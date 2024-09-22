@@ -1,0 +1,235 @@
+<!DOCTYPE html><html lang="zh-TW" data-theme="dark"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>分散式系統的CAP定理(CAP theorem) | Cheng® Blog</title><meta name="author" content="Cheng®"><meta name="copyright" content="Cheng®"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#0d0d0d"><meta name="description" content="在設計分散式系統(Distributed System)前，必須要了解CAP定理(CAP theorem)，又稱布魯爾定理（Brewer’s theorem）。 CAP定理的三個字母C，A，P分別代表以下：  Consistency：一致性 Availability：可用性 Partition-tolerance：分區容錯  Consistency 一致性指分散式系統中的每個節點(nodes)所查">
+<meta property="og:type" content="article">
+<meta property="og:title" content="分散式系統的CAP定理(CAP theorem)">
+<meta property="og:url" content="https://mark22013333.github.io/2024/09/21/%E5%88%86%E6%95%A3%E5%BC%8F%E7%B3%BB%E7%B5%B1%E7%9A%84CAP%E5%AE%9A%E7%90%86-CAP-theorem/index.html">
+<meta property="og:site_name" content="Cheng® Blog">
+<meta property="og:description" content="在設計分散式系統(Distributed System)前，必須要了解CAP定理(CAP theorem)，又稱布魯爾定理（Brewer’s theorem）。 CAP定理的三個字母C，A，P分別代表以下：  Consistency：一致性 Availability：可用性 Partition-tolerance：分區容錯  Consistency 一致性指分散式系統中的每個節點(nodes)所查">
+<meta property="og:locale" content="zh_TW">
+<meta property="og:image" content="https://mark22013333.github.io/img/20240921-1.png">
+<meta property="article:published_time" content="2024-09-21T14:55:28.000Z">
+<meta property="article:modified_time" content="2024-09-22T01:54:21.571Z">
+<meta property="article:author" content="Cheng®">
+<meta property="article:tag" content="分散式(Distributed)">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://mark22013333.github.io/img/20240921-1.png"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://mark22013333.github.io/2024/09/21/%E5%88%86%E6%95%A3%E5%BC%8F%E7%B3%BB%E7%B5%B1%E7%9A%84CAP%E5%AE%9A%E7%90%86-CAP-theorem/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//fonts.googleapis.com" crossorigin=""/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Titillium+Web&amp;display=swap" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '複製成功',
+    error: '複製錯誤',
+    noSupport: '瀏覽器不支援'
+  },
+  relativeDate: {
+    homepage: false,
+    post: true
+  },
+  runtime: '天',
+  dateSuffix: {
+    just: '剛剛',
+    min: '分鐘前',
+    hour: '小時前',
+    day: '天前',
+    month: '個月前'
+  },
+  copyright: {"limitCount":50,"languages":{"author":"作者: Cheng®","link":"連結: ","source":"來源: Cheng® Blog","info":"著作權歸作者所有。商業轉載請聯繫作者獲得授權，非商業轉載請註明出處。"}},
+  lightbox: 'mediumZoom',
+  Snackbar: {"chs_to_cht":"你已切換為繁體中文","cht_to_chs":"你已切換為簡體中文","day_to_night":"你已切換為深色模式","night_to_day":"你已切換為淺色模式","bgLight":"#49b1f5","bgDark":"#1f1f1f","position":"top-center"},
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid/dist/infinitegrid.min.js',
+    buttonText: '載入更多'
+  },
+  isPhotoFigcaption: true,
+  islazyload: false,
+  isAnchor: true,
+  percent: {
+    toc: true,
+    rightside: true,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '分散式系統的CAP定理(CAP theorem)',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2024-09-22 09:54:21'
+}</script><script>(win=>{
+      win.saveToLocal = {
+        set: (key, value, ttl) => {
+          if (ttl === 0) return
+          const now = Date.now()
+          const expiry = now + ttl * 86400000
+          const item = {
+            value,
+            expiry
+          }
+          localStorage.setItem(key, JSON.stringify(item))
+        },
+      
+        get: key => {
+          const itemStr = localStorage.getItem(key)
+      
+          if (!itemStr) {
+            return undefined
+          }
+          const item = JSON.parse(itemStr)
+          const now = Date.now()
+      
+          if (now > item.expiry) {
+            localStorage.removeItem(key)
+            return undefined
+          }
+          return item.value
+        }
+      }
+    
+      win.getScript = (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        script.onerror = reject
+        script.onload = script.onreadystatechange = function() {
+          const loadState = this.readyState
+          if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+          script.onload = script.onreadystatechange = null
+          resolve()
+        }
+
+        Object.keys(attr).forEach(key => {
+          script.setAttribute(key, attr[key])
+        })
+
+        document.head.appendChild(script)
+      })
+    
+      win.getCSS = (url, id = false) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onerror = reject
+        link.onload = link.onreadystatechange = function() {
+          const loadState = this.readyState
+          if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+          link.onload = link.onreadystatechange = null
+          resolve()
+        }
+        document.head.appendChild(link)
+      })
+    
+      win.activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          const now = new Date()
+          const hour = now.getHours()
+          const isNight = hour <= 9 || hour >= 18
+          if (t === undefined) isNight ? activateDarkMode() : activateLightMode()
+          else if (t === 'light') activateLightMode()
+          else activateDarkMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+      const detectApple = () => {
+        if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+          document.documentElement.classList.add('apple')
+        }
+      }
+      detectApple()
+    })(window)</script><meta name="generator" content="Hexo 7.0.0"></head><body><div id="loading-box"><div class="loading-left-bg"></div><div class="loading-right-bg"></div><div class="spinner-box"><div class="configure-border-1"><div class="configure-core"></div></div><div class="configure-border-2"><div class="configure-core"></div></div><div class="loading-word">載入中...</div></div></div><script>(()=>{
+  const $loadingBox = document.getElementById('loading-box')
+  const $body = document.body
+  const preloader = {
+    endLoading: () => {
+      $body.style.overflow = ''
+      $loadingBox.classList.add('loaded')
+    },
+    initLoading: () => {
+      $body.style.overflow = 'hidden'
+      $loadingBox.classList.remove('loaded')
+    }
+  }
+
+  preloader.initLoading()
+  window.addEventListener('load',() => { preloader.endLoading() })
+
+  if (false) {
+    document.addEventListener('pjax:send', () => { preloader.initLoading() })
+    document.addEventListener('pjax:complete', () => { preloader.endLoading() })
+  }
+})()</script><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="https://lh3.googleusercontent.com/pw/ABLVV87_po8nBc6F_tXcoYDmtzMGWxHuhhrbguYILCjmjWKLOS8DTpubm0YoQLKgjyjRIZyV5TjYe7XVEz_YU4squfr37GTZqPZP1hlMVZ_MIgXpTxWu73M=w1200" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">8</div></a><a href="/tags/"><div class="headline">標籤</div><div class="length-num">10</div></a><a href="/categories/"><div class="headline">分類</div><div class="length-num">7</div></a></div><hr class="custom-hr"/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首頁-Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 時間軸-archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 標籤-tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分類-Categories</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-list"></i><span> 其他列表</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音樂-Music</span></a></li><li><a class="site-page child" href="/gallery/"><i class="fa-fw fas fa-images"></i><span> 畫館-Gallery</span></a></li></ul></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg fixed" id="page-header" style="background-image: url('/img/20240921-1.png')"><nav id="nav"><span id="blog-info"><a href="/" title="Cheng® Blog"><img class="site-icon" src="https://lh3.googleusercontent.com/pw/ABLVV87_po8nBc6F_tXcoYDmtzMGWxHuhhrbguYILCjmjWKLOS8DTpubm0YoQLKgjyjRIZyV5TjYe7XVEz_YU4squfr37GTZqPZP1hlMVZ_MIgXpTxWu73M=w1200"/><span class="site-name">Cheng® Blog</span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首頁-Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 時間軸-archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 標籤-tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分類-Categories</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-list"></i><span> 其他列表</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音樂-Music</span></a></li><li><a class="site-page child" href="/gallery/"><i class="fa-fw fas fa-images"></i><span> 畫館-Gallery</span></a></li></ul></div></div><div id="toggle-menu"><a class="site-page" href="javascript:void(0);"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">分散式系統的CAP定理(CAP theorem)</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">發表於</span><time class="post-meta-date-created" datetime="2024-09-21T14:55:28.000Z" title="發表於 2024-09-21 22:55:28">2024-09-21</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新於</span><time class="post-meta-date-updated" datetime="2024-09-22T01:54:21.571Z" title="更新於 2024-09-22 09:54:21">2024-09-22</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E5%90%8D%E8%A9%9E%E8%A7%A3%E9%87%8B/">名詞解釋</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字數總計:</span><span class="word-count">541</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">閱讀時長:</span><span>1分鐘</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="分散式系統的CAP定理(CAP theorem)"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">閱讀量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><p>在設計分散式系統(Distributed System)前，必須要了解CAP定理(CAP theorem)，又稱布魯爾定理（Brewer’s theorem）。</p>
+<p>CAP定理的三個字母C，A，P分別代表以下：</p>
+<ul>
+<li><strong>C</strong>onsistency：一致性</li>
+<li><strong>A</strong>vailability：可用性</li>
+<li><strong>P</strong>artition-tolerance：分區容錯</li>
+</ul>
+<h3 id="Consistency-一致性"><a href="#Consistency-一致性" class="headerlink" title="Consistency 一致性"></a>Consistency 一致性</h3><p>指分散式系統中的每個節點(nodes)所查到的都是一致且最新的資料。</p>
+<h3 id="Availability-可用性"><a href="#Availability-可用性" class="headerlink" title="Availability 可用性"></a>Availability 可用性</h3><p>在任何時候，每次向系統發出請求都能在合理的時間內獲得回應，但並不保證回應的資料為最新。</p>
+<h3 id="Partition-tolerance-分區容錯"><a href="#Partition-tolerance-分區容錯" class="headerlink" title="Partition-tolerance 分區容錯"></a>Partition-tolerance 分區容錯</h3><p>當網路或節點故障造成系統的不同網路分區間(Partitions)的傳輸資料丟失時，系統仍可以正常運作。</p>
+<p>滿足以上三種特性是一個完美的分散式系統欲達成的目標。</p>
+<p>不過CAP定理指出，一個分散式系統最多只能滿足以上三個特性中的兩個，而無法同時滿足三個。</p>
+<blockquote>
+<p>You can have at most two of these properties for any shared-data system</p>
+</blockquote>
+<p>因此在設計分散式系統時，只能從三個特性中取捨，最多只能選擇兩點來滿足，有下列組合：</p>
+<ul>
+<li>CP (Consistency and Partition Tolerant)：一致性與分區容錯。</li>
+<li>AP (Availability and Partition Tolerant)：可用性與分區容錯。</li>
+<li>CA (Consistency and Availability)： 一致性與可用性。</li>
+</ul>
+<h3 id="CP-Consistent-and-Partition-Tolerant"><a href="#CP-Consistent-and-Partition-Tolerant" class="headerlink" title="CP (Consistent and Partition Tolerant)"></a>CP (Consistent and Partition Tolerant)</h3><blockquote>
+<p>在分區容錯的情況下保證資料的一致性，那就必須犧牲可用性。</p>
+</blockquote>
+<h3 id="AP-Availability-and-Partition-Tolerant"><a href="#AP-Availability-and-Partition-Tolerant" class="headerlink" title="AP (Availability and Partition Tolerant)"></a>AP (Availability and Partition Tolerant)</h3><blockquote>
+<p>在分區容錯的情況下保證系統的可用性，那就必須犧牲資料的一致性。</p>
+</blockquote>
+<h3 id="CA-Consistent-and-Availability"><a href="#CA-Consistent-and-Availability" class="headerlink" title="CA (Consistent and Availability)"></a>CA (Consistent and Availability)</h3><blockquote>
+<p>保證系統的可用性與資料一致，那就無法有分區容錯，也就是只有一個節點，這樣的情況就不是分散式系統了，不過這樣的系統可能並不存在。</p>
+</blockquote>
+<p>CAP定理的證明請參考<a target="_blank" rel="noopener" href="https://strrl.dev/post/before-2022/brewers-conjecture-and-the-feasibility-of-consistent-available-partition-tolerant-web-services">Brewer’s Conjecture and the Feasibility of Consistent, Available, Partition-Tolerant Web Services</a>。</p>
+<p>而分散式系統本身即為滿足分區容錯(P)的架構，也就是希望系統在部分節點或網路失靈的狀況下功能能可正常運作，因此通常是在CP與AP中作抉擇。</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://mark22013333.github.io">Cheng®</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章連結: </span><span class="post-copyright-info"><a href="https://mark22013333.github.io/2024/09/21/%E5%88%86%E6%95%A3%E5%BC%8F%E7%B3%BB%E7%B5%B1%E7%9A%84CAP%E5%AE%9A%E7%90%86-CAP-theorem/">https://mark22013333.github.io/2024/09/21/分散式系統的CAP定理-CAP-theorem/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版權聲明: </span><span class="post-copyright-info">本部落格所有文章除特別聲明外，均採用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 許可協議。轉載請註明來自 <a href="https://mark22013333.github.io" target="_blank">Cheng® Blog</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E5%88%86%E6%95%A3%E5%BC%8F-Distributed/">分散式(Distributed)</a></div><div class="post_share"><div class="social-share" data-image="/img/20240921-1.png" data-sites="facebook,twitter,wechat"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><div class="post-reward"><div class="reward-button"><i class="fas fa-qrcode"></i>贊助</div><div class="reward-main"><ul class="reward-all"><li class="reward-item"><a href="/img/MyRichart.jpg" target="_blank"><img class="post-qr-code-img" src="/img/MyRichart.jpg" alt="Richart"/></a><div class="post-qr-code-desc">Richart</div></li><li class="reward-item"><a href="/img/CubeBank.jpg" target="_blank"><img class="post-qr-code-img" src="/img/CubeBank.jpg" alt="國泰 Cube"/></a><div class="post-qr-code-desc">國泰 Cube</div></li></ul></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-full"><a href="/2024/05/17/Hibernate-DiscriminatorColumn%E8%AA%AA%E6%98%8E/" title="Hibernate → @DiscriminatorColumn說明"><img class="cover" src="/img/20240517-01.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">Hibernate → @DiscriminatorColumn說明</div></div></a></div></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="https://lh3.googleusercontent.com/pw/ABLVV87_po8nBc6F_tXcoYDmtzMGWxHuhhrbguYILCjmjWKLOS8DTpubm0YoQLKgjyjRIZyV5TjYe7XVEz_YU4squfr37GTZqPZP1hlMVZ_MIgXpTxWu73M=w1200" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">Cheng®</div><div class="author-info__description">紀錄一些遇到的問題</div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">8</div></a><a href="/tags/"><div class="headline">標籤</div><div class="length-num">10</div></a><a href="/categories/"><div class="headline">分類</div><div class="length-num">7</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/mark22013333"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/mark22013333" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:mark22013333@gmail.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">Cheng® Blog 紀錄一些發生的事情...</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目錄</span><span class="toc-percentage"></span></div><div class="toc-content is-expand"><ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#Consistency-%E4%B8%80%E8%87%B4%E6%80%A7"><span class="toc-number">1.</span> <span class="toc-text">Consistency 一致性</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Availability-%E5%8F%AF%E7%94%A8%E6%80%A7"><span class="toc-number">2.</span> <span class="toc-text">Availability 可用性</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Partition-tolerance-%E5%88%86%E5%8D%80%E5%AE%B9%E9%8C%AF"><span class="toc-number">3.</span> <span class="toc-text">Partition-tolerance 分區容錯</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#CP-Consistent-and-Partition-Tolerant"><span class="toc-number">4.</span> <span class="toc-text">CP (Consistent and Partition Tolerant)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#AP-Availability-and-Partition-Tolerant"><span class="toc-number">5.</span> <span class="toc-text">AP (Availability and Partition Tolerant)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#CA-Consistent-and-Availability"><span class="toc-number">6.</span> <span class="toc-text">CA (Consistent and Availability)</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2024/09/21/%E5%88%86%E6%95%A3%E5%BC%8F%E7%B3%BB%E7%B5%B1%E7%9A%84CAP%E5%AE%9A%E7%90%86-CAP-theorem/" title="分散式系統的CAP定理(CAP theorem)"><img src="/img/20240921-1.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="分散式系統的CAP定理(CAP theorem)"/></a><div class="content"><a class="title" href="/2024/09/21/%E5%88%86%E6%95%A3%E5%BC%8F%E7%B3%BB%E7%B5%B1%E7%9A%84CAP%E5%AE%9A%E7%90%86-CAP-theorem/" title="分散式系統的CAP定理(CAP theorem)">分散式系統的CAP定理(CAP theorem)</a><time datetime="2024-09-21T14:55:28.000Z" title="發表於 2024-09-21 22:55:28">2024-09-21</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2024/05/17/Hibernate-DiscriminatorColumn%E8%AA%AA%E6%98%8E/" title="Hibernate → @DiscriminatorColumn說明"><img src="/img/20240517-01.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Hibernate → @DiscriminatorColumn說明"/></a><div class="content"><a class="title" href="/2024/05/17/Hibernate-DiscriminatorColumn%E8%AA%AA%E6%98%8E/" title="Hibernate → @DiscriminatorColumn說明">Hibernate → @DiscriminatorColumn說明</a><time datetime="2024-05-17T14:09:00.000Z" title="發表於 2024-05-17 22:09:00">2024-05-17</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2024/03/21/HashMap-%E2%86%92-computeIfAbsent/" title="HashMap → computeIfAbsent()"><img src="/img/DALL%C2%B7E%202024-03-21.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="HashMap → computeIfAbsent()"/></a><div class="content"><a class="title" href="/2024/03/21/HashMap-%E2%86%92-computeIfAbsent/" title="HashMap → computeIfAbsent()">HashMap → computeIfAbsent()</a><time datetime="2024-03-21T14:56:36.000Z" title="發表於 2024-03-21 22:56:36">2024-03-21</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2024/03/20/HashMap-%E2%86%92-putIfAbsent/" title="HashMap → putIfAbsent()"><img src="/img/DALL%C2%B7E%202024-03-20%2023.45.20.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="HashMap → putIfAbsent()"/></a><div class="content"><a class="title" href="/2024/03/20/HashMap-%E2%86%92-putIfAbsent/" title="HashMap → putIfAbsent()">HashMap → putIfAbsent()</a><time datetime="2024-03-20T15:28:00.000Z" title="發表於 2024-03-20 23:28:00">2024-03-20</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2024/02/05/HTML-Scrpit-%E5%B1%AC%E6%80%A7/" title="HTML-Script 屬性"><img src="/img/20240205-1.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="HTML-Script 屬性"/></a><div class="content"><a class="title" href="/2024/02/05/HTML-Scrpit-%E5%B1%AC%E6%80%A7/" title="HTML-Script 屬性">HTML-Script 屬性</a><time datetime="2024-02-05T14:02:29.000Z" title="發表於 2024-02-05 22:02:29">2024-02-05</time></div></div></div></div></div></div></main><footer id="footer" style="background-image: url('/img/20240921-1.png')"><div id="footer-wrap"><div class="copyright">&copy;2024 By Cheng®</div><div class="footer_custom_text">Cheng®<a href="https://mark22013333.github.io/"> Blog</a>!</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="閱讀模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="淺色和深色模式轉換"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="單欄和雙欄切換"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="設定"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目錄"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="返回頂部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/medium-zoom/dist/medium-zoom.min.js"></script><script src="https://cdn.jsdelivr.net/npm/instant.page/instantpage.min.js" type="module"></script><script src="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.js"></script><script>function panguFn () {
+  if (typeof pangu === 'object') pangu.autoSpacingPage()
+  else {
+    getScript('https://cdn.jsdelivr.net/npm/pangu/dist/browser/pangu.min.js')
+      .then(() => {
+        pangu.autoSpacingPage()
+      })
+  }
+}
+
+function panguInit () {
+  if (false){
+    GLOBAL_CONFIG_SITE.isPost && panguFn()
+  } else {
+    panguFn()
+  }
+}
+
+document.addEventListener('DOMContentLoaded', panguInit)</script><div class="js-pjax"></div><script defer="defer" id="fluttering_ribbon" mobile="false" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/canvas-fluttering-ribbon.min.js"></script><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/activate-power-mode.min.js"></script><script>POWERMODE.colorful = true;
+POWERMODE.shake = true;
+POWERMODE.mobile = true;
+document.body.addEventListener('input', POWERMODE);
+</script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
