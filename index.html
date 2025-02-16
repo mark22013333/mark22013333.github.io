@@ -1,31 +1,123 @@
-<!DOCTYPE html><html lang="zh-TW" data-theme="dark"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>Cheng® Blog - ─=≡Σ((( つ•̀ω•́)つ</title><meta name="author" content="Cheng®"><meta name="copyright" content="Cheng®"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#0d0d0d"><meta name="description" content="紀錄一些遇到的問題">
+<!DOCTYPE html><html lang="zh-TW" data-theme="dark"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>Cheng® Blog - ─=≡Σ((( つ•̀ω•́)つ</title><meta name="author" content="Cheng®"><meta name="copyright" content="Cheng®"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#0d0d0d"><meta name="description" content="做一些筆記和紀錄遇到的問題">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Cheng® Blog">
 <meta property="og:url" content="https://mark22013333.github.io/index.html">
 <meta property="og:site_name" content="Cheng® Blog">
-<meta property="og:description" content="紀錄一些遇到的問題">
+<meta property="og:description" content="做一些筆記和紀錄遇到的問題">
 <meta property="og:locale" content="zh_TW">
 <meta property="og:image" content="https://lh3.googleusercontent.com/pw/ABLVV87_po8nBc6F_tXcoYDmtzMGWxHuhhrbguYILCjmjWKLOS8DTpubm0YoQLKgjyjRIZyV5TjYe7XVEz_YU4squfr37GTZqPZP1hlMVZ_MIgXpTxWu73M=w1200">
 <meta property="article:author" content="Cheng®">
-<meta property="article:tag" content="Blog Code Life Note">
+<meta property="article:tag" content="Blog Code Life Note Java Spring Hibernate JPA JavaScript HTML CSS MSSQL DB">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://lh3.googleusercontent.com/pw/ABLVV87_po8nBc6F_tXcoYDmtzMGWxHuhhrbguYILCjmjWKLOS8DTpubm0YoQLKgjyjRIZyV5TjYe7XVEz_YU4squfr37GTZqPZP1hlMVZ_MIgXpTxWu73M=w1200"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://mark22013333.github.io/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//fonts.googleapis.com" crossorigin=""/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Titillium+Web&amp;display=swap" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = {
+<meta name="twitter:image" content="https://lh3.googleusercontent.com/pw/ABLVV87_po8nBc6F_tXcoYDmtzMGWxHuhhrbguYILCjmjWKLOS8DTpubm0YoQLKgjyjRIZyV5TjYe7XVEz_YU4squfr37GTZqPZP1hlMVZ_MIgXpTxWu73M=w1200"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://mark22013333.github.io/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//fonts.googleapis.com" crossorigin=""/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          const hour = new Date().getHours()
+          const isNight = hour <= 9 || hour >= 18
+          if (theme === undefined) isNight ? activateDarkMode() : activateLightMode()
+          else theme === 'light' ? activateLightMode() : activateDarkMode()
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Titillium+Web&amp;display=swap" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = {
   root: '/',
   algolia: undefined,
-  localSearch: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"languages":{"hits_empty":"找不到符合您查詢的內容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
   translate: undefined,
-  noticeOutdate: undefined,
-  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
   copy: {
     success: '複製成功',
-    error: '複製錯誤',
+    error: '複製失敗',
     noSupport: '瀏覽器不支援'
   },
   relativeDate: {
     homepage: false,
     post: true
   },
-  runtime: '天',
+  runtime: '',
   dateSuffix: {
     just: '剛剛',
     min: '分鐘前',
@@ -33,15 +125,15 @@
     day: '天前',
     month: '個月前'
   },
-  copyright: {"limitCount":50,"languages":{"author":"作者: Cheng®","link":"連結: ","source":"來源: Cheng® Blog","info":"著作權歸作者所有。商業轉載請聯繫作者獲得授權，非商業轉載請註明出處。"}},
-  lightbox: 'mediumZoom',
-  Snackbar: {"chs_to_cht":"你已切換為繁體中文","cht_to_chs":"你已切換為簡體中文","day_to_night":"你已切換為深色模式","night_to_day":"你已切換為淺色模式","bgLight":"#49b1f5","bgDark":"#1f1f1f","position":"top-center"},
+  copyright: {"limitCount":1,"languages":{"author":"作者: Cheng®","link":"連結: ","source":"來源: Cheng® Blog","info":"著作權歸作者所有。如需商業轉載，請聯絡作者獲得授權，非商業轉載請註明出處。"}},
+  lightbox: 'fancybox',
+  Snackbar: {"chs_to_cht":"已切換為繁體中文","cht_to_chs":"已切換為簡體中文","day_to_night":"已切換為深色模式","night_to_day":"已切換為淺色模式","bgLight":"#49b1f5","bgDark":"#1f1f1f","position":"top-center"},
   infinitegrid: {
     js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid/dist/infinitegrid.min.js',
     buttonText: '載入更多'
   },
   isPhotoFigcaption: true,
-  islazyload: false,
+  islazyloadPlugin: false,
   isAnchor: true,
   percent: {
     toc: true,
@@ -50,112 +142,10 @@
   autoDarkmode: false
 }</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
   title: 'Cheng® Blog',
-  isPost: false,
-  isHome: true,
   isHighlightShrink: false,
   isToc: false,
-  postUpdate: '2025-02-02 22:42:15'
-}</script><script>(win=>{
-      win.saveToLocal = {
-        set: (key, value, ttl) => {
-          if (ttl === 0) return
-          const now = Date.now()
-          const expiry = now + ttl * 86400000
-          const item = {
-            value,
-            expiry
-          }
-          localStorage.setItem(key, JSON.stringify(item))
-        },
-      
-        get: key => {
-          const itemStr = localStorage.getItem(key)
-      
-          if (!itemStr) {
-            return undefined
-          }
-          const item = JSON.parse(itemStr)
-          const now = Date.now()
-      
-          if (now > item.expiry) {
-            localStorage.removeItem(key)
-            return undefined
-          }
-          return item.value
-        }
-      }
-    
-      win.getScript = (url, attr = {}) => new Promise((resolve, reject) => {
-        const script = document.createElement('script')
-        script.src = url
-        script.async = true
-        script.onerror = reject
-        script.onload = script.onreadystatechange = function() {
-          const loadState = this.readyState
-          if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
-          script.onload = script.onreadystatechange = null
-          resolve()
-        }
-
-        Object.keys(attr).forEach(key => {
-          script.setAttribute(key, attr[key])
-        })
-
-        document.head.appendChild(script)
-      })
-    
-      win.getCSS = (url, id = false) => new Promise((resolve, reject) => {
-        const link = document.createElement('link')
-        link.rel = 'stylesheet'
-        link.href = url
-        if (id) link.id = id
-        link.onerror = reject
-        link.onload = link.onreadystatechange = function() {
-          const loadState = this.readyState
-          if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
-          link.onload = link.onreadystatechange = null
-          resolve()
-        }
-        document.head.appendChild(link)
-      })
-    
-      win.activateDarkMode = () => {
-        document.documentElement.setAttribute('data-theme', 'dark')
-        if (document.querySelector('meta[name="theme-color"]') !== null) {
-          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
-        }
-      }
-      win.activateLightMode = () => {
-        document.documentElement.setAttribute('data-theme', 'light')
-        if (document.querySelector('meta[name="theme-color"]') !== null) {
-          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
-        }
-      }
-      const t = saveToLocal.get('theme')
-    
-          const now = new Date()
-          const hour = now.getHours()
-          const isNight = hour <= 9 || hour >= 18
-          if (t === undefined) isNight ? activateDarkMode() : activateLightMode()
-          else if (t === 'light') activateLightMode()
-          else activateDarkMode()
-        
-      const asideStatus = saveToLocal.get('aside-status')
-      if (asideStatus !== undefined) {
-        if (asideStatus === 'hide') {
-          document.documentElement.classList.add('hide-aside')
-        } else {
-          document.documentElement.classList.remove('hide-aside')
-        }
-      }
-    
-      const detectApple = () => {
-        if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
-          document.documentElement.classList.add('apple')
-        }
-      }
-      detectApple()
-    })(window)</script><meta name="generator" content="Hexo 7.0.0"></head><body><div id="loading-box"><div class="loading-left-bg"></div><div class="loading-right-bg"></div><div class="spinner-box"><div class="configure-border-1"><div class="configure-core"></div></div><div class="configure-border-2"><div class="configure-core"></div></div><div class="loading-word">載入中...</div></div></div><script>(()=>{
+  pageType: 'home'
+}</script><meta name="generator" content="Hexo 7.0.0"></head><body><div id="loading-box"><div class="loading-left-bg"></div><div class="loading-right-bg"></div><div class="spinner-box"><div class="configure-border-1"><div class="configure-core"></div></div><div class="configure-border-2"><div class="configure-core"></div></div><div class="loading-word">載入中...</div></div></div><script>(()=>{
   const $loadingBox = document.getElementById('loading-box')
   const $body = document.body
   const preloader = {
@@ -170,109 +160,85 @@
   }
 
   preloader.initLoading()
-  window.addEventListener('load',() => { preloader.endLoading() })
+  window.addEventListener('load', preloader.endLoading)
 
   if (false) {
-    document.addEventListener('pjax:send', () => { preloader.initLoading() })
-    document.addEventListener('pjax:complete', () => { preloader.endLoading() })
+    btf.addGlobalFn('pjaxSend', preloader.initLoading, 'preloader_init')
+    btf.addGlobalFn('pjaxComplete', preloader.endLoading, 'preloader_end')
   }
-})()</script><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="https://lh3.googleusercontent.com/pw/ABLVV87_po8nBc6F_tXcoYDmtzMGWxHuhhrbguYILCjmjWKLOS8DTpubm0YoQLKgjyjRIZyV5TjYe7XVEz_YU4squfr37GTZqPZP1hlMVZ_MIgXpTxWu73M=w1200" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">9</div></a><a href="/tags/"><div class="headline">標籤</div><div class="length-num">8</div></a><a href="/categories/"><div class="headline">分類</div><div class="length-num">4</div></a></div><hr class="custom-hr"/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首頁-Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 時間軸-archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 標籤-tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分類-Categories</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-list"></i><span> 其他列表</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音樂-Music</span></a></li><li><a class="site-page child" href="/gallery/"><i class="fa-fw fas fa-images"></i><span> 畫館-Gallery</span></a></li></ul></div></div></div></div><div class="page" id="body-wrap"><header class="full_page fixed" id="page-header" style="background-image: url('https://lh3.googleusercontent.com/pw/ABLVV853NQFWL4WeSSrWk5muVHD0zrcrFPpWIUUavM_Whrk2S6MxmPC6IZTRkUrg4ibCJsO0mFugBuJvMdwQu5_kpa9M08ZXqLsNmJa62GuQJ1zVZrXrMBg=w2400')"><nav id="nav"><span id="blog-info"><a href="/" title="Cheng® Blog"><img class="site-icon" src="https://lh3.googleusercontent.com/pw/ABLVV87_po8nBc6F_tXcoYDmtzMGWxHuhhrbguYILCjmjWKLOS8DTpubm0YoQLKgjyjRIZyV5TjYe7XVEz_YU4squfr37GTZqPZP1hlMVZ_MIgXpTxWu73M=w1200"/><span class="site-name">Cheng® Blog</span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首頁-Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 時間軸-archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 標籤-tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分類-Categories</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-list"></i><span> 其他列表</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音樂-Music</span></a></li><li><a class="site-page child" href="/gallery/"><i class="fa-fw fas fa-images"></i><span> 畫館-Gallery</span></a></li></ul></div></div><div id="toggle-menu"><a class="site-page" href="javascript:void(0);"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="site-info"><h1 id="site-title">Cheng® Blog</h1><div id="site-subtitle"><span id="subtitle"></span></div><div id="site_social_icons"><a class="social-icon" href="https://github.com/mark22013333" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:mark22013333@gmail.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a></div></div><div id="scroll-down"><i class="fas fa-angle-down scroll-down-effects"></i></div></header><main class="layout" id="content-inner"><div class="recent-posts" id="recent-posts"><div class="recent-post-item"><div class="post_cover left"><a href="/2025/02/02/%E6%9F%A5%E7%9C%8BMSSQL%E8%B3%87%E6%96%99%E5%BA%AB%E7%9A%84%E4%BD%94%E7%94%A8%E7%A9%BA%E9%96%93/" title="查看MSSQL資料庫的佔用空間"><img class="post-bg" src="/img/DB-20250202.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="查看MSSQL資料庫的佔用空間"></a></div><div class="recent-post-info"><a class="article-title" href="/2025/02/02/%E6%9F%A5%E7%9C%8BMSSQL%E8%B3%87%E6%96%99%E5%BA%AB%E7%9A%84%E4%BD%94%E7%94%A8%E7%A9%BA%E9%96%93/" title="查看MSSQL資料庫的佔用空間">查看MSSQL資料庫的佔用空間</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">發表於</span><time class="post-meta-date-created" datetime="2025-02-02T13:02:39.000Z" title="發表於 2025-02-02 21:02:39">2025-02-02</time><span class="article-meta-separator">|</span><i class="fas fa-history"></i><span class="article-meta-label">更新於</span><time class="post-meta-date-updated" datetime="2025-02-02T14:12:43.820Z" title="更新於 2025-02-02 22:12:43">2025-02-02</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/%E8%B3%87%E6%96%99%E5%BA%AB-MSSQL/">資料庫(MSSQL)</a></span><span class="article-meta tags"><span class="article-meta-separator">|</span><i class="fas fa-tag"></i><a class="article-meta__tags" href="/tags/MSSQL/">MSSQL</a><span class="article-meta-link">•</span><i class="fas fa-tag"></i><a class="article-meta__tags" href="/tags/DB/">DB</a></span></div><div class="content">在 MSSQL 中，可以通過系統檢視或內建存儲過程來查看資料庫的大小，包括資料和索引的占用。以下是常用的方法：
-
-方法 1：使用 sp_spaceusedsp_spaceused 是一個內建的存儲過程，用於查看資料庫的空間使用情況。
-查看整個資料庫的大小
-切換到目標資料庫：
- 12USE [YourDatabaseName];GO
-
-執行以下命令：返回的關鍵結果：
- 1EXEC sp_spaceused;
-
-database_size：資料庫的總大小（資料和索引）。
-unallocated space：未分配的空間。
-
-
-
-查看特定表的大小
-執行以下命令：返回的關鍵結果：
- 1EXEC sp_spaceused N&#x27;[YourTableName]&#x27;;
-
-reserved：表的總預留空間（資料、索引和未使用空間）。
-data：表中資料的大小。
-index_size：表的索引大小。
-unused：未使用的空間。
-
-
-
-
-方法 2：使用 sys.master_files 和 sys.database_files可以直接從系統檢視中查詢資料庫文件的大小。
-查看資料庫的總大小 ...</div></div></div><div class="recent-post-item"><div class="post_cover right"><a href="/2024/09/21/%E5%88%86%E6%95%A3%E5%BC%8F%E7%B3%BB%E7%B5%B1%E7%9A%84CAP%E5%AE%9A%E7%90%86-CAP-theorem/" title="分散式系統的CAP定理(CAP theorem)"><img class="post-bg" src="/img/20240921-1.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="分散式系統的CAP定理(CAP theorem)"></a></div><div class="recent-post-info"><a class="article-title" href="/2024/09/21/%E5%88%86%E6%95%A3%E5%BC%8F%E7%B3%BB%E7%B5%B1%E7%9A%84CAP%E5%AE%9A%E7%90%86-CAP-theorem/" title="分散式系統的CAP定理(CAP theorem)">分散式系統的CAP定理(CAP theorem)</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">發表於</span><time class="post-meta-date-created" datetime="2024-09-21T14:55:28.000Z" title="發表於 2024-09-21 22:55:28">2024-09-21</time><span class="article-meta-separator">|</span><i class="fas fa-history"></i><span class="article-meta-label">更新於</span><time class="post-meta-date-updated" datetime="2024-09-22T02:15:05.593Z" title="更新於 2024-09-22 10:15:05">2024-09-22</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/%E5%90%8D%E8%A9%9E%E8%A7%A3%E9%87%8B/">名詞解釋</a></span><span class="article-meta tags"><span class="article-meta-separator">|</span><i class="fas fa-tag"></i><a class="article-meta__tags" href="/tags/%E5%88%86%E6%95%A3%E5%BC%8F-Distributed/">分散式(Distributed)</a></span></div><div class="content">在設計分散式系統(Distributed System)前，必須要了解CAP定理(CAP theorem)，又稱布魯爾定理（Brewer’s theorem）。
-CAP定理的三個字母C，A，P分別代表以下：
-
-Consistency：一致性
-Availability：可用性
-Partition-tolerance：分區容錯
-
-Consistency 一致性指分散式系統中的每個節點(nodes)所查到的都是一致且最新的資料。
-Availability 可用性在任何時候，每次向系統發出請求都能在合理的時間內獲得回應，但並不保證回應的資料為最新。
-Partition-tolerance 分區容錯當網路或節點故障造成系統的不同網路分區間(Partitions)的傳輸資料丟失時，系統仍可以正常運作。
-滿足以上三種特性是一個完美的分散式系統欲達成的目標。
-不過CAP定理指出，一個分散式系統最多只能滿足以上三個特性中的兩個，而無法同時滿足三個。
-
-You can have at most two of these properties for any shared-data system
-
-因此在設 ...</div></div></div><div class="recent-post-item"><div class="post_cover left"><a href="/2024/05/17/Hibernate-DiscriminatorColumn%E8%AA%AA%E6%98%8E/" title="Hibernate → @DiscriminatorColumn說明"><img class="post-bg" src="/img/20240517-01.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Hibernate → @DiscriminatorColumn說明"></a></div><div class="recent-post-info"><a class="article-title" href="/2024/05/17/Hibernate-DiscriminatorColumn%E8%AA%AA%E6%98%8E/" title="Hibernate → @DiscriminatorColumn說明">Hibernate → @DiscriminatorColumn說明</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">發表於</span><time class="post-meta-date-created" datetime="2024-05-17T14:09:00.000Z" title="發表於 2024-05-17 22:09:00">2024-05-17</time><span class="article-meta-separator">|</span><i class="fas fa-history"></i><span class="article-meta-label">更新於</span><time class="post-meta-date-updated" datetime="2024-09-22T01:54:57.943Z" title="更新於 2024-09-22 09:54:57">2024-09-22</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/Java/">Java</a></span><span class="article-meta tags"><span class="article-meta-separator">|</span><i class="fas fa-tag"></i><a class="article-meta__tags" href="/tags/Hibernate/">Hibernate</a></span></div><div class="content">@DiscriminatorColumn 註解用於在 JPA 繼承結構中，為單表策略 (InheritanceType.SINGLE_TABLE) 的繼承層次結構指定區分列。這樣，JPA 可以使用這個列來識別每一行對應的具體實體類型。
-讓我們詳細解釋一下：
-註解部分1@DiscriminatorColumn(name=&quot;accountType&quot;, discriminatorType = DiscriminatorType.STRING)
-
-
-@DiscriminatorColumn：這個註解指定了用來區分不同實體類型的列。
-name=&quot;accountType&quot;：這指定了區分列的名稱為 accountType。這個列將會被添加到生成的單表中，用來存儲每一行對應的實體類型。
-discriminatorType = DiscriminatorType.STRING：這指定了區分列的類型為 STRING。區分列可以是 STRING、CHAR 或 INTEGER。
-
-作用當使用 InheritanceType.SINGLE_TABLE 繼承策略時，所有的繼 ...</div></div></div><div class="recent-post-item"><div class="post_cover right"><a href="/2024/03/21/HashMap-%E2%86%92-computeIfAbsent/" title="HashMap → computeIfAbsent()"><img class="post-bg" src="/img/DALL%C2%B7E%202024-03-21.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="HashMap → computeIfAbsent()"></a></div><div class="recent-post-info"><a class="article-title" href="/2024/03/21/HashMap-%E2%86%92-computeIfAbsent/" title="HashMap → computeIfAbsent()">HashMap → computeIfAbsent()</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">發表於</span><time class="post-meta-date-created" datetime="2024-03-21T14:56:36.000Z" title="發表於 2024-03-21 22:56:36">2024-03-21</time><span class="article-meta-separator">|</span><i class="fas fa-history"></i><span class="article-meta-label">更新於</span><time class="post-meta-date-updated" datetime="2024-09-22T02:15:05.597Z" title="更新於 2024-09-22 10:15:05">2024-09-22</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/Java/">Java</a></span><span class="article-meta tags"><span class="article-meta-separator">|</span><i class="fas fa-tag"></i><a class="article-meta__tags" href="/tags/Collections/">Collections</a></span></div><div class="content">12345678910// 當key不存在，就執行第二個參數的函數，並回傳執行後的值，然後也會put// 如果函數返回 null，則不會put// 如果函數本身拋出（未經檢查的）異常，則重新拋出異常，則不會putpublic static void main(String[] args) &#123;    Map&lt;String, Integer&gt; stringLength = new HashMap&lt;&gt;();    stringLength.put(&quot;John&quot;, 2);    int i = stringLength.computeIfAbsent(&quot;John&quot;, String::length);    System.out.println(&quot;i = &quot; + i);    System.out.println(&quot;stringLength = &quot; + stringLength);&#125;
-
-這段程式碼看起來沒有明顯的錯誤，但可以做一些優化。
-12345678910public  ...</div></div></div><div class="recent-post-item"><div class="post_cover left"><a href="/2024/03/20/HashMap-%E2%86%92-putIfAbsent/" title="HashMap → putIfAbsent()"><img class="post-bg" src="/img/DALL%C2%B7E%202024-03-20%2023.45.20.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="HashMap → putIfAbsent()"></a></div><div class="recent-post-info"><a class="article-title" href="/2024/03/20/HashMap-%E2%86%92-putIfAbsent/" title="HashMap → putIfAbsent()">HashMap → putIfAbsent()</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">發表於</span><time class="post-meta-date-created" datetime="2024-03-20T15:28:00.000Z" title="發表於 2024-03-20 23:28:00">2024-03-20</time><span class="article-meta-separator">|</span><i class="fas fa-history"></i><span class="article-meta-label">更新於</span><time class="post-meta-date-updated" datetime="2024-09-22T02:15:05.586Z" title="更新於 2024-09-22 10:15:05">2024-09-22</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/Java/">Java</a></span><span class="article-meta tags"><span class="article-meta-separator">|</span><i class="fas fa-tag"></i><a class="article-meta__tags" href="/tags/Collections/">Collections</a></span></div><div class="content">putIfAbsent() 是 HashMap 在 Java 中的一個實用方法，它屬於 Map 介面。這個方法用來在對應的鍵（key）不存在於映射中時，將一組key,value 放入映射(map)裡。如果映射先前已包含該鍵(key)的映射，則不做任何更動。putIfAbsent() 方法既可以確保不會不小心覆蓋已有的鍵值(key, value)，也可以用來在多執行緒環境下安全的更新map，假設映射本身是同步的或者是一個 ConcurrentHashMap。
-方法簽名
-1V putIfAbsent(K key, V value)
-K: 鍵的類型
-V: 值的類型
-返回值：如果映射中已經有這個鍵，則返回鍵對應的舊值；如果沒有，則返回 null（並且將新的鍵值對插入映射）。
-範例1以下是使用 putIfAbsent() 方法的一個簡單範例：
-1234567891011121314151617181920212223import java.util.HashMap;import java.util.Map;public class PutIfAbsentExample &#123;    pub ...</div></div></div><div class="recent-post-item"><div class="post_cover right"><a href="/2024/02/05/HTML-Scrpit-%E5%B1%AC%E6%80%A7/" title="HTML-Script 屬性"><img class="post-bg" src="/img/20240205-1.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="HTML-Script 屬性"></a></div><div class="recent-post-info"><a class="article-title" href="/2024/02/05/HTML-Scrpit-%E5%B1%AC%E6%80%A7/" title="HTML-Script 屬性">HTML-Script 屬性</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">發表於</span><time class="post-meta-date-created" datetime="2024-02-05T14:02:29.000Z" title="發表於 2024-02-05 22:02:29">2024-02-05</time><span class="article-meta-separator">|</span><i class="fas fa-history"></i><span class="article-meta-label">更新於</span><time class="post-meta-date-updated" datetime="2024-09-22T01:54:49.852Z" title="更新於 2024-09-22 09:54:49">2024-09-22</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/HTML/">HTML</a></span><span class="article-meta tags"><span class="article-meta-separator">|</span><i class="fas fa-tag"></i><a class="article-meta__tags" href="/tags/Web/">Web</a></span></div><div class="content">src屬性src 屬性指定外部腳本的 URL，允許開發者將 JavaScript 程式碼組織在單獨檔案中，而非直接寫在 HTML 內。當&lt;script&gt;標籤包含src屬性時，不應包含嵌入式腳本程式碼。
-type屬性type 屬性聲明腳本的 MIME 類型 (現已非必需，因為現代瀏覽器預設使用JavaScript)。早期 HTML 規範中，這個屬性用來指示腳本語言的類型，如”text/javascript“ 或 “application/javascript“。
-async屬性async 屬性是個布林屬性，告訴瀏覽器非同步的載入檔案。這意味著腳本會在下載完畢後儘快執行，但不會阻塞 HTML 文件的解析。此屬性僅適用於帶有src屬性的&lt;script&gt;標籤。
-1&lt;script src=&quot;xxx/script.js&quot; async&gt;&lt;/script&gt;  
-
-defer屬性與async屬性類似，defer屬性也會指示瀏覽器非同步載入腳本，但有個關鍵不同：帶有 defer 屬性的腳本保證會在文件解析完成後、DOMContentLoa ...</div></div></div><div class="recent-post-item"><div class="post_cover left"><a href="/2024/01/27/Docker-MySql/" title="Docker-MySql"><img class="post-bg" src="/img/0127-1.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Docker-MySql"></a></div><div class="recent-post-info"><a class="article-title" href="/2024/01/27/Docker-MySql/" title="Docker-MySql">Docker-MySql</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">發表於</span><time class="post-meta-date-created" datetime="2024-01-27T10:05:54.000Z" title="發表於 2024-01-27 18:05:54">2024-01-27</time><span class="article-meta-separator">|</span><i class="fas fa-history"></i><span class="article-meta-label">更新於</span><time class="post-meta-date-updated" datetime="2024-09-22T02:15:05.599Z" title="更新於 2024-09-22 10:15:05">2024-09-22</time></span><span class="article-meta tags"><span class="article-meta-separator">|</span><i class="fas fa-tag"></i><a class="article-meta__tags" href="/tags/Docker/">Docker</a></span></div><div class="content">新增檔案將內容貼上後，將檔案命名為docker-compose.yml，再執行docker-compose up -d
-12345678910111213141516171819202122232425version: &#x27;3.7&#x27;services:  mysql:    image: mysql:5.7    platform: linux/amd64    environment:      - MYSQL_ROOT_PASSWORD=root      - MYSQL_DATABASE=sample      - MYSQL_USER=demouser      - MYSQL_PASSWORD=e23s5    volumes:       - ./volumes:/var/lib/mysql      - ./conf.d/mysql.cnf:/etc/mysql/conf.d/mysql.cnf      - ./data:/data      - ./init.d:/docker-entrypoint-initdb.d    container_name ...</div></div></div><div class="recent-post-item"><div class="post_cover right"><a href="/2024/01/12/Docker-Solr-Compose/" title="Docker-Solr Compose"><img class="post-bg" src="/img/0113-1.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Docker-Solr Compose"></a></div><div class="recent-post-info"><a class="article-title" href="/2024/01/12/Docker-Solr-Compose/" title="Docker-Solr Compose">Docker-Solr Compose</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">發表於</span><time class="post-meta-date-created" datetime="2024-01-12T15:42:00.000Z" title="發表於 2024-01-12 23:42:00">2024-01-12</time><span class="article-meta-separator">|</span><i class="fas fa-history"></i><span class="article-meta-label">更新於</span><time class="post-meta-date-updated" datetime="2024-09-22T02:15:05.590Z" title="更新於 2024-09-22 10:15:05">2024-09-22</time></span><span class="article-meta tags"><span class="article-meta-separator">|</span><i class="fas fa-tag"></i><a class="article-meta__tags" href="/tags/Docker/">Docker</a></span></div><div class="content">本機開發時會用到，遇到要升級時需要測試環境，所以本機使用 Docker 建立 Solr6，然後在 VM 上建立 Solr8
-Solr 612345678910111213141516171819202122232425version: &#x27;3&#x27;services:  zookeeper:    image: zookeeper:3.7    ports:      - &quot;2181:2181&quot;  solr:    image: solr:6.6.3    ports:      - &quot;8983:8983&quot;    volumes:      - data:/var/solr      #- ./init-solr.sh:/docker-entrypoint-initdb.d/init-solr.sh    environment:      - ZK_HOST=zookeeper:2181      - SOLR_HOST=127.0.0.1      - JETTY_PORT=8983    command:      - solr ...</div></div></div><div class="recent-post-item"><div class="post_cover left"><a href="/2024/01/05/PowerShell-%E5%8F%96%E5%BE%97%E4%B8%8A%E4%B8%80%E5%80%8B%E6%9C%88%E7%9A%84%E4%BA%8B%E4%BB%B6%E9%8C%AF%E8%AA%A4%E8%A8%98%E9%8C%84/" title="PowerShell-取得上一個月的事件錯誤記錄"><img class="post-bg" src="/img/20240205-2.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="PowerShell-取得上一個月的事件錯誤記錄"></a></div><div class="recent-post-info"><a class="article-title" href="/2024/01/05/PowerShell-%E5%8F%96%E5%BE%97%E4%B8%8A%E4%B8%80%E5%80%8B%E6%9C%88%E7%9A%84%E4%BA%8B%E4%BB%B6%E9%8C%AF%E8%AA%A4%E8%A8%98%E9%8C%84/" title="PowerShell-取得上一個月的事件錯誤記錄">PowerShell-取得上一個月的事件錯誤記錄</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">發表於</span><time class="post-meta-date-created" datetime="2024-01-04T16:04:23.000Z" title="發表於 2024-01-05 00:04:23">2024-01-05</time><span class="article-meta-separator">|</span><i class="fas fa-history"></i><span class="article-meta-label">更新於</span><time class="post-meta-date-updated" datetime="2024-09-22T02:15:05.595Z" title="更新於 2024-09-22 10:15:05">2024-09-22</time></span><span class="article-meta tags"><span class="article-meta-separator">|</span><i class="fas fa-tag"></i><a class="article-meta__tags" href="/tags/Script/">Script</a></span></div><div class="content">最近要將每月的報告自動化，所以使用PowerShell來取得一些記錄，要取得的記錄是事件檢視器前一個月的「應用程式」、「安全性」、「系統」各個的錯誤事件。
-1234567891011121314151617181920212223242526272829303132333435363738394041424344454647$month = Get-Date -Format &#x27;MM&#x27;$year = Get-Date -Format &#x27;yyyy&#x27;$dir = &#x27;EventLog&#x27;if($month -eq 1)&#123;    $year = $year-1    $month = 12&#125;else&#123;    $month = $month-1&#125; $last = [DateTime]::DaysInMonth($year, $month)$first = Get-Date -Day 1 -Month $month -Year $year -Hour 0 -Minute 0 -Second 0$last ...</div></div></div><nav id="pagination"><div class="pagination"><span class="page-number current">1</span></div></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="https://lh3.googleusercontent.com/pw/ABLVV87_po8nBc6F_tXcoYDmtzMGWxHuhhrbguYILCjmjWKLOS8DTpubm0YoQLKgjyjRIZyV5TjYe7XVEz_YU4squfr37GTZqPZP1hlMVZ_MIgXpTxWu73M=w1200" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">Cheng®</div><div class="author-info__description">紀錄一些遇到的問題</div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">9</div></a><a href="/tags/"><div class="headline">標籤</div><div class="length-num">8</div></a><a href="/categories/"><div class="headline">分類</div><div class="length-num">4</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/mark22013333"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/mark22013333" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:mark22013333@gmail.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">Cheng® Blog 紀錄一些發生的事情...</div></div><div class="sticky_layout"><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2025/02/02/%E6%9F%A5%E7%9C%8BMSSQL%E8%B3%87%E6%96%99%E5%BA%AB%E7%9A%84%E4%BD%94%E7%94%A8%E7%A9%BA%E9%96%93/" title="查看MSSQL資料庫的佔用空間"><img src="/img/DB-20250202.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="查看MSSQL資料庫的佔用空間"/></a><div class="content"><a class="title" href="/2025/02/02/%E6%9F%A5%E7%9C%8BMSSQL%E8%B3%87%E6%96%99%E5%BA%AB%E7%9A%84%E4%BD%94%E7%94%A8%E7%A9%BA%E9%96%93/" title="查看MSSQL資料庫的佔用空間">查看MSSQL資料庫的佔用空間</a><time datetime="2025-02-02T13:02:39.000Z" title="發表於 2025-02-02 21:02:39">2025-02-02</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2024/09/21/%E5%88%86%E6%95%A3%E5%BC%8F%E7%B3%BB%E7%B5%B1%E7%9A%84CAP%E5%AE%9A%E7%90%86-CAP-theorem/" title="分散式系統的CAP定理(CAP theorem)"><img src="/img/20240921-1.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="分散式系統的CAP定理(CAP theorem)"/></a><div class="content"><a class="title" href="/2024/09/21/%E5%88%86%E6%95%A3%E5%BC%8F%E7%B3%BB%E7%B5%B1%E7%9A%84CAP%E5%AE%9A%E7%90%86-CAP-theorem/" title="分散式系統的CAP定理(CAP theorem)">分散式系統的CAP定理(CAP theorem)</a><time datetime="2024-09-21T14:55:28.000Z" title="發表於 2024-09-21 22:55:28">2024-09-21</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2024/05/17/Hibernate-DiscriminatorColumn%E8%AA%AA%E6%98%8E/" title="Hibernate → @DiscriminatorColumn說明"><img src="/img/20240517-01.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Hibernate → @DiscriminatorColumn說明"/></a><div class="content"><a class="title" href="/2024/05/17/Hibernate-DiscriminatorColumn%E8%AA%AA%E6%98%8E/" title="Hibernate → @DiscriminatorColumn說明">Hibernate → @DiscriminatorColumn說明</a><time datetime="2024-05-17T14:09:00.000Z" title="發表於 2024-05-17 22:09:00">2024-05-17</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2024/03/21/HashMap-%E2%86%92-computeIfAbsent/" title="HashMap → computeIfAbsent()"><img src="/img/DALL%C2%B7E%202024-03-21.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="HashMap → computeIfAbsent()"/></a><div class="content"><a class="title" href="/2024/03/21/HashMap-%E2%86%92-computeIfAbsent/" title="HashMap → computeIfAbsent()">HashMap → computeIfAbsent()</a><time datetime="2024-03-21T14:56:36.000Z" title="發表於 2024-03-21 22:56:36">2024-03-21</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2024/03/20/HashMap-%E2%86%92-putIfAbsent/" title="HashMap → putIfAbsent()"><img src="/img/DALL%C2%B7E%202024-03-20%2023.45.20.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="HashMap → putIfAbsent()"/></a><div class="content"><a class="title" href="/2024/03/20/HashMap-%E2%86%92-putIfAbsent/" title="HashMap → putIfAbsent()">HashMap → putIfAbsent()</a><time datetime="2024-03-20T15:28:00.000Z" title="發表於 2024-03-20 23:28:00">2024-03-20</time></div></div></div></div><div class="card-widget card-categories"><div class="item-headline">
+})()</script><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="https://lh3.googleusercontent.com/pw/ABLVV87_po8nBc6F_tXcoYDmtzMGWxHuhhrbguYILCjmjWKLOS8DTpubm0YoQLKgjyjRIZyV5TjYe7XVEz_YU4squfr37GTZqPZP1hlMVZ_MIgXpTxWu73M=w1200" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">10</div></a><a href="/tags/"><div class="headline">標籤</div><div class="length-num">9</div></a><a href="/categories/"><div class="headline">分類</div><div class="length-num">4</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首頁-Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 時間軸-archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 標籤-tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分類-Categories</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-list"></i><span> 其他列表</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音樂-Music</span></a></li><li><a class="site-page child" href="/gallery/"><i class="fa-fw fas fa-images"></i><span> 畫館-Gallery</span></a></li></ul></div></div></div></div><div class="page" id="body-wrap"><header class="full_page fixed" id="page-header" style="background-image: url(https://lh3.googleusercontent.com/pw/ABLVV853NQFWL4WeSSrWk5muVHD0zrcrFPpWIUUavM_Whrk2S6MxmPC6IZTRkUrg4ibCJsO0mFugBuJvMdwQu5_kpa9M08ZXqLsNmJa62GuQJ1zVZrXrMBg=w2400);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><img class="site-icon" src="https://lh3.googleusercontent.com/pw/ABLVV87_po8nBc6F_tXcoYDmtzMGWxHuhhrbguYILCjmjWKLOS8DTpubm0YoQLKgjyjRIZyV5TjYe7XVEz_YU4squfr37GTZqPZP1hlMVZ_MIgXpTxWu73M=w1200" alt="Logo"><span class="site-name">Cheng® Blog</span></a></span><div id="menus"><div id="search-button"><span class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜尋</span></span></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首頁-Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 時間軸-archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 標籤-tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分類-Categories</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-list"></i><span> 其他列表</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音樂-Music</span></a></li><li><a class="site-page child" href="/gallery/"><i class="fa-fw fas fa-images"></i><span> 畫館-Gallery</span></a></li></ul></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="site-info"><h1 id="site-title">Cheng® Blog</h1><div id="site-subtitle"><span id="subtitle"></span></div><div id="site_social_icons"><a class="social-icon" href="https://github.com/mark22013333" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:mark22013333@gmail.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a></div></div><div id="scroll-down"><i class="fas fa-angle-down scroll-down-effects"></i></div></header><main class="layout" id="content-inner"><div class="recent-posts nc masonry" id="recent-posts"><div class="recent-post-items"><div class="recent-post-item"><div class="post_cover"><a href="/2025/02/16/%E5%A4%9A%E5%9F%B7%E8%A1%8C%E7%B7%92%E7%9A%84%E7%9B%B8%E9%97%9C%E8%A1%93%E8%AA%9E/" title="多執行緒的相關術語"><img class="post-bg" src="/img/20250216.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="多執行緒的相關術語"></a></div><div class="recent-post-info"><a class="article-title" href="/2025/02/16/%E5%A4%9A%E5%9F%B7%E8%A1%8C%E7%B7%92%E7%9A%84%E7%9B%B8%E9%97%9C%E8%A1%93%E8%AA%9E/" title="多執行緒的相關術語">多執行緒的相關術語</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">發表於</span><time class="post-meta-date-created" datetime="2025-02-16T03:59:07.000Z" title="發表於 2025-02-16 11:59:07">2025-02-16</time><span class="article-meta-separator">|</span><i class="fas fa-history"></i><span class="article-meta-label">更新於</span><time class="post-meta-date-updated" datetime="2025-02-16T04:32:12.529Z" title="更新於 2025-02-16 12:32:12">2025-02-16</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/Java/">Java</a></span><span class="article-meta tags"><span class="article-meta-separator">|</span><i class="fas fa-tag"></i><a class="article-meta__tags" href="/tags/MultiThread/">MultiThread</a></span></div><div class="content"> 序列（串行）：任務依照先後順序逐一執行，必須等前一個任務完成後，下一個任務才會開始執行。 並發（交替執行）：多個任務在同一單位時間內交替執行，從宏觀上看似乎同時進行，但在任何特定時刻，實際上僅有一個任務在執行。這種模式通常發生在單核心或單執行緒環境下。 平行（真正同時執行）：多個任務能夠在相同時刻真正地同時運行，這通常依賴於多核心處理器或多處理器系統，使得各任務可分派到不同的核心上同步執行。  1. 序列（串行）所有任務按順序執行，一個完成後才開始下一個。 程式碼12345678910111213141516171819202122public class SequentialExample &#123;    public static void main(String[] args) &#123;        long startTime = System.currentTimeMillis();        task(&quot;Task 1&quot;);        task(&quot;Task 2&quot;);       ...</div></div></div><div class="recent-post-item"><div class="post_cover"><a href="/2025/02/02/%E6%9F%A5%E7%9C%8BMSSQL%E8%B3%87%E6%96%99%E5%BA%AB%E7%9A%84%E4%BD%94%E7%94%A8%E7%A9%BA%E9%96%93/" title="查看MSSQL資料庫的佔用空間"><img class="post-bg" src="/img/DB-20250202.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="查看MSSQL資料庫的佔用空間"></a></div><div class="recent-post-info"><a class="article-title" href="/2025/02/02/%E6%9F%A5%E7%9C%8BMSSQL%E8%B3%87%E6%96%99%E5%BA%AB%E7%9A%84%E4%BD%94%E7%94%A8%E7%A9%BA%E9%96%93/" title="查看MSSQL資料庫的佔用空間">查看MSSQL資料庫的佔用空間</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">發表於</span><time class="post-meta-date-created" datetime="2025-02-02T13:02:39.000Z" title="發表於 2025-02-02 21:02:39">2025-02-02</time><span class="article-meta-separator">|</span><i class="fas fa-history"></i><span class="article-meta-label">更新於</span><time class="post-meta-date-updated" datetime="2025-02-16T03:44:21.030Z" title="更新於 2025-02-16 11:44:21">2025-02-16</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/%E8%B3%87%E6%96%99%E5%BA%AB-MSSQL/">資料庫(MSSQL)</a></span><span class="article-meta tags"><span class="article-meta-separator">|</span><i class="fas fa-tag"></i><a class="article-meta__tags" href="/tags/MSSQL/">MSSQL</a><span class="article-meta-link">•</span><i class="fas fa-tag"></i><a class="article-meta__tags" href="/tags/DB/">DB</a></span></div><div class="content">在 MSSQL 中，可以通過系統檢視或內建存儲過程來查看資料庫的大小，包括資料和索引的占用。以下是常用的方法：  方法 1：使用 sp_spaceusedsp_spaceused 是一個內建的存儲過程，用於查看資料庫的空間使用情況。 查看整個資料庫的大小 切換到目標資料庫：  12USE [YourDatabaseName];GO  執行以下命令：返回的關鍵結果：  1EXEC sp_spaceused;  database_size：資料庫的總大小（資料和索引）。 unallocated space：未分配的空間。    查看特定表的大小 執行以下命令：返回的關鍵結果：  1EXEC sp_spaceused N&#x27;[YourTableName]&#x27;;  reserved：表的總預留空間（資料、索引和未使用空間）。 data：表中資料的大小。 index_size：表的索引大小。 unused：未使用的空間。     方法 2：使用 sys.master_files 和...</div></div></div><div class="recent-post-item"><div class="post_cover"><a href="/2024/09/21/%E5%88%86%E6%95%A3%E5%BC%8F%E7%B3%BB%E7%B5%B1%E7%9A%84CAP%E5%AE%9A%E7%90%86-CAP-theorem/" title="分散式系統的CAP定理(CAP theorem)"><img class="post-bg" src="/img/20240921-1.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="分散式系統的CAP定理(CAP theorem)"></a></div><div class="recent-post-info"><a class="article-title" href="/2024/09/21/%E5%88%86%E6%95%A3%E5%BC%8F%E7%B3%BB%E7%B5%B1%E7%9A%84CAP%E5%AE%9A%E7%90%86-CAP-theorem/" title="分散式系統的CAP定理(CAP theorem)">分散式系統的CAP定理(CAP theorem)</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">發表於</span><time class="post-meta-date-created" datetime="2024-09-21T14:55:28.000Z" title="發表於 2024-09-21 22:55:28">2024-09-21</time><span class="article-meta-separator">|</span><i class="fas fa-history"></i><span class="article-meta-label">更新於</span><time class="post-meta-date-updated" datetime="2024-09-22T02:15:05.593Z" title="更新於 2024-09-22 10:15:05">2024-09-22</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/%E5%90%8D%E8%A9%9E%E8%A7%A3%E9%87%8B/">名詞解釋</a></span><span class="article-meta tags"><span class="article-meta-separator">|</span><i class="fas fa-tag"></i><a class="article-meta__tags" href="/tags/%E5%88%86%E6%95%A3%E5%BC%8F-Distributed/">分散式(Distributed)</a></span></div><div class="content">在設計分散式系統(Distributed System)前，必須要了解CAP定理(CAP theorem)，又稱布魯爾定理（Brewer’s theorem）。 CAP定理的三個字母C，A，P分別代表以下：  Consistency：一致性 Availability：可用性 Partition-tolerance：分區容錯  Consistency 一致性指分散式系統中的每個節點(nodes)所查到的都是一致且最新的資料。 Availability 可用性在任何時候，每次向系統發出請求都能在合理的時間內獲得回應，但並不保證回應的資料為最新。 Partition-tolerance 分區容錯當網路或節點故障造成系統的不同網路分區間(Partitions)的傳輸資料丟失時，系統仍可以正常運作。 滿足以上三種特性是一個完美的分散式系統欲達成的目標。 不過CAP定理指出，一個分散式系統最多只能滿足以上三個特性中的兩個，而無法同時滿足三個。  You can have at most two of these properties for any shared-data...</div></div></div><div class="recent-post-item"><div class="post_cover"><a href="/2024/05/17/Hibernate-DiscriminatorColumn%E8%AA%AA%E6%98%8E/" title="Hibernate → @DiscriminatorColumn說明"><img class="post-bg" src="/img/20240517-01.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Hibernate → @DiscriminatorColumn說明"></a></div><div class="recent-post-info"><a class="article-title" href="/2024/05/17/Hibernate-DiscriminatorColumn%E8%AA%AA%E6%98%8E/" title="Hibernate → @DiscriminatorColumn說明">Hibernate → @DiscriminatorColumn說明</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">發表於</span><time class="post-meta-date-created" datetime="2024-05-17T14:09:00.000Z" title="發表於 2024-05-17 22:09:00">2024-05-17</time><span class="article-meta-separator">|</span><i class="fas fa-history"></i><span class="article-meta-label">更新於</span><time class="post-meta-date-updated" datetime="2024-09-22T01:54:57.943Z" title="更新於 2024-09-22 09:54:57">2024-09-22</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/Java/">Java</a></span><span class="article-meta tags"><span class="article-meta-separator">|</span><i class="fas fa-tag"></i><a class="article-meta__tags" href="/tags/Hibernate/">Hibernate</a></span></div><div class="content">@DiscriminatorColumn 註解用於在 JPA 繼承結構中，為單表策略 (InheritanceType.SINGLE_TABLE) 的繼承層次結構指定區分列。這樣，JPA 可以使用這個列來識別每一行對應的具體實體類型。 讓我們詳細解釋一下： 註解部分1@DiscriminatorColumn(name=&quot;accountType&quot;, discriminatorType = DiscriminatorType.STRING)   @DiscriminatorColumn：這個註解指定了用來區分不同實體類型的列。 name=&quot;accountType&quot;：這指定了區分列的名稱為 accountType。這個列將會被添加到生成的單表中，用來存儲每一行對應的實體類型。 discriminatorType = DiscriminatorType.STRING：這指定了區分列的類型為 STRING。區分列可以是 STRING、CHAR 或 INTEGER。  作用當使用 InheritanceType.SINGLE_TABLE...</div></div></div><div class="recent-post-item"><div class="post_cover"><a href="/2024/03/21/HashMap-%E2%86%92-computeIfAbsent/" title="HashMap → computeIfAbsent()"><img class="post-bg" src="/img/DALL-2024-03-21.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="HashMap → computeIfAbsent()"></a></div><div class="recent-post-info"><a class="article-title" href="/2024/03/21/HashMap-%E2%86%92-computeIfAbsent/" title="HashMap → computeIfAbsent()">HashMap → computeIfAbsent()</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">發表於</span><time class="post-meta-date-created" datetime="2024-03-21T14:56:36.000Z" title="發表於 2024-03-21 22:56:36">2024-03-21</time><span class="article-meta-separator">|</span><i class="fas fa-history"></i><span class="article-meta-label">更新於</span><time class="post-meta-date-updated" datetime="2025-02-16T03:50:58.717Z" title="更新於 2025-02-16 11:50:58">2025-02-16</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/Java/">Java</a></span><span class="article-meta tags"><span class="article-meta-separator">|</span><i class="fas fa-tag"></i><a class="article-meta__tags" href="/tags/Collections/">Collections</a></span></div><div class="content">12345678910// 當key不存在，就執行第二個參數的函數，並回傳執行後的值，然後也會put// 如果函數返回 null，則不會put// 如果函數本身拋出（未經檢查的）異常，則重新拋出異常，則不會putpublic static void main(String[] args) &#123;    Map&lt;String, Integer&gt; stringLength = new HashMap&lt;&gt;();    stringLength.put(&quot;John&quot;, 2);    int i = stringLength.computeIfAbsent(&quot;John&quot;, String::length);    System.out.println(&quot;i = &quot; + i);    System.out.println(&quot;stringLength = &quot; +...</div></div></div><div class="recent-post-item"><div class="post_cover"><a href="/2024/03/20/HashMap-%E2%86%92-putIfAbsent/" title="HashMap → putIfAbsent()"><img class="post-bg" src="/img/DALL-2024-03-20.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="HashMap → putIfAbsent()"></a></div><div class="recent-post-info"><a class="article-title" href="/2024/03/20/HashMap-%E2%86%92-putIfAbsent/" title="HashMap → putIfAbsent()">HashMap → putIfAbsent()</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">發表於</span><time class="post-meta-date-created" datetime="2024-03-20T15:28:00.000Z" title="發表於 2024-03-20 23:28:00">2024-03-20</time><span class="article-meta-separator">|</span><i class="fas fa-history"></i><span class="article-meta-label">更新於</span><time class="post-meta-date-updated" datetime="2025-02-16T03:44:56.417Z" title="更新於 2025-02-16 11:44:56">2025-02-16</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/Java/">Java</a></span><span class="article-meta tags"><span class="article-meta-separator">|</span><i class="fas fa-tag"></i><a class="article-meta__tags" href="/tags/Collections/">Collections</a></span></div><div class="content">putIfAbsent() 是 HashMap 在 Java 中的一個實用方法，它屬於 Map 介面。這個方法用來在對應的鍵（key）不存在於映射中時，將一組key,value 放入映射(map)裡。如果映射先前已包含該鍵(key)的映射，則不做任何更動。putIfAbsent() 方法既可以確保不會不小心覆蓋已有的鍵值(key, value)，也可以用來在多執行緒環境下安全的更新map，假設映射本身是同步的或者是一個 ConcurrentHashMap。 方法簽名 1V putIfAbsent(K key, V value) K: 鍵的類型 V: 值的類型 返回值：如果映射中已經有這個鍵，則返回鍵對應的舊值；如果沒有，則返回 null（並且將新的鍵值對插入映射）。 範例1以下是使用 putIfAbsent() 方法的一個簡單範例： 1234567891011121314151617181920212223import java.util.HashMap;import java.util.Map;public class PutIfAbsentExample &#123;   ...</div></div></div><div class="recent-post-item"><div class="post_cover"><a href="/2024/02/05/HTML-Scrpit-%E5%B1%AC%E6%80%A7/" title="HTML-Script 屬性"><img class="post-bg" src="/img/20240205-1.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="HTML-Script 屬性"></a></div><div class="recent-post-info"><a class="article-title" href="/2024/02/05/HTML-Scrpit-%E5%B1%AC%E6%80%A7/" title="HTML-Script 屬性">HTML-Script 屬性</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">發表於</span><time class="post-meta-date-created" datetime="2024-02-05T14:02:29.000Z" title="發表於 2024-02-05 22:02:29">2024-02-05</time><span class="article-meta-separator">|</span><i class="fas fa-history"></i><span class="article-meta-label">更新於</span><time class="post-meta-date-updated" datetime="2024-09-22T01:54:49.852Z" title="更新於 2024-09-22 09:54:49">2024-09-22</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/HTML/">HTML</a></span><span class="article-meta tags"><span class="article-meta-separator">|</span><i class="fas fa-tag"></i><a class="article-meta__tags" href="/tags/Web/">Web</a></span></div><div class="content">src屬性src 屬性指定外部腳本的 URL，允許開發者將 JavaScript 程式碼組織在單獨檔案中，而非直接寫在 HTML 內。當&lt;script&gt;標籤包含src屬性時，不應包含嵌入式腳本程式碼。 type屬性type 屬性聲明腳本的 MIME 類型 (現已非必需，因為現代瀏覽器預設使用JavaScript)。早期 HTML 規範中，這個屬性用來指示腳本語言的類型，如”text/javascript“ 或 “application/javascript“。 async屬性async 屬性是個布林屬性，告訴瀏覽器非同步的載入檔案。這意味著腳本會在下載完畢後儘快執行，但不會阻塞 HTML 文件的解析。此屬性僅適用於帶有src屬性的&lt;script&gt;標籤。 1&lt;script src=&quot;xxx/script.js&quot; async&gt;&lt;/script&gt;    defer屬性與async屬性類似，defer屬性也會指示瀏覽器非同步載入腳本，但有個關鍵不同：帶有 defer...</div></div></div><div class="recent-post-item"><div class="post_cover"><a href="/2024/01/27/Docker-MySql/" title="Docker-MySql"><img class="post-bg" src="/img/0127-1.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Docker-MySql"></a></div><div class="recent-post-info"><a class="article-title" href="/2024/01/27/Docker-MySql/" title="Docker-MySql">Docker-MySql</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">發表於</span><time class="post-meta-date-created" datetime="2024-01-27T10:05:54.000Z" title="發表於 2024-01-27 18:05:54">2024-01-27</time><span class="article-meta-separator">|</span><i class="fas fa-history"></i><span class="article-meta-label">更新於</span><time class="post-meta-date-updated" datetime="2024-09-22T02:15:05.599Z" title="更新於 2024-09-22 10:15:05">2024-09-22</time></span><span class="article-meta tags"><span class="article-meta-separator">|</span><i class="fas fa-tag"></i><a class="article-meta__tags" href="/tags/Docker/">Docker</a></span></div><div class="content">新增檔案將內容貼上後，將檔案命名為docker-compose.yml，再執行docker-compose up -d 12345678910111213141516171819202122232425version: &#x27;3.7&#x27;services:  mysql:    image: mysql:5.7    platform: linux/amd64    environment:      - MYSQL_ROOT_PASSWORD=root      - MYSQL_DATABASE=sample      - MYSQL_USER=demouser      - MYSQL_PASSWORD=e23s5    volumes:       - ./volumes:/var/lib/mysql      - ./conf.d/mysql.cnf:/etc/mysql/conf.d/mysql.cnf      - ./data:/data      - ./init.d:/docker-entrypoint-initdb.d   ...</div></div></div><div class="recent-post-item"><div class="post_cover"><a href="/2024/01/12/Docker-Solr-Compose/" title="Docker-Solr Compose"><img class="post-bg" src="/img/0113-1.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Docker-Solr Compose"></a></div><div class="recent-post-info"><a class="article-title" href="/2024/01/12/Docker-Solr-Compose/" title="Docker-Solr Compose">Docker-Solr Compose</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">發表於</span><time class="post-meta-date-created" datetime="2024-01-12T15:42:00.000Z" title="發表於 2024-01-12 23:42:00">2024-01-12</time><span class="article-meta-separator">|</span><i class="fas fa-history"></i><span class="article-meta-label">更新於</span><time class="post-meta-date-updated" datetime="2024-09-22T02:15:05.590Z" title="更新於 2024-09-22 10:15:05">2024-09-22</time></span><span class="article-meta tags"><span class="article-meta-separator">|</span><i class="fas fa-tag"></i><a class="article-meta__tags" href="/tags/Docker/">Docker</a></span></div><div class="content">本機開發時會用到，遇到要升級時需要測試環境，所以本機使用 Docker 建立 Solr6，然後在 VM 上建立 Solr8 Solr 612345678910111213141516171819202122232425version: &#x27;3&#x27;services:  zookeeper:    image: zookeeper:3.7    ports:      - &quot;2181:2181&quot;  solr:    image: solr:6.6.3    ports:      - &quot;8983:8983&quot;    volumes:      - data:/var/solr      #- ./init-solr.sh:/docker-entrypoint-initdb.d/init-solr.sh    environment:      - ZK_HOST=zookeeper:2181      - SOLR_HOST=127.0.0.1      - JETTY_PORT=8983    command:      -...</div></div></div><div class="recent-post-item"><div class="post_cover"><a href="/2024/01/05/PowerShell-%E5%8F%96%E5%BE%97%E4%B8%8A%E4%B8%80%E5%80%8B%E6%9C%88%E7%9A%84%E4%BA%8B%E4%BB%B6%E9%8C%AF%E8%AA%A4%E8%A8%98%E9%8C%84/" title="PowerShell-取得上一個月的事件錯誤記錄"><img class="post-bg" src="/img/20240205-2.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="PowerShell-取得上一個月的事件錯誤記錄"></a></div><div class="recent-post-info"><a class="article-title" href="/2024/01/05/PowerShell-%E5%8F%96%E5%BE%97%E4%B8%8A%E4%B8%80%E5%80%8B%E6%9C%88%E7%9A%84%E4%BA%8B%E4%BB%B6%E9%8C%AF%E8%AA%A4%E8%A8%98%E9%8C%84/" title="PowerShell-取得上一個月的事件錯誤記錄">PowerShell-取得上一個月的事件錯誤記錄</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">發表於</span><time class="post-meta-date-created" datetime="2024-01-04T16:04:23.000Z" title="發表於 2024-01-05 00:04:23">2024-01-05</time><span class="article-meta-separator">|</span><i class="fas fa-history"></i><span class="article-meta-label">更新於</span><time class="post-meta-date-updated" datetime="2024-09-22T02:15:05.595Z" title="更新於 2024-09-22 10:15:05">2024-09-22</time></span><span class="article-meta tags"><span class="article-meta-separator">|</span><i class="fas fa-tag"></i><a class="article-meta__tags" href="/tags/Script/">Script</a></span></div><div class="content">最近要將每月的報告自動化，所以使用PowerShell來取得一些記錄，要取得的記錄是事件檢視器前一個月的「應用程式」、「安全性」、「系統」各個的錯誤事件。 1234567891011121314151617181920212223242526272829303132333435363738394041424344454647$month = Get-Date -Format &#x27;MM&#x27;$year = Get-Date -Format &#x27;yyyy&#x27;$dir = &#x27;EventLog&#x27;if($month -eq 1)&#123;    $year = $year-1    $month = 12&#125;else&#123;    $month = $month-1&#125; $last = [DateTime]::DaysInMonth($year, $month)$first = Get-Date -Day 1 -Month $month -Year $year -Hour 0 -Minute 0 -Second...</div></div></div></div><nav id="pagination"><div class="pagination"><span class="page-number current">1</span></div></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="https://lh3.googleusercontent.com/pw/ABLVV87_po8nBc6F_tXcoYDmtzMGWxHuhhrbguYILCjmjWKLOS8DTpubm0YoQLKgjyjRIZyV5TjYe7XVEz_YU4squfr37GTZqPZP1hlMVZ_MIgXpTxWu73M=w1200" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">Cheng®</div><div class="author-info-description">做一些筆記和紀錄遇到的問題</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">10</div></a><a href="/tags/"><div class="headline">標籤</div><div class="length-num">9</div></a><a href="/categories/"><div class="headline">分類</div><div class="length-num">4</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/mark22013333"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons"><a class="social-icon" href="https://github.com/mark22013333" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:mark22013333@gmail.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">做一些筆記和紀錄一些發生的事情...</div></div><div class="sticky_layout"><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2025/02/16/%E5%A4%9A%E5%9F%B7%E8%A1%8C%E7%B7%92%E7%9A%84%E7%9B%B8%E9%97%9C%E8%A1%93%E8%AA%9E/" title="多執行緒的相關術語"><img src="/img/20250216.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="多執行緒的相關術語"/></a><div class="content"><a class="title" href="/2025/02/16/%E5%A4%9A%E5%9F%B7%E8%A1%8C%E7%B7%92%E7%9A%84%E7%9B%B8%E9%97%9C%E8%A1%93%E8%AA%9E/" title="多執行緒的相關術語">多執行緒的相關術語</a><time datetime="2025-02-16T03:59:07.000Z" title="發表於 2025-02-16 11:59:07">2025-02-16</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/02/02/%E6%9F%A5%E7%9C%8BMSSQL%E8%B3%87%E6%96%99%E5%BA%AB%E7%9A%84%E4%BD%94%E7%94%A8%E7%A9%BA%E9%96%93/" title="查看MSSQL資料庫的佔用空間"><img src="/img/DB-20250202.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="查看MSSQL資料庫的佔用空間"/></a><div class="content"><a class="title" href="/2025/02/02/%E6%9F%A5%E7%9C%8BMSSQL%E8%B3%87%E6%96%99%E5%BA%AB%E7%9A%84%E4%BD%94%E7%94%A8%E7%A9%BA%E9%96%93/" title="查看MSSQL資料庫的佔用空間">查看MSSQL資料庫的佔用空間</a><time datetime="2025-02-02T13:02:39.000Z" title="發表於 2025-02-02 21:02:39">2025-02-02</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2024/09/21/%E5%88%86%E6%95%A3%E5%BC%8F%E7%B3%BB%E7%B5%B1%E7%9A%84CAP%E5%AE%9A%E7%90%86-CAP-theorem/" title="分散式系統的CAP定理(CAP theorem)"><img src="/img/20240921-1.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="分散式系統的CAP定理(CAP theorem)"/></a><div class="content"><a class="title" href="/2024/09/21/%E5%88%86%E6%95%A3%E5%BC%8F%E7%B3%BB%E7%B5%B1%E7%9A%84CAP%E5%AE%9A%E7%90%86-CAP-theorem/" title="分散式系統的CAP定理(CAP theorem)">分散式系統的CAP定理(CAP theorem)</a><time datetime="2024-09-21T14:55:28.000Z" title="發表於 2024-09-21 22:55:28">2024-09-21</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2024/05/17/Hibernate-DiscriminatorColumn%E8%AA%AA%E6%98%8E/" title="Hibernate → @DiscriminatorColumn說明"><img src="/img/20240517-01.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Hibernate → @DiscriminatorColumn說明"/></a><div class="content"><a class="title" href="/2024/05/17/Hibernate-DiscriminatorColumn%E8%AA%AA%E6%98%8E/" title="Hibernate → @DiscriminatorColumn說明">Hibernate → @DiscriminatorColumn說明</a><time datetime="2024-05-17T14:09:00.000Z" title="發表於 2024-05-17 22:09:00">2024-05-17</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2024/03/21/HashMap-%E2%86%92-computeIfAbsent/" title="HashMap → computeIfAbsent()"><img src="/img/DALL-2024-03-21.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="HashMap → computeIfAbsent()"/></a><div class="content"><a class="title" href="/2024/03/21/HashMap-%E2%86%92-computeIfAbsent/" title="HashMap → computeIfAbsent()">HashMap → computeIfAbsent()</a><time datetime="2024-03-21T14:56:36.000Z" title="發表於 2024-03-21 22:56:36">2024-03-21</time></div></div></div></div><div class="card-widget card-categories"><div class="item-headline">
             <i class="fas fa-folder-open"></i>
             <span>分類</span>
             
-            </div>
-            <ul class="card-category-list" id="aside-cat-list">
-            <li class="card-category-list-item "><a class="card-category-list-link" href="/categories/HTML/"><span class="card-category-list-name">HTML</span><span class="card-category-list-count">1</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/Java/"><span class="card-category-list-name">Java</span><span class="card-category-list-count">3</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/%E5%90%8D%E8%A9%9E%E8%A7%A3%E9%87%8B/"><span class="card-category-list-name">名詞解釋</span><span class="card-category-list-count">1</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/%E8%B3%87%E6%96%99%E5%BA%AB-MSSQL/"><span class="card-category-list-name">資料庫(MSSQL)</span><span class="card-category-list-count">1</span></a></li>
-            </ul></div><div class="card-widget card-tags"><div class="item-headline"><i class="fas fa-tags"></i><span>標籤</span></div><div class="card-tag-cloud"><a href="/tags/Docker/" style="font-size: 1.45em; color: rgb(2, 0, 158)">Docker</a><a href="/tags/Web/" style="font-size: 1.15em; color: rgb(10, 19, 109)">Web</a><a href="/tags/Collections/" style="font-size: 1.45em; color: rgb(42, 24, 86)">Collections</a><a href="/tags/Hibernate/" style="font-size: 1.15em; color: rgb(180, 5, 25)">Hibernate</a><a href="/tags/Script/" style="font-size: 1.15em; color: rgb(198, 84, 59)">Script</a><a href="/tags/%E5%88%86%E6%95%A3%E5%BC%8F-Distributed/" style="font-size: 1.15em; color: rgb(168, 139, 59)">分散式(Distributed)</a><a href="/tags/MSSQL/" style="font-size: 1.15em; color: rgb(86, 184, 132)">MSSQL</a><a href="/tags/DB/" style="font-size: 1.15em; color: rgb(84, 54, 135)">DB</a></div></div><div class="card-widget card-archives"><div class="item-headline"><i class="fas fa-archive"></i><span>歸檔</span></div><ul class="card-archive-list"><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2025/02/"><span class="card-archive-list-date">二月 2025</span><span class="card-archive-list-count">1</span></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2024/09/"><span class="card-archive-list-date">九月 2024</span><span class="card-archive-list-count">1</span></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2024/05/"><span class="card-archive-list-date">五月 2024</span><span class="card-archive-list-count">1</span></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2024/03/"><span class="card-archive-list-date">三月 2024</span><span class="card-archive-list-count">2</span></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2024/02/"><span class="card-archive-list-date">二月 2024</span><span class="card-archive-list-count">1</span></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2024/01/"><span class="card-archive-list-date">一月 2024</span><span class="card-archive-list-count">3</span></a></li></ul></div><div class="card-widget card-webinfo"><div class="item-headline"><i class="fas fa-chart-line"></i><span>網站資訊</span></div><div class="webinfo"><div class="webinfo-item"><div class="item-name">文章數目 :</div><div class="item-count">9</div></div><div class="webinfo-item"><div class="item-name">已執行時間 :</div><div class="item-count" id="runtimeshow" data-publishDate="2024-01-05T14:30:22.000Z"><i class="fa-solid fa-spinner fa-spin"></i></div></div><div class="webinfo-item"><div class="item-name">本站總字數 :</div><div class="item-count">3.8k</div></div><div class="webinfo-item"><div class="item-name">本站訪客數 :</div><div class="item-count" id="busuanzi_value_site_uv"><i class="fa-solid fa-spinner fa-spin"></i></div></div><div class="webinfo-item"><div class="item-name">本站總訪問量 :</div><div class="item-count" id="busuanzi_value_site_pv"><i class="fa-solid fa-spinner fa-spin"></i></div></div><div class="webinfo-item"><div class="item-name">最後更新時間 :</div><div class="item-count" id="last-push-date" data-lastPushDate="2025-02-02T14:42:15.261Z"><i class="fa-solid fa-spinner fa-spin"></i></div></div></div></div></div></div></main><footer id="footer" style="background-image: url('https://lh3.googleusercontent.com/pw/ABLVV853NQFWL4WeSSrWk5muVHD0zrcrFPpWIUUavM_Whrk2S6MxmPC6IZTRkUrg4ibCJsO0mFugBuJvMdwQu5_kpa9M08ZXqLsNmJa62GuQJ1zVZrXrMBg=w2400')"><div id="footer-wrap"><div class="copyright">&copy;2024 - 2025 By Cheng®</div><div class="footer_custom_text">Cheng®<a href="https://mark22013333.github.io/"> Blog</a>!</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="darkmode" type="button" title="淺色和深色模式轉換"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="單欄和雙欄切換"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="設定"><i class="fas fa-cog fa-spin"></i></button><button id="go-up" type="button" title="返回頂部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/medium-zoom/dist/medium-zoom.min.js"></script><script src="https://cdn.jsdelivr.net/npm/instant.page/instantpage.min.js" type="module"></script><script src="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.js"></script><script>function panguFn () {
-  if (typeof pangu === 'object') pangu.autoSpacingPage()
-  else {
-    getScript('https://cdn.jsdelivr.net/npm/pangu/dist/browser/pangu.min.js')
-      .then(() => {
-        pangu.autoSpacingPage()
-      })
-  }
-}
-
-function panguInit () {
-  if (false){
-    GLOBAL_CONFIG_SITE.isPost && panguFn()
-  } else {
-    panguFn()
-  }
-}
-
-document.addEventListener('DOMContentLoaded', panguInit)</script><div class="js-pjax"><script>window.typedJSFn = {
-  init: (str) => {
+          </div>
+          <ul class="card-category-list" id="aside-cat-list">
+            <li class="card-category-list-item "><a class="card-category-list-link" href="/categories/HTML/"><span class="card-category-list-name">HTML</span><span class="card-category-list-count">1</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/Java/"><span class="card-category-list-name">Java</span><span class="card-category-list-count">4</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/%E5%90%8D%E8%A9%9E%E8%A7%A3%E9%87%8B/"><span class="card-category-list-name">名詞解釋</span><span class="card-category-list-count">1</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/%E8%B3%87%E6%96%99%E5%BA%AB-MSSQL/"><span class="card-category-list-name">資料庫(MSSQL)</span><span class="card-category-list-count">1</span></a></li>
+          </ul></div><div class="card-widget card-tags"><div class="item-headline"><i class="fas fa-tags"></i><span>標籤</span></div><div class="card-tag-cloud"><a href="/tags/Docker/" style="font-size: 1.45em; color: rgb(116, 80, 113);">Docker</a><a href="/tags/Web/" style="font-size: 1.15em; color: rgb(195, 90, 170);">Web</a><a href="/tags/Hibernate/" style="font-size: 1.15em; color: rgb(127, 154, 70);">Hibernate</a><a href="/tags/Script/" style="font-size: 1.15em; color: rgb(106, 148, 103);">Script</a><a href="/tags/Collections/" style="font-size: 1.45em; color: rgb(63, 97, 50);">Collections</a><a href="/tags/%E5%88%86%E6%95%A3%E5%BC%8F-Distributed/" style="font-size: 1.15em; color: rgb(64, 194, 140);">分散式(Distributed)</a><a href="/tags/MSSQL/" style="font-size: 1.15em; color: rgb(98, 162, 50);">MSSQL</a><a href="/tags/DB/" style="font-size: 1.15em; color: rgb(131, 50, 67);">DB</a><a href="/tags/MultiThread/" style="font-size: 1.15em; color: rgb(110, 197, 198);">MultiThread</a></div></div><div class="card-widget card-archives">
+    <div class="item-headline">
+      <i class="fas fa-archive"></i>
+      <span>歸檔</span>
+      
+    </div>
+  
+    <ul class="card-archive-list">
+      
+        <li class="card-archive-list-item">
+          <a class="card-archive-list-link" href="/archives/2025/02/">
+            <span class="card-archive-list-date">
+              二月 2025
+            </span>
+            <span class="card-archive-list-count">2</span>
+          </a>
+        </li>
+      
+        <li class="card-archive-list-item">
+          <a class="card-archive-list-link" href="/archives/2024/09/">
+            <span class="card-archive-list-date">
+              九月 2024
+            </span>
+            <span class="card-archive-list-count">1</span>
+          </a>
+        </li>
+      
+        <li class="card-archive-list-item">
+          <a class="card-archive-list-link" href="/archives/2024/05/">
+            <span class="card-archive-list-date">
+              五月 2024
+            </span>
+            <span class="card-archive-list-count">1</span>
+          </a>
+        </li>
+      
+        <li class="card-archive-list-item">
+          <a class="card-archive-list-link" href="/archives/2024/03/">
+            <span class="card-archive-list-date">
+              三月 2024
+            </span>
+            <span class="card-archive-list-count">2</span>
+          </a>
+        </li>
+      
+        <li class="card-archive-list-item">
+          <a class="card-archive-list-link" href="/archives/2024/02/">
+            <span class="card-archive-list-date">
+              二月 2024
+            </span>
+            <span class="card-archive-list-count">1</span>
+          </a>
+        </li>
+      
+        <li class="card-archive-list-item">
+          <a class="card-archive-list-link" href="/archives/2024/01/">
+            <span class="card-archive-list-date">
+              一月 2024
+            </span>
+            <span class="card-archive-list-count">3</span>
+          </a>
+        </li>
+      
+    </ul>
+  </div><div class="card-widget card-webinfo"><div class="item-headline"><i class="fas fa-chart-line"></i><span>網站資訊</span></div><div class="webinfo"><div class="webinfo-item"><div class="item-name">文章數量 :</div><div class="item-count">10</div></div><div class="webinfo-item"><div class="item-name">總字數 :</div><div class="item-count">4.8k</div></div><div class="webinfo-item"><div class="item-name">訪客數 :</div><div class="item-count" id="busuanzi_value_site_uv"><i class="fa-solid fa-spinner fa-spin"></i></div></div><div class="webinfo-item"><div class="item-name">總瀏覽量 :</div><div class="item-count" id="busuanzi_value_site_pv"><i class="fa-solid fa-spinner fa-spin"></i></div></div><div class="webinfo-item"><div class="item-name">最後更新時間 :</div><div class="item-count" id="last-push-date" data-lastPushDate="2025-02-16T04:33:32.555Z"><i class="fa-solid fa-spinner fa-spin"></i></div></div></div></div></div></div></main><footer id="footer" style="background-image: url(https://lh3.googleusercontent.com/pw/ABLVV853NQFWL4WeSSrWk5muVHD0zrcrFPpWIUUavM_Whrk2S6MxmPC6IZTRkUrg4ibCJsO0mFugBuJvMdwQu5_kpa9M08ZXqLsNmJa62GuQJ1zVZrXrMBg=w2400);"><div id="footer-wrap"><div class="copyright">&copy;2024 - 2025 By Cheng®</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主題 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div><div class="footer_custom_text">Cheng®<a href="https://mark22013333.github.io/"> Blog</a>!</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="darkmode" type="button" title="日夜模式切換"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="單欄和雙欄切換"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="設定"><i class="fas fa-cog fa-spin"></i></button><button id="go-up" type="button" title="回到頂端"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.umd.min.js"></script><script src="https://cdn.jsdelivr.net/npm/instant.page/instantpage.min.js" type="module"></script><script src="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.js"></script><div class="js-pjax"><script>window.typedJSFn = {
+  init: str => {
     window.typed = new Typed('#subtitle', Object.assign({
       strings: str,
       startDelay: 300,
@@ -281,27 +247,28 @@ document.addEventListener('DOMContentLoaded', panguInit)</script><div class="js-
       backSpeed: 50,
     }, null))
   },
-  run: (subtitleType) => {
+  run: subtitleType => {
     if (true) {
       if (typeof Typed === 'function') {
         subtitleType()
       } else {
-        getScript('https://cdn.jsdelivr.net/npm/typed.js/dist/typed.umd.min.js').then(subtitleType)
+        btf.getScript('https://cdn.jsdelivr.net/npm/typed.js/dist/typed.umd.min.js').then(subtitleType)
       }
     } else {
       subtitleType()
     }
   }
 }
+btf.addGlobalFn('pjaxSendOnce', () => { typed.destroy() }, 'typedDestroy')
 </script><script>function subtitleType () {
   if (true) {
-    typedJSFn.init(["「成功是由一大堆失敗疊加而成。」－ 湯瑪斯‧愛迪生","「勇敢並不是不感到恐慌，而是即使感到恐慌也能面對。」－ 尼爾森‧曼德拉","「最困難的事情就是認識自己。」－ 蘇格拉底","「智者不是擁有知識的人，而是學習的人。」－ 佚名","「夢想沒有期限。」－ C.S. 路易斯","Never put off till tomorrow what you can do today"])
+    typedJSFn.init(["「自律往往一念之間。」－ Cheng®","「成功是由一大堆失敗疊加而成。」－ 湯瑪斯‧愛迪生","「勇敢並不是不感到恐慌，而是即使感到恐慌也能面對。」－ 尼爾森‧曼德拉","「最困難的事情就是認識自己。」－ 蘇格拉底","「智者不是擁有知識的人，而是學習的人。」－ 佚名","「夢想沒有期限。」－ C.S. 路易斯","Never put off till tomorrow what you can do today"])
   } else {
-    document.getElementById("subtitle").textContent = "「成功是由一大堆失敗疊加而成。」－ 湯瑪斯‧愛迪生"
+    document.getElementById("subtitle").textContent = "「自律往往一念之間。」－ Cheng®"
   }
 }
 typedJSFn.run(subtitleType)</script></div><script defer="defer" id="fluttering_ribbon" mobile="false" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/canvas-fluttering-ribbon.min.js"></script><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/activate-power-mode.min.js"></script><script>POWERMODE.colorful = true;
 POWERMODE.shake = true;
 POWERMODE.mobile = true;
 document.body.addEventListener('input', POWERMODE);
-</script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
+</script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜尋</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="text-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  資料載入中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜尋文章" type="text"/></div></div><hr/><div id="local-search-results"></div><div id="local-search-stats-wrap"></div></div></div><div id="search-mask"></div><script src="/js/search/local-search.js"></script></div></div></body></html>
