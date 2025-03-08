@@ -1,0 +1,223 @@
+<!DOCTYPE html><html lang="zh-TW" data-theme="dark"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>從 Identity 欄位極限值看資料庫運作：實戰查詢範例分享 | Cheng's Tech &amp; Life</title><meta name="author" content="Cheng®"><meta name="copyright" content="Cheng®"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#0d0d0d"><meta name="description" content="在這篇文章中，我想跟各位分享一個相當有趣又實用的 SQL 查詢範例。這支查詢主要用來檢查資料庫中各個資料表的 Identity 欄位（通常作為主鍵使用）的目前值（last_value），並根據該欄位的資料型態來推算其可能達到的最大極限值。  查詢範例以下就是完整的 SQL 查詢程式碼： 12345678910111213141516SELECT OBJECT_NAME(ic.object_id)">
+<meta property="og:type" content="article">
+<meta property="og:title" content="從 Identity 欄位極限值看資料庫運作：實戰查詢範例分享">
+<meta property="og:url" content="https://mark22013333.github.io/2025/03/08/%E5%BE%9E%20Identity%20%E6%AC%84%E4%BD%8D%E6%A5%B5%E9%99%90%E5%80%BC%E7%9C%8B%E8%B3%87%E6%96%99%E5%BA%AB%E9%81%8B%E4%BD%9C%EF%BC%9A%E5%AF%A6%E6%88%B0%E6%9F%A5%E8%A9%A2%E7%AF%84%E4%BE%8B%E5%88%86%E4%BA%AB/index.html">
+<meta property="og:site_name" content="Cheng&#39;s Tech &amp; Life">
+<meta property="og:description" content="在這篇文章中，我想跟各位分享一個相當有趣又實用的 SQL 查詢範例。這支查詢主要用來檢查資料庫中各個資料表的 Identity 欄位（通常作為主鍵使用）的目前值（last_value），並根據該欄位的資料型態來推算其可能達到的最大極限值。  查詢範例以下就是完整的 SQL 查詢程式碼： 12345678910111213141516SELECT OBJECT_NAME(ic.object_id)">
+<meta property="og:locale" content="zh_TW">
+<meta property="og:image" content="https://mark22013333.github.io/img/2025-03-08-DB.webp">
+<meta property="article:published_time" content="2025-03-08T09:08:41.000Z">
+<meta property="article:modified_time" content="2025-03-08T09:15:05.683Z">
+<meta property="article:author" content="Cheng®">
+<meta property="article:tag" content="MSSQL">
+<meta property="article:tag" content="DB">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://mark22013333.github.io/img/2025-03-08-DB.webp"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "從 Identity 欄位極限值看資料庫運作：實戰查詢範例分享",
+  "url": "https://mark22013333.github.io/2025/03/08/%E5%BE%9E%20Identity%20%E6%AC%84%E4%BD%8D%E6%A5%B5%E9%99%90%E5%80%BC%E7%9C%8B%E8%B3%87%E6%96%99%E5%BA%AB%E9%81%8B%E4%BD%9C%EF%BC%9A%E5%AF%A6%E6%88%B0%E6%9F%A5%E8%A9%A2%E7%AF%84%E4%BE%8B%E5%88%86%E4%BA%AB/",
+  "image": "https://mark22013333.github.io/img/2025-03-08-DB.webp",
+  "datePublished": "2025-03-08T09:08:41.000Z",
+  "dateModified": "2025-03-08T09:15:05.683Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "Cheng®",
+      "url": "https://mark22013333.github.io"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://mark22013333.github.io/2025/03/08/%E5%BE%9E%20Identity%20%E6%AC%84%E4%BD%8D%E6%A5%B5%E9%99%90%E5%80%BC%E7%9C%8B%E8%B3%87%E6%96%99%E5%BA%AB%E9%81%8B%E4%BD%9C%EF%BC%9A%E5%AF%A6%E6%88%B0%E6%9F%A5%E8%A9%A2%E7%AF%84%E4%BE%8B%E5%88%86%E4%BA%AB/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//fonts.googleapis.com" crossorigin=""/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          const hour = new Date().getHours()
+          const isNight = hour <= 9 || hour >= 18
+          if (theme === undefined) isNight ? activateDarkMode() : activateLightMode()
+          else theme === 'light' ? activateLightMode() : activateDarkMode()
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Titillium+Web&amp;display=swap" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"languages":{"hits_empty":"找不到符合您查詢的內容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '複製成功',
+    error: '複製失敗',
+    noSupport: '瀏覽器不支援'
+  },
+  relativeDate: {
+    homepage: false,
+    post: true
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '剛剛',
+    min: '分鐘前',
+    hour: '小時前',
+    day: '天前',
+    month: '個月前'
+  },
+  copyright: {"limitCount":1,"languages":{"author":"作者: Cheng®","link":"連結: ","source":"來源: Cheng's Tech & Life","info":"著作權歸作者所有。如需商業轉載，請聯絡作者獲得授權，非商業轉載請註明出處😁。"}},
+  lightbox: 'fancybox',
+  Snackbar: {"chs_to_cht":"已切換為繁體中文","cht_to_chs":"已切換為簡體中文","day_to_night":"已切換為深色模式","night_to_day":"已切換為淺色模式","bgLight":"#49b1f5","bgDark":"#1f1f1f","position":"top-center"},
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid/dist/infinitegrid.min.js',
+    buttonText: '載入更多'
+  },
+  isPhotoFigcaption: true,
+  islazyloadPlugin: false,
+  isAnchor: true,
+  percent: {
+    toc: true,
+    rightside: true,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '從 Identity 欄位極限值看資料庫運作：實戰查詢範例分享',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><meta name="generator" content="Hexo 7.0.0"></head><body><div id="loading-box"><div class="loading-left-bg"></div><div class="loading-right-bg"></div><div class="spinner-box"><div class="configure-border-1"><div class="configure-core"></div></div><div class="configure-border-2"><div class="configure-core"></div></div><div class="loading-word">載入中...</div></div></div><script>(()=>{
+  const $loadingBox = document.getElementById('loading-box')
+  const $body = document.body
+  const preloader = {
+    endLoading: () => {
+      $body.style.overflow = ''
+      $loadingBox.classList.add('loaded')
+    },
+    initLoading: () => {
+      $body.style.overflow = 'hidden'
+      $loadingBox.classList.remove('loaded')
+    }
+  }
+
+  preloader.initLoading()
+  window.addEventListener('load', preloader.endLoading)
+
+  if (false) {
+    btf.addGlobalFn('pjaxSend', preloader.initLoading, 'preloader_init')
+    btf.addGlobalFn('pjaxComplete', preloader.endLoading, 'preloader_end')
+  }
+})()</script><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="https://lh3.googleusercontent.com/pw/ABLVV87_po8nBc6F_tXcoYDmtzMGWxHuhhrbguYILCjmjWKLOS8DTpubm0YoQLKgjyjRIZyV5TjYe7XVEz_YU4squfr37GTZqPZP1hlMVZ_MIgXpTxWu73M=w1200" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">13</div></a><a href="/tags/"><div class="headline">標籤</div><div class="length-num">9</div></a><a href="/categories/"><div class="headline">分類</div><div class="length-num">4</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首頁-Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 時間軸-archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 標籤-tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分類-Categories</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-list"></i><span> 其他列表</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音樂-Music</span></a></li><li><a class="site-page child" href="/gallery/"><i class="fa-fw fas fa-images"></i><span> 畫館-Gallery</span></a></li></ul></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg fixed" id="page-header" style="background-image: url(/img/2025-03-08-DB.webp);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><img class="site-icon" src="https://lh3.googleusercontent.com/pw/ABLVV87_po8nBc6F_tXcoYDmtzMGWxHuhhrbguYILCjmjWKLOS8DTpubm0YoQLKgjyjRIZyV5TjYe7XVEz_YU4squfr37GTZqPZP1hlMVZ_MIgXpTxWu73M=w1200" alt="Logo"><span class="site-name">Cheng's Tech &amp; Life</span></a><a class="nav-page-title" href="/"><span class="site-name">從 Identity 欄位極限值看資料庫運作：實戰查詢範例分享</span></a></span><div id="menus"><div id="search-button"><span class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜尋</span></span></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首頁-Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 時間軸-archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 標籤-tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分類-Categories</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-list"></i><span> 其他列表</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音樂-Music</span></a></li><li><a class="site-page child" href="/gallery/"><i class="fa-fw fas fa-images"></i><span> 畫館-Gallery</span></a></li></ul></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">從 Identity 欄位極限值看資料庫運作：實戰查詢範例分享</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">發表於</span><time class="post-meta-date-created" datetime="2025-03-08T09:08:41.000Z" title="發表於 2025-03-08 17:08:41">2025-03-08</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新於</span><time class="post-meta-date-updated" datetime="2025-03-08T09:15:05.683Z" title="更新於 2025-03-08 17:15:05">2025-03-08</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E8%B3%87%E6%96%99%E5%BA%AB-MSSQL/">資料庫(MSSQL)</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">總字數:</span><span class="word-count">830</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">閱讀時間:</span><span>2分鐘</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">瀏覽量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><p>在這篇文章中，我想跟各位分享一個相當有趣又實用的 SQL 查詢範例。這支查詢主要用來檢查資料庫中各個資料表的 Identity 欄位（通常作為主鍵使用）的目前值（last_value），並根據該欄位的資料型態來推算其可能達到的最大極限值。</p>
+<hr>
+<h3 id="查詢範例"><a href="#查詢範例" class="headerlink" title="查詢範例"></a>查詢範例</h3><p>以下就是完整的 SQL 查詢程式碼：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> OBJECT_NAME(ic.object_id) <span class="keyword">AS</span> TableName,</span><br><span class="line">       ic.name                   <span class="keyword">AS</span> IdentityColumn,</span><br><span class="line">       ic.last_value             <span class="keyword">AS</span> CurrentValue,</span><br><span class="line">       <span class="keyword">CASE</span></span><br><span class="line">           <span class="keyword">WHEN</span> ty.name <span class="operator">=</span> <span class="string">&#x27;tinyint&#x27;</span> <span class="keyword">THEN</span> <span class="number">255</span></span><br><span class="line">           <span class="keyword">WHEN</span> ty.name <span class="operator">=</span> <span class="string">&#x27;smallint&#x27;</span> <span class="keyword">THEN</span> <span class="number">32767</span></span><br><span class="line">           <span class="keyword">WHEN</span> ty.name <span class="operator">=</span> <span class="string">&#x27;int&#x27;</span> <span class="keyword">THEN</span> <span class="number">2147483647</span></span><br><span class="line">           <span class="keyword">WHEN</span> ty.name <span class="operator">=</span> <span class="string">&#x27;bigint&#x27;</span> <span class="keyword">THEN</span> <span class="number">9223372036854775807</span></span><br><span class="line">           <span class="keyword">ELSE</span> N<span class="string">&#x27;非數值型態&#x27;</span></span><br><span class="line">       <span class="keyword">END</span> <span class="keyword">AS</span> MaxPossibleValue</span><br><span class="line"><span class="keyword">FROM</span> sys.identity_columns ic</span><br><span class="line">         <span class="keyword">JOIN</span> sys.columns c</span><br><span class="line">              <span class="keyword">ON</span> ic.object_id <span class="operator">=</span> c.object_id <span class="keyword">AND</span> ic.column_id <span class="operator">=</span> c.column_id</span><br><span class="line">         <span class="keyword">JOIN</span> sys.types ty</span><br><span class="line">              <span class="keyword">ON</span> c.user_type_id <span class="operator">=</span> ty.user_type_id</span><br><span class="line"><span class="keyword">WHERE</span> ic.last_value <span class="operator">&gt;</span> <span class="number">50</span>;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h3 id="分步解析"><a href="#分步解析" class="headerlink" title="分步解析"></a>分步解析</h3><h3 id="1-取得關鍵資訊"><a href="#1-取得關鍵資訊" class="headerlink" title="1. 取得關鍵資訊"></a>1. 取得關鍵資訊</h3><ul>
+<li><strong>TableName</strong>：利用 <code>OBJECT_NAME(ic.object_id)</code> 將物件 ID 轉換成易讀的資料表名稱。</li>
+<li><strong>IdentityColumn</strong>：藉由 <code>ic.name</code> 直接取得 Identity 欄位的名稱，讓你一眼就知道是哪個欄位在運作。</li>
+<li><strong>CurrentValue</strong>：<code>ic.last_value</code> 代表目前該 Identity 欄位最後使用的數值，也就是下次插入資料時所會用到的數字。</li>
+</ul>
+<h3 id="2-計算型態的極限值"><a href="#2-計算型態的極限值" class="headerlink" title="2. 計算型態的極限值"></a>2. 計算型態的極限值</h3><p>這裡我們運用 <code>CASE</code> 語句，根據不同的數值型態，給出各自的最大可能值：</p>
+<ul>
+<li><strong>tinyint</strong>：最大值為 255。</li>
+<li><strong>smallint</strong>：最大值為 32767。</li>
+<li><strong>int</strong>：最大值為 2147483647。</li>
+<li><strong>bigint</strong>：最大值為 9223372036854775807。</li>
+<li>若欄位型態非上述數值型態，則回傳「非數值型態」。</li>
+</ul>
+<p>這個邏輯能夠快速算出每個 Identity 欄位還有多少數值空間，幫助我們在系統接近極限前做好預防措施。</p>
+<h3 id="3-連結系統檢視表"><a href="#3-連結系統檢視表" class="headerlink" title="3. 連結系統檢視表"></a>3. 連結系統檢視表</h3><ul>
+<li><strong>sys.identity_columns</strong>：此系統檢視表保存了所有具有 Identity 屬性的欄位資訊。</li>
+<li><strong>sys.columns</strong> 與 <strong>sys.types</strong>：分別提供欄位的詳細資料與型態資訊，讓我們能根據資料型態正確計算出極限值。</li>
+</ul>
+<h3 id="4-篩選條件"><a href="#4-篩選條件" class="headerlink" title="4. 篩選條件"></a>4. 篩選條件</h3><ul>
+<li><code>WHERE ic.last_value &gt; 50</code>：這個篩選條件只針對目前數值大於 50 的 Identity 欄位進行查詢，數值可以依照實際情況調整，讓你只聚焦在可能接近極限的那些資料表上。</li>
+</ul>
+<hr>
+<h3 id="實際應用場景"><a href="#實際應用場景" class="headerlink" title="實際應用場景"></a>實際應用場景</h3><p>在大型應用系統中，許多專案會採用 Identity 欄位來作為主要的主鍵生成機制。隨著資料量不斷累加，Identity 欄位的數值也會逐漸逼近其資料型態所能表示的極限值。當這個狀況發生時，若沒有提前預防，就可能造成數值溢出。此時，你可以利用這支查詢快速掌握哪些資料表已經快到臨界點，並採取必要的措施（例如改變欄位型態或重設序列），確保系統的穩定與安全。</p>
+<hr>
+<h3 id="總結"><a href="#總結" class="headerlink" title="總結"></a>總結</h3><p>這支查詢範例不僅展示了如何運用 MSSQL 的系統檢視表來取得 Identity 欄位的現況，還結合了資料型態的知識來推算每個欄位的最大極限值。對資料庫管理員和開發團隊來說，這都是一個極具參考價值的工具，可以在系統運行過程中及早預防潛在問題。希望透過這篇文章，大家能在日常的資料庫管理中多一份安心！</p>
+<hr>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://mark22013333.github.io">Cheng®</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章連結: </span><span class="post-copyright-info"><a href="https://mark22013333.github.io/2025/03/08/%E5%BE%9E%20Identity%20%E6%AC%84%E4%BD%8D%E6%A5%B5%E9%99%90%E5%80%BC%E7%9C%8B%E8%B3%87%E6%96%99%E5%BA%AB%E9%81%8B%E4%BD%9C%EF%BC%9A%E5%AF%A6%E6%88%B0%E6%9F%A5%E8%A9%A2%E7%AF%84%E4%BE%8B%E5%88%86%E4%BA%AB/">https://mark22013333.github.io/2025/03/08/從 Identity 欄位極限值看資料庫運作：實戰查詢範例分享/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版權聲明: </span><span class="post-copyright-info">本部落格所有文章除特別聲明外，均採用<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 授權協議。轉載請註明來源 <a href="https://mark22013333.github.io" target="_blank">Cheng's Tech & Life</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/MSSQL/">MSSQL</a><a class="post-meta__tags" href="/tags/DB/">DB</a></div><div class="post-share"><div class="social-share" data-image="/img/2025-03-08-DB.webp" data-sites="facebook,twitter"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><div class="post-reward"><div class="reward-button"><i class="fas fa-qrcode"></i>贊助</div><div class="reward-main"><ul class="reward-all"><li class="reward-item"><a href="/img/MyRichart.jpg" target="_blank"><img class="post-qr-code-img" src="/img/MyRichart.jpg" alt="Richart"/></a><div class="post-qr-code-desc">Richart</div></li><li class="reward-item"><a href="/img/CubeBank.jpg" target="_blank"><img class="post-qr-code-img" src="/img/CubeBank.jpg" alt="國泰 Cube"/></a><div class="post-qr-code-desc">國泰 Cube</div></li></ul></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related full-width" href="/2025/02/24/%E8%B3%87%E6%96%99%E8%A1%A8%E9%87%8D%E6%96%B0%E5%BB%BA%E7%AB%8B%E5%8F%8A%E8%B3%87%E6%96%99%E9%81%B7%E7%A7%BB-SOP/" title="資料表重新建立及資料遷移 SOP"><img class="cover" src="/img/20250225.webp" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">資料表重新建立及資料遷移 SOP</div></div><div class="info-2"><div class="info-item-1">💡 Purpose:  此 SOP 說明如何從原始資料表進行備份、建立新表、資料遷移以及重新命名，目的是因應原資料表主鍵未設定自動遞增，需先備份資料，再依新的 DDL 語法建立自動遞增主鍵的表結構，最後將資料還原。請務必在每個步驟執行前確認相關操作已備份完成，以避免資料遺失。 前置檢查步驟 0：檢查表結構與資料筆數  取得資料表結構，確認是否已有自動遞增主鍵。  1exec sp_columns WCSTXXX;  檢查主鍵（例如：WCSID）是否有重複筆數：  1234select WCSID, COUNT(*)from WCSTXXXgroup by WCSIDhaving COUNT(*) &gt; 1;  檢查資料表的總筆數：  1select COUNT(*) from WCSTXXX;   注意： 請將檢查結果記錄下來，作為後續參考依據。   備份原始資料步驟 1：備份現有資料表 將現有資料完整備份至另一張暫存表中，避免後續操作造成資料遺失： 1select * into backup_WCSTXXX from WCSTXXX;   建立新資料表步驟...</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相關推薦</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2025/02/02/%E6%9F%A5%E7%9C%8BMSSQL%E8%B3%87%E6%96%99%E5%BA%AB%E7%9A%84%E4%BD%94%E7%94%A8%E7%A9%BA%E9%96%93/" title="查看MSSQL資料庫的佔用空間"><img class="cover" src="/img/2025-02-02-DB.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-02-02</div><div class="info-item-2">查看MSSQL資料庫的佔用空間</div></div><div class="info-2"><div class="info-item-1">在 MSSQL 中，可以通過系統檢視或內建存儲過程來查看資料庫的大小，包括資料和索引的占用。以下是常用的方法：  方法 1：使用 sp_spaceusedsp_spaceused 是一個內建的存儲過程，用於查看資料庫的空間使用情況。 查看整個資料庫的大小 切換到目標資料庫：  12USE [YourDatabaseName];GO  執行以下命令：返回的關鍵結果：  1EXEC sp_spaceused;  database_size：資料庫的總大小（資料和索引）。 unallocated space：未分配的空間。    查看特定表的大小 執行以下命令：返回的關鍵結果：  1EXEC sp_spaceused N&#x27;[YourTableName]&#x27;;  reserved：表的總預留空間（資料、索引和未使用空間）。 data：表中資料的大小。 index_size：表的索引大小。 unused：未使用的空間。     方法 2：使用 sys.master_files 和...</div></div></div></a><a class="pagination-related" href="/2025/02/20/%E7%B5%B1%E8%A8%88%E8%B3%87%E6%96%99%E5%BA%AB%E6%89%80%E6%9C%89%E8%A1%A8%E7%9A%84%E7%AD%86%E6%95%B8%E8%88%87%E5%AE%8C%E6%95%B4%E6%80%A7%E6%A0%A1%E9%A9%97%EF%BC%88CheckSum%EF%BC%89/" title="統計資料庫所有表的筆數與完整性校驗（CheckSum）"><img class="cover" src="/img/20250220.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-02-20</div><div class="info-item-2">統計資料庫所有表的筆數與完整性校驗（CheckSum）</div></div><div class="info-2"><div class="info-item-1">今天來分享幾個在 SQL Server 2008 裡，如何比對資料表內容的小技巧，讓你可以快速檢查資料是否有異動。以下會介紹三種方法，分別適用於不同的情境，親自實測過，效果滿不錯的喔！  方法 1：用 CHECKSUM_AGG 來計算表格變更這個方法是利用 CHECKSUM_AGG(BINARY_CHECKSUM(*)) 來算出整個資料表的檢查碼。它的優點就是運算速度快，不會遇到像 XML 轉換那種限制，缺點則是有可能會發生碰撞（就是不同資料卻得到一樣的檢查碼），而且對於 BLOB 或浮點數欄位就不太適合。 123456789SELECT    s.name AS SchemaName,    t.name AS TableName,    CHECKSUM_AGG(BINARY_CHECKSUM(*)) AS TableChecksumFROM sys.tables t         INNER JOIN sys.schemas s ON t.schema_id = s.schema_idWHERE s.name = &#x27;dbo&#x27;GROUP BY...</div></div></div></a><a class="pagination-related" href="/2025/02/24/%E8%B3%87%E6%96%99%E8%A1%A8%E9%87%8D%E6%96%B0%E5%BB%BA%E7%AB%8B%E5%8F%8A%E8%B3%87%E6%96%99%E9%81%B7%E7%A7%BB-SOP/" title="資料表重新建立及資料遷移 SOP"><img class="cover" src="/img/20250225.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-02-24</div><div class="info-item-2">資料表重新建立及資料遷移 SOP</div></div><div class="info-2"><div class="info-item-1">💡 Purpose:  此 SOP 說明如何從原始資料表進行備份、建立新表、資料遷移以及重新命名，目的是因應原資料表主鍵未設定自動遞增，需先備份資料，再依新的 DDL 語法建立自動遞增主鍵的表結構，最後將資料還原。請務必在每個步驟執行前確認相關操作已備份完成，以避免資料遺失。 前置檢查步驟 0：檢查表結構與資料筆數  取得資料表結構，確認是否已有自動遞增主鍵。  1exec sp_columns WCSTXXX;  檢查主鍵（例如：WCSID）是否有重複筆數：  1234select WCSID, COUNT(*)from WCSTXXXgroup by WCSIDhaving COUNT(*) &gt; 1;  檢查資料表的總筆數：  1select COUNT(*) from WCSTXXX;   注意： 請將檢查結果記錄下來，作為後續參考依據。   備份原始資料步驟 1：備份現有資料表 將現有資料完整備份至另一張暫存表中，避免後續操作造成資料遺失： 1select * into backup_WCSTXXX from WCSTXXX;   建立新資料表步驟...</div></div></div></a></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="https://lh3.googleusercontent.com/pw/ABLVV87_po8nBc6F_tXcoYDmtzMGWxHuhhrbguYILCjmjWKLOS8DTpubm0YoQLKgjyjRIZyV5TjYe7XVEz_YU4squfr37GTZqPZP1hlMVZ_MIgXpTxWu73M=w1200" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">Cheng®</div><div class="author-info-description">持續精進，樂在分享</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">13</div></a><a href="/tags/"><div class="headline">標籤</div><div class="length-num">9</div></a><a href="/categories/"><div class="headline">分類</div><div class="length-num">4</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/mark22013333"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons"><a class="social-icon" href="https://github.com/mark22013333" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:mark22013333@gmail.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">做一些筆記和紀錄一些發生的事情...</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目錄</span><span class="toc-percentage"></span></div><div class="toc-content is-expand"><ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9F%A5%E8%A9%A2%E7%AF%84%E4%BE%8B"><span class="toc-number">1.</span> <span class="toc-text">查詢範例</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%86%E6%AD%A5%E8%A7%A3%E6%9E%90"><span class="toc-number">2.</span> <span class="toc-text">分步解析</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E5%8F%96%E5%BE%97%E9%97%9C%E9%8D%B5%E8%B3%87%E8%A8%8A"><span class="toc-number">3.</span> <span class="toc-text">1. 取得關鍵資訊</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E8%A8%88%E7%AE%97%E5%9E%8B%E6%85%8B%E7%9A%84%E6%A5%B5%E9%99%90%E5%80%BC"><span class="toc-number">4.</span> <span class="toc-text">2. 計算型態的極限值</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E9%80%A3%E7%B5%90%E7%B3%BB%E7%B5%B1%E6%AA%A2%E8%A6%96%E8%A1%A8"><span class="toc-number">5.</span> <span class="toc-text">3. 連結系統檢視表</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-%E7%AF%A9%E9%81%B8%E6%A2%9D%E4%BB%B6"><span class="toc-number">6.</span> <span class="toc-text">4. 篩選條件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AF%A6%E9%9A%9B%E6%87%89%E7%94%A8%E5%A0%B4%E6%99%AF"><span class="toc-number">7.</span> <span class="toc-text">實際應用場景</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%B8%BD%E7%B5%90"><span class="toc-number">8.</span> <span class="toc-text">總結</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2025/03/08/%E5%BE%9E%20Identity%20%E6%AC%84%E4%BD%8D%E6%A5%B5%E9%99%90%E5%80%BC%E7%9C%8B%E8%B3%87%E6%96%99%E5%BA%AB%E9%81%8B%E4%BD%9C%EF%BC%9A%E5%AF%A6%E6%88%B0%E6%9F%A5%E8%A9%A2%E7%AF%84%E4%BE%8B%E5%88%86%E4%BA%AB/" title="從 Identity 欄位極限值看資料庫運作：實戰查詢範例分享"><img src="/img/2025-03-08-DB.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="從 Identity 欄位極限值看資料庫運作：實戰查詢範例分享"/></a><div class="content"><a class="title" href="/2025/03/08/%E5%BE%9E%20Identity%20%E6%AC%84%E4%BD%8D%E6%A5%B5%E9%99%90%E5%80%BC%E7%9C%8B%E8%B3%87%E6%96%99%E5%BA%AB%E9%81%8B%E4%BD%9C%EF%BC%9A%E5%AF%A6%E6%88%B0%E6%9F%A5%E8%A9%A2%E7%AF%84%E4%BE%8B%E5%88%86%E4%BA%AB/" title="從 Identity 欄位極限值看資料庫運作：實戰查詢範例分享">從 Identity 欄位極限值看資料庫運作：實戰查詢範例分享</a><time datetime="2025-03-08T09:08:41.000Z" title="發表於 2025-03-08 17:08:41">2025-03-08</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/02/24/%E8%B3%87%E6%96%99%E8%A1%A8%E9%87%8D%E6%96%B0%E5%BB%BA%E7%AB%8B%E5%8F%8A%E8%B3%87%E6%96%99%E9%81%B7%E7%A7%BB-SOP/" title="資料表重新建立及資料遷移 SOP"><img src="/img/20250225.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="資料表重新建立及資料遷移 SOP"/></a><div class="content"><a class="title" href="/2025/02/24/%E8%B3%87%E6%96%99%E8%A1%A8%E9%87%8D%E6%96%B0%E5%BB%BA%E7%AB%8B%E5%8F%8A%E8%B3%87%E6%96%99%E9%81%B7%E7%A7%BB-SOP/" title="資料表重新建立及資料遷移 SOP">資料表重新建立及資料遷移 SOP</a><time datetime="2025-02-24T15:57:41.000Z" title="發表於 2025-02-24 23:57:41">2025-02-24</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/02/20/%E7%B5%B1%E8%A8%88%E8%B3%87%E6%96%99%E5%BA%AB%E6%89%80%E6%9C%89%E8%A1%A8%E7%9A%84%E7%AD%86%E6%95%B8%E8%88%87%E5%AE%8C%E6%95%B4%E6%80%A7%E6%A0%A1%E9%A9%97%EF%BC%88CheckSum%EF%BC%89/" title="統計資料庫所有表的筆數與完整性校驗（CheckSum）"><img src="/img/20250220.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="統計資料庫所有表的筆數與完整性校驗（CheckSum）"/></a><div class="content"><a class="title" href="/2025/02/20/%E7%B5%B1%E8%A8%88%E8%B3%87%E6%96%99%E5%BA%AB%E6%89%80%E6%9C%89%E8%A1%A8%E7%9A%84%E7%AD%86%E6%95%B8%E8%88%87%E5%AE%8C%E6%95%B4%E6%80%A7%E6%A0%A1%E9%A9%97%EF%BC%88CheckSum%EF%BC%89/" title="統計資料庫所有表的筆數與完整性校驗（CheckSum）">統計資料庫所有表的筆數與完整性校驗（CheckSum）</a><time datetime="2025-02-20T15:07:37.000Z" title="發表於 2025-02-20 23:07:37">2025-02-20</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/02/16/%E5%A4%9A%E5%9F%B7%E8%A1%8C%E7%B7%92%E7%9A%84%E7%9B%B8%E9%97%9C%E8%A1%93%E8%AA%9E/" title="多執行緒的相關術語"><img src="/img/20250216.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="多執行緒的相關術語"/></a><div class="content"><a class="title" href="/2025/02/16/%E5%A4%9A%E5%9F%B7%E8%A1%8C%E7%B7%92%E7%9A%84%E7%9B%B8%E9%97%9C%E8%A1%93%E8%AA%9E/" title="多執行緒的相關術語">多執行緒的相關術語</a><time datetime="2025-02-16T03:59:07.000Z" title="發表於 2025-02-16 11:59:07">2025-02-16</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/02/02/%E6%9F%A5%E7%9C%8BMSSQL%E8%B3%87%E6%96%99%E5%BA%AB%E7%9A%84%E4%BD%94%E7%94%A8%E7%A9%BA%E9%96%93/" title="查看MSSQL資料庫的佔用空間"><img src="/img/2025-02-02-DB.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="查看MSSQL資料庫的佔用空間"/></a><div class="content"><a class="title" href="/2025/02/02/%E6%9F%A5%E7%9C%8BMSSQL%E8%B3%87%E6%96%99%E5%BA%AB%E7%9A%84%E4%BD%94%E7%94%A8%E7%A9%BA%E9%96%93/" title="查看MSSQL資料庫的佔用空間">查看MSSQL資料庫的佔用空間</a><time datetime="2025-02-02T13:02:39.000Z" title="發表於 2025-02-02 21:02:39">2025-02-02</time></div></div></div></div></div></div></main><footer id="footer" style="background-image: url(/img/2025-03-08-DB.webp);"><div id="footer-wrap"><div class="copyright">&copy;2024 - 2025 By Cheng®</div><div class="framework-info"><span>全力以赴 </span><a target="_blank" rel="noopener" href="https://hexo.io"> </a><!--span.footer-separator |--><span>保持自律 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly"> </a></div><div class="footer_custom_text">Cheng's <a href="https://mark22013333.github.io/"> Blog</a>!</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="閱讀模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日夜模式切換"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="單欄和雙欄切換"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="設定"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目錄"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到頂端"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.umd.min.js"></script><script src="https://cdn.jsdelivr.net/npm/instant.page/instantpage.min.js" type="module"></script><script src="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.js"></script><div class="js-pjax"></div><script defer="defer" id="fluttering_ribbon" mobile="false" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/canvas-fluttering-ribbon.min.js"></script><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/activate-power-mode.min.js"></script><script>POWERMODE.colorful = true;
+POWERMODE.shake = true;
+POWERMODE.mobile = true;
+document.body.addEventListener('input', POWERMODE);
+</script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜尋</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="text-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  資料載入中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜尋文章" type="text"/></div></div><hr/><div id="local-search-results"></div><div id="local-search-stats-wrap"></div></div></div><div id="search-mask"></div><script src="/js/search/local-search.js"></script></div></div></body></html>

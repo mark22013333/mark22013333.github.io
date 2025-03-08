@@ -4,6 +4,33 @@
   
     
     <entry>
+      <title>從 Identity 欄位極限值看資料庫運作：實戰查詢範例分享</title>
+      <link href="/2025/03/08/%E5%BE%9E%20Identity%20%E6%AC%84%E4%BD%8D%E6%A5%B5%E9%99%90%E5%80%BC%E7%9C%8B%E8%B3%87%E6%96%99%E5%BA%AB%E9%81%8B%E4%BD%9C%EF%BC%9A%E5%AF%A6%E6%88%B0%E6%9F%A5%E8%A9%A2%E7%AF%84%E4%BE%8B%E5%88%86%E4%BA%AB/"/>
+      <url>/2025/03/08/%E5%BE%9E%20Identity%20%E6%AC%84%E4%BD%8D%E6%A5%B5%E9%99%90%E5%80%BC%E7%9C%8B%E8%B3%87%E6%96%99%E5%BA%AB%E9%81%8B%E4%BD%9C%EF%BC%9A%E5%AF%A6%E6%88%B0%E6%9F%A5%E8%A9%A2%E7%AF%84%E4%BE%8B%E5%88%86%E4%BA%AB/</url>
+      
+        <content type="html"><![CDATA[<p>在這篇文章中，我想跟各位分享一個相當有趣又實用的 SQL 查詢範例。這支查詢主要用來檢查資料庫中各個資料表的 Identity 欄位（通常作為主鍵使用）的目前值（last_value），並根據該欄位的資料型態來推算其可能達到的最大極限值。</p><hr><h3 id="查詢範例"><a href="#查詢範例" class="headerlink" title="查詢範例"></a>查詢範例</h3><p>以下就是完整的 SQL 查詢程式碼：</p><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> OBJECT_NAME(ic.object_id) <span class="keyword">AS</span> TableName,</span><br><span class="line">       ic.name                   <span class="keyword">AS</span> IdentityColumn,</span><br><span class="line">       ic.last_value             <span class="keyword">AS</span> CurrentValue,</span><br><span class="line">       <span class="keyword">CASE</span></span><br><span class="line">           <span class="keyword">WHEN</span> ty.name <span class="operator">=</span> <span class="string">&#x27;tinyint&#x27;</span> <span class="keyword">THEN</span> <span class="number">255</span></span><br><span class="line">           <span class="keyword">WHEN</span> ty.name <span class="operator">=</span> <span class="string">&#x27;smallint&#x27;</span> <span class="keyword">THEN</span> <span class="number">32767</span></span><br><span class="line">           <span class="keyword">WHEN</span> ty.name <span class="operator">=</span> <span class="string">&#x27;int&#x27;</span> <span class="keyword">THEN</span> <span class="number">2147483647</span></span><br><span class="line">           <span class="keyword">WHEN</span> ty.name <span class="operator">=</span> <span class="string">&#x27;bigint&#x27;</span> <span class="keyword">THEN</span> <span class="number">9223372036854775807</span></span><br><span class="line">           <span class="keyword">ELSE</span> N<span class="string">&#x27;非數值型態&#x27;</span></span><br><span class="line">       <span class="keyword">END</span> <span class="keyword">AS</span> MaxPossibleValue</span><br><span class="line"><span class="keyword">FROM</span> sys.identity_columns ic</span><br><span class="line">         <span class="keyword">JOIN</span> sys.columns c</span><br><span class="line">              <span class="keyword">ON</span> ic.object_id <span class="operator">=</span> c.object_id <span class="keyword">AND</span> ic.column_id <span class="operator">=</span> c.column_id</span><br><span class="line">         <span class="keyword">JOIN</span> sys.types ty</span><br><span class="line">              <span class="keyword">ON</span> c.user_type_id <span class="operator">=</span> ty.user_type_id</span><br><span class="line"><span class="keyword">WHERE</span> ic.last_value <span class="operator">&gt;</span> <span class="number">50</span>;</span><br></pre></td></tr></table></figure><hr><h3 id="分步解析"><a href="#分步解析" class="headerlink" title="分步解析"></a>分步解析</h3><h3 id="1-取得關鍵資訊"><a href="#1-取得關鍵資訊" class="headerlink" title="1. 取得關鍵資訊"></a>1. 取得關鍵資訊</h3><ul><li><strong>TableName</strong>：利用 <code>OBJECT_NAME(ic.object_id)</code> 將物件 ID 轉換成易讀的資料表名稱。</li><li><strong>IdentityColumn</strong>：藉由 <code>ic.name</code> 直接取得 Identity 欄位的名稱，讓你一眼就知道是哪個欄位在運作。</li><li><strong>CurrentValue</strong>：<code>ic.last_value</code> 代表目前該 Identity 欄位最後使用的數值，也就是下次插入資料時所會用到的數字。</li></ul><h3 id="2-計算型態的極限值"><a href="#2-計算型態的極限值" class="headerlink" title="2. 計算型態的極限值"></a>2. 計算型態的極限值</h3><p>這裡我們運用 <code>CASE</code> 語句，根據不同的數值型態，給出各自的最大可能值：</p><ul><li><strong>tinyint</strong>：最大值為 255。</li><li><strong>smallint</strong>：最大值為 32767。</li><li><strong>int</strong>：最大值為 2147483647。</li><li><strong>bigint</strong>：最大值為 9223372036854775807。</li><li>若欄位型態非上述數值型態，則回傳「非數值型態」。</li></ul><p>這個邏輯能夠快速算出每個 Identity 欄位還有多少數值空間，幫助我們在系統接近極限前做好預防措施。</p><h3 id="3-連結系統檢視表"><a href="#3-連結系統檢視表" class="headerlink" title="3. 連結系統檢視表"></a>3. 連結系統檢視表</h3><ul><li><strong>sys.identity_columns</strong>：此系統檢視表保存了所有具有 Identity 屬性的欄位資訊。</li><li><strong>sys.columns</strong> 與 <strong>sys.types</strong>：分別提供欄位的詳細資料與型態資訊，讓我們能根據資料型態正確計算出極限值。</li></ul><h3 id="4-篩選條件"><a href="#4-篩選條件" class="headerlink" title="4. 篩選條件"></a>4. 篩選條件</h3><ul><li><code>WHERE ic.last_value &gt; 50</code>：這個篩選條件只針對目前數值大於 50 的 Identity 欄位進行查詢，數值可以依照實際情況調整，讓你只聚焦在可能接近極限的那些資料表上。</li></ul><hr><h3 id="實際應用場景"><a href="#實際應用場景" class="headerlink" title="實際應用場景"></a>實際應用場景</h3><p>在大型應用系統中，許多專案會採用 Identity 欄位來作為主要的主鍵生成機制。隨著資料量不斷累加，Identity 欄位的數值也會逐漸逼近其資料型態所能表示的極限值。當這個狀況發生時，若沒有提前預防，就可能造成數值溢出。此時，你可以利用這支查詢快速掌握哪些資料表已經快到臨界點，並採取必要的措施（例如改變欄位型態或重設序列），確保系統的穩定與安全。</p><hr><h3 id="總結"><a href="#總結" class="headerlink" title="總結"></a>總結</h3><p>這支查詢範例不僅展示了如何運用 MSSQL 的系統檢視表來取得 Identity 欄位的現況，還結合了資料型態的知識來推算每個欄位的最大極限值。對資料庫管理員和開發團隊來說，這都是一個極具參考價值的工具，可以在系統運行過程中及早預防潛在問題。希望透過這篇文章，大家能在日常的資料庫管理中多一份安心！</p><hr>]]></content>
+      
+      
+      <categories>
+          
+          <category> 資料庫(MSSQL) </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> MSSQL </tag>
+            
+            <tag> DB </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>資料表重新建立及資料遷移 SOP</title>
       <link href="/2025/02/24/%E8%B3%87%E6%96%99%E8%A1%A8%E9%87%8D%E6%96%B0%E5%BB%BA%E7%AB%8B%E5%8F%8A%E8%B3%87%E6%96%99%E9%81%B7%E7%A7%BB-SOP/"/>
       <url>/2025/02/24/%E8%B3%87%E6%96%99%E8%A1%A8%E9%87%8D%E6%96%B0%E5%BB%BA%E7%AB%8B%E5%8F%8A%E8%B3%87%E6%96%99%E9%81%B7%E7%A7%BB-SOP/</url>
