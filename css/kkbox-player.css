@@ -1,54 +1,57 @@
-#kkbox-player-bar {
+#kkbox-player-panel {
   position: fixed;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  height: 80px;
-  background: #1a1a2e;
+  right: 0;
+  bottom: 80px;
+  width: 300px;
+  height: 600px;
   z-index: 9999;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.3);
   transition: transform 0.3s ease;
+  border-radius: 12px 0 0 12px;
+  overflow: hidden;
+  box-shadow: -2px 0 15px rgba(0, 0, 0, 0.25);
 }
 
-#kkbox-player-bar.hidden {
-  transform: translateY(100%);
+#kkbox-player-panel.hidden {
+  transform: translateX(100%);
 }
 
-#kkbox-player-bar iframe {
+#kkbox-player-panel iframe {
   width: 100%;
-  max-width: 800px;
-  height: 80px;
+  height: 100%;
   border: none;
 }
 
 #kkbox-toggle-btn {
   position: fixed;
-  bottom: 85px;
-  right: 15px;
+  right: 0;
+  bottom: 40px;
   z-index: 10000;
   width: 36px;
   height: 36px;
-  border-radius: 50%;
+  border-radius: 8px 0 0 8px;
   background: #1a1a2e;
   color: #fff;
   border: none;
   cursor: pointer;
-  font-size: 18px;
+  font-size: 16px;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-  transition: bottom 0.3s ease;
+  box-shadow: -2px 2px 8px rgba(0, 0, 0, 0.3);
+  transition: right 0.3s ease;
 }
 
-#kkbox-toggle-btn.player-hidden {
-  bottom: 15px;
+#kkbox-toggle-btn.player-visible {
+  right: 300px;
 }
 
-/* Prevent page content from being covered by the player bar */
-body {
-  padding-bottom: 80px;
+@media screen and (max-width: 768px) {
+  #kkbox-player-panel {
+    width: 260px;
+    height: 500px;
+    bottom: 60px;
+  }
+  #kkbox-toggle-btn.player-visible {
+    right: 260px;
+  }
 }
