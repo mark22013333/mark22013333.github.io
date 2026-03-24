@@ -1,0 +1,28 @@
+/* Minimal Pizza Custom Cursor */
+body,
+html {
+  cursor: url('/img/cursor-default.png') 4 4, auto;
+}
+
+a,
+button,
+[role="button"],
+input[type="submit"],
+input[type="button"],
+.card-post-link,
+summary,
+select,
+label[for],
+[onclick] {
+  cursor: url('/img/cursor-pointer.png') 2 2, pointer;
+}
+
+textarea,
+input[type="text"],
+input[type="search"],
+input[type="email"],
+input[type="password"],
+input[type="url"],
+[contenteditable="true"] {
+  cursor: url('/img/cursor-default.png') 4 4, text;
+}
