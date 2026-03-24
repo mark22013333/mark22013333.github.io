@@ -4,6 +4,33 @@
   
     
     <entry>
+      <title>npx vs npm 差異與 MCP Server 自動更新機制</title>
+      <link href="/2026/03/24/npx-vs-npm-%E5%B7%AE%E7%95%B0%E8%88%87-MCP-Server-%E8%87%AA%E5%8B%95%E6%9B%B4%E6%96%B0%E6%A9%9F%E5%88%B6/"/>
+      <url>/2026/03/24/npx-vs-npm-%E5%B7%AE%E7%95%B0%E8%88%87-MCP-Server-%E8%87%AA%E5%8B%95%E6%9B%B4%E6%96%B0%E6%A9%9F%E5%88%B6/</url>
+      
+        <content type="html"><![CDATA[<p>最近在設定 Claude Code 的 <code>/plan-verify</code> 功能時，用到了 Google 官方出的 <code>chrome-devtools-mcp</code> 這個 MCP Server。安裝指令裡用的是 <code>npx</code> 而不是 <code>npm install</code>，一開始我還沒特別在意，但後來仔細研究才發現，這兩者的行為差異其實直接影響到版本更新策略。這邊把我整理的筆記記錄一下。</p><h2 id="npm-install-vs-npx-到底差在哪？"><a href="#npm-install-vs-npx-到底差在哪？" class="headerlink" title="npm install vs npx 到底差在哪？"></a>npm install vs npx 到底差在哪？</h2><p>說實話，剛開始學 Node.js 的時候，我也搞不太清楚 <code>npx</code> 跟 <code>npm</code> 的差別，總覺得都是裝套件用的。但其實它們的設計理念完全不同。</p><p>簡單來說，<strong>npm install</strong> 會把套件下載到 <code>node_modules/</code> 資料夾裡，持久保存在本地。而 <strong>npx</strong> 的概念則是「臨時下載、執行完就可以不管了」。</p><p>幾個關鍵差異整理一下：</p><ul><li><strong>版本解析時機</strong>：<code>npm install</code> 安裝時解析一次版本就固定了；<code>npx</code> 加上 <code>@latest</code> 的話，<strong>每次執行都會重新解析</strong>，自動抓最新版</li><li><strong>磁碟空間</strong>：<code>npm</code> 裝了就佔空間；<code>npx</code> 用完可能會被快取策略清掉</li><li><strong>啟動速度</strong>：<code>npm</code> 因為已經在本地了所以快；<code>npx</code> 首次會稍慢一點（要下載），不過後續有快取就還好</li></ul><h2 id="MCP-Server-的啟動與更新機制"><a href="#MCP-Server-的啟動與更新機制" class="headerlink" title="MCP Server 的啟動與更新機制"></a>MCP Server 的啟動與更新機制</h2><p>安裝指令長這樣：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">claude mcp add chrome-devtools --scope user -- npx chrome-devtools-mcp@latest --autoConnect</span><br></pre></td></tr></table></figure><p>重點是那個 <code>npx chrome-devtools-mcp@latest</code> 的部分。那到底 MCP Server 什麼時候會啟動、什麼時候會去下載更新呢？</p><h3 id="啟動流程"><a href="#啟動流程" class="headerlink" title="啟動流程"></a>啟動流程</h3><p>整個流程大概是這樣：</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">Claude Code 啟動</span><br><span class="line">  -&gt; 讀取 MCP 設定</span><br><span class="line">  -&gt; 執行 npx chrome-devtools-mcp@latest --autoConnect</span><br><span class="line">  -&gt; npx 檢查本地快取</span><br><span class="line">     -&gt; 快取有且未過期 -&gt; 直接用快取（不下載）</span><br><span class="line">     -&gt; 快取過期或沒有 -&gt; 下載最新版</span><br><span class="line">  -&gt; MCP Server 啟動，常駐到 Claude Code 關閉</span><br></pre></td></tr></table></figure><h3 id="什麼時候會觸發下載？"><a href="#什麼時候會觸發下載？" class="headerlink" title="什麼時候會觸發下載？"></a>什麼時候會觸發下載？</h3><p>這邊我特別整理了一下，因為一開始自己也搞混過：</p><ul><li><strong>同一個 Claude Code session 內多次使用 MCP 工具</strong>：<strong>不會</strong>下載，MCP Server 啟動後就常駐了</li><li><strong>重啟 Claude Code</strong>：npx 會檢查快取，<strong>通常不會</strong>下載（快取還在的話）</li><li><strong>快取被清理或有新版本釋出</strong>：這時候<strong>才會</strong>下載一次</li></ul><h3 id="幾個重要結論"><a href="#幾個重要結論" class="headerlink" title="幾個重要結論"></a>幾個重要結論</h3><p>搞了一陣子之後，我歸納出幾個重點：</p><ol><li>MCP Server 是 Claude Code <strong>啟動時</strong>就跑起來的背景程序，不是每次呼叫工具才啟動</li><li>像 <code>/plan-verify</code> 這種指令只是呼叫已經在跑的 MCP Server 提供的工具，<strong>不涉及下載</strong></li><li><code>@latest</code> 的好處是自動更新，<strong>不需要</strong>另外手動處理版本更新</li><li><code>chrome-devtools-mcp</code> 跟其他 plugin（例如 feature-workflow）是<strong>各自獨立</strong>的，更新互不影響</li></ol><h2 id="為什麼選-npx-而不是-npm-install？"><a href="#為什麼選-npx-而不是-npm-install？" class="headerlink" title="為什麼選 npx 而不是 npm install？"></a>為什麼選 npx 而不是 npm install？</h2><p>其實想清楚之後原因蠻明確的：</p><ol><li><strong>自動更新</strong> — 加上 <code>@latest</code> 就能在每次啟動時解析最新版，完全不用手動維護</li><li><strong>不污染全域環境</strong> — 不會在使用者的 <code>node_modules</code> 裡面留下一堆檔案</li><li><strong>MCP 社群慣例</strong> — Claude Code 官方文件跟社群的 MCP Server 幾乎都是用 npx 安裝，照著慣例走比較不會踩坑</li></ol><h2 id="常用相關指令"><a href="#常用相關指令" class="headerlink" title="常用相關指令"></a>常用相關指令</h2><p>最後附上幾個我常用的指令，方便之後查：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 安裝 chrome-devtools-mcp</span></span><br><span class="line">claude mcp add chrome-devtools --scope user -- npx chrome-devtools-mcp@latest --autoConnect</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看已安裝的 MCP</span></span><br><span class="line">claude mcp list</span><br><span class="line"></span><br><span class="line"><span class="comment"># 移除</span></span><br><span class="line">claude mcp remove chrome-devtools</span><br></pre></td></tr></table></figure><blockquote><p>小提醒：如果發現 MCP Server 行為怪怪的，可以先試著重啟 Claude Code，讓 npx 重新抓一次最新版，通常就能解決了。</p></blockquote>]]></content>
+      
+      
+      <categories>
+          
+          <category> Claude Code </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> configuration </tag>
+            
+            <tag> best-practice </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>🔁 解決 Java 中的 ABA 問題 — 使用 AtomicStampedReference</title>
       <link href="/2025/05/01/%F0%9F%94%81-%E8%A7%A3%E6%B1%BA-Java-%E4%B8%AD%E7%9A%84-ABA-%E5%95%8F%E9%A1%8C-%E2%80%94-%E4%BD%BF%E7%94%A8-AtomicStampedReference/"/>
       <url>/2025/05/01/%F0%9F%94%81-%E8%A7%A3%E6%B1%BA-Java-%E4%B8%AD%E7%9A%84-ABA-%E5%95%8F%E9%A1%8C-%E2%80%94-%E4%BD%BF%E7%94%A8-AtomicStampedReference/</url>
