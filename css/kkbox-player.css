@@ -1,57 +1,20 @@
-#kkbox-player-panel {
-  position: fixed;
-  right: 0;
-  bottom: 80px;
-  width: 300px;
-  height: 600px;
-  z-index: 9999;
-  transition: transform 0.3s ease;
-  border-radius: 12px 0 0 12px;
+/* KKBOX Sidebar Widget */
+.card-kkbox {
+  padding: 0;
   overflow: hidden;
-  box-shadow: -2px 0 15px rgba(0, 0, 0, 0.25);
 }
 
-#kkbox-player-panel.hidden {
-  transform: translateX(100%);
+.card-kkbox .item-headline {
+  padding: 1rem 1rem 0.5rem;
 }
 
-#kkbox-player-panel iframe {
+.card-kkbox .item-headline i {
+  margin-right: 0.3rem;
+}
+
+.card-kkbox iframe {
   width: 100%;
-  height: 100%;
+  height: 450px;
   border: none;
-}
-
-#kkbox-toggle-btn {
-  position: fixed;
-  right: 0;
-  bottom: 40px;
-  z-index: 10000;
-  width: 36px;
-  height: 36px;
-  border-radius: 8px 0 0 8px;
-  background: #1a1a2e;
-  color: #fff;
-  border: none;
-  cursor: pointer;
-  font-size: 16px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: -2px 2px 8px rgba(0, 0, 0, 0.3);
-  transition: right 0.3s ease;
-}
-
-#kkbox-toggle-btn.player-visible {
-  right: 300px;
-}
-
-@media screen and (max-width: 768px) {
-  #kkbox-player-panel {
-    width: 260px;
-    height: 500px;
-    bottom: 60px;
-  }
-  #kkbox-toggle-btn.player-visible {
-    right: 260px;
-  }
+  display: block;
 }

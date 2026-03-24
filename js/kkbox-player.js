@@ -1,24 +1,19 @@
 document.addEventListener('DOMContentLoaded', function () {
-  // Create player panel (right side)
-  var panel = document.createElement('div');
-  panel.id = 'kkbox-player-panel';
-  panel.classList.add('hidden');
-  panel.innerHTML = '<iframe src="https://widget.kkbox.com/v1/?id=0kI_2N-Uzou3DVmdC1&type=playlist&terr=tw&lang=tc" frameborder="0" scrolling="no"></iframe>';
+  var aside = document.getElementById('aside-content');
+  if (!aside) return;
 
-  // Create toggle button
-  var toggleBtn = document.createElement('button');
-  toggleBtn.id = 'kkbox-toggle-btn';
-  toggleBtn.innerHTML = '&#9835;';
-  toggleBtn.title = '播放音樂';
+  // Create KKBOX card widget
+  var card = document.createElement('div');
+  card.className = 'card-widget card-kkbox';
+  card.innerHTML =
+    '<div class="item-headline"><i class="fas fa-music"></i><span>Music</span></div>' +
+    '<iframe src="https://widget.kkbox.com/v1/?id=0kI_2N-Uzou3DVmdC1&type=playlist&terr=tw&lang=tc" frameborder="0" scrolling="no"></iframe>';
 
-  document.body.appendChild(panel);
-  document.body.appendChild(toggleBtn);
-
-  // Toggle player visibility (default hidden)
-  toggleBtn.addEventListener('click', function () {
-    var isHidden = panel.classList.toggle('hidden');
-    toggleBtn.classList.toggle('player-visible', !isHidden);
-    toggleBtn.innerHTML = isHidden ? '&#9835;' : '&#10005;';
-    toggleBtn.title = isHidden ? '播放音樂' : '關閉播放器';
-  });
+  // Insert after card_announcement (second card)
+  var cards = aside.querySelectorAll('.card-widget');
+  if (cards.length >= 2) {
+    cards[1].insertAdjacentElement('afterend', card);
+  } else {
+    aside.appendChild(card);
+  }
 });
