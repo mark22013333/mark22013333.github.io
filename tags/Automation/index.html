@@ -1,0 +1,311 @@
+<!DOCTYPE html><html lang="zh-TW" data-theme="dark"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>標籤: Automation | Cheng's Tech &amp; Life</title><meta name="author" content="Cheng®"><meta name="copyright" content="Cheng®"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#0d0d0d"><meta name="description" content="持續精進，樂在分享">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Cheng&#39;s Tech &amp; Life">
+<meta property="og:url" content="https://mark22013333.github.io/tags/Automation/index.html">
+<meta property="og:site_name" content="Cheng&#39;s Tech &amp; Life">
+<meta property="og:description" content="持續精進，樂在分享">
+<meta property="og:locale" content="zh_TW">
+<meta property="og:image" content="https://lh3.googleusercontent.com/pw/ABLVV87_po8nBc6F_tXcoYDmtzMGWxHuhhrbguYILCjmjWKLOS8DTpubm0YoQLKgjyjRIZyV5TjYe7XVEz_YU4squfr37GTZqPZP1hlMVZ_MIgXpTxWu73M=w1200">
+<meta property="article:author" content="Cheng®">
+<meta property="article:tag" content="Blog Code Life Note Java Spring Hibernate JPA JavaScript HTML CSS MSSQL DB">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://lh3.googleusercontent.com/pw/ABLVV87_po8nBc6F_tXcoYDmtzMGWxHuhhrbguYILCjmjWKLOS8DTpubm0YoQLKgjyjRIZyV5TjYe7XVEz_YU4squfr37GTZqPZP1hlMVZ_MIgXpTxWu73M=w1200"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://mark22013333.github.io/tags/Automation/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//fonts.googleapis.com" crossorigin=""/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!true && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          const hour = new Date().getHours()
+          const isNight = hour <= 9 || hour >= 18
+          if (theme === undefined) isNight ? activateDarkMode() : activateLightMode()
+          else theme === 'light' ? activateLightMode() : activateDarkMode()
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Titillium+Web&amp;display=swap" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"languages":{"hits_empty":"找不到符合您查詢的內容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '複製成功',
+    error: '複製失敗',
+    noSupport: '瀏覽器不支援'
+  },
+  relativeDate: {
+    homepage: false,
+    post: true
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '剛剛',
+    min: '分鐘前',
+    hour: '小時前',
+    day: '天前',
+    month: '個月前'
+  },
+  copyright: {"limitCount":1,"languages":{"author":"作者: Cheng®","link":"連結: ","source":"來源: Cheng's Tech & Life","info":"著作權歸作者所有。如需商業轉載，請聯絡作者獲得授權，非商業轉載請註明出處😁。"}},
+  lightbox: 'fancybox',
+  Snackbar: {"chs_to_cht":"已切換為繁體中文","cht_to_chs":"已切換為簡體中文","day_to_night":"已切換為深色模式","night_to_day":"已切換為淺色模式","bgLight":"#49b1f5","bgDark":"#1f1f1f","position":"top-center"},
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid/dist/infinitegrid.min.js',
+    buttonText: '載入更多'
+  },
+  isPhotoFigcaption: true,
+  islazyloadPlugin: false,
+  isAnchor: true,
+  percent: {
+    toc: true,
+    rightside: true,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '標籤: Automation',
+  isHighlightShrink: false,
+  isToc: false,
+  pageType: 'tag'
+}</script><link rel="stylesheet" href="/css/kkbox-player.css"><link rel="stylesheet" href="/css/font-resize.css"><link rel="stylesheet" href="/css/dark-palette.css"><meta name="generator" content="Hexo 7.0.0"></head><body><div id="loading-box"><div class="loading-left-bg"></div><div class="loading-right-bg"></div><div class="spinner-box"><div class="configure-border-1"><div class="configure-core"></div></div><div class="configure-border-2"><div class="configure-core"></div></div><div class="loading-word">載入中...</div></div></div><script>(()=>{
+  const $loadingBox = document.getElementById('loading-box')
+  const $body = document.body
+  const preloader = {
+    endLoading: () => {
+      $body.style.overflow = ''
+      $loadingBox.classList.add('loaded')
+    },
+    initLoading: () => {
+      $body.style.overflow = 'hidden'
+      $loadingBox.classList.remove('loaded')
+    }
+  }
+
+  preloader.initLoading()
+  window.addEventListener('load', preloader.endLoading)
+
+  if (true) {
+    btf.addGlobalFn('pjaxSend', preloader.initLoading, 'preloader_init')
+    btf.addGlobalFn('pjaxComplete', preloader.endLoading, 'preloader_end')
+  }
+})()</script><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="https://lh3.googleusercontent.com/pw/ABLVV87_po8nBc6F_tXcoYDmtzMGWxHuhhrbguYILCjmjWKLOS8DTpubm0YoQLKgjyjRIZyV5TjYe7XVEz_YU4squfr37GTZqPZP1hlMVZ_MIgXpTxWu73M=w1200" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">27</div></a><a href="/tags/"><div class="headline">標籤</div><div class="length-num">39</div></a><a href="/categories/"><div class="headline">分類</div><div class="length-num">6</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首頁-Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 時間軸-archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 標籤-tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分類-Categories</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-list"></i><span> 其他列表</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音樂-Music</span></a></li><li><a class="site-page child" href="/gallery/"><i class="fa-fw fas fa-images"></i><span> 畫館-Gallery</span></a></li></ul></div></div></div></div><div class="page" id="body-wrap"><header class="not-home-page fixed" id="page-header" style="background-image: url(https://lh3.googleusercontent.com/pw/ABLVV853NQFWL4WeSSrWk5muVHD0zrcrFPpWIUUavM_Whrk2S6MxmPC6IZTRkUrg4ibCJsO0mFugBuJvMdwQu5_kpa9M08ZXqLsNmJa62GuQJ1zVZrXrMBg=w2400);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><img class="site-icon" src="https://lh3.googleusercontent.com/pw/ABLVV87_po8nBc6F_tXcoYDmtzMGWxHuhhrbguYILCjmjWKLOS8DTpubm0YoQLKgjyjRIZyV5TjYe7XVEz_YU4squfr37GTZqPZP1hlMVZ_MIgXpTxWu73M=w1200" alt="Logo"><span class="site-name">Cheng's Tech &amp; Life</span></a></span><div id="menus"><div id="search-button"><span class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜尋</span></span></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首頁-Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 時間軸-archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 標籤-tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分類-Categories</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-list"></i><span> 其他列表</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音樂-Music</span></a></li><li><a class="site-page child" href="/gallery/"><i class="fa-fw fas fa-images"></i><span> 畫館-Gallery</span></a></li></ul></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="page-site-info"><h1 id="site-title">Automation</h1></div></header><main class="layout" id="content-inner"><div id="tag"><div class="article-sort-title">標籤 - Automation</div><div class="article-sort"><div class="article-sort-item year">2026</div><div class="article-sort-item"><a class="article-sort-item-img" href="/2026/03/26/Claude-Code-Auto-Mode-%E8%AE%93-AI-%E8%87%AA%E5%B7%B1%E6%B1%BA%E5%AE%9A%E8%A9%B2%E4%B8%8D%E8%A9%B2%E5%9F%B7%E8%A1%8C%E6%8C%87%E4%BB%A4/" title="Claude Code Auto Mode — 讓 AI 自己決定該不該執行指令"><img src="/img/20260326-03.webp" alt="Claude Code Auto Mode — 讓 AI 自己決定該不該執行指令" onerror="this.onerror=null;this.src='/img/404.jpg'"></a><div class="article-sort-item-info"><div class="article-sort-item-time"><i class="far fa-calendar-alt"></i><time class="post-meta-date-created" datetime="2026-03-26T07:00:00.000Z" title="發表於 2026-03-26 15:00:00">2026-03-26</time></div><a class="article-sort-item-title" href="/2026/03/26/Claude-Code-Auto-Mode-%E8%AE%93-AI-%E8%87%AA%E5%B7%B1%E6%B1%BA%E5%AE%9A%E8%A9%B2%E4%B8%8D%E8%A9%B2%E5%9F%B7%E8%A1%8C%E6%8C%87%E4%BB%A4/" title="Claude Code Auto Mode — 讓 AI 自己決定該不該執行指令">Claude Code Auto Mode — 讓 AI 自己決定該不該執行指令</a></div></div><div class="article-sort-item"><a class="article-sort-item-img" href="/2026/03/25/%E7%94%A8-Claude-Code-%E6%8A%8A%E5%BD%B1%E7%89%87%E8%AE%8A%E7%B0%A1%E5%A0%B1-mlx-whisper-%E8%BD%89%E9%8C%84-%E5%A4%9A%E6%A8%A1%E6%85%8B%E8%AE%80%E5%9C%96%E5%AF%A6%E6%88%B0/" title="用 Claude Code 把影片變簡報 — mlx-whisper 轉錄 + 多模態讀圖實戰"><img src="/img/20260325-01.webp" alt="用 Claude Code 把影片變簡報 — mlx-whisper 轉錄 + 多模態讀圖實戰" onerror="this.onerror=null;this.src='/img/404.jpg'"></a><div class="article-sort-item-info"><div class="article-sort-item-time"><i class="far fa-calendar-alt"></i><time class="post-meta-date-created" datetime="2026-03-25T00:30:00.000Z" title="發表於 2026-03-25 08:30:00">2026-03-25</time></div><a class="article-sort-item-title" href="/2026/03/25/%E7%94%A8-Claude-Code-%E6%8A%8A%E5%BD%B1%E7%89%87%E8%AE%8A%E7%B0%A1%E5%A0%B1-mlx-whisper-%E8%BD%89%E9%8C%84-%E5%A4%9A%E6%A8%A1%E6%85%8B%E8%AE%80%E5%9C%96%E5%AF%A6%E6%88%B0/" title="用 Claude Code 把影片變簡報 — mlx-whisper 轉錄 + 多模態讀圖實戰">用 Claude Code 把影片變簡報 — mlx-whisper 轉錄 + 多模態讀圖實戰</a></div></div><div class="article-sort-item"><a class="article-sort-item-img" href="/2026/03/24/Claude-Code-Hooks-%E5%AE%8C%E6%95%B4%E6%8C%87%E5%8D%97-%E8%AE%93-AI-%E8%87%AA%E5%8B%95%E5%8C%96%E4%B8%8D%E5%86%8D%E9%9D%A0%E9%81%8B%E6%B0%A3/" title="Claude Code Hooks 完整指南 — 讓 AI 自動化不再靠運氣"><img src="/img/20260324-06.webp" alt="Claude Code Hooks 完整指南 — 讓 AI 自動化不再靠運氣" onerror="this.onerror=null;this.src='/img/404.jpg'"></a><div class="article-sort-item-info"><div class="article-sort-item-time"><i class="far fa-calendar-alt"></i><time class="post-meta-date-created" datetime="2026-03-24T12:00:00.000Z" title="發表於 2026-03-24 20:00:00">2026-03-24</time></div><a class="article-sort-item-title" href="/2026/03/24/Claude-Code-Hooks-%E5%AE%8C%E6%95%B4%E6%8C%87%E5%8D%97-%E8%AE%93-AI-%E8%87%AA%E5%8B%95%E5%8C%96%E4%B8%8D%E5%86%8D%E9%9D%A0%E9%81%8B%E6%B0%A3/" title="Claude Code Hooks 完整指南 — 讓 AI 自動化不再靠運氣">Claude Code Hooks 完整指南 — 讓 AI 自動化不再靠運氣</a></div></div></div><nav id="pagination"><div class="pagination"><span class="page-number current">1</span></div></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="https://lh3.googleusercontent.com/pw/ABLVV87_po8nBc6F_tXcoYDmtzMGWxHuhhrbguYILCjmjWKLOS8DTpubm0YoQLKgjyjRIZyV5TjYe7XVEz_YU4squfr37GTZqPZP1hlMVZ_MIgXpTxWu73M=w1200" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">Cheng®</div><div class="author-info-description">Backend Developer / 技術筆記 & AI 新聞分享</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">27</div></a><a href="/tags/"><div class="headline">標籤</div><div class="length-num">39</div></a><a href="/categories/"><div class="headline">分類</div><div class="length-num">6</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/mark22013333"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons"><a class="social-icon" href="https://github.com/mark22013333" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:mark22013333@gmail.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a></div><div class="card-info-sponsor"><a class="sponsor-glow-btn" href="https://www.buymeacoffee.com/mark22013333" target="_blank" rel="noopener noreferrer" title="Buy Me A Coffee"><img src="https://img.shields.io/badge/Buy_Me_A_Coffee-FFDD00?style=for-the-badge&amp;logo=buy-me-a-coffee&amp;logoColor=black" alt="Buy Me A Coffee"/></a><a class="sponsor-glow-btn" href="https://p.ecpay.com.tw/EFC3F8F" target="_blank" rel="noopener noreferrer" title="綠界贊助"><img src="https://img.shields.io/badge/☕_%E8%AB%8B%E6%88%91%E5%96%9D%E6%9D%AF%E5%92%96%E5%95%A1-Donate-11998e?style=for-the-badge&amp;logo=coffee&amp;logoColor=white" alt="綠界贊助"/></a><a class="sponsor-glow-btn" href="https://calendly.com/markcheng00806-intumit/15min" target="_blank" rel="noopener noreferrer" title="預約時間"><img src="https://img.shields.io/badge/📅_%E9%A0%90%E7%B4%84_15_%E5%88%86%E9%90%98-Book_Time-0072ff?style=for-the-badge" alt="預約時間"/></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">這裡記錄我在後端開發路上踩過的坑、學到的東西，也會分享每日 AI 與科技新聞觀點。歡迎一起交流！</div></div><div class="sticky_layout"><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2026/03/26/Claude-Code-Auto-Mode-%E8%AE%93-AI-%E8%87%AA%E5%B7%B1%E6%B1%BA%E5%AE%9A%E8%A9%B2%E4%B8%8D%E8%A9%B2%E5%9F%B7%E8%A1%8C%E6%8C%87%E4%BB%A4/" title="Claude Code Auto Mode — 讓 AI 自己決定該不該執行指令"><img src="/img/20260326-03.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Claude Code Auto Mode — 讓 AI 自己決定該不該執行指令"/></a><div class="content"><a class="title" href="/2026/03/26/Claude-Code-Auto-Mode-%E8%AE%93-AI-%E8%87%AA%E5%B7%B1%E6%B1%BA%E5%AE%9A%E8%A9%B2%E4%B8%8D%E8%A9%B2%E5%9F%B7%E8%A1%8C%E6%8C%87%E4%BB%A4/" title="Claude Code Auto Mode — 讓 AI 自己決定該不該執行指令">Claude Code Auto Mode — 讓 AI 自己決定該不該執行指令</a><time datetime="2026-03-26T07:00:00.000Z" title="發表於 2026-03-26 15:00:00">2026-03-26</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/03/26/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260326/" title="AI 與科技新聞摘要 — 2026/03/26"><img src="/img/20260326-02.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="AI 與科技新聞摘要 — 2026/03/26"/></a><div class="content"><a class="title" href="/2026/03/26/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260326/" title="AI 與科技新聞摘要 — 2026/03/26">AI 與科技新聞摘要 — 2026/03/26</a><time datetime="2026-03-26T04:00:00.000Z" title="發表於 2026-03-26 12:00:00">2026-03-26</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/03/26/Claude-Code-Skill-%E9%96%8B%E7%99%BC%E6%A8%99%E6%BA%96%E8%88%87-Plugin-Marketplace-%E5%AE%8C%E6%95%B4%E6%94%BB%E7%95%A5/" title="Claude Code Skill 開發標準與 Plugin Marketplace 完整攻略"><img src="/img/20260326-01.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Claude Code Skill 開發標準與 Plugin Marketplace 完整攻略"/></a><div class="content"><a class="title" href="/2026/03/26/Claude-Code-Skill-%E9%96%8B%E7%99%BC%E6%A8%99%E6%BA%96%E8%88%87-Plugin-Marketplace-%E5%AE%8C%E6%95%B4%E6%94%BB%E7%95%A5/" title="Claude Code Skill 開發標準與 Plugin Marketplace 完整攻略">Claude Code Skill 開發標準與 Plugin Marketplace 完整攻略</a><time datetime="2026-03-26T01:00:00.000Z" title="發表於 2026-03-26 09:00:00">2026-03-26</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/03/25/Claude-Cowork-%E5%85%A5%E9%96%80%E6%8C%87%E5%8D%97-%E8%AE%93-AI-%E5%9C%A8%E4%BD%A0%E9%9B%BB%E8%85%A6%E4%B8%8A%E8%87%AA%E5%B7%B1%E5%B9%B9%E6%B4%BB/" title="Claude Cowork 入門指南 — 讓 AI 在你電腦上自己幹活"><img src="/img/20260325-03.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Claude Cowork 入門指南 — 讓 AI 在你電腦上自己幹活"/></a><div class="content"><a class="title" href="/2026/03/25/Claude-Cowork-%E5%85%A5%E9%96%80%E6%8C%87%E5%8D%97-%E8%AE%93-AI-%E5%9C%A8%E4%BD%A0%E9%9B%BB%E8%85%A6%E4%B8%8A%E8%87%AA%E5%B7%B1%E5%B9%B9%E6%B4%BB/" title="Claude Cowork 入門指南 — 讓 AI 在你電腦上自己幹活">Claude Cowork 入門指南 — 讓 AI 在你電腦上自己幹活</a><time datetime="2026-03-25T06:00:00.000Z" title="發表於 2026-03-25 14:00:00">2026-03-25</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/03/25/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260325/" title="AI 與科技新聞摘要 — 2026/03/25"><img src="/img/20260325-02.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="AI 與科技新聞摘要 — 2026/03/25"/></a><div class="content"><a class="title" href="/2026/03/25/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260325/" title="AI 與科技新聞摘要 — 2026/03/25">AI 與科技新聞摘要 — 2026/03/25</a><time datetime="2026-03-25T02:00:00.000Z" title="發表於 2026-03-25 10:00:00">2026-03-25</time></div></div></div></div><div class="card-widget card-categories"><div class="item-headline">
+            <i class="fas fa-folder-open"></i>
+            <span>分類</span>
+            
+          </div>
+          <ul class="card-category-list" id="aside-cat-list">
+            <li class="card-category-list-item "><a class="card-category-list-link" href="/categories/AI%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E/"><span class="card-category-list-name">AI與科技新聞</span><span class="card-category-list-count">3</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/Claude-Code/"><span class="card-category-list-name">Claude Code</span><span class="card-category-list-count">9</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/HTML/"><span class="card-category-list-name">HTML</span><span class="card-category-list-count">1</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/Java/"><span class="card-category-list-name">Java</span><span class="card-category-list-count">6</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/%E5%90%8D%E8%A9%9E%E8%A7%A3%E9%87%8B/"><span class="card-category-list-name">名詞解釋</span><span class="card-category-list-count">1</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/%E8%B3%87%E6%96%99%E5%BA%AB-MSSQL/"><span class="card-category-list-name">資料庫(MSSQL)</span><span class="card-category-list-count">4</span></a></li>
+          </ul></div><div class="card-widget card-tags"><div class="item-headline"><i class="fas fa-tags"></i><span>標籤</span></div><div class="card-tag-cloud"><a href="/tags/AI/" style="font-size: 1.33em; color: rgb(114, 58, 50);">AI</a><a href="/tags/LLM/" style="font-size: 1.21em; color: rgb(147, 95, 149);">LLM</a><a href="/tags/Security/" style="font-size: 1.27em; color: rgb(101, 169, 123);">Security</a><a href="/tags/Open-Source/" style="font-size: 1.15em; color: rgb(172, 186, 175);">Open Source</a><a href="/tags/News/" style="font-size: 1.15em; color: rgb(78, 142, 51);">News</a><a href="/tags/Claude/" style="font-size: 1.27em; color: rgb(50, 72, 199);">Claude</a><a href="/tags/OpenAI/" style="font-size: 1.21em; color: rgb(128, 111, 183);">OpenAI</a><a href="/tags/Apple/" style="font-size: 1.15em; color: rgb(70, 50, 54);">Apple</a><a href="/tags/MCP/" style="font-size: 1.21em; color: rgb(145, 50, 156);">MCP</a><a href="/tags/Claude-Code/" style="font-size: 1.45em; color: rgb(77, 50, 162);">Claude Code</a><a href="/tags/Auto-Mode/" style="font-size: 1.15em; color: rgb(152, 70, 139);">Auto Mode</a><a href="/tags/AI-Agent/" style="font-size: 1.21em; color: rgb(60, 173, 50);">AI Agent</a><a href="/tags/Safety/" style="font-size: 1.15em; color: rgb(59, 116, 50);">Safety</a><a href="/tags/Automation/" style="font-size: 1.27em; color: rgb(147, 174, 50);">Automation</a><a href="/tags/Hooks/" style="font-size: 1.21em; color: rgb(50, 137, 197);">Hooks</a><a href="/tags/Developer-Tools/" style="font-size: 1.21em; color: rgb(110, 150, 122);">Developer Tools</a><a href="/tags/Tutorial/" style="font-size: 1.21em; color: rgb(178, 195, 81);">Tutorial</a><a href="/tags/Shell-Script/" style="font-size: 1.15em; color: rgb(81, 50, 137);">Shell Script</a><a href="/tags/Best-Practice/" style="font-size: 1.15em; color: rgb(73, 95, 50);">Best Practice</a><a href="/tags/DB/" style="font-size: 1.39em; color: rgb(103, 50, 74);">DB</a><a href="/tags/best-practice/" style="font-size: 1.21em; color: rgb(163, 151, 50);">best-practice</a><a href="/tags/configuration/" style="font-size: 1.21em; color: rgb(143, 61, 137);">configuration</a><a href="/tags/Remote-Control/" style="font-size: 1.15em; color: rgb(50, 138, 50);">Remote Control</a><a href="/tags/Skill/" style="font-size: 1.15em; color: rgb(150, 50, 138);">Skill</a><a href="/tags/Plugin/" style="font-size: 1.15em; color: rgb(125, 50, 200);">Plugin</a><a href="/tags/Marketplace/" style="font-size: 1.15em; color: rgb(130, 64, 180);">Marketplace</a><a href="/tags/Cowork/" style="font-size: 1.15em; color: rgb(178, 180, 146);">Cowork</a><a href="/tags/Desktop-App/" style="font-size: 1.15em; color: rgb(194, 148, 50);">Desktop App</a><a href="/tags/Docker/" style="font-size: 1.21em; color: rgb(150, 146, 50);">Docker</a><a href="/tags/Web/" style="font-size: 1.15em; color: rgb(52, 51, 98);">Web</a><a href="/tags/Collections/" style="font-size: 1.21em; color: rgb(50, 127, 188);">Collections</a><a href="/tags/Hibernate/" style="font-size: 1.15em; color: rgb(85, 141, 50);">Hibernate</a><a href="/tags/Script/" style="font-size: 1.15em; color: rgb(177, 182, 140);">Script</a><a href="/tags/MultiThread/" style="font-size: 1.27em; color: rgb(117, 141, 84);">MultiThread</a><a href="/tags/%E5%88%86%E6%95%A3%E5%BC%8F-Distributed/" style="font-size: 1.15em; color: rgb(63, 50, 58);">分散式(Distributed)</a><a href="/tags/mlx-whisper/" style="font-size: 1.15em; color: rgb(73, 158, 189);">mlx-whisper</a><a href="/tags/ffmpeg/" style="font-size: 1.15em; color: rgb(50, 95, 74);">ffmpeg</a><a href="/tags/Apple-Silicon/" style="font-size: 1.15em; color: rgb(197, 71, 56);">Apple Silicon</a><a href="/tags/MSSQL/" style="font-size: 1.33em; color: rgb(111, 50, 137);">MSSQL</a></div></div><div class="card-widget card-archives">
+    <div class="item-headline">
+      <i class="fas fa-archive"></i>
+      <span>歸檔</span>
+      <a class="card-more-btn" href="/archives/"
+            title="檢視更多">
+            <i class="fas fa-angle-right"></i>
+          </a>
+    </div>
+  
+    <ul class="card-archive-list">
+      
+        <li class="card-archive-list-item">
+          <a class="card-archive-list-link" href="/archives/2026/03/">
+            <span class="card-archive-list-date">
+              三月 2026
+            </span>
+            <span class="card-archive-list-count">12</span>
+          </a>
+        </li>
+      
+        <li class="card-archive-list-item">
+          <a class="card-archive-list-link" href="/archives/2025/05/">
+            <span class="card-archive-list-date">
+              五月 2025
+            </span>
+            <span class="card-archive-list-count">2</span>
+          </a>
+        </li>
+      
+        <li class="card-archive-list-item">
+          <a class="card-archive-list-link" href="/archives/2025/03/">
+            <span class="card-archive-list-date">
+              三月 2025
+            </span>
+            <span class="card-archive-list-count">1</span>
+          </a>
+        </li>
+      
+        <li class="card-archive-list-item">
+          <a class="card-archive-list-link" href="/archives/2025/02/">
+            <span class="card-archive-list-date">
+              二月 2025
+            </span>
+            <span class="card-archive-list-count">4</span>
+          </a>
+        </li>
+      
+        <li class="card-archive-list-item">
+          <a class="card-archive-list-link" href="/archives/2024/09/">
+            <span class="card-archive-list-date">
+              九月 2024
+            </span>
+            <span class="card-archive-list-count">1</span>
+          </a>
+        </li>
+      
+        <li class="card-archive-list-item">
+          <a class="card-archive-list-link" href="/archives/2024/05/">
+            <span class="card-archive-list-date">
+              五月 2024
+            </span>
+            <span class="card-archive-list-count">1</span>
+          </a>
+        </li>
+      
+        <li class="card-archive-list-item">
+          <a class="card-archive-list-link" href="/archives/2024/03/">
+            <span class="card-archive-list-date">
+              三月 2024
+            </span>
+            <span class="card-archive-list-count">2</span>
+          </a>
+        </li>
+      
+        <li class="card-archive-list-item">
+          <a class="card-archive-list-link" href="/archives/2024/02/">
+            <span class="card-archive-list-date">
+              二月 2024
+            </span>
+            <span class="card-archive-list-count">1</span>
+          </a>
+        </li>
+      
+    </ul>
+  </div><div class="card-widget card-webinfo"><div class="item-headline"><i class="fas fa-chart-line"></i><span>網站資訊</span></div><div class="webinfo"><div class="webinfo-item"><div class="item-name">文章數量 :</div><div class="item-count">27</div></div><div class="webinfo-item"><div class="item-name">總字數 :</div><div class="item-count">28.8k</div></div><div class="webinfo-item"><div class="item-name">訪客數 :</div><div class="item-count" id="busuanzi_value_site_uv"><i class="fa-solid fa-spinner fa-spin"></i></div></div><div class="webinfo-item"><div class="item-name">總瀏覽量 :</div><div class="item-count" id="busuanzi_value_site_pv"><i class="fa-solid fa-spinner fa-spin"></i></div></div><div class="webinfo-item"><div class="item-name">最後更新時間 :</div><div class="item-count" id="last-push-date" data-lastPushDate="2026-03-27T02:28:14.348Z"><i class="fa-solid fa-spinner fa-spin"></i></div></div></div></div></div></div></main><footer id="footer" style="background-image: url(https://lh3.googleusercontent.com/pw/ABLVV853NQFWL4WeSSrWk5muVHD0zrcrFPpWIUUavM_Whrk2S6MxmPC6IZTRkUrg4ibCJsO0mFugBuJvMdwQu5_kpa9M08ZXqLsNmJa62GuQJ1zVZrXrMBg=w2400);"><div id="footer-wrap"><div class="copyright">&copy;2024 - 2026 By Cheng®</div><div class="framework-info"><span>全力以赴 </span><a target="_blank" rel="noopener" href="https://hexo.io"> </a><!--span.footer-separator |--><span>保持自律 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly"> </a></div><div class="footer_custom_text">Written by Cheng® — 自律，從當下的一念開始。</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="darkmode" type="button" title="日夜模式切換"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="單欄和雙欄切換"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="設定"><i class="fas fa-cog fa-spin"></i></button><button id="go-up" type="button" title="回到頂端"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.umd.min.js"></script><script src="https://cdn.jsdelivr.net/npm/instant.page/instantpage.min.js" type="module"></script><script src="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.js"></script><div class="js-pjax"></div><script src="/js/kkbox-player.js"></script><script src="/js/font-resize.js"></script><script src="/js/dark-palette.js"></script><script defer="defer" id="fluttering_ribbon" mobile="false" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/canvas-fluttering-ribbon.min.js"></script><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/activate-power-mode.min.js"></script><script>POWERMODE.colorful = true;
+POWERMODE.shake = true;
+POWERMODE.mobile = true;
+document.body.addEventListener('input', POWERMODE);
+</script><script src="https://cdn.jsdelivr.net/npm/pjax/pjax.min.js"></script><script>(() => {
+  const pjaxSelectors = ["head > title","#config-diff","#body-wrap","#rightside-config-hide","#rightside-config-show",".js-pjax"]
+
+  window.pjax = new Pjax({
+    elements: 'a:not([target="_blank"])',
+    selectors: pjaxSelectors,
+    cacheBust: false,
+    analytics: false,
+    scrollRestoration: false
+  })
+
+  const triggerPjaxFn = (val) => {
+    if (!val) return
+    Object.values(val).forEach(fn => fn())
+  }
+
+  document.addEventListener('pjax:send', () => {
+    // removeEventListener
+    btf.removeGlobalFnEvent('pjaxSendOnce')
+    btf.removeGlobalFnEvent('themeChange')
+
+    // reset readmode
+    const $bodyClassList = document.body.classList
+    if ($bodyClassList.contains('read-mode')) $bodyClassList.remove('read-mode')
+
+    triggerPjaxFn(window.globalFn.pjaxSend)
+  })
+
+  document.addEventListener('pjax:complete', () => {
+    btf.removeGlobalFnEvent('pjaxCompleteOnce')
+    document.querySelectorAll('script[data-pjax]').forEach(item => {
+      const newScript = document.createElement('script')
+      const content = item.text || item.textContent || item.innerHTML || ""
+      Array.from(item.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value))
+      newScript.appendChild(document.createTextNode(content))
+      item.parentNode.replaceChild(newScript, item)
+    })
+
+    triggerPjaxFn(window.globalFn.pjaxComplete)
+  })
+
+  document.addEventListener('pjax:error', e => {
+    if (e.request.status === 404) {
+      pjax.loadUrl('/404.html')
+    }
+  })
+})()</script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜尋</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="text-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  資料載入中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜尋文章" type="text"/></div></div><hr/><div id="local-search-results"></div><div id="local-search-stats-wrap"></div></div></div><div id="search-mask"></div><script src="/js/search/local-search.js"></script></div></div></body></html>
