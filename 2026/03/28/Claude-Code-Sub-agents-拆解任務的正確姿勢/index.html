@@ -1,0 +1,301 @@
+<!DOCTYPE html><html lang="zh-TW" data-theme="dark"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>Claude Code Sub-agents — 拆解任務的正確姿勢 | Cheng's Tech &amp; Life</title><meta name="author" content="Cheng®"><meta name="copyright" content="Cheng®"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#0d0d0d"><meta name="description" content="打開 Claude Code 跑了一個大任務，結果它把 context window 塞到快溢出來，回應開始變慢、幻覺變多。你有遇過這種狀況嗎？ Sub-agents 就是為了解決這件事而存在的。  Skills、Commands、Subagents、Plugins 差在哪這四個東西很容易搞混。先講清楚： CLAUDE.md 是 always-on 的背景知識。每次 Claude Code 啟動都">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Claude Code Sub-agents — 拆解任務的正確姿勢">
+<meta property="og:url" content="https://mark22013333.github.io/2026/03/28/Claude-Code-Sub-agents-%E6%8B%86%E8%A7%A3%E4%BB%BB%E5%8B%99%E7%9A%84%E6%AD%A3%E7%A2%BA%E5%A7%BF%E5%8B%A2/index.html">
+<meta property="og:site_name" content="Cheng&#39;s Tech &amp; Life">
+<meta property="og:description" content="打開 Claude Code 跑了一個大任務，結果它把 context window 塞到快溢出來，回應開始變慢、幻覺變多。你有遇過這種狀況嗎？ Sub-agents 就是為了解決這件事而存在的。  Skills、Commands、Subagents、Plugins 差在哪這四個東西很容易搞混。先講清楚： CLAUDE.md 是 always-on 的背景知識。每次 Claude Code 啟動都">
+<meta property="og:locale" content="zh_TW">
+<meta property="og:image" content="https://mark22013333.github.io/img/20260328-03.webp">
+<meta property="article:published_time" content="2026-03-28T00:00:00.000Z">
+<meta property="article:modified_time" content="2026-03-28T11:55:49.859Z">
+<meta property="article:author" content="Cheng®">
+<meta property="article:tag" content="Claude Code">
+<meta property="article:tag" content="Sub-agents">
+<meta property="article:tag" content="Skills">
+<meta property="article:tag" content="Plugins">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://mark22013333.github.io/img/20260328-03.webp"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Claude Code Sub-agents — 拆解任務的正確姿勢",
+  "url": "https://mark22013333.github.io/2026/03/28/Claude-Code-Sub-agents-%E6%8B%86%E8%A7%A3%E4%BB%BB%E5%8B%99%E7%9A%84%E6%AD%A3%E7%A2%BA%E5%A7%BF%E5%8B%A2/",
+  "image": "https://mark22013333.github.io/img/20260328-03.webp",
+  "datePublished": "2026-03-28T00:00:00.000Z",
+  "dateModified": "2026-03-28T11:55:49.859Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "Cheng®",
+      "url": "https://mark22013333.github.io"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://mark22013333.github.io/2026/03/28/Claude-Code-Sub-agents-%E6%8B%86%E8%A7%A3%E4%BB%BB%E5%8B%99%E7%9A%84%E6%AD%A3%E7%A2%BA%E5%A7%BF%E5%8B%A2/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//fonts.googleapis.com" crossorigin=""/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!true && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          const hour = new Date().getHours()
+          const isNight = hour <= 9 || hour >= 18
+          if (theme === undefined) isNight ? activateDarkMode() : activateLightMode()
+          else theme === 'light' ? activateLightMode() : activateDarkMode()
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Titillium+Web&amp;display=swap" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"languages":{"hits_empty":"找不到符合您查詢的內容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '複製成功',
+    error: '複製失敗',
+    noSupport: '瀏覽器不支援'
+  },
+  relativeDate: {
+    homepage: false,
+    post: true
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '剛剛',
+    min: '分鐘前',
+    hour: '小時前',
+    day: '天前',
+    month: '個月前'
+  },
+  copyright: {"limitCount":1,"languages":{"author":"作者: Cheng®","link":"連結: ","source":"來源: Cheng's Tech & Life","info":"著作權歸作者所有。如需商業轉載，請聯絡作者獲得授權，非商業轉載請註明出處😁。"}},
+  lightbox: 'fancybox',
+  Snackbar: {"chs_to_cht":"已切換為繁體中文","cht_to_chs":"已切換為簡體中文","day_to_night":"已切換為深色模式","night_to_day":"已切換為淺色模式","bgLight":"#49b1f5","bgDark":"#1f1f1f","position":"top-center"},
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid/dist/infinitegrid.min.js',
+    buttonText: '載入更多'
+  },
+  isPhotoFigcaption: true,
+  islazyloadPlugin: false,
+  isAnchor: true,
+  percent: {
+    toc: true,
+    rightside: true,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Claude Code Sub-agents — 拆解任務的正確姿勢',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><link rel="stylesheet" href="/css/kkbox-player.css"><link rel="stylesheet" href="/css/font-resize.css"><link rel="stylesheet" href="/css/dark-palette.css"><meta name="generator" content="Hexo 7.0.0"></head><body><div id="loading-box"><div class="loading-left-bg"></div><div class="loading-right-bg"></div><div class="spinner-box"><div class="configure-border-1"><div class="configure-core"></div></div><div class="configure-border-2"><div class="configure-core"></div></div><div class="loading-word">載入中...</div></div></div><script>(()=>{
+  const $loadingBox = document.getElementById('loading-box')
+  const $body = document.body
+  const preloader = {
+    endLoading: () => {
+      $body.style.overflow = ''
+      $loadingBox.classList.add('loaded')
+    },
+    initLoading: () => {
+      $body.style.overflow = 'hidden'
+      $loadingBox.classList.remove('loaded')
+    }
+  }
+
+  preloader.initLoading()
+  window.addEventListener('load', preloader.endLoading)
+
+  if (true) {
+    btf.addGlobalFn('pjaxSend', preloader.initLoading, 'preloader_init')
+    btf.addGlobalFn('pjaxComplete', preloader.endLoading, 'preloader_end')
+  }
+})()</script><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="https://lh3.googleusercontent.com/pw/ABLVV87_po8nBc6F_tXcoYDmtzMGWxHuhhrbguYILCjmjWKLOS8DTpubm0YoQLKgjyjRIZyV5TjYe7XVEz_YU4squfr37GTZqPZP1hlMVZ_MIgXpTxWu73M=w1200" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">33</div></a><a href="/tags/"><div class="headline">標籤</div><div class="length-num">55</div></a><a href="/categories/"><div class="headline">分類</div><div class="length-num">7</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首頁-Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 時間軸-archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 標籤-tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分類-Categories</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-list"></i><span> 其他列表</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音樂-Music</span></a></li><li><a class="site-page child" href="/gallery/"><i class="fa-fw fas fa-images"></i><span> 畫館-Gallery</span></a></li></ul></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg fixed" id="page-header" style="background-image: url(/img/20260328-03.webp);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><img class="site-icon" src="https://lh3.googleusercontent.com/pw/ABLVV87_po8nBc6F_tXcoYDmtzMGWxHuhhrbguYILCjmjWKLOS8DTpubm0YoQLKgjyjRIZyV5TjYe7XVEz_YU4squfr37GTZqPZP1hlMVZ_MIgXpTxWu73M=w1200" alt="Logo"><span class="site-name">Cheng's Tech &amp; Life</span></a><a class="nav-page-title" href="/"><span class="site-name">Claude Code Sub-agents — 拆解任務的正確姿勢</span></a></span><div id="menus"><div id="search-button"><span class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜尋</span></span></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首頁-Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 時間軸-archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 標籤-tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分類-Categories</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-list"></i><span> 其他列表</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音樂-Music</span></a></li><li><a class="site-page child" href="/gallery/"><i class="fa-fw fas fa-images"></i><span> 畫館-Gallery</span></a></li></ul></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">Claude Code Sub-agents — 拆解任務的正確姿勢</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">發表於</span><time class="post-meta-date-created" datetime="2026-03-28T00:00:00.000Z" title="發表於 2026-03-28 08:00:00">2026-03-28</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新於</span><time class="post-meta-date-updated" datetime="2026-03-28T11:55:49.859Z" title="更新於 2026-03-28 19:55:49">2026-03-28</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Claude-Code/">Claude Code</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">總字數:</span><span class="word-count">1.6k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">閱讀時間:</span><span>5分鐘</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">瀏覽量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><p>打開 Claude Code 跑了一個大任務，結果它把 context window 塞到快溢出來，回應開始變慢、幻覺變多。你有遇過這種狀況嗎？</p>
+<p>Sub-agents 就是為了解決這件事而存在的。</p>
+<hr>
+<h2 id="Skills、Commands、Subagents、Plugins-差在哪"><a href="#Skills、Commands、Subagents、Plugins-差在哪" class="headerlink" title="Skills、Commands、Subagents、Plugins 差在哪"></a>Skills、Commands、Subagents、Plugins 差在哪</h2><p>這四個東西很容易搞混。先講清楚：</p>
+<p><strong>CLAUDE.md</strong> 是 always-on 的背景知識。每次 Claude Code 啟動都會載入。適合放專案規範、coding style、常用指令之類的東西。問題是它永遠佔 context，放太多會擠壓你實際工作的空間。</p>
+<p><strong>Skills</strong> 是 on-demand 的上下文。只有在觸發條件符合的時候才載入。每個 Skill 有一個 <code>SKILL.md</code> 檔案，裡面定義了名稱、描述、允許的工具、以及行為指引。跟 CLAUDE.md 的差別在於：不用的時候不佔空間。</p>
+<p><strong>Commands</strong>（斜線指令）是你手動觸發的捷徑。<code>/review</code>、<code>/test</code>、<code>/deploy</code> 這種。執行一段預定義的流程。</p>
+<p><strong>Sub-agents</strong> 是重點。它讓一個 Skill 能啟動獨立的子程序——有自己的 context window、自己的工具權限。做完之後回傳結果，不會污染主程序的 context。</p>
+<p><strong>Plugins</strong> 把 Skills、MCP Server、工具打包成可安裝的套件。用 <code>claude plugin install</code> 裝，用 <code>claude plugin list</code> 查。</p>
+<hr>
+<h2 id="Sub-agents-解決什麼問題"><a href="#Sub-agents-解決什麼問題" class="headerlink" title="Sub-agents 解決什麼問題"></a>Sub-agents 解決什麼問題</h2><p>Claude Code 的 context window 有上限。當你在一個長 session 裡同時做 code review、跑測試、寫文件，context 會被各種中間結果塞滿。模型開始忘記前面說過什麼，回應品質直線下降。</p>
+<p>Sub-agents 的做法是：把任務拆出去。</p>
+<p>主程序說「我需要一個 code review」，然後啟動一個 sub-agent。這個 sub-agent 有乾淨的 context window，只載入 review 相關的 SKILL.md 和目標檔案。做完把結論交回來。主程序拿到結論繼續往下走，不用扛 review 過程中產生的所有中間 context。</p>
+<p>概念上就像作業系統的 fork：子程序有自己的記憶體空間，結束後只把需要的結果傳回父程序。</p>
+<hr>
+<h2 id="怎麼設定-Sub-agent"><a href="#怎麼設定-Sub-agent" class="headerlink" title="怎麼設定 Sub-agent"></a>怎麼設定 Sub-agent</h2><p>在 SKILL.md 的 frontmatter 裡，可以指定這個 Skill 以 sub-agent 模式執行。關鍵設定：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="attr">name:</span> <span class="string">my-review-skill</span></span><br><span class="line"><span class="attr">description:</span> <span class="string">|</span></span><br><span class="line"><span class="string">  Code review with security focus</span></span><br><span class="line"><span class="string"></span><span class="attr">allowed-tools:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">Bash</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">Read</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">Grep</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">Glob</span></span><br><span class="line"><span class="meta">---</span></span><br></pre></td></tr></table></figure>
+
+<p><code>allowed-tools</code> 很重要。你可以限制 sub-agent 只能用特定工具，不讓它亂改檔案或亂跑危險指令。比如一個純 review 的 sub-agent，只給 Read 和 Grep，不給 Edit 和 Bash。</p>
+<p>Sub-agent 執行的時候，主程序的 context 是暫停的。不會互相干擾。做完之後，sub-agent 的完整 context 會被丟掉，只有最終輸出回到主程序。</p>
+<hr>
+<h2 id="實際使用場景"><a href="#實際使用場景" class="headerlink" title="實際使用場景"></a>實際使用場景</h2><h3 id="場景一：大型-PR-Review"><a href="#場景一：大型-PR-Review" class="headerlink" title="場景一：大型 PR Review"></a>場景一：大型 PR Review</h3><p>一個 1,200 行的 PR，如果在主 session 裡直接 review，產生的 context 量很大。拆成 sub-agent：</p>
+<ol>
+<li>主程序分析 PR 結構，識別出哪些檔案有改動</li>
+<li>對每個改動的模組啟動一個 review sub-agent</li>
+<li>每個 sub-agent 只看自己負責的檔案，產出 review 結論</li>
+<li>主程序彙整所有結論，產出最終 review</li>
+</ol>
+<p>context 不會爆，每個 sub-agent 的專注度也更高。</p>
+<h3 id="場景二：平行跑測試和-lint"><a href="#場景二：平行跑測試和-lint" class="headerlink" title="場景二：平行跑測試和 lint"></a>場景二：平行跑測試和 lint</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">主程序</span><br><span class="line">├── Sub-agent A: 跑 unit tests</span><br><span class="line">├── Sub-agent B: 跑 linter</span><br><span class="line">└── Sub-agent C: 檢查 type errors</span><br></pre></td></tr></table></figure>
+
+<p>三個 sub-agent 各自獨立，不會互相污染 context。結果回來之後主程序統一處理。</p>
+<h3 id="場景三：多步驟部署流程"><a href="#場景三：多步驟部署流程" class="headerlink" title="場景三：多步驟部署流程"></a>場景三：多步驟部署流程</h3><p>部署前要做的事通常很多：跑測試、build、推 PR、合併、部署、健康檢查。每一步的 context 需求不同。用 sub-agent 拆開，每一步都在乾淨的環境裡執行。</p>
+<hr>
+<h2 id="跟-gstack-的關係"><a href="#跟-gstack-的關係" class="headerlink" title="跟 gstack 的關係"></a>跟 gstack 的關係</h2><p>如果你看過 gstack（Y Combinator CEO Garry Tan 開源的 AI 工程工作流系統），它的 Sprint 工作流就是大量使用 sub-agent 的實際案例。</p>
+<p><code>/office-hours</code> 啟動一個 sub-agent 扮演 YC 導師、<code>/review</code> 啟動 Staff Engineer、<code>/qa</code> 啟動 QA Lead、<code>/cso</code> 啟動資安長。每個角色都是獨立的 sub-agent，有自己的 context 和工具權限。</p>
+<p>這比在同一個 session 裡切換角色有效率得多。每個 sub-agent 只載入自己需要的知識，不會被其他角色的 context 干擾。</p>
+<hr>
+<h2 id="建立自己的-Skill-Sub-agent"><a href="#建立自己的-Skill-Sub-agent" class="headerlink" title="建立自己的 Skill + Sub-agent"></a>建立自己的 Skill + Sub-agent</h2><p>步驟不複雜：</p>
+<p><strong>1. 建立 SKILL.md</strong></p>
+<p>在 <code>.claude/skills/my-skill/</code> 底下建一個 <code>SKILL.md</code>：</p>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">---</span><br><span class="line">name: security-audit</span><br><span class="line">description: |</span><br><span class="line">  Run OWASP Top 10 security audit on the codebase.</span><br><span class="line">  Trigger when user mentions &quot;security audit&quot; or &quot;vulnerability scan&quot;.</span><br><span class="line">allowed-tools:</span><br><span class="line"><span class="bullet">  -</span> Read</span><br><span class="line"><span class="bullet">  -</span> Grep</span><br><span class="line"><span class="bullet">  -</span> Glob</span><br><span class="line"><span class="section">  - Bash</span></span><br><span class="line"><span class="section">---</span></span><br><span class="line"></span><br><span class="line"><span class="section">## Instructions</span></span><br><span class="line"></span><br><span class="line">You are a senior security engineer. Audit the codebase for:</span><br><span class="line"></span><br><span class="line"><span class="bullet">1.</span> SQL injection</span><br><span class="line"><span class="bullet">2.</span> XSS</span><br><span class="line"><span class="bullet">3.</span> CSRF</span><br><span class="line"><span class="bullet">4.</span> Authentication bypass</span><br><span class="line"><span class="bullet">5.</span> Sensitive data exposure</span><br><span class="line"></span><br><span class="line">Output a structured report with severity levels.</span><br></pre></td></tr></table></figure>
+
+<p><strong>2. 設定觸發描述</strong></p>
+<p><code>description</code> 裡寫清楚觸發條件。Claude Code 會根據使用者的輸入去比對，描述越精確，觸發越準。</p>
+<p><strong>3. 限制工具權限</strong></p>
+<p><code>allowed-tools</code> 用白名單。安全審計只需要讀取能力，就不要給 Edit 和 Write。最小權限原則。</p>
+<p><strong>4. 測試</strong></p>
+<p>在 Claude Code 裡測試觸發是否正常、輸出格式是否符合預期。調整描述和指引直到穩定。</p>
+<hr>
+<h2 id="注意事項"><a href="#注意事項" class="headerlink" title="注意事項"></a>注意事項</h2><p>Sub-agent 不是銀彈。幾個要注意的點：</p>
+<p>每次啟動 sub-agent 都有開銷。如果任務本身很簡單（三行 code 的改動要 review），直接在主 session 做比較快，不值得啟動一個 sub-agent。</p>
+<p>Sub-agent 之間不能直接通訊。如果 A 的結果需要給 B 用，必須回到主程序再轉發。這是設計上的限制，不是 bug——避免 sub-agent 之間形成不可控的依賴。</p>
+<p>Context window 的上限不會因為用了 sub-agent 就變大。單一 sub-agent 還是受限於模型的 context size。好處是每個 sub-agent 的 context 是乾淨的，不會被其他任務的殘留佔據。</p>
+<hr>
+<h2 id="跟傳統的-Agent-框架比"><a href="#跟傳統的-Agent-框架比" class="headerlink" title="跟傳統的 Agent 框架比"></a>跟傳統的 Agent 框架比</h2><p>LangChain、CrewAI 這些框架也有 multi-agent 的概念。差別在哪？</p>
+<p>Claude Code 的 sub-agent 跑在同一個 CLI 環境裡，共享檔案系統但不共享 context。不需要額外的框架、不需要設定 API endpoint、不需要管 agent 之間的通訊協定。SKILL.md 一個檔案搞定。</p>
+<p>代價是彈性比較低。你不能讓不同的 sub-agent 用不同的模型（LangChain 可以），不能做複雜的 agent 間協商。但對大部分工程任務來說，「拆出去跑、結果拿回來」已經夠用了。</p>
+<p>簡單的東西做得好，比複雜的東西做得半吊子有用。</p>
+<blockquote>
+<p>參考來源：<a target="_blank" rel="noopener" href="https://code.claude.com/docs/en/skills">Extend Claude with skills - Claude Code Docs</a><br>參考來源：<a target="_blank" rel="noopener" href="https://anthropic.skilljar.com/claude-code-sub-agents">Claude Code Sub-agents - Anthropic Academy</a><br>參考來源：<a target="_blank" rel="noopener" href="https://www.youngleaders.tech/p/claude-skills-commands-subagents-plugins">Understanding Claude Code: Skills vs Commands vs Subagents vs Plugins</a><br>參考來源：<a target="_blank" rel="noopener" href="https://levelup.gitconnected.com/a-mental-model-for-claude-code-skills-subagents-and-plugins-3dea9924bf05">A Mental Model for Claude Code: Skills, Subagents, and Plugins</a></p>
+</blockquote>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://mark22013333.github.io">Cheng®</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章連結: </span><span class="post-copyright-info"><a href="https://mark22013333.github.io/2026/03/28/Claude-Code-Sub-agents-%E6%8B%86%E8%A7%A3%E4%BB%BB%E5%8B%99%E7%9A%84%E6%AD%A3%E7%A2%BA%E5%A7%BF%E5%8B%A2/">https://mark22013333.github.io/2026/03/28/Claude-Code-Sub-agents-拆解任務的正確姿勢/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版權聲明: </span><span class="post-copyright-info">本部落格所有文章除特別聲明外，均採用<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 授權協議。轉載請註明來源 <a href="https://mark22013333.github.io" target="_blank">Cheng's Tech & Life</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Claude-Code/">Claude Code</a><a class="post-meta__tags" href="/tags/Sub-agents/">Sub-agents</a><a class="post-meta__tags" href="/tags/Skills/">Skills</a><a class="post-meta__tags" href="/tags/Plugins/">Plugins</a></div><div class="post-share"><div class="social-share" data-image="/img/20260328-03.webp" data-sites="facebook,twitter"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><div class="post-reward"><div class="reward-badges"><a class="sponsor-glow-btn" href="https://www.buymeacoffee.com/mark22013333" target="_blank" rel="noopener noreferrer" title="Buy Me A Coffee"><img src="https://img.shields.io/badge/Buy_Me_A_Coffee-FFDD00?style=for-the-badge&amp;logo=buy-me-a-coffee&amp;logoColor=black" alt="Buy Me A Coffee"/></a><a class="sponsor-glow-btn" href="https://p.ecpay.com.tw/EFC3F8F" target="_blank" rel="noopener noreferrer" title="綠界贊助"><img src="https://img.shields.io/badge/☕_%E8%AB%8B%E6%88%91%E5%96%9D%E6%9D%AF%E5%92%96%E5%95%A1-Donate-11998e?style=for-the-badge&amp;logo=coffee&amp;logoColor=white" alt="綠界贊助"/></a><a class="sponsor-glow-btn" href="https://calendly.com/markcheng00806-intumit/15min" target="_blank" rel="noopener noreferrer" title="預約時間"><img src="https://img.shields.io/badge/📅_%E9%A0%90%E7%B4%84_15_%E5%88%86%E9%90%98-Book_Time-0072ff?style=for-the-badge" alt="預約時間"/></a><p class="reward-badges-note">你的鼓勵將被轉換為我明天繼續加班的動力（真的）。 ❤️</p></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related full-width" href="/2026/03/28/gstack-%E7%94%A8-Claude-Code-%E6%89%93%E9%80%A0%E8%99%9B%E6%93%AC-20-%E4%BA%BA%E5%B7%A5%E7%A8%8B%E5%9C%98%E9%9A%8A/" title="gstack — 用 Claude Code 打造虛擬 20 人工程團隊"><img class="cover" src="/img/20260328-01.webp" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">gstack — 用 Claude Code 打造虛擬 20 人工程團隊</div></div><div class="info-2"><div class="info-item-1">一個人寫一萬行生產級程式碼，聽起來像在吹牛。但 Y Combinator CEO Garry Tan 把他的工作流打包成開源工具，名字叫 gstack，MIT 授權，30 秒裝完。  它到底是什麼gstack 把 Claude Code 變成一支虛擬工程團隊。不是那種「幫你補全一行 code」的等級——是從構想、規劃、實作、Code Review、QA、安全審計、部署到監控，整條 Sprint 流程都有對應的 Skill 角色。 技術棧是 TypeScript + Bun + Playwright。核心是一個持久化的 Chromium daemon，首次啟動約三秒，之後每個指令 100-200ms。不是每次冷開瀏覽器那種等到天荒地老的體驗。 GitHub 在這：github.com&#x2F;garrytan&#x2F;gstack  安裝：真的 30 秒12git clone --single-branch --depth 1 https://github.com/garrytan/gstack.git ~/.claude/skills/gstackcd...</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相關推薦</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2026/03/26/Claude-Code-Auto-Mode-%E8%AE%93-AI-%E8%87%AA%E5%B7%B1%E6%B1%BA%E5%AE%9A%E8%A9%B2%E4%B8%8D%E8%A9%B2%E5%9F%B7%E8%A1%8C%E6%8C%87%E4%BB%A4/" title="Claude Code Auto Mode — 讓 AI 自己決定該不該執行指令"><img class="cover" src="/img/20260326-03.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-03-26</div><div class="info-item-2">Claude Code Auto Mode — 讓 AI 自己決定該不該執行指令</div></div><div class="info-2"><div class="info-item-1">每改一個檔案就要按一次 Yes。跑個 npm install 要同意，讀個 .env 要同意，連 ls 有時候都要你點一下。 用過 Claude Code 的人大概都經歷過這種「同意疲勞」。你知道它要做什麼，你也信任它，但流程就是逼你一直按確認。到後來你根本不看內容了，反射性地按 Yes——這時候所謂的安全機制反而變成形式。 三月 24 號 Anthropic 發佈的 Auto Mode 就是衝著這個問題來的。  Auto Mode 做了什麼一句話：讓 Claude Code 自己判斷一個操作安不安全，安全的就直接執行，不安全的才擋下來問你。 技術上是一個雙層分類器（two-layer classifier）。每個動作在執行前會過兩關： 第一關檢查這個操作是不是使用者「合理預期」的行為。你叫它改 code，它要寫檔案，這是合理預期。你叫它改 code，它要讀你的 SSH key，這不是。 第二關檢查有沒有 prompt injection 的跡象。如果有人在 codebase 裡埋了惡意指令試圖讓 Claude...</div></div></div></a><a class="pagination-related" href="/2026/03/24/Claude-Code-Hooks-%E5%AE%8C%E6%95%B4%E6%8C%87%E5%8D%97-%E8%AE%93-AI-%E8%87%AA%E5%8B%95%E5%8C%96%E4%B8%8D%E5%86%8D%E9%9D%A0%E9%81%8B%E6%B0%A3/" title="Claude Code Hooks 完整指南 — 讓 AI 自動化不再靠運氣"><img class="cover" src="/img/20260324-06.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-03-24</div><div class="info-item-2">Claude Code Hooks 完整指南 — 讓 AI 自動化不再靠運氣</div></div><div class="info-2"><div class="info-item-1">你有沒有遇過這種狀況：叫 Claude Code 改完檔案，結果忘了跑 formatter，code review 被打回來的全是 style issue？ 或者更痛的——Claude 很盡責地幫你改了五個檔案，你說「好了可以了」，它就真的停了。然後你才發現 test 沒跑、lint 沒過、有一個 .env 被改到。 Hooks 就是拿來解決這類問題的。它不是什麼 AI 魔法，反而是整套 Claude Code 裡面最不 AI 的部分——純粹的 shell 腳本，在特定時間點被觸發，做你設定好的事情。確定性的行為，不靠 LLM 判斷。  概念：Hook 是什麼？一句話講完：在 Claude Code 生命週期的特定節點，自動執行你寫的腳本。 跟 Git hooks 很像。pre-commit hook 在 commit 前跑 lint，Claude Code 的 PreToolUse hook 在工具執行前跑你的檢查。概念相通，只是觸發的時機不一樣。 目前支援的 hook 事件超過 20...</div></div></div></a><a class="pagination-related" href="/2026/03/24/Claude-Code-Bypass-%E6%A8%A1%E5%BC%8F%E5%AE%89%E5%85%A8%E9%98%B2%E8%AD%B7-PreToolUse-Hook-%E6%94%94%E6%88%AA%E5%8D%B1%E9%9A%AA%E6%8C%87%E4%BB%A4/" title="Claude Code Bypass 模式安全防護 — 用 PreToolUse Hook 攔截危險指令"><img class="cover" src="/img/20260324-05.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-03-24</div><div class="info-item-2">Claude Code Bypass 模式安全防護 — 用 PreToolUse Hook 攔截危險指令</div></div><div class="info-2"><div class="info-item-1">凌晨兩點，手指一滑開了 bypass 模式，Claude Code 像脫韁的馬一路跑。跑得很順——直到它跑出一句 rm -rf 把半個 repo 幹掉。 不誇張，bypass 模式（bypassPermissions）跳過所有工具執行確認，效率直接拉滿，但副作用也很直接：AI 可能在你沒注意的時候送出 force push、hard reset，甚至砍掉整個 .git。這不是理論風險，是踩過坑的人才會去設防的東西。 這篇記錄一套雙層防護架構：permissions.deny 規則 + PreToolUse Hook 腳本，讓 bypass 模式既保留速度，又不會在關鍵時刻翻車。  第一層：permissions.deny — 粗粒度攔截在 ~/.claude/settings.json 直接用 pattern matching 把最危險的指令擋掉： 12345678910&#123;  &quot;permissions&quot;: &#123;    &quot;deny&quot;: [      &quot;Bash(rm -rf *)&quot;,     ...</div></div></div></a><a class="pagination-related" href="/2026/03/24/Claude-Code-Remote-Control-%E7%94%A8%E6%89%8B%E6%A9%9F%E9%81%99%E6%8E%A7%E4%BD%A0%E7%9A%84%E7%B5%82%E7%AB%AF%E6%A9%9F/" title="Claude Code Remote Control：用手機遙控你的終端機"><img class="cover" src="/img/20260324-04.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-03-24</div><div class="info-item-2">Claude Code Remote Control：用手機遙控你的終端機</div></div><div class="info-2"><div class="info-item-1">半夜十一點，deploy 跑到一半你想離開電腦去倒杯水。以前的選擇是：盯著螢幕等它跑完，或者賭一把直接走開祈禱不要炸。現在多了第三個選項——拿起手機繼續操作。 這就是 Claude Code Remote Control 在做的事。 不是雲端，是你的電腦先講最關鍵的一點。Remote Control 不是把你的 session 搬到雲端跑。它的運作方式是：你的本地終端機繼續執行，手機或瀏覽器只是一面「遠端鏡子」。你的 filesystem、MCP Server、專案設定，全部都還在本機上，沒有任何東西飄到雲端去。 跟 Claude Code on the Web 不一樣。那個是直接跑在 Anthropic 的雲端基礎建設上，你不需要本地有任何東西。Remote Control 則是讓你已經在跑的 local session，從另一台裝置接手操作。 用白話講：你在公司的終端機上開了一個 Claude Code session，搭捷運的時候拿手機繼續下指令，到家之後開筆電的瀏覽器接著做。對話紀錄全程同步，你在哪個裝置送出的訊息，其他裝置都看得到。 三種啟動方式Remote...</div></div></div></a><a class="pagination-related" href="/2026/03/26/Claude-Code-Skill-%E9%96%8B%E7%99%BC%E6%A8%99%E6%BA%96%E8%88%87-Plugin-Marketplace-%E5%AE%8C%E6%95%B4%E6%94%BB%E7%95%A5/" title="Claude Code Skill 開發標準與 Plugin Marketplace 完整攻略"><img class="cover" src="/img/20260326-01.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-03-26</div><div class="info-item-2">Claude Code Skill 開發標準與 Plugin Marketplace 完整攻略</div></div><div class="info-2"><div class="info-item-1">八千字的 SKILL.md 灌進 context window，Claude 還沒開始幹活，token 就先燒掉一半。 這就是很多人寫 Skill 踩的第一個坑——把所有東西塞進同一個檔案，以為越詳細越好。結果 Claude 讀完規格就沒剩多少空間做事了。Anthropic 的設計其實有一套漸進式揭露的機制，但不翻文件的話你根本不會知道有這回事。 這篇把 Skill 開發的完整流程拆開來講：從目錄結構、三層載入機制、SKILL.md 撰寫規範，到 Plugin 打包和 Marketplace 發佈。  三層載入：省 token 的關鍵設計Skill 不是一股腦全丟進去的。它分成三層，按需載入：    層級 內容 載入時機 建議大小    L1 元資料 name + description（YAML frontmatter） 永遠在 context 中 ~100 字   L2 SKILL.md 核心流程、快速參考、資源指引 Skill 被觸發時 1,500–2,000 字   L3 Bundled...</div></div></div></a><a class="pagination-related" href="/2026/03/25/%E7%94%A8-Claude-Code-%E6%8A%8A%E5%BD%B1%E7%89%87%E8%AE%8A%E7%B0%A1%E5%A0%B1-mlx-whisper-%E8%BD%89%E9%8C%84-%E5%A4%9A%E6%A8%A1%E6%85%8B%E8%AE%80%E5%9C%96%E5%AF%A6%E6%88%B0/" title="用 Claude Code 把影片變簡報 — mlx-whisper 轉錄 + 多模態讀圖實戰"><img class="cover" src="/img/20260325-01.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-03-25</div><div class="info-item-2">用 Claude Code 把影片變簡報 — mlx-whisper 轉錄 + 多模態讀圖實戰</div></div><div class="info-2"><div class="info-item-1">8 分 54 秒的影片，從音訊轉錄到產出 14 頁 HTML 簡報，全程自動化。這是我最近用 Claude Code 跑通的一套完整工具鏈，過程中踩了幾個坑，但現在可以說真香。 為什麼要把影片變簡報？假設你在會議上錄了一段技術分享，或者在 YouTube 看到不錯的演講。如果只留著 .mp4 檔，想複習時還要拖進度條，效率爛透了。如果能自動把音軌轉成逐字稿，關鍵畫面截圖下來，再搭配 Claude 的多模態能力讀取這些圖片，最後產出一份結構化的 HTML 簡報——這樣才是真正可複用的知識資產。 這次的範例是 Anthropic 官方影片「AI 協作者：重新定義軟體工程」。我用這套流程： 影片 → ffmpeg 提取音訊 → mlx-whisper 轉錄 → 截圖關鍵畫面 → Claude 多模態讀圖 → HTML 簡報 第一坑：pip3 裝不了 mlx-whisper開發環境是 M-series Mac（Apple Silicon）。從 Python 3.11 開始，pip 加了 PEP 668 限制，防止直接修改系統套件，結果我跑 pip3 install...</div></div></div></a></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="https://lh3.googleusercontent.com/pw/ABLVV87_po8nBc6F_tXcoYDmtzMGWxHuhhrbguYILCjmjWKLOS8DTpubm0YoQLKgjyjRIZyV5TjYe7XVEz_YU4squfr37GTZqPZP1hlMVZ_MIgXpTxWu73M=w1200" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">Cheng®</div><div class="author-info-description">Backend Developer / 技術筆記 & AI 新聞分享</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">33</div></a><a href="/tags/"><div class="headline">標籤</div><div class="length-num">55</div></a><a href="/categories/"><div class="headline">分類</div><div class="length-num">7</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/mark22013333"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons"><a class="social-icon" href="https://github.com/mark22013333" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:mark22013333@gmail.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a></div><div class="card-info-sponsor"><a class="sponsor-glow-btn" href="https://www.buymeacoffee.com/mark22013333" target="_blank" rel="noopener noreferrer" title="Buy Me A Coffee"><img src="https://img.shields.io/badge/Buy_Me_A_Coffee-FFDD00?style=for-the-badge&amp;logo=buy-me-a-coffee&amp;logoColor=black" alt="Buy Me A Coffee"/></a><a class="sponsor-glow-btn" href="https://p.ecpay.com.tw/EFC3F8F" target="_blank" rel="noopener noreferrer" title="綠界贊助"><img src="https://img.shields.io/badge/☕_%E8%AB%8B%E6%88%91%E5%96%9D%E6%9D%AF%E5%92%96%E5%95%A1-Donate-11998e?style=for-the-badge&amp;logo=coffee&amp;logoColor=white" alt="綠界贊助"/></a><a class="sponsor-glow-btn" href="https://calendly.com/markcheng00806-intumit/15min" target="_blank" rel="noopener noreferrer" title="預約時間"><img src="https://img.shields.io/badge/📅_%E9%A0%90%E7%B4%84_15_%E5%88%86%E9%90%98-Book_Time-0072ff?style=for-the-badge" alt="預約時間"/></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">這裡記錄我在後端開發路上踩過的坑、學到的東西，也會分享每日 AI 與科技新聞觀點。歡迎一起交流！</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目錄</span><span class="toc-percentage"></span></div><div class="toc-content is-expand"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Skills%E3%80%81Commands%E3%80%81Subagents%E3%80%81Plugins-%E5%B7%AE%E5%9C%A8%E5%93%AA"><span class="toc-number">1.</span> <span class="toc-text">Skills、Commands、Subagents、Plugins 差在哪</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Sub-agents-%E8%A7%A3%E6%B1%BA%E4%BB%80%E9%BA%BC%E5%95%8F%E9%A1%8C"><span class="toc-number">2.</span> <span class="toc-text">Sub-agents 解決什麼問題</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%8E%E9%BA%BC%E8%A8%AD%E5%AE%9A-Sub-agent"><span class="toc-number">3.</span> <span class="toc-text">怎麼設定 Sub-agent</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AF%A6%E9%9A%9B%E4%BD%BF%E7%94%A8%E5%A0%B4%E6%99%AF"><span class="toc-number">4.</span> <span class="toc-text">實際使用場景</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A0%B4%E6%99%AF%E4%B8%80%EF%BC%9A%E5%A4%A7%E5%9E%8B-PR-Review"><span class="toc-number">4.1.</span> <span class="toc-text">場景一：大型 PR Review</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A0%B4%E6%99%AF%E4%BA%8C%EF%BC%9A%E5%B9%B3%E8%A1%8C%E8%B7%91%E6%B8%AC%E8%A9%A6%E5%92%8C-lint"><span class="toc-number">4.2.</span> <span class="toc-text">場景二：平行跑測試和 lint</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A0%B4%E6%99%AF%E4%B8%89%EF%BC%9A%E5%A4%9A%E6%AD%A5%E9%A9%9F%E9%83%A8%E7%BD%B2%E6%B5%81%E7%A8%8B"><span class="toc-number">4.3.</span> <span class="toc-text">場景三：多步驟部署流程</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%B7%9F-gstack-%E7%9A%84%E9%97%9C%E4%BF%82"><span class="toc-number">5.</span> <span class="toc-text">跟 gstack 的關係</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%BB%BA%E7%AB%8B%E8%87%AA%E5%B7%B1%E7%9A%84-Skill-Sub-agent"><span class="toc-number">6.</span> <span class="toc-text">建立自己的 Skill + Sub-agent</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A0%85"><span class="toc-number">7.</span> <span class="toc-text">注意事項</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%B7%9F%E5%82%B3%E7%B5%B1%E7%9A%84-Agent-%E6%A1%86%E6%9E%B6%E6%AF%94"><span class="toc-number">8.</span> <span class="toc-text">跟傳統的 Agent 框架比</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2026/03/28/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260328/" title="AI 與科技新聞摘要 — 2026/03/28"><img src="/img/20260328-02.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="AI 與科技新聞摘要 — 2026/03/28"/></a><div class="content"><a class="title" href="/2026/03/28/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260328/" title="AI 與科技新聞摘要 — 2026/03/28">AI 與科技新聞摘要 — 2026/03/28</a><time datetime="2026-03-28T00:00:00.000Z" title="發表於 2026-03-28 08:00:00">2026-03-28</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/03/28/gstack-%E7%94%A8-Claude-Code-%E6%89%93%E9%80%A0%E8%99%9B%E6%93%AC-20-%E4%BA%BA%E5%B7%A5%E7%A8%8B%E5%9C%98%E9%9A%8A/" title="gstack — 用 Claude Code 打造虛擬 20 人工程團隊"><img src="/img/20260328-01.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="gstack — 用 Claude Code 打造虛擬 20 人工程團隊"/></a><div class="content"><a class="title" href="/2026/03/28/gstack-%E7%94%A8-Claude-Code-%E6%89%93%E9%80%A0%E8%99%9B%E6%93%AC-20-%E4%BA%BA%E5%B7%A5%E7%A8%8B%E5%9C%98%E9%9A%8A/" title="gstack — 用 Claude Code 打造虛擬 20 人工程團隊">gstack — 用 Claude Code 打造虛擬 20 人工程團隊</a><time datetime="2026-03-28T00:00:00.000Z" title="發表於 2026-03-28 08:00:00">2026-03-28</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/03/28/Claude-Code-Sub-agents-%E6%8B%86%E8%A7%A3%E4%BB%BB%E5%8B%99%E7%9A%84%E6%AD%A3%E7%A2%BA%E5%A7%BF%E5%8B%A2/" title="Claude Code Sub-agents — 拆解任務的正確姿勢"><img src="/img/20260328-03.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Claude Code Sub-agents — 拆解任務的正確姿勢"/></a><div class="content"><a class="title" href="/2026/03/28/Claude-Code-Sub-agents-%E6%8B%86%E8%A7%A3%E4%BB%BB%E5%8B%99%E7%9A%84%E6%AD%A3%E7%A2%BA%E5%A7%BF%E5%8B%A2/" title="Claude Code Sub-agents — 拆解任務的正確姿勢">Claude Code Sub-agents — 拆解任務的正確姿勢</a><time datetime="2026-03-28T00:00:00.000Z" title="發表於 2026-03-28 08:00:00">2026-03-28</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/03/27/Claude-Dispatch-%E7%94%A8%E6%89%8B%E6%A9%9F%E6%8C%87%E6%8F%AE%E6%A1%8C%E6%A9%9F%E8%AE%93-AI-%E8%87%AA%E5%B7%B1%E5%B9%B9%E6%B4%BB/" title="Claude Dispatch 完整指南 — 用手機指揮桌機，讓 AI 在你電腦上自己幹活"><img src="/img/20260327-03.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Claude Dispatch 完整指南 — 用手機指揮桌機，讓 AI 在你電腦上自己幹活"/></a><div class="content"><a class="title" href="/2026/03/27/Claude-Dispatch-%E7%94%A8%E6%89%8B%E6%A9%9F%E6%8C%87%E6%8F%AE%E6%A1%8C%E6%A9%9F%E8%AE%93-AI-%E8%87%AA%E5%B7%B1%E5%B9%B9%E6%B4%BB/" title="Claude Dispatch 完整指南 — 用手機指揮桌機，讓 AI 在你電腦上自己幹活">Claude Dispatch 完整指南 — 用手機指揮桌機，讓 AI 在你電腦上自己幹活</a><time datetime="2026-03-27T01:00:00.000Z" title="發表於 2026-03-27 09:00:00">2026-03-27</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/03/27/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260327/" title="AI 與科技新聞摘要 — 2026/03/27"><img src="/img/20260327-02.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="AI 與科技新聞摘要 — 2026/03/27"/></a><div class="content"><a class="title" href="/2026/03/27/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260327/" title="AI 與科技新聞摘要 — 2026/03/27">AI 與科技新聞摘要 — 2026/03/27</a><time datetime="2026-03-27T00:00:00.000Z" title="發表於 2026-03-27 08:00:00">2026-03-27</time></div></div></div></div></div></div></main><footer id="footer" style="background-image: url(/img/20260328-03.webp);"><div id="footer-wrap"><div class="copyright">&copy;2024 - 2026 By Cheng®</div><div class="framework-info"><span>全力以赴 </span><a target="_blank" rel="noopener" href="https://hexo.io"> </a><!--span.footer-separator |--><span>保持自律 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly"> </a></div><div class="footer_custom_text">Written by Cheng® — 自律，從當下的一念開始。</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="閱讀模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日夜模式切換"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="單欄和雙欄切換"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="設定"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目錄"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到頂端"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.umd.min.js"></script><script src="https://cdn.jsdelivr.net/npm/instant.page/instantpage.min.js" type="module"></script><script src="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.js"></script><div class="js-pjax"></div><script src="/js/kkbox-player.js"></script><script src="/js/font-resize.js"></script><script src="/js/dark-palette.js"></script><script defer="defer" id="fluttering_ribbon" mobile="false" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/canvas-fluttering-ribbon.min.js"></script><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/activate-power-mode.min.js"></script><script>POWERMODE.colorful = true;
+POWERMODE.shake = true;
+POWERMODE.mobile = true;
+document.body.addEventListener('input', POWERMODE);
+</script><script src="https://cdn.jsdelivr.net/npm/pjax/pjax.min.js"></script><script>(() => {
+  const pjaxSelectors = ["head > title","#config-diff","#body-wrap","#rightside-config-hide","#rightside-config-show",".js-pjax"]
+
+  window.pjax = new Pjax({
+    elements: 'a:not([target="_blank"])',
+    selectors: pjaxSelectors,
+    cacheBust: false,
+    analytics: false,
+    scrollRestoration: false
+  })
+
+  const triggerPjaxFn = (val) => {
+    if (!val) return
+    Object.values(val).forEach(fn => fn())
+  }
+
+  document.addEventListener('pjax:send', () => {
+    // removeEventListener
+    btf.removeGlobalFnEvent('pjaxSendOnce')
+    btf.removeGlobalFnEvent('themeChange')
+
+    // reset readmode
+    const $bodyClassList = document.body.classList
+    if ($bodyClassList.contains('read-mode')) $bodyClassList.remove('read-mode')
+
+    triggerPjaxFn(window.globalFn.pjaxSend)
+  })
+
+  document.addEventListener('pjax:complete', () => {
+    btf.removeGlobalFnEvent('pjaxCompleteOnce')
+    document.querySelectorAll('script[data-pjax]').forEach(item => {
+      const newScript = document.createElement('script')
+      const content = item.text || item.textContent || item.innerHTML || ""
+      Array.from(item.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value))
+      newScript.appendChild(document.createTextNode(content))
+      item.parentNode.replaceChild(newScript, item)
+    })
+
+    triggerPjaxFn(window.globalFn.pjaxComplete)
+  })
+
+  document.addEventListener('pjax:error', e => {
+    if (e.request.status === 404) {
+      pjax.loadUrl('/404.html')
+    }
+  })
+})()</script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜尋</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="text-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  資料載入中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜尋文章" type="text"/></div></div><hr/><div id="local-search-results"></div><div id="local-search-stats-wrap"></div></div></div><div id="search-mask"></div><script src="/js/search/local-search.js"></script></div></div></body></html>
