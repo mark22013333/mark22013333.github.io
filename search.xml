@@ -4,6 +4,105 @@
   
     
     <entry>
+      <title>Claude Desktop 三種模式怎麼切？Chat、Cowork、Code 完整導覽</title>
+      <link href="/2026/03/29/Claude-Desktop-%E4%B8%89%E7%A8%AE%E6%A8%A1%E5%BC%8F%E6%80%8E%E9%BA%BC%E5%88%87-Chat-Cowork-Code-%E5%AE%8C%E6%95%B4%E5%B0%8E%E8%A6%BD/"/>
+      <url>/2026/03/29/Claude-Desktop-%E4%B8%89%E7%A8%AE%E6%A8%A1%E5%BC%8F%E6%80%8E%E9%BA%BC%E5%88%87-Chat-Cowork-Code-%E5%AE%8C%E6%95%B4%E5%B0%8E%E8%A6%BD/</url>
+      
+        <content type="html"><![CDATA[<p>打開 Claude Desktop，上面三個 tab 寫著 Chat、Cowork、Code。第一次看到的人大概會問：這三個到底差在哪？什麼時候該用哪個？</p><p>答案比想像中簡單——它們不是三個不同的 AI，是同一個 Claude 的三種工作模式，各自對應不同的使用場景和權限範圍。</p><h2 id="Chat：快問快答的主場"><a href="#Chat：快問快答的主場" class="headerlink" title="Chat：快問快答的主場"></a>Chat：快問快答的主場</h2><p>Chat 是最輕量的模式。問問題、腦力激盪、幫你改改文案、翻譯一段文字——這些不需要動到檔案系統、不需要跑程式的事情，Chat 就夠了。</p><p>有兩個功能值得記住。第一個是 <strong>Quick Entry</strong>：在 Mac 上連按兩下 Option 鍵，會跳出一個浮動對話框，不用切到 Claude 視窗就能丟問題。會議之間的三十秒空檔，打開來問一句「剛才那個 dashboard 上的 DAU 數字怎麼算的」剛好。</p><p>第二個是<strong>截圖分享</strong>。直接把螢幕畫面丟給 Claude 看，省去「那個按鈕在左邊第三排…不對，是第四排」的來回描述。</p><p>Chat 也能串 Desktop Connector，接上 Apple Notes 之類的本機工具。但整體來說，它的定位就是快速對話，不是拿來做大型專案的。</p><h2 id="Cowork：需要動手做事的時候"><a href="#Cowork：需要動手做事的時候" class="headerlink" title="Cowork：需要動手做事的時候"></a>Cowork：需要動手做事的時候</h2><p>Cowork 的定位是「需要真功夫的工作」——從多個來源拉資料、整理分析、產出成品。</p><p>跟 Chat 最大的差異在三個能力。</p><p><strong>資料夾存取</strong>。你可以指定一個資料夾讓 Claude 讀寫。市場調研報告、合約審查、財務分析——Claude 可以直接在你指定的資料夾裡讀取來源文件，然後把成品存回去。不用手動上傳下載。</p><p><strong>排程任務</strong>。設定每天早上八點自動跑一次新聞摘要、每週一產出上週的 KPI 報告。不需要你打開 Claude，它自己會跑。這對固定格式的重複性產出特別好用。</p><p><strong>瀏覽器整合</strong>。Claude in Chrome 讓 Claude 可以操控瀏覽器——開網頁、抓資料、填表單。競品價格追蹤、自動化表單填寫這類需要上網的任務，Cowork 配 Chrome 一起用效果不錯。</p><p>另外 Cowork 有 Plugin 生態系，可以裝各種專用功能擴充。安全方面，Claude 只能存取你分享的資料夾，不會亂動其他東西。</p><p>目前 Cowork 是 research preview 狀態，Pro、Max、Team、Enterprise 訂戶可以用。</p><h2 id="Code：完整的開發環境"><a href="#Code：完整的開發環境" class="headerlink" title="Code：完整的開發環境"></a>Code：完整的開發環境</h2><p>Code 模式是給寫程式的人用的。它不只是「能看 code 的聊天室」，而是一個完整的開發環境——讀寫檔案、跑終端機指令、Git 操作、看 diff、本地預覽，全部包在裡面。</p><p>兩種連線方式：<strong>Local</strong> 直接操作你電腦上的檔案和開發工具；<strong>Remote</strong> 連到雲端的 GitHub repo 做開發。</p><p>三種互動模式值得搞清楚：</p><p><strong>Ask 模式</strong>——Claude 提出修改建議，但每一步都要你核准才會動。適合不確定 Claude 會改什麼的時候。</p><p><strong>Code 模式</strong>——檔案修改自動執行，但跑指令還是會問你。大多數日常開發用這個模式最順。</p><p><strong>Plan 模式</strong>——Claude 先出策略規劃，你看過同意了再動手。大型重構或不熟悉的 codebase 適合先開 Plan。</p><p>Git 追蹤是內建的。每次修改都有 visual diff 可以看，不用擔心 Claude 改了什麼你不知道。</p><h2 id="三種模式怎麼選"><a href="#三種模式怎麼選" class="headerlink" title="三種模式怎麼選"></a>三種模式怎麼選</h2><p>選擇其實取決於兩個問題：你要不要動到檔案？你要不要跑程式？</p><table><thead><tr><th></th><th>Chat</th><th>Cowork</th><th>Code</th></tr></thead><tbody><tr><td>適合場景</td><td>快速問答、翻譯、腦力激盪</td><td>研究分析、文件產出、排程自動化</td><td>軟體開發、程式碼修改</td></tr><tr><td>檔案存取</td><td>有限</td><td>指定資料夾</td><td>完整檔案系統</td></tr><tr><td>自動化</td><td>互動式</td><td>多任務 + 排程</td><td>完整環境控制</td></tr><tr><td>關鍵工具</td><td>Connector、Skills</td><td>Plugin、排程任務、Chrome</td><td>Git、diff、終端機、Hooks</td></tr></tbody></table><p>不確定的時候，從 Chat 開始。對話到一半發現需要讀檔案、做分析，切到 Cowork。要開始寫 code，切到 Code。模式之間的切換成本很低，不用糾結。</p><h2 id="進入門檻"><a href="#進入門檻" class="headerlink" title="進入門檻"></a>進入門檻</h2><p>Claude Desktop 在 Mac 和 Windows 都有。Chat 免費用戶就能用，Cowork 和 Code 需要 Pro 以上訂閱。Code tab 目前還在陸續開放中。</p><p>一個 app 三種模式的設計，好處是不用在不同工具之間跳來跳去。壞處是第一次打開會有點迷路——但搞清楚「Chat 是嘴巴、Cowork 是手、Code 是整個工作台」這個比喻之後，應該就很直覺了。</p><blockquote><p>原文來源：<a href="https://claude.com/resources/tutorials/navigating-the-claude-desktop-app">Navigating the Claude desktop app: Chat, Cowork, Code</a><br>參考來源：<a href="https://anthropic.skilljar.com/">Claude 101 - Anthropic Academy</a></p></blockquote>]]></content>
+      
+      
+      <categories>
+          
+          <category> Claude Code </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> Claude </tag>
+            
+            <tag> Claude Code </tag>
+            
+            <tag> Cowork </tag>
+            
+            <tag> 桌面應用 </tag>
+            
+            <tag> 教學 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>AI 與科技新聞摘要 — 2026/03/29</title>
+      <link href="/2026/03/29/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260329/"/>
+      <url>/2026/03/29/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260329/</url>
+      
+        <content type="html"><![CDATA[<p>NVIDIA 組了一個聯盟要做開源 frontier model、Google 把 Gemini Code Assist 直接免費送、MCP 生態冒出防詐騙和治理控制兩個新玩家、AI 安全治理落地的比例只有 7%。五則跟前兩天不重複的。</p><hr><h2 id="1-NVIDIA-Nemotron-3-Super-開源-Nemotron-Coalition-成軍"><a href="#1-NVIDIA-Nemotron-3-Super-開源-Nemotron-Coalition-成軍" class="headerlink" title="1. NVIDIA Nemotron 3 Super 開源 + Nemotron Coalition 成軍"></a>1. NVIDIA Nemotron 3 Super 開源 + Nemotron Coalition 成軍</h2><p>NVIDIA 三月中連丟兩顆炸彈。先是開源 Nemotron 3 Super——120B 參數的混合架構模型（Mamba-Transformer MoE），實際啟用 12B 參數，專門為 multi-agent reasoning 設計。軟體開發、資安分析、自動化工作流這些場景是它的主戰場。</p><p>模型已經上了 Perplexity、OpenRouter、Hugging Face、build.nvidia.com，CodeRabbit、Factory、Greptile 這些 AI coding agent 也在整合中。</p><p>更值得注意的是 3 月 16 日成立的 <strong>Nemotron Coalition</strong>——Black Forest Labs、Cursor、LangChain、Mistral AI、Perplexity、Reflection AI 都是創始成員。目標：共享研究、資料、算力，推進開源 frontier model。第一個成果會是 Nemotron 4 系列。</p><p>NVIDIA 不只賣 GPU 了。它在用開源模型 + 生態聯盟的方式，確保整個 AI 技術棧的底層跑在自己的硬體上。聰明。</p><blockquote><p>原文來源：<a href="https://nvidianews.nvidia.com/news/nvidia-debuts-nemotron-3-family-of-open-models">NVIDIA Debuts Nemotron 3 Family of Open Models</a><br>原文來源：<a href="https://nvidianews.nvidia.com/news/nvidia-launches-nemotron-coalition-of-leading-global-ai-labs-to-advance-open-frontier-models">NVIDIA Launches Nemotron Coalition of Leading Global AI Labs</a></p></blockquote><hr><h2 id="2-Google-Gemini-Code-Assist-免費開放-—-不是試用，是真的免費"><a href="#2-Google-Gemini-Code-Assist-免費開放-—-不是試用，是真的免費" class="headerlink" title="2. Google Gemini Code Assist 免費開放 — 不是試用，是真的免費"></a>2. Google Gemini Code Assist 免費開放 — 不是試用，是真的免費</h2><p>Google 三月宣布 Gemini Code Assist 對個人開發者完全免費。不是縮水版 free tier，是完整功能。底層跑 Gemini 2.5（Gemini 3 快了），支援 VS Code、JetBrains 全家桶、GitHub。</p><p>額度：每天 6,000 次程式碼相關請求、240 次聊天請求，每月最多 180,000 次 code completion。對個人開發者來說，這額度基本上用不完。</p><p>三月初還加了兩個新功能：<strong>Finish Changes</strong>（自動補完你正在寫的修改）和 <strong>Outlines</strong>（程式碼結構大綱），IntelliJ 和 VS Code 都能用。</p><p>GitHub Copilot 之前也有免費版，但額度限制比較嚴格。Google 這波直接把門檻拉到地板——用了再說，用上癮了再付錢升級企業版。這套路，懂的都懂。</p><blockquote><p>原文來源：<a href="https://dev.to/alanwest/google-made-gemini-code-assist-free-whats-the-catch-4cae">Google Made Gemini Code Assist Free. What’s the Catch?</a><br>原文來源：<a href="https://blog.google/innovation-and-ai/technology/developers-tools/gemini-code-assist-free/">Try free Gemini Code Assist and Gemini Code Review in GitHub</a></p></blockquote><hr><h2 id="3-Fingerprint-推出反詐騙-MCP-Server-—-金融科技第一個吃螃蟹的"><a href="#3-Fingerprint-推出反詐騙-MCP-Server-—-金融科技第一個吃螃蟹的" class="headerlink" title="3. Fingerprint 推出反詐騙 MCP Server — 金融科技第一個吃螃蟹的"></a>3. Fingerprint 推出反詐騙 MCP Server — 金融科技第一個吃螃蟹的</h2><p>Fingerprint 在 3 月 16 日發佈了業界第一個專為防詐騙設計的 MCP Server。開源，MIT 授權。</p><p>做什麼用的？讓 AI Agent 直接連上 Fingerprint 的設備指紋平台，用自然語言查詢可疑設備活動、分析詐騙模式、管理防護規則。以前做這些分析要寫一堆 query，現在一句話搞定。</p><p>兩種部署方式：自建（開源版）或託管服務。不只是唯讀查詢——Agent 可以直接操作 Management API 來配置防護工作流。</p><p>MCP 下載量從 2024 年 11 月的 10 萬次爆到 2025 年 4 月的 800 萬次。現在金融科技這邊也開始接了。從開發工具、數位資產管理、遊戲美術，到現在的防詐騙——MCP 的觸角伸得比誰都快。</p><blockquote><p>原文來源：<a href="https://www.businesswire.com/news/home/20260316016511/en/Fingerprint-Launches-Industry-First-MCP-Server-for-Fraud-Prevention">Fingerprint Launches Industry-First MCP Server for Fraud Prevention</a><br>原文來源：<a href="https://fingerprint.com/blog/introducing-fingerprint-mcp-server/">Introducing the Fingerprint MCP Server</a></p></blockquote><hr><h2 id="4-SurePath-AI-發佈-MCP-Policy-Controls-—-終於有人管-MCP-的安全了"><a href="#4-SurePath-AI-發佈-MCP-Policy-Controls-—-終於有人管-MCP-的安全了" class="headerlink" title="4. SurePath AI 發佈 MCP Policy Controls — 終於有人管 MCP 的安全了"></a>4. SurePath AI 發佈 MCP Policy Controls — 終於有人管 MCP 的安全了</h2><p>3 月 12 日，SurePath AI 推出了 MCP Policy Controls。一句話解釋：它是 MCP 的「防火牆」，讓企業控制哪些 MCP Server 和工具可以被 AI Agent 使用。</p><p>運作方式：所有受保護的 MCP 流量都會經過 SurePath 平台，即時套用存取控制。它能偵測從沒見過的新 MCP 工具——那些可能假裝成合法工具、實際上在竊取資料的東西。</p><p>為什麼需要這個？MCP 引入了一個全新的攻擊面。Agent 連上 MCP Server 之後，有權限讀資料、執行操作。如果哪個惡意 MCP Server 混進來，後果就是 LiteLLM 供應鏈攻擊的翻版——但更隱蔽。</p><p>MCP 生態的成熟需要治理工具跟上。之前 2026 路線圖提到的 SSO、audit trail、gateway 行為控制，SurePath 算是率先交出一份答卷。</p><blockquote><p>原文來源：<a href="https://www.prnewswire.com/news-releases/surepath-ai-advances-real-time-model-context-protocol-mcp-policy-controls-to-govern-ai-actions-302709875.html">SurePath AI Advances Real-Time Model Context Protocol (MCP) Policy Controls to Govern AI Actions</a></p></blockquote><hr><h2 id="5-AI-安全治理落地率只有-7-—-WEF-報告的數字很扎眼"><a href="#5-AI-安全治理落地率只有-7-—-WEF-報告的數字很扎眼" class="headerlink" title="5. AI 安全治理落地率只有 7% — WEF 報告的數字很扎眼"></a>5. AI 安全治理落地率只有 7% — WEF 報告的數字很扎眼</h2><p>世界經濟論壇（WEF）發佈了《Global Cybersecurity Outlook 2026》，裡面一個數字讓人停下來想一想：73% 的企業已經部署了 AI 工具，但有即時安全治理策略的只有 7%。</p><p>87% 的受訪者把 AI 相關漏洞列為 2025 年成長最快的資安風險，2026 年趨勢沒有減緩的跡象。主要攻擊向量：AI 生成的釣魚郵件、deepfake 詐騙、AI 輔助的惡意程式、自動化漏洞掃描。</p><p>報告裡一段話寫得蠻直接的：「一個精心設計的 prompt injection 或工具濫用漏洞，就能讓攻擊者接管企業最有權限的 AI Agent——靜默執行交易、刪除備份、或打包整個客戶資料庫外傳。」</p><p>73% vs 7%。工具跑在前面，治理遠遠在後面。不是不知道有風險，是組織流程和安全策略還沒追上技術的部署速度。</p><blockquote><p>原文來源：<a href="https://reports.weforum.org/docs/WEF_Global_Cybersecurity_Outlook_2026.pdf">Global Cybersecurity Outlook 2026 - World Economic Forum</a><br>原文來源：<a href="https://www.cybersecurity-insiders.com/ai-risk-and-readiness-report-2026/">AI Risk and Readiness Report 2026 - Cybersecurity Insiders</a></p></blockquote><hr><p>這期有個隱藏主線：治理。NVIDIA 用聯盟治理開源模型發展、SurePath 治理 MCP 安全、WEF 報告在喊企業 AI 治理太慢。AI 不缺新功能，缺的是有人在後面收拾殘局。</p>]]></content>
+      
+      
+      <categories>
+          
+          <category> AI與科技新聞 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> MCP </tag>
+            
+            <tag> AI新聞 </tag>
+            
+            <tag> 資安 </tag>
+            
+            <tag> Google </tag>
+            
+            <tag> NVIDIA </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>Ralph Loop — 讓 Claude Code 自己跑到完為止</title>
+      <link href="/2026/03/29/Ralph-Loop-%E8%AE%93-Claude-Code-%E8%87%AA%E5%B7%B1%E8%B7%91%E5%88%B0%E5%AE%8C%E7%82%BA%E6%AD%A2/"/>
+      <url>/2026/03/29/Ralph-Loop-%E8%AE%93-Claude-Code-%E8%87%AA%E5%B7%B1%E8%B7%91%E5%88%B0%E5%AE%8C%E7%82%BA%E6%AD%A2/</url>
+      
+        <content type="html"><![CDATA[<p>你有沒有遇過這種情境：跑測試，紅了三個，修好一個又冒出兩個，來回切 terminal 切到懷疑人生？</p><p>Ralph Loop 解決的就是這件事。它是 Claude Code 的自動迭代套件，概念很直接——讓 Claude 在同一個 session 裡反覆執行同一個 prompt，每一輪看到前一輪改過的檔案繼續修，直到條件滿足或者跑到你設定的上限為止。</p><h2 id="Stop-Hook-攔截機制"><a href="#Stop-Hook-攔截機制" class="headerlink" title="Stop Hook 攔截機制"></a>Stop Hook 攔截機制</h2><p>背後的原理不複雜。Ralph Loop 用的是 Claude Code 的 <strong>Stop Hook</strong>——Claude 每次想結束的時候，Hook 會攔截這個動作，檢查輸出裡有沒有出現你預設的完成標記 <code>&lt;promise&gt;TAG&lt;/promise&gt;</code>。沒看到？同一個 prompt 再餵一次。看到了或者跑到最大次數？放行，結束。</p><p>等效的概念大概是這樣：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">while</span> :; <span class="keyword">do</span></span><br><span class="line">  <span class="built_in">cat</span> PROMPT.md | claude-code --<span class="built_in">continue</span></span><br><span class="line"><span class="keyword">done</span></span><br></pre></td></tr></table></figure><p>但它不是真的 bash 迴圈。狀態會寫在 <code>.claude/ralph-loop.local.md</code> 裡面，用 YAML frontmatter 記錄目前跑到第幾輪、session ID、完成條件。</p><h2 id="指令一覽"><a href="#指令一覽" class="headerlink" title="指令一覽"></a>指令一覽</h2><p>啟動迴圈：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/ralph-loop <span class="string">&quot;&lt;你的 prompt&gt;&quot;</span> --max-iterations 20 --completion-promise <span class="string">&quot;DONE&quot;</span></span><br></pre></td></tr></table></figure><p>取消：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/cancel-ralph</span><br></pre></td></tr></table></figure><p>查看進度：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">head</span> -10 .claude/ralph-loop.local.md</span><br></pre></td></tr></table></figure><p>兩個參數值得記住。<code>--max-iterations</code> 設定跑幾輪就強制停，<strong>建議永遠加上去</strong>——不然就是無限迴圈，API 額度燒到乾也不會停。<code>--completion-promise</code> 設定 Claude 輸出什麼文字代表「做完了」。</p><h2 id="六種實戰場景"><a href="#六種實戰場景" class="headerlink" title="六種實戰場景"></a>六種實戰場景</h2><h3 id="TDD-迴圈"><a href="#TDD-迴圈" class="headerlink" title="TDD 迴圈"></a>TDD 迴圈</h3><p>跑測試 → 修 code → 再跑，直到全綠。這是 Ralph Loop 最對味的場景，因為 pass&#x2F;fail 是客觀的，Claude 沒辦法作弊。</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">/ralph-loop <span class="string">&quot;執行 pnpm test，失敗就修實作，反覆到全部通過。\</span></span><br><span class="line"><span class="string">完成後輸出 &lt;promise&gt;ALL TESTS PASS&lt;/promise&gt;&quot;</span> \</span><br><span class="line">--completion-promise <span class="string">&quot;ALL TESTS PASS&quot;</span> --max-iterations 20</span><br></pre></td></tr></table></figure><h3 id="逐步消化-Task-List"><a href="#逐步消化-Task-List" class="headerlink" title="逐步消化 Task List"></a>逐步消化 Task List</h3><p>讀取 <code>.spec/tasks.md</code>，找到下一個未完成的項目實作，做完打勾，直到清單清空。</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">/ralph-loop <span class="string">&quot;讀 .spec/tasks.md，實作下一個未完成任務，完成打勾。\</span></span><br><span class="line"><span class="string">全部做完輸出 &lt;promise&gt;DONE&lt;/promise&gt;&quot;</span> \</span><br><span class="line">--completion-promise <span class="string">&quot;DONE&quot;</span> --max-iterations 30</span><br></pre></td></tr></table></figure><h3 id="Lint-修到零錯誤"><a href="#Lint-修到零錯誤" class="headerlink" title="Lint 修到零錯誤"></a>Lint 修到零錯誤</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">/ralph-loop <span class="string">&quot;執行 pnpm lint，修復所有報錯，重複直到零錯誤。\</span></span><br><span class="line"><span class="string">完成後輸出 &lt;promise&gt;CLEAN&lt;/promise&gt;&quot;</span> \</span><br><span class="line">--completion-promise <span class="string">&quot;CLEAN&quot;</span> --max-iterations 10</span><br></pre></td></tr></table></figure><h3 id="Code-Review-迭代"><a href="#Code-Review-迭代" class="headerlink" title="Code Review 迭代"></a>Code Review 迭代</h3><p>用 reviewer agent 掃一遍、修完再掃，直到沒有 CRITICAL 和 HIGH。</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">/ralph-loop <span class="string">&quot;用 code-reviewer agent 審查 src/ 變更，\</span></span><br><span class="line"><span class="string">修復所有 CRITICAL 和 HIGH 問題。\</span></span><br><span class="line"><span class="string">全部修完輸出 &lt;promise&gt;REVIEWED&lt;/promise&gt;&quot;</span> \</span><br><span class="line">--completion-promise <span class="string">&quot;REVIEWED&quot;</span> --max-iterations 15</span><br></pre></td></tr></table></figure><h3 id="自動修-CI"><a href="#自動修-CI" class="headerlink" title="自動修 CI"></a>自動修 CI</h3><p>CI 紅了就分析 log、修 code、push，直到全綠。</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">/ralph-loop <span class="string">&quot;檢查 gh run list 最新結果，\</span></span><br><span class="line"><span class="string">失敗就分析日誌修復程式碼並推送。\</span></span><br><span class="line"><span class="string">CI 全綠後輸出 &lt;promise&gt;CI GREEN&lt;/promise&gt;&quot;</span> \</span><br><span class="line">--completion-promise <span class="string">&quot;CI GREEN&quot;</span> --max-iterations 10</span><br></pre></td></tr></table></figure><h3 id="漸進式重構"><a href="#漸進式重構" class="headerlink" title="漸進式重構"></a>漸進式重構</h3><p>找到下一個用舊版 API 的檔案，改成新版，確認編譯，下一個。</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">/ralph-loop <span class="string">&quot;找到下一個使用舊版 API 的檔案，重構為新版 API，\</span></span><br><span class="line"><span class="string">確認編譯通過。全部遷移完成後輸出 &lt;promise&gt;MIGRATED&lt;/promise&gt;&quot;</span> \</span><br><span class="line">--completion-promise <span class="string">&quot;MIGRATED&quot;</span> --max-iterations 50</span><br></pre></td></tr></table></figure><h2 id="什麼時候不該用"><a href="#什麼時候不該用" class="headerlink" title="什麼時候不該用"></a>什麼時候不該用</h2><p>Ralph Loop 的核心限制在一個字：<strong>客觀性</strong>。</p><p>有自動驗證的任務（測試結果、lint 輸出、CI status）非常適合。但需要主觀判斷的事情——「UI 調到好看」「文案寫到滿意」——Claude 可能會提前輸出 <code>&lt;promise&gt;</code> 來脫離迴圈。它不是故意騙你，是它真的覺得「差不多了」，而你可能不同意。</p><table><thead><tr><th>場景</th><th>適合？</th><th>原因</th></tr></thead><tbody><tr><td>TDD &#x2F; lint 零錯誤</td><td>非常適合</td><td>有明確的自動驗證</td></tr><tr><td>逐步實作 task list</td><td>適合</td><td>有 checkbox 當進度指標</td></tr><tr><td>自動修 CI</td><td>適合</td><td>CI status 可驗證</td></tr><tr><td>UI 調整到「好看」</td><td>不適合</td><td>主觀判斷，Claude 會提前逃跑</td></tr><tr><td>生產環境 debug</td><td>不適合</td><td>需要人類即時決策</td></tr></tbody></table><h2 id="Prompt-撰寫要點"><a href="#Prompt-撰寫要點" class="headerlink" title="Prompt 撰寫要點"></a>Prompt 撰寫要點</h2><p>三個原則。第一，完成條件要寫清楚——在 prompt 裡明確告訴 Claude 什麼時候該輸出 <code>&lt;promise&gt;TAG&lt;/promise&gt;</code>。第二，安全出口要設好——<code>--max-iterations</code> 永遠加，然後在 prompt 裡寫「如果卡住就記錄 blocker」。第三，分階段拆解——複雜任務拆成 Phase 1&#x2F;2&#x2F;3，最後一個 phase 才輸出 promise。</p><p>另外一個值得注意的：Ralph Loop 只影響啟動它的 session。同專案開了其他 Claude Code 視窗不會被攔截，可以安心繼續做別的事。</p><p>Ralph Loop 把「人盯著 terminal 等結果再手動重跑」的迴圈自動化掉了。TDD、lint、CI 這些本來就是機械式重複的流程，交給 Hook 處理剛好。下次跑測試跑到天荒地老的時候，不妨試試看。</p><blockquote><p>參考來源：<a href="https://anthropic.skilljar.com/">Claude Code in Action - Anthropic Academy</a></p></blockquote>]]></content>
+      
+      
+      <categories>
+          
+          <category> Claude Code </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> Claude Code </tag>
+            
+            <tag> Skill </tag>
+            
+            <tag> 自動化 </tag>
+            
+            <tag> TDD </tag>
+            
+            <tag> CI/CD </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>AI 與科技新聞摘要 — 2026/03/28</title>
       <link href="/2026/03/28/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260328/"/>
       <url>/2026/03/28/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260328/</url>
