@@ -1,0 +1,385 @@
+<!DOCTYPE html><html lang="zh-TW" data-theme="dark"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>Java 8 時間 API 與 LinkedHashMap 使用筆記 | Cheng's Tech &amp; Life</title><meta name="author" content="Cheng®"><meta name="copyright" content="Cheng®"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#0d0d0d"><meta name="description" content="Java 8 的時間 API 用起來比之前的 Date、Calendar 不知道爽幾倍。但新 API 的時區轉換常常爆炸，因為邏輯和以前差很多。LinkedHashMap 是保持插入順序的 Map，常被小看但超實用。Java 8 時間 API 基礎 主要類 時間轉換 最常見的坑：UTC 時間轉台灣時間。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Java 8 時間 API 與 LinkedHashMap 使用筆記">
+<meta property="og:url" content="https://mark22013333.github.io/2026/02/20/Java-8-%E6%99%82%E9%96%93-API-%E8%88%87-LinkedHashMap-%E7%AD%86%E8%A8%98/index.html">
+<meta property="og:site_name" content="Cheng&#39;s Tech &amp; Life">
+<meta property="og:description" content="Java 8 的時間 API 用起來比之前的 Date、Calendar 不知道爽幾倍。但新 API 的時區轉換常常爆炸，因為邏輯和以前差很多。LinkedHashMap 是保持插入順序的 Map，常被小看但超實用。Java 8 時間 API 基礎 主要類 時間轉換 最常見的坑：UTC 時間轉台灣時間。">
+<meta property="og:locale" content="zh_TW">
+<meta property="og:image" content="https://mark22013333.github.io/img/20260220-01.webp">
+<meta property="article:published_time" content="2026-02-20T00:30:00.000Z">
+<meta property="article:modified_time" content="2026-04-13T02:00:09.833Z">
+<meta property="article:author" content="Cheng®">
+<meta property="article:tag" content="Java">
+<meta property="article:tag" content="Collections">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://mark22013333.github.io/img/20260220-01.webp"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Java 8 時間 API 與 LinkedHashMap 使用筆記",
+  "url": "https://mark22013333.github.io/2026/02/20/Java-8-%E6%99%82%E9%96%93-API-%E8%88%87-LinkedHashMap-%E7%AD%86%E8%A8%98/",
+  "image": "https://mark22013333.github.io/img/20260220-01.webp",
+  "datePublished": "2026-02-20T00:30:00.000Z",
+  "dateModified": "2026-04-13T02:00:09.833Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "Cheng®",
+      "url": "https://mark22013333.github.io"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://mark22013333.github.io/2026/02/20/Java-8-%E6%99%82%E9%96%93-API-%E8%88%87-LinkedHashMap-%E7%AD%86%E8%A8%98/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//www.google-analytics.com" crossorigin=""/><link rel="preconnect" href="//fonts.googleapis.com" crossorigin=""/><link rel="preconnect" href="//busuanzi.ibruce.info"/><meta name="google-site-verification" content="6ywUr8k2n_CT1PFYJzlSvI3CZ-JmJ55RYbA39VrFBDs"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!true && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          const hour = new Date().getHours()
+          const isNight = hour <= 9 || hour >= 18
+          if (theme === undefined) isNight ? activateDarkMode() : activateLightMode()
+          else theme === 'light' ? activateLightMode() : activateDarkMode()
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script async="async" src="https://www.googletagmanager.com/gtag/js?id=G-JBV14NRDH3"></script><script>window.dataLayer = window.dataLayer || []
+function gtag(){dataLayer.push(arguments)}
+gtag('js', new Date())
+gtag('config', 'G-JBV14NRDH3')
+btf.addGlobalFn('pjaxComplete', () => {
+  gtag('config', 'G-JBV14NRDH3', {'page_path': window.location.pathname})
+}, 'google_analytics')
+</script><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Titillium+Web&amp;display=swap" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"pagination":{"enable":false,"hitsPerPage":8},"languages":{"hits_empty":"找不到符合您查詢的內容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '複製成功',
+    error: '複製失敗',
+    noSupport: '瀏覽器不支援'
+  },
+  relativeDate: {
+    homepage: false,
+    post: true
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '剛剛',
+    min: '分鐘前',
+    hour: '小時前',
+    day: '天前',
+    month: '個月前'
+  },
+  copyright: {"limitCount":1,"languages":{"author":"作者: Cheng®","link":"連結: ","source":"來源: Cheng's Tech & Life","info":"著作權歸作者所有。如需商業轉載，請聯絡作者獲得授權，非商業轉載請註明出處😁。"}},
+  lightbox: 'fancybox',
+  Snackbar: {"chs_to_cht":"已切換為繁體中文","cht_to_chs":"已切換為簡體中文","day_to_night":"已切換為深色模式","night_to_day":"已切換為淺色模式","bgLight":"#49b1f5","bgDark":"#1f1f1f","position":"top-center"},
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid/dist/infinitegrid.min.js',
+    buttonText: '載入更多'
+  },
+  isPhotoFigcaption: true,
+  islazyloadPlugin: false,
+  isAnchor: true,
+  percent: {
+    toc: true,
+    rightside: true,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Java 8 時間 API 與 LinkedHashMap 使用筆記',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><link rel="stylesheet" href="/css/kkbox-player.css"><link rel="stylesheet" href="/css/tag-cloud-fancy.css"><link rel="stylesheet" href="/css/font-resize.css"><link rel="stylesheet" href="/css/dark-palette.css"><link rel="stylesheet" href="/css/loading-override.css"><link rel="alternate" href="/atom.xml" title="Cheng's Tech & Life" type="application/atom+xml">
+</head><body><div id="loading-box"><div class="loading-glass-overlay"></div><div class="loading-indicator"><div class="loading-dot"></div><div class="loading-dot"></div><div class="loading-dot"></div></div></div><script>(()=>{
+  const $loadingBox = document.getElementById('loading-box')
+  const $body = document.body
+  const preloader = {
+    endLoading: () => {
+      if ($loadingBox.classList.contains('loaded')) return
+      $body.style.overflow = ''
+      $loadingBox.classList.add('loaded')
+    },
+    initLoading: () => {
+      $body.style.overflow = 'hidden'
+      $loadingBox.classList.remove('loaded')
+    }
+  }
+
+  preloader.initLoading()
+
+  if (document.readyState === 'complete') {
+    preloader.endLoading()
+  } else {
+    window.addEventListener('load', preloader.endLoading)
+    document.addEventListener('DOMContentLoaded', preloader.endLoading)
+    setTimeout(preloader.endLoading, 7000)
+  }
+
+  if (true) {
+    btf.addGlobalFn('pjaxSend', preloader.initLoading, 'preloader_init')
+    btf.addGlobalFn('pjaxComplete', preloader.endLoading, 'preloader_end')
+  }
+})()</script><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="https://lh3.googleusercontent.com/pw/ABLVV87_po8nBc6F_tXcoYDmtzMGWxHuhhrbguYILCjmjWKLOS8DTpubm0YoQLKgjyjRIZyV5TjYe7XVEz_YU4squfr37GTZqPZP1hlMVZ_MIgXpTxWu73M=w1200" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">114</div></a><a href="/tags/"><div class="headline">標籤</div><div class="length-num">50</div></a><a href="/categories/"><div class="headline">分類</div><div class="length-num">9</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首頁-Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 時間軸-archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 標籤-tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分類-Categories</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-list"></i><span> 其他列表</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音樂-Music</span></a></li><li><a class="site-page child" href="/gallery/"><i class="fa-fw fas fa-images"></i><span> 畫館-Gallery</span></a></li></ul></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg fixed" id="page-header" style="background-image: url(/img/20260220-01.webp);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><img class="site-icon" src="https://lh3.googleusercontent.com/pw/ABLVV87_po8nBc6F_tXcoYDmtzMGWxHuhhrbguYILCjmjWKLOS8DTpubm0YoQLKgjyjRIZyV5TjYe7XVEz_YU4squfr37GTZqPZP1hlMVZ_MIgXpTxWu73M=w1200" alt="Logo"><span class="site-name">Cheng's Tech &amp; Life</span></a><a class="nav-page-title" href="/"><span class="site-name">Java 8 時間 API 與 LinkedHashMap 使用筆記</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首頁</span></span></a></span><div id="menus"><div id="search-button" title="Ctrl+K / Cmd+K"><span class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜尋</span></span></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首頁-Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 時間軸-archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 標籤-tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分類-Categories</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-list"></i><span> 其他列表</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音樂-Music</span></a></li><li><a class="site-page child" href="/gallery/"><i class="fa-fw fas fa-images"></i><span> 畫館-Gallery</span></a></li></ul></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">Java 8 時間 API 與 LinkedHashMap 使用筆記</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">發表於</span><time class="post-meta-date-created" datetime="2026-02-20T00:30:00.000Z" title="發表於 2026-02-20 08:30:00">2026-02-20</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新於</span><time class="post-meta-date-updated" datetime="2026-04-13T02:00:09.833Z" title="更新於 2026-04-13 10:00:09">2026-04-13</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Java/">Java</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">總字數:</span><span class="word-count">1.5k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">閱讀時間:</span><span>6分鐘</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">瀏覽量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><p>Java 8 的時間 API 用起來比之前的 Date、Calendar 不知道爽幾倍。但新 API 的時區轉換常常爆炸，因為邏輯和以前差很多。LinkedHashMap 是保持插入順序的 Map，常被小看但超實用。一次整理出來。</p>
+<h2 id="Java-8-時間-API-基礎"><a href="#Java-8-時間-API-基礎" class="headerlink" title="Java 8 時間 API 基礎"></a>Java 8 時間 API 基礎</h2><h3 id="主要類"><a href="#主要類" class="headerlink" title="主要類"></a>主要類</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.time.*;</span><br><span class="line"></span><br><span class="line"><span class="comment">// LocalDateTime - 純日期時間，沒有時區</span></span><br><span class="line"><span class="type">LocalDateTime</span> <span class="variable">now</span> <span class="operator">=</span> LocalDateTime.now();</span><br><span class="line">System.out.println(now);  <span class="comment">// 2026-02-20T14:30:45.123456</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// LocalDate - 只有日期</span></span><br><span class="line"><span class="type">LocalDate</span> <span class="variable">today</span> <span class="operator">=</span> LocalDate.now();</span><br><span class="line">System.out.println(today);  <span class="comment">// 2026-02-20</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// LocalTime - 只有時間</span></span><br><span class="line"><span class="type">LocalTime</span> <span class="variable">time</span> <span class="operator">=</span> LocalTime.now();</span><br><span class="line">System.out.println(time);  <span class="comment">// 14:30:45.123456</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// Instant - UTC 時間戳，從 1970-01-01T00:00:00Z 起算</span></span><br><span class="line"><span class="type">Instant</span> <span class="variable">instant</span> <span class="operator">=</span> Instant.now();</span><br><span class="line">System.out.println(instant);  <span class="comment">// 2026-02-20T06:30:45.123456Z</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// ZoneId - 時區識別碼</span></span><br><span class="line"><span class="type">ZoneId</span> <span class="variable">taipeiZone</span> <span class="operator">=</span> ZoneId.of(<span class="string">&quot;Asia/Taipei&quot;</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// ZonedDateTime - 帶時區的日期時間</span></span><br><span class="line"><span class="type">ZonedDateTime</span> <span class="variable">taipeiTime</span> <span class="operator">=</span> ZonedDateTime.now(taipeiZone);</span><br><span class="line">System.out.println(taipeiTime);  <span class="comment">// 2026-02-20T14:30:45.123456+08:00[Asia/Taipei]</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="時間轉換"><a href="#時間轉換" class="headerlink" title="時間轉換"></a>時間轉換</h3><p>最常見的坑：UTC 時間轉台灣時間。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 假設 API 回傳的是 UTC 時間字串</span></span><br><span class="line"><span class="type">String</span> <span class="variable">utcTimeStr</span> <span class="operator">=</span> <span class="string">&quot;2026-02-20T06:30:00Z&quot;</span>;  <span class="comment">// UTC 時間</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 方法 1：用 Instant 再轉 ZonedDateTime</span></span><br><span class="line"><span class="type">Instant</span> <span class="variable">instant</span> <span class="operator">=</span> Instant.parse(utcTimeStr);</span><br><span class="line"><span class="type">ZonedDateTime</span> <span class="variable">taipeiTime</span> <span class="operator">=</span> instant.atZone(ZoneId.of(<span class="string">&quot;Asia/Taipei&quot;</span>));</span><br><span class="line">System.out.println(taipeiTime);  <span class="comment">// 2026-02-20T14:30:00+08:00[Asia/Taipei]</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 方法 2：用 LocalDateTime + ZoneOffset（更複雜但有時更清楚）</span></span><br><span class="line"><span class="type">LocalDateTime</span> <span class="variable">utcLocal</span> <span class="operator">=</span> LocalDateTime.parse(utcTimeStr.replace(<span class="string">&quot;Z&quot;</span>, <span class="string">&quot;&quot;</span>));</span><br><span class="line"><span class="type">Instant</span> <span class="variable">inst</span> <span class="operator">=</span> utcLocal.toInstant(ZoneOffset.UTC);</span><br><span class="line"><span class="type">ZonedDateTime</span> <span class="variable">taipeiTime</span> <span class="operator">=</span> inst.atZone(ZoneId.of(<span class="string">&quot;Asia/Taipei&quot;</span>));</span><br></pre></td></tr></table></figure>
+
+<h3 id="關鍵的坑"><a href="#關鍵的坑" class="headerlink" title="關鍵的坑"></a>關鍵的坑</h3><p><strong>UTC 時間轉本地時間的常見錯誤：</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 爛做法 1：直接加 8 小時（早期做法）</span></span><br><span class="line"><span class="type">long</span> <span class="variable">utcMillis</span> <span class="operator">=</span> System.currentTimeMillis();</span><br><span class="line"><span class="type">long</span> <span class="variable">taipeiMillis</span> <span class="operator">=</span> utcMillis + <span class="number">8</span> * <span class="number">60</span> * <span class="number">60</span> * <span class="number">1000</span>;  <span class="comment">// 這是錯的！</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 爛做法 2：假設 LocalDateTime.parse 就是 UTC</span></span><br><span class="line"><span class="type">String</span> <span class="variable">utcStr</span> <span class="operator">=</span> <span class="string">&quot;2026-02-20T06:30:00&quot;</span>;</span><br><span class="line"><span class="type">LocalDateTime</span> <span class="variable">ldt</span> <span class="operator">=</span> LocalDateTime.parse(utcStr);</span><br><span class="line"><span class="comment">// 錯誤：ldt 現在是 2026-02-20T06:30:00（沒有時區資訊），</span></span><br><span class="line"><span class="comment">// 系統會當成本地時間，而不是 UTC</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 正確做法</span></span><br><span class="line"><span class="type">Instant</span> <span class="variable">inst</span> <span class="operator">=</span> LocalDateTime.parse(utcStr).toInstant(ZoneOffset.UTC);</span><br><span class="line"><span class="type">ZonedDateTime</span> <span class="variable">taipeiTime</span> <span class="operator">=</span> inst.atZone(ZoneId.of(<span class="string">&quot;Asia/Taipei&quot;</span>));</span><br></pre></td></tr></table></figure>
+
+<h3 id="格式化和解析"><a href="#格式化和解析" class="headerlink" title="格式化和解析"></a>格式化和解析</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 格式化</span></span><br><span class="line"><span class="type">LocalDateTime</span> <span class="variable">now</span> <span class="operator">=</span> LocalDateTime.now();</span><br><span class="line"><span class="type">DateTimeFormatter</span> <span class="variable">formatter</span> <span class="operator">=</span> DateTimeFormatter.ofPattern(<span class="string">&quot;yyyy-MM-dd HH:mm:ss&quot;</span>);</span><br><span class="line"><span class="type">String</span> <span class="variable">formatted</span> <span class="operator">=</span> now.format(formatter);</span><br><span class="line">System.out.println(formatted);  <span class="comment">// 2026-02-20 14:30:45</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 解析</span></span><br><span class="line"><span class="type">LocalDateTime</span> <span class="variable">parsed</span> <span class="operator">=</span> LocalDateTime.parse(<span class="string">&quot;2026-02-20 14:30:45&quot;</span>, formatter);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 帶時區的格式化</span></span><br><span class="line"><span class="type">ZonedDateTime</span> <span class="variable">taipei</span> <span class="operator">=</span> ZonedDateTime.now(ZoneId.of(<span class="string">&quot;Asia/Taipei&quot;</span>));</span><br><span class="line"><span class="type">String</span> <span class="variable">tzFormatted</span> <span class="operator">=</span> taipei.format(DateTimeFormatter.ISO_ZONED_DATE_TIME);</span><br><span class="line">System.out.println(tzFormatted);  <span class="comment">// 2026-02-20T14:30:45.123456+08:00[Asia/Taipei]</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="和舊-Date-轉換"><a href="#和舊-Date-轉換" class="headerlink" title="和舊 Date 轉換"></a>和舊 Date 轉換</h3><p>有些古老 library 還在用 java.util.Date：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Instant -&gt; Date</span></span><br><span class="line"><span class="type">Instant</span> <span class="variable">instant</span> <span class="operator">=</span> Instant.now();</span><br><span class="line"><span class="type">Date</span> <span class="variable">date</span> <span class="operator">=</span> Date.from(instant);</span><br><span class="line"></span><br><span class="line"><span class="comment">// Date -&gt; Instant</span></span><br><span class="line"><span class="type">Date</span> <span class="variable">date</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Date</span>();</span><br><span class="line"><span class="type">Instant</span> <span class="variable">instant</span> <span class="operator">=</span> date.toInstant();</span><br><span class="line"></span><br><span class="line"><span class="comment">// LocalDateTime -&gt; Date（需要時區）</span></span><br><span class="line"><span class="type">LocalDateTime</span> <span class="variable">ldt</span> <span class="operator">=</span> LocalDateTime.now();</span><br><span class="line"><span class="type">Date</span> <span class="variable">date</span> <span class="operator">=</span> Date.from(ldt.atZone(ZoneId.systemDefault()).toInstant());</span><br><span class="line"></span><br><span class="line"><span class="comment">// Date -&gt; LocalDateTime（需要時區）</span></span><br><span class="line"><span class="type">Date</span> <span class="variable">date</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Date</span>();</span><br><span class="line"><span class="type">LocalDateTime</span> <span class="variable">ldt</span> <span class="operator">=</span> date.toInstant()</span><br><span class="line">    .atZone(ZoneId.systemDefault())</span><br><span class="line">    .toLocalDateTime();</span><br></pre></td></tr></table></figure>
+
+<h2 id="LinkedHashMap-筆記"><a href="#LinkedHashMap-筆記" class="headerlink" title="LinkedHashMap 筆記"></a>LinkedHashMap 筆記</h2><p>HashMap 不保證順序，但有時候需要保持插入順序。LinkedHashMap 就是這種場景。</p>
+<h3 id="基本用法"><a href="#基本用法" class="headerlink" title="基本用法"></a>基本用法</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 普通 HashMap：順序不確定</span></span><br><span class="line">Map&lt;String, Integer&gt; hashMap = <span class="keyword">new</span> <span class="title class_">HashMap</span>&lt;&gt;();</span><br><span class="line">hashMap.put(<span class="string">&quot;Alice&quot;</span>, <span class="number">30</span>);</span><br><span class="line">hashMap.put(<span class="string">&quot;Bob&quot;</span>, <span class="number">25</span>);</span><br><span class="line">hashMap.put(<span class="string">&quot;Cathy&quot;</span>, <span class="number">28</span>);</span><br><span class="line"><span class="comment">// 遍歷時順序不確定</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// LinkedHashMap：保持插入順序</span></span><br><span class="line">Map&lt;String, Integer&gt; linkedMap = <span class="keyword">new</span> <span class="title class_">LinkedHashMap</span>&lt;&gt;();</span><br><span class="line">linkedMap.put(<span class="string">&quot;Alice&quot;</span>, <span class="number">30</span>);</span><br><span class="line">linkedMap.put(<span class="string">&quot;Bob&quot;</span>, <span class="number">25</span>);</span><br><span class="line">linkedMap.put(<span class="string">&quot;Cathy&quot;</span>, <span class="number">28</span>);</span><br><span class="line"><span class="comment">// 遍歷時就是 Alice -&gt; Bob -&gt; Cathy</span></span><br><span class="line"></span><br><span class="line">linkedMap.forEach((k, v) -&gt; System.out.println(k + <span class="string">&quot;: &quot;</span> + v));</span><br><span class="line"><span class="comment">// 輸出：</span></span><br><span class="line"><span class="comment">// Alice: 30</span></span><br><span class="line"><span class="comment">// Bob: 25</span></span><br><span class="line"><span class="comment">// Cathy: 28</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="設定初始容量避免擴容"><a href="#設定初始容量避免擴容" class="headerlink" title="設定初始容量避免擴容"></a>設定初始容量避免擴容</h3><p>跟 HashMap 一樣，要預先設定容量避免頻繁 resize：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 不好：會自動擴容</span></span><br><span class="line">Map&lt;String, String&gt; map = <span class="keyword">new</span> <span class="title class_">LinkedHashMap</span>&lt;&gt;();</span><br><span class="line"></span><br><span class="line"><span class="comment">// 更好：預先指定容量</span></span><br><span class="line">Map&lt;String, String&gt; map = <span class="keyword">new</span> <span class="title class_">LinkedHashMap</span>&lt;&gt;(<span class="number">16</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 最好：根據預期大小計算</span></span><br><span class="line"><span class="comment">// LinkedHashMap 也遵循 0.75 的 load factor</span></span><br><span class="line"><span class="comment">// 如果預期 100 個元素，容量應該是 100 / 0.75 ≈ 134</span></span><br><span class="line">Map&lt;String, String&gt; map = <span class="keyword">new</span> <span class="title class_">LinkedHashMap</span>&lt;&gt;(<span class="number">134</span>);</span><br></pre></td></tr></table></figure>
+
+<h3 id="LinkedHashMap-的內部結構"><a href="#LinkedHashMap-的內部結構" class="headerlink" title="LinkedHashMap 的內部結構"></a>LinkedHashMap 的內部結構</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">HashMap:</span><br><span class="line">  [bucket]─────&gt; entry1 -&gt; entry2 -&gt; entry3</span><br><span class="line">  </span><br><span class="line">LinkedHashMap（保持插入順序）:</span><br><span class="line">  [bucket]─────&gt; entry1 -&gt; entry2 -&gt; entry3</span><br><span class="line">    </span><br><span class="line">  同時維護一條雙向鏈結串列：</span><br><span class="line">  entry1 &lt;-&gt; entry2 &lt;-&gt; entry3</span><br></pre></td></tr></table></figure>
+
+<p>跟 HashMap 相比，多了一條雙向鏈結串列來記錄插入順序。查詢還是 O(1)，但記憶體稍多。</p>
+<h3 id="LRU-Cache-實現（特殊用法）"><a href="#LRU-Cache-實現（特殊用法）" class="headerlink" title="LRU Cache 實現（特殊用法）"></a>LRU Cache 實現（特殊用法）</h3><p>LinkedHashMap 有個特殊的 <code>accessOrder</code> 模式，記錄訪問順序而不是插入順序：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 記錄訪問順序（LRU）</span></span><br><span class="line">Map&lt;String, String&gt; lruCache = <span class="keyword">new</span> <span class="title class_">LinkedHashMap</span>&lt;String, String&gt;(<span class="number">16</span>, <span class="number">0.75f</span>, <span class="literal">true</span>) &#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">protected</span> <span class="type">boolean</span> <span class="title function_">removeEldestEntry</span><span class="params">(Map.Entry eldest)</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> size() &gt; <span class="number">10</span>;  <span class="comment">// 最多保持 10 個最近訪問的項</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">lruCache.put(<span class="string">&quot;key1&quot;</span>, <span class="string">&quot;value1&quot;</span>);</span><br><span class="line">lruCache.put(<span class="string">&quot;key2&quot;</span>, <span class="string">&quot;value2&quot;</span>);</span><br><span class="line">lruCache.get(<span class="string">&quot;key1&quot;</span>);  <span class="comment">// 訪問了 key1，它會移到最後</span></span><br><span class="line">lruCache.put(<span class="string">&quot;key3&quot;</span>, <span class="string">&quot;value3&quot;</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// key1 因為被訪問過，優先級提高，不會被淘汰</span></span><br><span class="line"><span class="comment">// 如果再加超過 10 個，最舊的會被移除</span></span><br></pre></td></tr></table></figure>
+
+<p>accessOrder 參數：</p>
+<ul>
+<li><code>false</code> - 記錄插入順序（預設）</li>
+<li><code>true</code> - 記錄訪問順序（get、put 都會更新順序）</li>
+</ul>
+<h2 id="實戰組合：時間戳序列化"><a href="#實戰組合：時間戳序列化" class="headerlink" title="實戰組合：時間戳序列化"></a>實戰組合：時間戳序列化</h2><p>常見場景：API 回傳時間，要保持原始順序，還要轉成台灣時間。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">List&lt;String&gt; timeStrings = Arrays.asList(</span><br><span class="line">    <span class="string">&quot;2026-02-20T06:00:00Z&quot;</span>,</span><br><span class="line">    <span class="string">&quot;2026-02-20T08:00:00Z&quot;</span>,</span><br><span class="line">    <span class="string">&quot;2026-02-20T10:00:00Z&quot;</span></span><br><span class="line">);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 用 LinkedHashMap 保持順序，轉成台灣時間</span></span><br><span class="line">Map&lt;String, ZonedDateTime&gt; timeMap = <span class="keyword">new</span> <span class="title class_">LinkedHashMap</span>&lt;&gt;();</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> (String utcStr : timeStrings) &#123;</span><br><span class="line">    <span class="type">Instant</span> <span class="variable">instant</span> <span class="operator">=</span> Instant.parse(utcStr);</span><br><span class="line">    <span class="type">ZonedDateTime</span> <span class="variable">taipeiTime</span> <span class="operator">=</span> instant.atZone(ZoneId.of(<span class="string">&quot;Asia/Taipei&quot;</span>));</span><br><span class="line">    timeMap.put(utcStr, taipeiTime);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 遍歷時保持原始順序</span></span><br><span class="line">timeMap.forEach((utcStr, taipeiTime) -&gt; &#123;</span><br><span class="line">    System.out.println(utcStr + <span class="string">&quot; -&gt; &quot;</span> + taipeiTime);</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 輸出（順序保證）：</span></span><br><span class="line"><span class="comment">// 2026-02-20T06:00:00Z -&gt; 2026-02-20T14:00:00+08:00[Asia/Taipei]</span></span><br><span class="line"><span class="comment">// 2026-02-20T08:00:00Z -&gt; 2026-02-20T16:00:00+08:00[Asia/Taipei]</span></span><br><span class="line"><span class="comment">// 2026-02-20T10:00:00Z -&gt; 2026-02-20T18:00:00+08:00[Asia/Taipei]</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="實務建議"><a href="#實務建議" class="headerlink" title="實務建議"></a>實務建議</h2><p><strong>時間 API：</strong></p>
+<ol>
+<li>儘量用 <code>Instant</code> + <code>ZoneId</code> 的組合處理時區轉換</li>
+<li>永遠記得 <code>LocalDateTime.parse()</code> 不包含時區資訊</li>
+<li>和舊 <code>Date</code> 轉換時透過 <code>Instant</code> 作中介</li>
+<li>格式化用 <code>DateTimeFormatter</code>，別自己組字串</li>
+</ol>
+<p><strong>LinkedHashMap：</strong></p>
+<ol>
+<li>需要保持順序就用 LinkedHashMap，別用 HashMap</li>
+<li>預先設定容量避免擴容</li>
+<li>簡單 LRU 緩存用 accessOrder &#x3D; true</li>
+<li>需要複雜 LRU 邏輯就用 Guava 的 <code>CacheBuilder</code></li>
+</ol>
+<p>大多數時候用 Java 8 的時間 API 和 LinkedHashMap，就能搞定九成的場景。剩下一成是奇怪的需求，那就另當別論了。</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://mark22013333.github.io">Cheng®</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章連結: </span><span class="post-copyright-info"><a href="https://mark22013333.github.io/2026/02/20/Java-8-%E6%99%82%E9%96%93-API-%E8%88%87-LinkedHashMap-%E7%AD%86%E8%A8%98/">https://mark22013333.github.io/2026/02/20/Java-8-時間-API-與-LinkedHashMap-筆記/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版權聲明: </span><span class="post-copyright-info">本部落格所有文章除特別聲明外，均採用<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 授權協議。轉載請註明來源 <a href="https://mark22013333.github.io" target="_blank">Cheng's Tech & Life</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Java/">Java</a><a class="post-meta__tags" href="/tags/Collections/">Collections</a></div><div class="post-share"><div class="social-share" data-image="/img/20260220-01.webp" data-sites="facebook,x"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><div class="post-reward"><div class="reward-badges"><a class="sponsor-glow-btn" href="https://www.buymeacoffee.com/mark22013333" target="_blank" rel="noopener noreferrer" title="Buy Me A Coffee"><img src="https://img.shields.io/badge/Buy_Me_A_Coffee-FFDD00?style=for-the-badge&amp;logo=buy-me-a-coffee&amp;logoColor=black" alt="Buy Me A Coffee"/></a><a class="sponsor-glow-btn" href="https://p.ecpay.com.tw/EFC3F8F" target="_blank" rel="noopener noreferrer" title="綠界贊助"><img src="https://img.shields.io/badge/☕_%E8%AB%8B%E6%88%91%E5%96%9D%E6%9D%AF%E5%92%96%E5%95%A1-Donate-11998e?style=for-the-badge&amp;logo=coffee&amp;logoColor=white" alt="綠界贊助"/></a><a class="sponsor-glow-btn" href="https://calendly.com/markcheng00806-intumit/15min" target="_blank" rel="noopener noreferrer" title="預約時間"><img src="https://img.shields.io/badge/📅_%E9%A0%90%E7%B4%84_15_%E5%88%86%E9%90%98-Book_Time-0072ff?style=for-the-badge" alt="預約時間"/></a><p class="reward-badges-note">你的鼓勵將被轉換為我明天繼續加班的動力（真的）。 ❤️</p></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2026/02/09/OkHttp-%E6%89%8B%E5%8B%95%E8%A7%A3%E5%A3%93%E7%B8%AE-gzip-deflate-%E9%9F%BF%E6%87%89/" title="OkHttp 手動解壓縮 gzip/deflate 響應"><img class="cover" src="/img/20260209-01.webp" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">OkHttp 手動解壓縮 gzip/deflate 響應</div></div><div class="info-2"><div class="info-item-1">大多數時候，OkHttp 會自動解壓 gzip 響應。但某些老舊 server 或特殊場景，response 的 Content-Encoding 是 gzip&#x2F;deflate，但 OkHttp 沒有自動幫你解。這時就要自己手動解壓。 問題場景通常是這些情況：  Server 回傳 Content-Encoding: gzip，但沒有設定好 headers 某些代理或中間層加了壓縮但沒遵循標準 特殊的嵌入式系統的 API 需要在 interceptor 層級處理壓縮和解壓  實作 UnzippingInterceptor直接上完整代碼： 12345678910111213141516171819202122232425262728293031323334353637383940414243444546474849505152535455565758596061626364656667686970717273747576import okhttp3.Interceptor;import okhttp3.Response;import okio.BufferedSource...</div></div></div></a><a class="pagination-related" href="/2026/03/03/Java-%E9%9B%86%E5%90%88%E6%93%8D%E4%BD%9C-List-%E5%B7%AE%E9%9B%86%E8%88%87-Stream-%E5%88%86%E5%89%B2-JsonArray/" title="Java 集合操作 - List 差集與 Stream 分割 JsonArray"><img class="cover" src="/img/20260303-01.webp" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">Java 集合操作 - List 差集與 Stream 分割 JsonArray</div></div><div class="info-2"><div class="info-item-1">集合操作是日常編程的基礎，但很多人寫得很醜。本篇涵蓋三個常見的集合操作場景：List 差集、JsonArray 分割成 List，以及 Stream 查詢計數。這些小技巧能讓代碼更簡潔。 1. List 差集需求：從 list1 移除所有在 list2 裡出現的元素。 簡單但爛的做法1234567891011121314151617List&lt;String&gt; list1 = Arrays.asList(&quot;Apple&quot;, &quot;Banana&quot;, &quot;Cherry&quot;, &quot;Orange&quot;);List&lt;String&gt; list2 = Arrays.asList(&quot;Banana&quot;, &quot;Orange&quot;);// 爛做法 1：逐個刪（在迴圈中修改 list，會爆 ConcurrentModificationException）for (String item : list1) &#123;    if (list2.contains(item)) &#123; ...</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相關推薦</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2026/03/03/Java-%E9%9B%86%E5%90%88%E6%93%8D%E4%BD%9C-List-%E5%B7%AE%E9%9B%86%E8%88%87-Stream-%E5%88%86%E5%89%B2-JsonArray/" title="Java 集合操作 - List 差集與 Stream 分割 JsonArray"><img class="cover" src="/img/20260303-01.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-03-03</div><div class="info-item-2">Java 集合操作 - List 差集與 Stream 分割 JsonArray</div></div><div class="info-2"><div class="info-item-1">集合操作是日常編程的基礎，但很多人寫得很醜。本篇涵蓋三個常見的集合操作場景：List 差集、JsonArray 分割成 List，以及 Stream 查詢計數。這些小技巧能讓代碼更簡潔。 1. List 差集需求：從 list1 移除所有在 list2 裡出現的元素。 簡單但爛的做法1234567891011121314151617List&lt;String&gt; list1 = Arrays.asList(&quot;Apple&quot;, &quot;Banana&quot;, &quot;Cherry&quot;, &quot;Orange&quot;);List&lt;String&gt; list2 = Arrays.asList(&quot;Banana&quot;, &quot;Orange&quot;);// 爛做法 1：逐個刪（在迴圈中修改 list，會爆 ConcurrentModificationException）for (String item : list1) &#123;    if (list2.contains(item)) &#123; ...</div></div></div></a><a class="pagination-related" href="/2026/01/18/Java-Stream-%E6%93%8D%E4%BD%9C%E9%9B%86%E9%8C%A6-%E5%90%88%E4%BD%B5Map-List%E8%BD%89Map-%E6%8E%92%E5%BA%8F/" title="Java Stream 操作集錦 - 合併 Map、List 轉 Map、物件排序"><img class="cover" src="/img/20260118-01.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-01-18</div><div class="info-item-2">Java Stream 操作集錦 - 合併 Map、List 轉 Map、物件排序</div></div><div class="info-2"><div class="info-item-1">Stream 操作是 Java 8+ 的大招。三個最常用的場景：合併多個 Map、把 List 轉成 Map、排序物件。一次整理出來，以後就 copy-paste 吧。 1. Stream 合併多個 Map經常要把好幾個 Map 合起來，最直白的做法是逐個 put： 123456789101112131415Map&lt;String, Integer&gt; map1 = new HashMap&lt;&gt;();map1.put(&quot;Apple&quot;, 10);map1.put(&quot;Banana&quot;, 20);Map&lt;String, Integer&gt; map2 = new HashMap&lt;&gt;();map2.put(&quot;Orange&quot;, 15);map2.put(&quot;Pear&quot;, 25);Map&lt;String, Integer&gt; map3 = new HashMap&lt;&gt;();map3.put(&quot;Cherry&quot;, 30);// 爛做法Map&lt...</div></div></div></a><a class="pagination-related" href="/2025/12/05/Java-Optional-%E5%AE%8C%E6%95%B4%E7%94%A8%E6%B3%95%E6%8C%87%E5%8D%97/" title="Java Optional 完整用法指南"><img class="cover" src="/img/20251205-01.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-12-05</div><div class="info-item-2">Java Optional 完整用法指南</div></div><div class="info-2"><div class="info-item-1">Optional 是 Java 8 引入的概念，初看很簡單，其實用法超深。一開始很多人覺得 Optional 很煩，後來用對了才發現「真香」。最關鍵是理解它的三段式結構。 Optional 的三段式結構Optional 的用法可以分成三段：頭部（建立）→ 身體（轉換）→ 尾巴（取值） 12建立        轉換（0~多個）       取值Optional → filter/map/flatMap → orElse/ifPresent  頭部：建立 Optionalof() - 確定非 null1234567User user = new User(&quot;Alice&quot;);// 用 of() 當你確定值一定不為 nullOptional&lt;User&gt; opt = Optional.of(user);// 如果值是 null，直接拋 NullPointerExceptionOptional&lt;User&gt; opt2 = Optional.of(null);  // ❌ 拋 exception  ofNullable() - 可能 null12345...</div></div></div></a><a class="pagination-related" href="/2026/02/09/OkHttp-%E6%89%8B%E5%8B%95%E8%A7%A3%E5%A3%93%E7%B8%AE-gzip-deflate-%E9%9F%BF%E6%87%89/" title="OkHttp 手動解壓縮 gzip&#x2F;deflate 響應"><img class="cover" src="/img/20260209-01.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-02-09</div><div class="info-item-2">OkHttp 手動解壓縮 gzip&#x2F;deflate 響應</div></div><div class="info-2"><div class="info-item-1">大多數時候，OkHttp 會自動解壓 gzip 響應。但某些老舊 server 或特殊場景，response 的 Content-Encoding 是 gzip&#x2F;deflate，但 OkHttp 沒有自動幫你解。這時就要自己手動解壓。 問題場景通常是這些情況：  Server 回傳 Content-Encoding: gzip，但沒有設定好 headers 某些代理或中間層加了壓縮但沒遵循標準 特殊的嵌入式系統的 API 需要在 interceptor 層級處理壓縮和解壓  實作 UnzippingInterceptor直接上完整代碼： 12345678910111213141516171819202122232425262728293031323334353637383940414243444546474849505152535455565758596061626364656667686970717273747576import okhttp3.Interceptor;import okhttp3.Response;import okio.BufferedSource...</div></div></div></a><a class="pagination-related" href="/2024/03/21/HashMap-%E2%86%92-computeIfAbsent/" title="HashMap → computeIfAbsent()"><img class="cover" src="/img/DALL-2024-03-21.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2024-03-21</div><div class="info-item-2">HashMap → computeIfAbsent()</div></div><div class="info-2"><div class="info-item-1">12345678910// 當key不存在，就執行第二個參數的函數，並回傳執行後的值，然後也會put// 如果函數返回 null，則不會put// 如果函數本身拋出（未經檢查的）異常，則重新拋出異常，則不會putpublic static void main(String[] args) &#123;    Map&lt;String, Integer&gt; stringLength = new HashMap&lt;&gt;();    stringLength.put(&quot;John&quot;, 2);    int i = stringLength.computeIfAbsent(&quot;John&quot;, String::length);    System.out.println(&quot;i = &quot; + i);    System.out.println(&quot;stringLength = &quot; + stringLength);&#125;  這段程式碼看起來沒有明顯的錯誤，但可以做一些優化。 12345678910publ...</div></div></div></a><a class="pagination-related" href="/2025/12/27/%E6%B7%BA%E8%AB%87-Hash-Hashtable-%E8%88%87-HashMap/" title="淺談 Hash、Hashtable 與 HashMap"><img class="cover" src="/img/20251227-01.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-12-27</div><div class="info-item-2">淺談 Hash、Hashtable 與 HashMap</div></div><div class="info-2"><div class="info-item-1">Hash 這玩意兒是程式世界的基礎，但一堆人搞不清楚 Hash、Hashtable、HashMap 的差別。常見情況：被問到為啥用 HashMap 不用 Hashtable，只能兩眼發直。今天就一次講清楚。 Hash 的概念Hash 就是把任意長度的資料「打碎」再「拼湊」成固定長度的代碼。 Hash Function 做的事12String input = &quot;This is a very long sentence with lots of words&quot;;int hashCode = input.hashCode();  // 回傳一個整數，比如 -123456789  Hash Function 的特性：  決定性 - 同一個輸入永遠產生同一個輸出 單向性 - 不可逆，不能從 hash code 推回原始資料 雪崩效應 - 輸入改一點點，輸出就完全不同 均勻分佈 - 理想情況下，不同輸入的 hash 值均勻分佈在整個範圍  Hash 的應用1. 數位簽章確認資料沒有被竄改。簽署人計算文件的 hash 值，用私鑰加密。驗證人計算一遍 hash，再用公鑰解密比對...</div></div></div></a></div></div><hr class="custom-hr"/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 評論</span></div></div><div class="comment-wrap"><div><div id="giscus-wrap"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="https://lh3.googleusercontent.com/pw/ABLVV87_po8nBc6F_tXcoYDmtzMGWxHuhhrbguYILCjmjWKLOS8DTpubm0YoQLKgjyjRIZyV5TjYe7XVEz_YU4squfr37GTZqPZP1hlMVZ_MIgXpTxWu73M=w1200" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">Cheng®</div><div class="author-info-description">Backend Developer / 技術筆記 & AI 新聞分享</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">114</div></a><a href="/tags/"><div class="headline">標籤</div><div class="length-num">50</div></a><a href="/categories/"><div class="headline">分類</div><div class="length-num">9</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/mark22013333"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons"><a class="social-icon" href="https://github.com/mark22013333" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:mark22013333@gmail.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a></div><div class="card-info-sponsor"><a class="sponsor-glow-btn" href="https://www.buymeacoffee.com/mark22013333" target="_blank" rel="noopener noreferrer" title="Buy Me A Coffee"><img src="https://img.shields.io/badge/Buy_Me_A_Coffee-FFDD00?style=for-the-badge&amp;logo=buy-me-a-coffee&amp;logoColor=black" alt="Buy Me A Coffee"/></a><a class="sponsor-glow-btn" href="https://p.ecpay.com.tw/EFC3F8F" target="_blank" rel="noopener noreferrer" title="綠界贊助"><img src="https://img.shields.io/badge/☕_%E8%AB%8B%E6%88%91%E5%96%9D%E6%9D%AF%E5%92%96%E5%95%A1-Donate-11998e?style=for-the-badge&amp;logo=coffee&amp;logoColor=white" alt="綠界贊助"/></a><a class="sponsor-glow-btn" href="https://calendly.com/markcheng00806-intumit/15min" target="_blank" rel="noopener noreferrer" title="預約時間"><img src="https://img.shields.io/badge/📅_%E9%A0%90%E7%B4%84_15_%E5%88%86%E9%90%98-Book_Time-0072ff?style=for-the-badge" alt="預約時間"/></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">這裡記錄我在後端開發路上踩過的坑、學到的東西，也會分享每日 AI 與科技新聞觀點。歡迎一起交流！</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目錄</span><span class="toc-percentage"></span></div><div class="toc-content is-expand"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Java-8-%E6%99%82%E9%96%93-API-%E5%9F%BA%E7%A4%8E"><span class="toc-number">1.</span> <span class="toc-text">Java 8 時間 API 基礎</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%BB%E8%A6%81%E9%A1%9E"><span class="toc-number">1.1.</span> <span class="toc-text">主要類</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%99%82%E9%96%93%E8%BD%89%E6%8F%9B"><span class="toc-number">1.2.</span> <span class="toc-text">時間轉換</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%97%9C%E9%8D%B5%E7%9A%84%E5%9D%91"><span class="toc-number">1.3.</span> <span class="toc-text">關鍵的坑</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%A0%BC%E5%BC%8F%E5%8C%96%E5%92%8C%E8%A7%A3%E6%9E%90"><span class="toc-number">1.4.</span> <span class="toc-text">格式化和解析</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%92%8C%E8%88%8A-Date-%E8%BD%89%E6%8F%9B"><span class="toc-number">1.5.</span> <span class="toc-text">和舊 Date 轉換</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#LinkedHashMap-%E7%AD%86%E8%A8%98"><span class="toc-number">2.</span> <span class="toc-text">LinkedHashMap 筆記</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9F%BA%E6%9C%AC%E7%94%A8%E6%B3%95"><span class="toc-number">2.1.</span> <span class="toc-text">基本用法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%A8%AD%E5%AE%9A%E5%88%9D%E5%A7%8B%E5%AE%B9%E9%87%8F%E9%81%BF%E5%85%8D%E6%93%B4%E5%AE%B9"><span class="toc-number">2.2.</span> <span class="toc-text">設定初始容量避免擴容</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#LinkedHashMap-%E7%9A%84%E5%85%A7%E9%83%A8%E7%B5%90%E6%A7%8B"><span class="toc-number">2.3.</span> <span class="toc-text">LinkedHashMap 的內部結構</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#LRU-Cache-%E5%AF%A6%E7%8F%BE%EF%BC%88%E7%89%B9%E6%AE%8A%E7%94%A8%E6%B3%95%EF%BC%89"><span class="toc-number">2.4.</span> <span class="toc-text">LRU Cache 實現（特殊用法）</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AF%A6%E6%88%B0%E7%B5%84%E5%90%88%EF%BC%9A%E6%99%82%E9%96%93%E6%88%B3%E5%BA%8F%E5%88%97%E5%8C%96"><span class="toc-number">3.</span> <span class="toc-text">實戰組合：時間戳序列化</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AF%A6%E5%8B%99%E5%BB%BA%E8%AD%B0"><span class="toc-number">4.</span> <span class="toc-text">實務建議</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2026/04/13/Claude-Code-vs-Cursor-vs-GitHub-Copilot-2026-AI-Coding-%E5%B7%A5%E5%85%B7%E4%B8%89%E5%B7%A8%E9%A0%AD%E5%AE%8C%E6%95%B4%E6%AF%94%E8%BC%83/" title="Claude Code vs Cursor vs GitHub Copilot — 2026 AI Coding 工具三巨頭完整比較"><img src="/img/20260413-compare.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Claude Code vs Cursor vs GitHub Copilot — 2026 AI Coding 工具三巨頭完整比較"/></a><div class="content"><a class="title" href="/2026/04/13/Claude-Code-vs-Cursor-vs-GitHub-Copilot-2026-AI-Coding-%E5%B7%A5%E5%85%B7%E4%B8%89%E5%B7%A8%E9%A0%AD%E5%AE%8C%E6%95%B4%E6%AF%94%E8%BC%83/" title="Claude Code vs Cursor vs GitHub Copilot — 2026 AI Coding 工具三巨頭完整比較">Claude Code vs Cursor vs GitHub Copilot — 2026 AI Coding 工具三巨頭完整比較</a><time datetime="2026-04-13T06:00:00.000Z" title="發表於 2026-04-13 14:00:00">2026-04-13</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/04/13/Claude-Code-%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8%E7%B4%A2%E5%BC%95-%E5%BE%9E%E5%85%A5%E9%96%80%E5%88%B0%E9%80%B2%E9%9A%8E%E7%9A%84%E6%89%80%E6%9C%89%E6%96%87%E7%AB%A0%E6%95%B4%E7%90%86/" title="Claude Code 完整教學索引 — 從入門到進階的所有文章整理"><img src="/img/20260413-pillar.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Claude Code 完整教學索引 — 從入門到進階的所有文章整理"/></a><div class="content"><a class="title" href="/2026/04/13/Claude-Code-%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8%E7%B4%A2%E5%BC%95-%E5%BE%9E%E5%85%A5%E9%96%80%E5%88%B0%E9%80%B2%E9%9A%8E%E7%9A%84%E6%89%80%E6%9C%89%E6%96%87%E7%AB%A0%E6%95%B4%E7%90%86/" title="Claude Code 完整教學索引 — 從入門到進階的所有文章整理">Claude Code 完整教學索引 — 從入門到進階的所有文章整理</a><time datetime="2026-04-13T02:00:00.000Z" title="發表於 2026-04-13 10:00:00">2026-04-13</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/04/12/AI-Hedge-Fund-%E7%94%A8-19-%E5%80%8B-AI-Agent-%E6%A8%A1%E6%93%AC%E6%8A%95%E8%B3%87%E5%A7%94%E5%93%A1%E6%9C%83/" title="AI Hedge Fund - 用 19 個 AI Agent 模擬投資委員會"><img src="/img/20260412-01.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="AI Hedge Fund - 用 19 個 AI Agent 模擬投資委員會"/></a><div class="content"><a class="title" href="/2026/04/12/AI-Hedge-Fund-%E7%94%A8-19-%E5%80%8B-AI-Agent-%E6%A8%A1%E6%93%AC%E6%8A%95%E8%B3%87%E5%A7%94%E5%93%A1%E6%9C%83/" title="AI Hedge Fund - 用 19 個 AI Agent 模擬投資委員會">AI Hedge Fund - 用 19 個 AI Agent 模擬投資委員會</a><time datetime="2026-04-12T00:30:00.000Z" title="發表於 2026-04-12 08:30:00">2026-04-12</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/04/12/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260412/" title="AI 與科技新聞摘要 - 2026/04/12"><img src="/img/20260412-02.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="AI 與科技新聞摘要 - 2026/04/12"/></a><div class="content"><a class="title" href="/2026/04/12/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260412/" title="AI 與科技新聞摘要 - 2026/04/12">AI 與科技新聞摘要 - 2026/04/12</a><time datetime="2026-04-12T00:30:00.000Z" title="發表於 2026-04-12 08:30:00">2026-04-12</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/04/12/%E5%8F%B0%E7%81%A3-AI-%E5%9F%BA%E6%9C%AC%E6%B3%95%E4%B8%8A%E8%B7%AF%E4%BA%86-%E4%B8%80%E5%80%8B%E5%B7%A5%E7%A8%8B%E5%B8%AB%E7%9A%84%E6%94%BF%E7%AD%96%E8%A7%80%E5%AF%9F/" title="台灣 AI 基本法上路了 — 一個工程師的政策觀察"><img src="/img/20260412-03.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="台灣 AI 基本法上路了 — 一個工程師的政策觀察"/></a><div class="content"><a class="title" href="/2026/04/12/%E5%8F%B0%E7%81%A3-AI-%E5%9F%BA%E6%9C%AC%E6%B3%95%E4%B8%8A%E8%B7%AF%E4%BA%86-%E4%B8%80%E5%80%8B%E5%B7%A5%E7%A8%8B%E5%B8%AB%E7%9A%84%E6%94%BF%E7%AD%96%E8%A7%80%E5%AF%9F/" title="台灣 AI 基本法上路了 — 一個工程師的政策觀察">台灣 AI 基本法上路了 — 一個工程師的政策觀察</a><time datetime="2026-04-12T00:30:00.000Z" title="發表於 2026-04-12 08:30:00">2026-04-12</time></div></div></div></div></div></div></main><footer id="footer" style="background-image: url(/img/20260220-01.webp);"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2024 - 2026 By Cheng®</span></div><div class="footer_custom_text">Written by Cheng® — 自律，從當下的一念開始。</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="閱讀模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日夜模式切換"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="單欄和雙欄切換"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="設定"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目錄"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="前往評論"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到頂端"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.umd.min.js"></script><script src="https://cdn.jsdelivr.net/npm/instant.page/instantpage.min.js" type="module"></script><script src="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.js"></script><div class="js-pjax"><script>(() => {
+  const isShuoshuo = GLOBAL_CONFIG_SITE.pageType === 'shuoshuo'
+  const option = {"mapping":"pathname","strict":0,"reactionsEnabled":1,"emitMetadata":0,"inputPosition":"bottom","lang":"zh-TW"}
+
+  const getGiscusTheme = theme => theme === 'dark' ? 'dark' : 'light'
+
+  const createScriptElement = config => {
+    const ele = document.createElement('script')
+    Object.entries(config).forEach(([key, value]) => {
+      ele.setAttribute(key, value)
+    })
+    return ele
+  }
+
+  const loadGiscus = (el = document, key) => {
+    const mappingConfig = isShuoshuo
+      ? { 'data-mapping': 'specific', 'data-term': key }
+      : { 'data-mapping': (option && option['data-mapping']) || 'pathname' }
+
+    const giscusConfig = {
+      src: 'https://giscus.app/client.js',
+      'data-repo': 'mark22013333/mark22013333.github.io',
+      'data-repo-id': 'R_kgDOLAxa6A',
+      'data-category-id': 'DIC_kwDOLAxa6M4C5eO9',
+      'data-theme': getGiscusTheme(document.documentElement.getAttribute('data-theme')),
+      'data-reactions-enabled': '1',
+      crossorigin: 'anonymous',
+      async: true,
+      ...option,
+      ...mappingConfig
+    }
+
+    const scriptElement = createScriptElement(giscusConfig)
+
+    el.querySelector('#giscus-wrap').appendChild(scriptElement)
+
+    if (isShuoshuo) {
+      window.shuoshuoComment.destroyGiscus = () => {
+        if (el.children.length) {
+          el.innerHTML = ''
+          el.classList.add('no-comment')
+        }
+      }
+    }
+  }
+
+  const changeGiscusTheme = theme => {
+    const iframe = document.querySelector('#giscus-wrap iframe')
+    if (iframe) {
+      const message = {
+        giscus: {
+          setConfig: {
+            theme: getGiscusTheme(theme)
+          }
+        }
+      }
+      iframe.contentWindow.postMessage(message, 'https://giscus.app')
+    }
+  }
+
+  btf.addGlobalFn('themeChange', changeGiscusTheme, 'giscus')
+
+  if (isShuoshuo) {
+    'Giscus' === 'Giscus'
+      ? window.shuoshuoComment = { loadComment: loadGiscus }
+      : window.loadOtherComment = loadGiscus
+    return
+  }
+
+  if ('Giscus' === 'Giscus' || !true) {
+    if (true) btf.loadComment(document.getElementById('giscus-wrap'), loadGiscus)
+    else loadGiscus()
+  } else {
+    window.loadOtherComment = loadGiscus
+  }
+})()</script></div><script src="/js/kkbox-player.js"></script><script src="/js/archives-pagination.js"></script><script src="/js/font-resize.js"></script><script src="/js/dark-palette.js"></script><script defer="defer" id="fluttering_ribbon" mobile="false" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/canvas-fluttering-ribbon.min.js"></script><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/activate-power-mode.min.js"></script><script>POWERMODE.colorful = true;
+POWERMODE.shake = true;
+POWERMODE.mobile = true;
+document.body.addEventListener('input', POWERMODE);
+</script><script src="https://cdn.jsdelivr.net/npm/pjax/pjax.min.js" defer="defer"></script><script>document.addEventListener('DOMContentLoaded', () => {
+  const pjaxSelectors = ["meta[property=\"og:image\"]","meta[property=\"og:title\"]","meta[property=\"og:url\"]","meta[property=\"og:description\"]","link[rel=\"canonical\"]","head > title","#config-diff","#body-wrap","#rightside-config-hide","#rightside-config-show",".js-pjax"]
+
+  window.pjax = new Pjax({
+    elements: 'a:not([target="_blank"])',
+    selectors: pjaxSelectors,
+    cacheBust: false,
+    analytics: true,
+    scrollRestoration: false
+  })
+
+  const triggerPjaxFn = (val) => {
+    if (!val) return
+    Object.values(val).forEach(fn => {
+      try {
+        fn()
+      } catch (err) {
+        console.debug('Pjax callback failed:', err)
+      }
+    })
+  }
+
+  document.addEventListener('pjax:send', () => {
+    // removeEventListener
+    btf.removeGlobalFnEvent('pjaxSendOnce')
+    btf.removeGlobalFnEvent('themeChange')
+
+    // reset readmode
+    const $bodyClassList = document.body.classList
+    if ($bodyClassList.contains('read-mode')) $bodyClassList.remove('read-mode')
+
+    triggerPjaxFn(window.globalFn.pjaxSend)
+  })
+
+  document.addEventListener('pjax:complete', () => {
+    btf.removeGlobalFnEvent('pjaxCompleteOnce')
+    document.querySelectorAll('script[data-pjax]').forEach(item => {
+      const newScript = document.createElement('script')
+      const content = item.text || item.textContent || item.innerHTML || ""
+      Array.from(item.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value))
+      newScript.appendChild(document.createTextNode(content))
+      item.parentNode.replaceChild(newScript, item)
+    })
+
+    triggerPjaxFn(window.globalFn.pjaxComplete)
+  })
+
+  document.addEventListener('pjax:error', e => {
+    if (e.request.status === 404) {
+      true
+        ? pjax.loadUrl('/404.html')
+        : window.location.href = e.request.responseURL
+    }
+  })
+})</script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜尋</span><i class="fas fa-spinner fa-pulse" id="loading-status" hidden="hidden"></i><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="text-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  資料載入中</span></div><div class="local-search-input"><input placeholder="搜尋文章" type="text"/></div><hr/><div id="local-search-results"></div><div class="ais-Pagination" id="local-search-pagination" style="display:none;"><ul class="ais-Pagination-list"></ul></div><div id="local-search-stats"></div></div><div id="search-mask"></div><script src="/js/search/local-search.js"></script></div></div></body></html>

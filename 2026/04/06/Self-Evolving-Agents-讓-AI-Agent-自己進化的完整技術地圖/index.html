@@ -1,0 +1,358 @@
+<!DOCTYPE html><html lang="zh-TW" data-theme="dark"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>Self-Evolving Agents - 讓 AI Agent 自己進化的完整技術地圖 | Cheng's Tech &amp; Life</title><meta name="author" content="Cheng®"><meta name="copyright" content="Cheng®"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#0d0d0d"><meta name="description" content="前陣子在看 University of Glasgow 的研究，發現一個有夠猛的方向：AI Agent 能夠自己進化，不用人類干預就越來越強。以前我們都以為模型 deploy 下去就固定了，沒想到還有這麼多角度可以自我優化。Agent 自己進化，到底在進化什麼。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Self-Evolving Agents - 讓 AI Agent 自己進化的完整技術地圖">
+<meta property="og:url" content="https://mark22013333.github.io/2026/04/06/Self-Evolving-Agents-%E8%AE%93-AI-Agent-%E8%87%AA%E5%B7%B1%E9%80%B2%E5%8C%96%E7%9A%84%E5%AE%8C%E6%95%B4%E6%8A%80%E8%A1%93%E5%9C%B0%E5%9C%96/index.html">
+<meta property="og:site_name" content="Cheng&#39;s Tech &amp; Life">
+<meta property="og:description" content="前陣子在看 University of Glasgow 的研究，發現一個有夠猛的方向：AI Agent 能夠自己進化，不用人類干預就越來越強。以前我們都以為模型 deploy 下去就固定了，沒想到還有這麼多角度可以自我優化。Agent 自己進化，到底在進化什麼。">
+<meta property="og:locale" content="zh_TW">
+<meta property="og:image" content="https://mark22013333.github.io/img/20260406-01.webp">
+<meta property="article:published_time" content="2026-04-06T00:30:00.000Z">
+<meta property="article:modified_time" content="2026-04-13T02:00:09.866Z">
+<meta property="article:author" content="Cheng®">
+<meta property="article:tag" content="LLM">
+<meta property="article:tag" content="AI Agent">
+<meta property="article:tag" content="MCP">
+<meta property="article:tag" content="Claude Code">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://mark22013333.github.io/img/20260406-01.webp"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Self-Evolving Agents - 讓 AI Agent 自己進化的完整技術地圖",
+  "url": "https://mark22013333.github.io/2026/04/06/Self-Evolving-Agents-%E8%AE%93-AI-Agent-%E8%87%AA%E5%B7%B1%E9%80%B2%E5%8C%96%E7%9A%84%E5%AE%8C%E6%95%B4%E6%8A%80%E8%A1%93%E5%9C%B0%E5%9C%96/",
+  "image": "https://mark22013333.github.io/img/20260406-01.webp",
+  "datePublished": "2026-04-06T00:30:00.000Z",
+  "dateModified": "2026-04-13T02:00:09.866Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "Cheng®",
+      "url": "https://mark22013333.github.io"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://mark22013333.github.io/2026/04/06/Self-Evolving-Agents-%E8%AE%93-AI-Agent-%E8%87%AA%E5%B7%B1%E9%80%B2%E5%8C%96%E7%9A%84%E5%AE%8C%E6%95%B4%E6%8A%80%E8%A1%93%E5%9C%B0%E5%9C%96/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//www.google-analytics.com" crossorigin=""/><link rel="preconnect" href="//fonts.googleapis.com" crossorigin=""/><link rel="preconnect" href="//busuanzi.ibruce.info"/><meta name="google-site-verification" content="6ywUr8k2n_CT1PFYJzlSvI3CZ-JmJ55RYbA39VrFBDs"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!true && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          const hour = new Date().getHours()
+          const isNight = hour <= 9 || hour >= 18
+          if (theme === undefined) isNight ? activateDarkMode() : activateLightMode()
+          else theme === 'light' ? activateLightMode() : activateDarkMode()
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script async="async" src="https://www.googletagmanager.com/gtag/js?id=G-JBV14NRDH3"></script><script>window.dataLayer = window.dataLayer || []
+function gtag(){dataLayer.push(arguments)}
+gtag('js', new Date())
+gtag('config', 'G-JBV14NRDH3')
+btf.addGlobalFn('pjaxComplete', () => {
+  gtag('config', 'G-JBV14NRDH3', {'page_path': window.location.pathname})
+}, 'google_analytics')
+</script><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Titillium+Web&amp;display=swap" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"pagination":{"enable":false,"hitsPerPage":8},"languages":{"hits_empty":"找不到符合您查詢的內容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '複製成功',
+    error: '複製失敗',
+    noSupport: '瀏覽器不支援'
+  },
+  relativeDate: {
+    homepage: false,
+    post: true
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '剛剛',
+    min: '分鐘前',
+    hour: '小時前',
+    day: '天前',
+    month: '個月前'
+  },
+  copyright: {"limitCount":1,"languages":{"author":"作者: Cheng®","link":"連結: ","source":"來源: Cheng's Tech & Life","info":"著作權歸作者所有。如需商業轉載，請聯絡作者獲得授權，非商業轉載請註明出處😁。"}},
+  lightbox: 'fancybox',
+  Snackbar: {"chs_to_cht":"已切換為繁體中文","cht_to_chs":"已切換為簡體中文","day_to_night":"已切換為深色模式","night_to_day":"已切換為淺色模式","bgLight":"#49b1f5","bgDark":"#1f1f1f","position":"top-center"},
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid/dist/infinitegrid.min.js',
+    buttonText: '載入更多'
+  },
+  isPhotoFigcaption: true,
+  islazyloadPlugin: false,
+  isAnchor: true,
+  percent: {
+    toc: true,
+    rightside: true,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Self-Evolving Agents - 讓 AI Agent 自己進化的完整技術地圖',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><link rel="stylesheet" href="/css/kkbox-player.css"><link rel="stylesheet" href="/css/tag-cloud-fancy.css"><link rel="stylesheet" href="/css/font-resize.css"><link rel="stylesheet" href="/css/dark-palette.css"><link rel="stylesheet" href="/css/loading-override.css"><link rel="alternate" href="/atom.xml" title="Cheng's Tech & Life" type="application/atom+xml">
+</head><body><div id="loading-box"><div class="loading-glass-overlay"></div><div class="loading-indicator"><div class="loading-dot"></div><div class="loading-dot"></div><div class="loading-dot"></div></div></div><script>(()=>{
+  const $loadingBox = document.getElementById('loading-box')
+  const $body = document.body
+  const preloader = {
+    endLoading: () => {
+      if ($loadingBox.classList.contains('loaded')) return
+      $body.style.overflow = ''
+      $loadingBox.classList.add('loaded')
+    },
+    initLoading: () => {
+      $body.style.overflow = 'hidden'
+      $loadingBox.classList.remove('loaded')
+    }
+  }
+
+  preloader.initLoading()
+
+  if (document.readyState === 'complete') {
+    preloader.endLoading()
+  } else {
+    window.addEventListener('load', preloader.endLoading)
+    document.addEventListener('DOMContentLoaded', preloader.endLoading)
+    setTimeout(preloader.endLoading, 7000)
+  }
+
+  if (true) {
+    btf.addGlobalFn('pjaxSend', preloader.initLoading, 'preloader_init')
+    btf.addGlobalFn('pjaxComplete', preloader.endLoading, 'preloader_end')
+  }
+})()</script><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="https://lh3.googleusercontent.com/pw/ABLVV87_po8nBc6F_tXcoYDmtzMGWxHuhhrbguYILCjmjWKLOS8DTpubm0YoQLKgjyjRIZyV5TjYe7XVEz_YU4squfr37GTZqPZP1hlMVZ_MIgXpTxWu73M=w1200" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">114</div></a><a href="/tags/"><div class="headline">標籤</div><div class="length-num">50</div></a><a href="/categories/"><div class="headline">分類</div><div class="length-num">9</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首頁-Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 時間軸-archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 標籤-tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分類-Categories</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-list"></i><span> 其他列表</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音樂-Music</span></a></li><li><a class="site-page child" href="/gallery/"><i class="fa-fw fas fa-images"></i><span> 畫館-Gallery</span></a></li></ul></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg fixed" id="page-header" style="background-image: url(/img/20260406-01.webp);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><img class="site-icon" src="https://lh3.googleusercontent.com/pw/ABLVV87_po8nBc6F_tXcoYDmtzMGWxHuhhrbguYILCjmjWKLOS8DTpubm0YoQLKgjyjRIZyV5TjYe7XVEz_YU4squfr37GTZqPZP1hlMVZ_MIgXpTxWu73M=w1200" alt="Logo"><span class="site-name">Cheng's Tech &amp; Life</span></a><a class="nav-page-title" href="/"><span class="site-name">Self-Evolving Agents - 讓 AI Agent 自己進化的完整技術地圖</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首頁</span></span></a></span><div id="menus"><div id="search-button" title="Ctrl+K / Cmd+K"><span class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜尋</span></span></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首頁-Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 時間軸-archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 標籤-tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分類-Categories</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-list"></i><span> 其他列表</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音樂-Music</span></a></li><li><a class="site-page child" href="/gallery/"><i class="fa-fw fas fa-images"></i><span> 畫館-Gallery</span></a></li></ul></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">Self-Evolving Agents - 讓 AI Agent 自己進化的完整技術地圖</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">發表於</span><time class="post-meta-date-created" datetime="2026-04-06T00:30:00.000Z" title="發表於 2026-04-06 08:30:00">2026-04-06</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新於</span><time class="post-meta-date-updated" datetime="2026-04-13T02:00:09.866Z" title="更新於 2026-04-13 10:00:09">2026-04-13</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Claude-Code/">Claude Code</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">總字數:</span><span class="word-count">898</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">閱讀時間:</span><span>2分鐘</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">瀏覽量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><p>前陣子在看 University of Glasgow 的研究，發現一個有夠猛的方向：AI Agent 能夠自己進化，不用人類干預就越來越強。以前我們都以為模型 deploy 下去就固定了，沒想到還有這麼多角度可以自我優化。</p>
+<h2 id="Agent-自己進化，到底在進化什麼？"><a href="#Agent-自己進化，到底在進化什麼？" class="headerlink" title="Agent 自己進化，到底在進化什麼？"></a>Agent 自己進化，到底在進化什麼？</h2><p>Self-Evolving Agent 的核心概念其實很簡單：讓系統在運作過程中自動改善自己。但「改善」這個詞太寬泛了。這波操作跨越 4 個維度：</p>
+<p><strong>第一個維度是 LLM 本身的行為</strong>。透過 Reinforcement Learning 和 self-play 這類技巧，模型能從自己的嘗試裡學習。STaR（Self-Taught Reasoner）就是代表作，它讓模型從推理過程中的成功案例自動學習。Absolute Zero 是今年新出的，直接從零資料開始自我對弈，效果炸了。</p>
+<p><strong>第二個維度是 Prompt 優化</strong>。有人用進化演算法，有人用梯度下降，用 TextGrad 或 OPRO 這樣的框架，系統能自動調整提示詞。不用人類手工調整，程式自己試出更有效的 prompt。</p>
+<p><strong>第三個維度是記憶機制</strong>。A-MEM 和 Mem0 專注在怎麼壓縮、檢索、跨 session 保留重要資訊。這裡的重點是讓 Agent 記得上次學到的東西，累積經驗。</p>
+<p><strong>第四個維度是工具</strong>。CREATOR 和 ReTool 這類框架，能讓 Agent 自己寫新工具或改進既有工具。這是最硬核的部分，直接生成程式碼。</p>
+<h2 id="技術分類：四個層級的突破"><a href="#技術分類：四個層級的突破" class="headerlink" title="技術分類：四個層級的突破"></a>技術分類：四個層級的突破</h2><p>整個領域粗略分成四類。<strong>Single-Agent Optimization</strong> 是單個 Agent 自己練習，比如 Self-Rewarding Language Models，讓模型自己評分、自己改進。</p>
+<p><strong>Multi-Agent Optimization</strong> 更有趣，多個 Agent 互相較勁。MetaGPT、GPTSwarm、AFlow 這類框架，讓不同 Agent 協作或競爭，整體系統變得更聰明。</p>
+<p><strong>Domain-Specific</strong> 的應用已經開始爆發。quantitative trading、biomedical research、software development，各領域都有特化的解決方案。</p>
+<p><strong>Evaluation</strong> 是最容易踩坑的地方。怎麼評估 Agent 有沒有真的進化，而不是過度優化某個指標？DSPy 和其他框架都在解決這個問題。</p>
+<h2 id="代表作和開源生態"><a href="#代表作和開源生態" class="headerlink" title="代表作和開源生態"></a>代表作和開源生態</h2><p>EvoAgentX 是 EMNLP’25 的新星，直接整合了進化框架。MASLab 專注多智能體，OpenHands 做自動化開發，OpenEvolve 提供通用基礎。還有 MCP-Zero 這類新東西，把 Claude 的 MCP 生態跟 Agent 進化綁在一起，真的蠻新穎的。</p>
+<h2 id="現在（2024-2025）發生了什麼"><a href="#現在（2024-2025）發生了什麼" class="headerlink" title="現在（2024-2025）發生了什麼"></a>現在（2024-2025）發生了什麼</h2><p><strong>零資料自我對弈爆發</strong>。Absolute Zero 這類工作證明 Agent 不需要人類標注資料，就能透過自我對弈進化。</p>
+<p><strong>RL 用在工具使用上</strong>。不再只是優化語言輸出，而是優化 Agent 怎麼選擇和組合工具。</p>
+<p><strong>MCP 生態成了新的連接點</strong>。Agent 透過 MCP 協議連接各種工具和服務，進化變成了自動系統設計的問題。</p>
+<p><strong>記憶不再是附加功能，而是核心</strong>。記憶的品質直接影響進化效率。</p>
+<h2 id="應該知道的風險"><a href="#應該知道的風險" class="headerlink" title="應該知道的風險"></a>應該知道的風險</h2><p>好事總有代價。AutoDAN-Turbo 這類研究證明自進化系統容易被利用來生成 jailbreak 提詞。Agent 在優化過程中可能會強化幻覺而不是學到真實知識。評估困難、計算成本高、進化方向不可控，這些都是未來要解決的課題。</p>
+<p>但這些限制擋不住這波浪潮。讓 AI 系統自己進化，少依賴人類干預，這是接下來幾年最激動人心的方向。</p>
+<blockquote>
+<p>原文來源：<a target="_blank" rel="noopener" href="https://github.com/EvoAgentX/Awesome-Self-Evolving-Agents">Awesome-Self-Evolving-Agents (GitHub)</a></p>
+</blockquote>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://mark22013333.github.io">Cheng®</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章連結: </span><span class="post-copyright-info"><a href="https://mark22013333.github.io/2026/04/06/Self-Evolving-Agents-%E8%AE%93-AI-Agent-%E8%87%AA%E5%B7%B1%E9%80%B2%E5%8C%96%E7%9A%84%E5%AE%8C%E6%95%B4%E6%8A%80%E8%A1%93%E5%9C%B0%E5%9C%96/">https://mark22013333.github.io/2026/04/06/Self-Evolving-Agents-讓-AI-Agent-自己進化的完整技術地圖/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版權聲明: </span><span class="post-copyright-info">本部落格所有文章除特別聲明外，均採用<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 授權協議。轉載請註明來源 <a href="https://mark22013333.github.io" target="_blank">Cheng's Tech & Life</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/LLM/">LLM</a><a class="post-meta__tags" href="/tags/AI-Agent/">AI Agent</a><a class="post-meta__tags" href="/tags/MCP/">MCP</a><a class="post-meta__tags" href="/tags/Claude-Code/">Claude Code</a></div><div class="post-share"><div class="social-share" data-image="/img/20260406-01.webp" data-sites="facebook,x"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><div class="post-reward"><div class="reward-badges"><a class="sponsor-glow-btn" href="https://www.buymeacoffee.com/mark22013333" target="_blank" rel="noopener noreferrer" title="Buy Me A Coffee"><img src="https://img.shields.io/badge/Buy_Me_A_Coffee-FFDD00?style=for-the-badge&amp;logo=buy-me-a-coffee&amp;logoColor=black" alt="Buy Me A Coffee"/></a><a class="sponsor-glow-btn" href="https://p.ecpay.com.tw/EFC3F8F" target="_blank" rel="noopener noreferrer" title="綠界贊助"><img src="https://img.shields.io/badge/☕_%E8%AB%8B%E6%88%91%E5%96%9D%E6%9D%AF%E5%92%96%E5%95%A1-Donate-11998e?style=for-the-badge&amp;logo=coffee&amp;logoColor=white" alt="綠界贊助"/></a><a class="sponsor-glow-btn" href="https://calendly.com/markcheng00806-intumit/15min" target="_blank" rel="noopener noreferrer" title="預約時間"><img src="https://img.shields.io/badge/📅_%E9%A0%90%E7%B4%84_15_%E5%88%86%E9%90%98-Book_Time-0072ff?style=for-the-badge" alt="預約時間"/></a><p class="reward-badges-note">你的鼓勵將被轉換為我明天繼續加班的動力（真的）。 ❤️</p></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2026/04/06/Claude-Code-Agent-Teams-%E5%A4%9A-Agent-%E5%8D%94%E4%BD%9C%E9%96%8B%E7%99%BC%E5%AF%A6%E6%88%B0%E6%95%99%E5%AD%B8/" title="Claude Code Agent Teams 完整教學 - 讓 16 個 AI 同時幫你寫程式"><img class="cover" src="/img/20260406-03.webp" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">Claude Code Agent Teams 完整教學 - 讓 16 個 AI 同時幫你寫程式</div></div><div class="info-2"><div class="info-item-1">有夠猛的事情發生了。Anthropic 工程師最近用 16 個並行的 Claude 實例，花兩週時間寫出了一個能編譯 Linux Kernel 的 Rust 版 C 編譯器，十萬行程式碼，花費還不到兩萬美金。這不是什麼魔法，而是一個叫做 Agent Teams 的功能。 如果你之前用過 Claude Code，你可能知道 Sub-agents 的概念 — 主 Agent 生出幾個子 Agent，各自做各自的工作，最後把結果回報。Agent Teams 完全不一樣。這次是多個獨立的 Claude Code 會話彼此協作、互相溝通、共享發現、甚至互相挑戰。想像 16 個聰明的工程師同時打開他們的筆電，各自認領任務列表上的工作，邊做邊討論。 Sub-agents vs Agent Teams先釐清概念。Sub-agents 是從主 Agent 衍生出來的，做完工作回報摘要就結束了，彼此沒有交流。Agent Teams 才是真正的協作 — 每個成員都是完整的 Claude Code 會話，有自己的上下文視窗，能認領共享任務、分享發現、指出彼此的問題。這波操作才叫無敵。 怎麼啟動設定很簡單...</div></div></div></a><a class="pagination-related" href="/2026/04/07/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260407/" title="AI 與科技新聞摘要 - 2026/04/07"><img class="cover" src="/img/20260407-02.webp" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">AI 與科技新聞摘要 - 2026/04/07</div></div><div class="info-2"><div class="info-item-1">Cursor 把編輯器砍掉重練、GitHub Copilot CLI 多了個會自動抓 bug 的 Critic agent、Jack Dorsey 的 Block 丟出開源 AI agent「Goose」、Fortinet 又爆一個被打到進 CISA 黑名單的零日漏洞，然後 Flowise 那邊直接 CVSS 滿分 10.0。AI 工具越來越強的同時，攻擊面也在同步擴大。 Cursor 3 發布：編輯器不見了，Agent 才是主角4 月 2 日，Cursor 團隊做了一件很大膽的事——把整個 IDE 介面砍掉重寫，從零打造一個「agent-first」的開發環境。傳統的檔案樹、tab 列、編輯區？還在，但已經不是視覺中心了。 新介面的核心是一個 Agent 面板。你可以同時跑多個 agent 跨不同 repo，本地和雲端無縫切換，甚至從手機、Slack、GitHub、Linear 啟動 agent session。內建 Git 操作（staging、commit、PR 管理），不用再切到終端機。 背後更有趣的是技術：Cursor 導入了 real-time RL for Comp...</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相關推薦</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2026/04/04/Agent-Broker-%E7%94%A8-Discord-%E6%93%8D%E6%8E%A7-AI-Coding-Agent-%E7%9A%84-Rust-%E6%A9%8B%E6%8E%A5%E6%9C%8D%E5%8B%99/" title="Agent Broker - 用 Discord 操控 AI Coding Agent 的 Rust 橋接服務"><img class="cover" src="/img/20260404-01.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-04-04</div><div class="info-item-2">Agent Broker - 用 Discord 操控 AI Coding Agent 的 Rust 橋接服務</div></div><div class="info-2"><div class="info-item-1">Discord 頻道裡 @mention 一個 bot，它就能幫你寫程式、code review、分析架構。背後串接的是 Claude Code、Kiro CLI、Codex 這些 AI coding agent。Agent Broker 就是那個站在中間的翻譯官——用 Rust 寫的橋接服務，把 Discord 和任何支援 ACP 協定的 coding CLI 串在一起。 這東西解決什麼問題團隊裡不是每個人都習慣開終端機跟 AI 互動。有些人就是活在 Discord 裡面，開會在 Discord、討論在 Discord、連摸魚都在 Discord。Agent Broker 的邏輯很直接：既然人在 Discord，那 AI 也該在 Discord。 核心架構長這樣：使用者在 Discord 打字 → Agent Broker 收到後轉成 ACP 協定的 JSON-RPC → 丟給後端 CLI（Claude Code、Kiro、Codex 都行）→ AI 回應串流回 Discord 即時顯示。每個 Discord thread 會 spawn 一個獨立的 CLI process，多...</div></div></div></a><a class="pagination-related" href="/2026/04/09/OpenSoul-%E4%BB%A5%E5%A4%A7%E8%85%A6%E7%A5%9E%E7%B6%93%E7%B5%90%E6%A7%8B%E7%82%BA%E9%9D%88%E6%84%9F%E7%9A%84%E8%AA%8D%E7%9F%A5-AI-%E6%A1%86%E6%9E%B6/" title="OpenSoul - 以大腦神經結構為靈感的認知 AI 框架"><img class="cover" src="/img/20260409-01.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-04-09</div><div class="info-item-2">OpenSoul - 以大腦神經結構為靈感的認知 AI 框架</div></div><div class="info-2"><div class="info-item-1">每次開新的 ChatGPT 對話，它都不記得你昨天講了什麼。用 Claude Code 開新 session，前一輪的 debug 心得全部歸零。LLM 的記憶，基本上跟金魚差不多。 OpenSoul 試圖改變這件事。它在 LLM 之上疊了一層認知架構，靈感來自人腦的神經結構——海馬迴管情節記憶、新皮質管語意記憶、基底核管程序記憶，甚至還有多巴胺和血清素的虛擬版本來調控 AI 的「情緒」。聽起來很科幻？確實，但它的設計文件讀起來比大多數「AI 認知」專案都嚴謹得多。 三層記憶圖譜OpenSoul 把記憶存在 FalkorDB（基於 Redis 的圖資料庫）裡，分成三層： 情節記憶（Episodic Memory）對應海馬迴，記錄具體的對話片段。「你上次說你喜歡喝咖啡」——就是這一層在運作。 語意記憶（Semantic Memory）對應新皮質，儲存從對話中提煉出來的通用知識。「Python 是程式語言」這種事實性資訊住在這裡。 程序記憶（Procedural Memory）對應基底核，記住「這個使用者常犯的錯」之類的行為模式。 每次對話時，系統用 EcphoryRAG 做聯想檢索...</div></div></div></a><a class="pagination-related" href="/2026/04/12/AI-Hedge-Fund-%E7%94%A8-19-%E5%80%8B-AI-Agent-%E6%A8%A1%E6%93%AC%E6%8A%95%E8%B3%87%E5%A7%94%E5%93%A1%E6%9C%83/" title="AI Hedge Fund - 用 19 個 AI Agent 模擬投資委員會"><img class="cover" src="/img/20260412-01.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-04-12</div><div class="info-item-2">AI Hedge Fund - 用 19 個 AI Agent 模擬投資委員會</div></div><div class="info-2"><div class="info-item-1">凌晨三點，你盯著股市看盤軟體，想著「我到底是誰，為什麼在看這支股票」。如果有一群投資大師能幫你分析呢？不過不是去請他們本人，而是用 19 個 AI Agent 來模擬他們的思維方式——這就是 AI Hedge Fund 要幹的事。 什麼是 AI Hedge Fund這是 GitHub 上一個有 50K+ 星星的開源專案，核心概念超狂：把華倫・巴菲特、彼得・林區、凱西・伍德這些傳奇投資家的投資理念寫成 AI Agent，讓他們獨立分析同一支股票，最後由一個「投資組合經理」整合所有意見，決定買還是賣。 聽起來像科幻小說，但實際上它展示了 LangGraph 這套框架有多扯。這不是什麼「自動賺錢機」——完全不會執行真實交易，純粹拿來學習投資哲學和回測的工具。 19 個 Agent 的陣容架構分兩層： 投資家智能體（13 個）：每個都用大語言模型來推理  價值投資派：巴菲特、蒙格、葛拉漢、林區、費雪 特化派：麥可・貝瑞（看次級房貸的那位）、伍德（科技狂魔）、阿克曼（激進投資人） 宏觀派：德魯肯米勒、塔勒布、達摩德仁、帕布萊、君君  每個代理人有自己的風格。巴菲特會問「這家公司有沒有競爭護...</div></div></div></a><a class="pagination-related" href="/2026/03/26/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260326/" title="AI 與科技新聞摘要 — 2026&#x2F;03&#x2F;26"><img class="cover" src="/img/20260326-02.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-03-26</div><div class="info-item-2">AI 與科技新聞摘要 — 2026&#x2F;03&#x2F;26</div></div><div class="info-2"><div class="info-item-1">Claude Code 可以自己決定要不要跑指令了、Apple 砸十億美金讓 Google Gemini 接管 Siri、OpenAI 的安全掃描工具在一百二十萬個 commit 裡抓出上萬個高嚴重度漏洞。今天的新聞有幾條挺重的。  1. Anthropic 推出 Claude Code Auto Mode — AI 自己判斷該不該執行Claude Code 新增了 Auto Mode，讓 AI 自主決定檔案寫入和 bash 指令的執行權限。以前每個動作都要你按同意，現在它會用雙層分類器先過濾：安全的直接跑，有風險的擋下來。 內部測試數據：0.4% 的誤攔率（安全指令被擋），5.7% 的漏放率（危險指令沒攔到）。目前僅限 Enterprise 和 API 用戶，建議在 sandbox 環境使用。 這是 Anthropic 在「給 AI 更多自主權」和「不要讓它搞砸東西」之間找平衡的一步。方向是對的，但 5.7% 的漏放率放在 production 還是讓人有點緊張。  原文來源：Anthropic hands Claude Code more control, but keeps...</div></div></div></a><a class="pagination-related" href="/2026/03/26/Claude-Code-Auto-Mode-%E8%AE%93-AI-%E8%87%AA%E5%B7%B1%E6%B1%BA%E5%AE%9A%E8%A9%B2%E4%B8%8D%E8%A9%B2%E5%9F%B7%E8%A1%8C%E6%8C%87%E4%BB%A4/" title="Claude Code Auto Mode — 讓 AI 自己決定該不該執行指令"><img class="cover" src="/img/20260326-03.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-03-26</div><div class="info-item-2">Claude Code Auto Mode — 讓 AI 自己決定該不該執行指令</div></div><div class="info-2"><div class="info-item-1">每改一個檔案就要按一次 Yes。跑個 npm install 要同意，讀個 .env 要同意，連 ls 有時候都要你點一下。 用過 Claude Code 的人大概都經歷過這種「同意疲勞」。你知道它要做什麼，你也信任它，但流程就是逼你一直按確認。到後來你根本不看內容了，反射性地按 Yes——這時候所謂的安全機制反而變成形式。 三月 24 號 Anthropic 發佈的 Auto Mode 就是衝著這個問題來的。  Auto Mode 做了什麼一句話：讓 Claude Code 自己判斷一個操作安不安全，安全的就直接執行，不安全的才擋下來問你。 技術上是一個雙層分類器（two-layer classifier）。每個動作在執行前會過兩關： 第一關檢查這個操作是不是使用者「合理預期」的行為。你叫它改 code，它要寫檔案，這是合理預期。你叫它改 code，它要讀你的 SSH key，這不是。 第二關檢查有沒有 prompt injection 的跡象。如果有人在 codebase 裡埋了惡意指令試圖讓 Claude 執行危險操作，這層要擋住。 通過兩關的操作自動放行，沒通過的降級回手...</div></div></div></a><a class="pagination-related" href="/2026/04/01/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260401/" title="AI 與科技新聞摘要 — 2026&#x2F;04&#x2F;01"><img class="cover" src="/img/20260401-02.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-04-01</div><div class="info-item-2">AI 與科技新聞摘要 — 2026&#x2F;04&#x2F;01</div></div><div class="info-2"><div class="info-item-1">512,000 行 TypeScript 原始碼，一個 .npmignore 沒設好就全部公開了。Anthropic 五天內第二次洩漏，這次是 Claude Code 的完整 codebase。同一週，MCP 的第一屆開發者峰會在紐約登場，Linux Foundation 正式成立 Agentic AI Foundation。Citrix 爆了一個 CVSS 9.3 的漏洞，NVIDIA 在 GTC 發布了 Rubin 世代的六款新晶片。  1. Claude Code 原始碼洩漏 — 59.8MB 的 source map 讓 1,900 個檔案全部曝光3 月 31 日凌晨，Anthropic 推送 @anthropic-ai/claude-code v2.1.88 到 npm 時，包裹裡多了一個不該存在的東西：一個 59.8MB 的 JavaScript source map 檔案。這個 .map 能完整還原壓縮前的原始碼——512,000 行 TypeScript，橫跨 1,900 個檔案。 研究者 Chaofan Shou 在凌晨 4:23 把下載連結貼到 X 上，16 ...</div></div></div></a></div></div><hr class="custom-hr"/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 評論</span></div></div><div class="comment-wrap"><div><div id="giscus-wrap"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="https://lh3.googleusercontent.com/pw/ABLVV87_po8nBc6F_tXcoYDmtzMGWxHuhhrbguYILCjmjWKLOS8DTpubm0YoQLKgjyjRIZyV5TjYe7XVEz_YU4squfr37GTZqPZP1hlMVZ_MIgXpTxWu73M=w1200" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">Cheng®</div><div class="author-info-description">Backend Developer / 技術筆記 & AI 新聞分享</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">114</div></a><a href="/tags/"><div class="headline">標籤</div><div class="length-num">50</div></a><a href="/categories/"><div class="headline">分類</div><div class="length-num">9</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/mark22013333"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons"><a class="social-icon" href="https://github.com/mark22013333" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:mark22013333@gmail.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a></div><div class="card-info-sponsor"><a class="sponsor-glow-btn" href="https://www.buymeacoffee.com/mark22013333" target="_blank" rel="noopener noreferrer" title="Buy Me A Coffee"><img src="https://img.shields.io/badge/Buy_Me_A_Coffee-FFDD00?style=for-the-badge&amp;logo=buy-me-a-coffee&amp;logoColor=black" alt="Buy Me A Coffee"/></a><a class="sponsor-glow-btn" href="https://p.ecpay.com.tw/EFC3F8F" target="_blank" rel="noopener noreferrer" title="綠界贊助"><img src="https://img.shields.io/badge/☕_%E8%AB%8B%E6%88%91%E5%96%9D%E6%9D%AF%E5%92%96%E5%95%A1-Donate-11998e?style=for-the-badge&amp;logo=coffee&amp;logoColor=white" alt="綠界贊助"/></a><a class="sponsor-glow-btn" href="https://calendly.com/markcheng00806-intumit/15min" target="_blank" rel="noopener noreferrer" title="預約時間"><img src="https://img.shields.io/badge/📅_%E9%A0%90%E7%B4%84_15_%E5%88%86%E9%90%98-Book_Time-0072ff?style=for-the-badge" alt="預約時間"/></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">這裡記錄我在後端開發路上踩過的坑、學到的東西，也會分享每日 AI 與科技新聞觀點。歡迎一起交流！</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目錄</span><span class="toc-percentage"></span></div><div class="toc-content is-expand"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Agent-%E8%87%AA%E5%B7%B1%E9%80%B2%E5%8C%96%EF%BC%8C%E5%88%B0%E5%BA%95%E5%9C%A8%E9%80%B2%E5%8C%96%E4%BB%80%E9%BA%BC%EF%BC%9F"><span class="toc-number">1.</span> <span class="toc-text">Agent 自己進化，到底在進化什麼？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%8A%80%E8%A1%93%E5%88%86%E9%A1%9E%EF%BC%9A%E5%9B%9B%E5%80%8B%E5%B1%A4%E7%B4%9A%E7%9A%84%E7%AA%81%E7%A0%B4"><span class="toc-number">2.</span> <span class="toc-text">技術分類：四個層級的突破</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%A3%E8%A1%A8%E4%BD%9C%E5%92%8C%E9%96%8B%E6%BA%90%E7%94%9F%E6%85%8B"><span class="toc-number">3.</span> <span class="toc-text">代表作和開源生態</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%8F%BE%E5%9C%A8%EF%BC%882024-2025%EF%BC%89%E7%99%BC%E7%94%9F%E4%BA%86%E4%BB%80%E9%BA%BC"><span class="toc-number">4.</span> <span class="toc-text">現在（2024-2025）發生了什麼</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%87%89%E8%A9%B2%E7%9F%A5%E9%81%93%E7%9A%84%E9%A2%A8%E9%9A%AA"><span class="toc-number">5.</span> <span class="toc-text">應該知道的風險</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2026/04/13/Claude-Code-vs-Cursor-vs-GitHub-Copilot-2026-AI-Coding-%E5%B7%A5%E5%85%B7%E4%B8%89%E5%B7%A8%E9%A0%AD%E5%AE%8C%E6%95%B4%E6%AF%94%E8%BC%83/" title="Claude Code vs Cursor vs GitHub Copilot — 2026 AI Coding 工具三巨頭完整比較"><img src="/img/20260413-compare.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Claude Code vs Cursor vs GitHub Copilot — 2026 AI Coding 工具三巨頭完整比較"/></a><div class="content"><a class="title" href="/2026/04/13/Claude-Code-vs-Cursor-vs-GitHub-Copilot-2026-AI-Coding-%E5%B7%A5%E5%85%B7%E4%B8%89%E5%B7%A8%E9%A0%AD%E5%AE%8C%E6%95%B4%E6%AF%94%E8%BC%83/" title="Claude Code vs Cursor vs GitHub Copilot — 2026 AI Coding 工具三巨頭完整比較">Claude Code vs Cursor vs GitHub Copilot — 2026 AI Coding 工具三巨頭完整比較</a><time datetime="2026-04-13T06:00:00.000Z" title="發表於 2026-04-13 14:00:00">2026-04-13</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/04/13/Claude-Code-%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8%E7%B4%A2%E5%BC%95-%E5%BE%9E%E5%85%A5%E9%96%80%E5%88%B0%E9%80%B2%E9%9A%8E%E7%9A%84%E6%89%80%E6%9C%89%E6%96%87%E7%AB%A0%E6%95%B4%E7%90%86/" title="Claude Code 完整教學索引 — 從入門到進階的所有文章整理"><img src="/img/20260413-pillar.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Claude Code 完整教學索引 — 從入門到進階的所有文章整理"/></a><div class="content"><a class="title" href="/2026/04/13/Claude-Code-%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8%E7%B4%A2%E5%BC%95-%E5%BE%9E%E5%85%A5%E9%96%80%E5%88%B0%E9%80%B2%E9%9A%8E%E7%9A%84%E6%89%80%E6%9C%89%E6%96%87%E7%AB%A0%E6%95%B4%E7%90%86/" title="Claude Code 完整教學索引 — 從入門到進階的所有文章整理">Claude Code 完整教學索引 — 從入門到進階的所有文章整理</a><time datetime="2026-04-13T02:00:00.000Z" title="發表於 2026-04-13 10:00:00">2026-04-13</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/04/12/AI-Hedge-Fund-%E7%94%A8-19-%E5%80%8B-AI-Agent-%E6%A8%A1%E6%93%AC%E6%8A%95%E8%B3%87%E5%A7%94%E5%93%A1%E6%9C%83/" title="AI Hedge Fund - 用 19 個 AI Agent 模擬投資委員會"><img src="/img/20260412-01.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="AI Hedge Fund - 用 19 個 AI Agent 模擬投資委員會"/></a><div class="content"><a class="title" href="/2026/04/12/AI-Hedge-Fund-%E7%94%A8-19-%E5%80%8B-AI-Agent-%E6%A8%A1%E6%93%AC%E6%8A%95%E8%B3%87%E5%A7%94%E5%93%A1%E6%9C%83/" title="AI Hedge Fund - 用 19 個 AI Agent 模擬投資委員會">AI Hedge Fund - 用 19 個 AI Agent 模擬投資委員會</a><time datetime="2026-04-12T00:30:00.000Z" title="發表於 2026-04-12 08:30:00">2026-04-12</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/04/12/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260412/" title="AI 與科技新聞摘要 - 2026/04/12"><img src="/img/20260412-02.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="AI 與科技新聞摘要 - 2026/04/12"/></a><div class="content"><a class="title" href="/2026/04/12/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260412/" title="AI 與科技新聞摘要 - 2026/04/12">AI 與科技新聞摘要 - 2026/04/12</a><time datetime="2026-04-12T00:30:00.000Z" title="發表於 2026-04-12 08:30:00">2026-04-12</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/04/12/%E5%8F%B0%E7%81%A3-AI-%E5%9F%BA%E6%9C%AC%E6%B3%95%E4%B8%8A%E8%B7%AF%E4%BA%86-%E4%B8%80%E5%80%8B%E5%B7%A5%E7%A8%8B%E5%B8%AB%E7%9A%84%E6%94%BF%E7%AD%96%E8%A7%80%E5%AF%9F/" title="台灣 AI 基本法上路了 — 一個工程師的政策觀察"><img src="/img/20260412-03.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="台灣 AI 基本法上路了 — 一個工程師的政策觀察"/></a><div class="content"><a class="title" href="/2026/04/12/%E5%8F%B0%E7%81%A3-AI-%E5%9F%BA%E6%9C%AC%E6%B3%95%E4%B8%8A%E8%B7%AF%E4%BA%86-%E4%B8%80%E5%80%8B%E5%B7%A5%E7%A8%8B%E5%B8%AB%E7%9A%84%E6%94%BF%E7%AD%96%E8%A7%80%E5%AF%9F/" title="台灣 AI 基本法上路了 — 一個工程師的政策觀察">台灣 AI 基本法上路了 — 一個工程師的政策觀察</a><time datetime="2026-04-12T00:30:00.000Z" title="發表於 2026-04-12 08:30:00">2026-04-12</time></div></div></div></div></div></div></main><footer id="footer" style="background-image: url(/img/20260406-01.webp);"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2024 - 2026 By Cheng®</span></div><div class="footer_custom_text">Written by Cheng® — 自律，從當下的一念開始。</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="閱讀模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日夜模式切換"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="單欄和雙欄切換"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="設定"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目錄"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="前往評論"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到頂端"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.umd.min.js"></script><script src="https://cdn.jsdelivr.net/npm/instant.page/instantpage.min.js" type="module"></script><script src="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.js"></script><div class="js-pjax"><script>(() => {
+  const isShuoshuo = GLOBAL_CONFIG_SITE.pageType === 'shuoshuo'
+  const option = {"mapping":"pathname","strict":0,"reactionsEnabled":1,"emitMetadata":0,"inputPosition":"bottom","lang":"zh-TW"}
+
+  const getGiscusTheme = theme => theme === 'dark' ? 'dark' : 'light'
+
+  const createScriptElement = config => {
+    const ele = document.createElement('script')
+    Object.entries(config).forEach(([key, value]) => {
+      ele.setAttribute(key, value)
+    })
+    return ele
+  }
+
+  const loadGiscus = (el = document, key) => {
+    const mappingConfig = isShuoshuo
+      ? { 'data-mapping': 'specific', 'data-term': key }
+      : { 'data-mapping': (option && option['data-mapping']) || 'pathname' }
+
+    const giscusConfig = {
+      src: 'https://giscus.app/client.js',
+      'data-repo': 'mark22013333/mark22013333.github.io',
+      'data-repo-id': 'R_kgDOLAxa6A',
+      'data-category-id': 'DIC_kwDOLAxa6M4C5eO9',
+      'data-theme': getGiscusTheme(document.documentElement.getAttribute('data-theme')),
+      'data-reactions-enabled': '1',
+      crossorigin: 'anonymous',
+      async: true,
+      ...option,
+      ...mappingConfig
+    }
+
+    const scriptElement = createScriptElement(giscusConfig)
+
+    el.querySelector('#giscus-wrap').appendChild(scriptElement)
+
+    if (isShuoshuo) {
+      window.shuoshuoComment.destroyGiscus = () => {
+        if (el.children.length) {
+          el.innerHTML = ''
+          el.classList.add('no-comment')
+        }
+      }
+    }
+  }
+
+  const changeGiscusTheme = theme => {
+    const iframe = document.querySelector('#giscus-wrap iframe')
+    if (iframe) {
+      const message = {
+        giscus: {
+          setConfig: {
+            theme: getGiscusTheme(theme)
+          }
+        }
+      }
+      iframe.contentWindow.postMessage(message, 'https://giscus.app')
+    }
+  }
+
+  btf.addGlobalFn('themeChange', changeGiscusTheme, 'giscus')
+
+  if (isShuoshuo) {
+    'Giscus' === 'Giscus'
+      ? window.shuoshuoComment = { loadComment: loadGiscus }
+      : window.loadOtherComment = loadGiscus
+    return
+  }
+
+  if ('Giscus' === 'Giscus' || !true) {
+    if (true) btf.loadComment(document.getElementById('giscus-wrap'), loadGiscus)
+    else loadGiscus()
+  } else {
+    window.loadOtherComment = loadGiscus
+  }
+})()</script></div><script src="/js/kkbox-player.js"></script><script src="/js/archives-pagination.js"></script><script src="/js/font-resize.js"></script><script src="/js/dark-palette.js"></script><script defer="defer" id="fluttering_ribbon" mobile="false" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/canvas-fluttering-ribbon.min.js"></script><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/activate-power-mode.min.js"></script><script>POWERMODE.colorful = true;
+POWERMODE.shake = true;
+POWERMODE.mobile = true;
+document.body.addEventListener('input', POWERMODE);
+</script><script src="https://cdn.jsdelivr.net/npm/pjax/pjax.min.js" defer="defer"></script><script>document.addEventListener('DOMContentLoaded', () => {
+  const pjaxSelectors = ["meta[property=\"og:image\"]","meta[property=\"og:title\"]","meta[property=\"og:url\"]","meta[property=\"og:description\"]","link[rel=\"canonical\"]","head > title","#config-diff","#body-wrap","#rightside-config-hide","#rightside-config-show",".js-pjax"]
+
+  window.pjax = new Pjax({
+    elements: 'a:not([target="_blank"])',
+    selectors: pjaxSelectors,
+    cacheBust: false,
+    analytics: true,
+    scrollRestoration: false
+  })
+
+  const triggerPjaxFn = (val) => {
+    if (!val) return
+    Object.values(val).forEach(fn => {
+      try {
+        fn()
+      } catch (err) {
+        console.debug('Pjax callback failed:', err)
+      }
+    })
+  }
+
+  document.addEventListener('pjax:send', () => {
+    // removeEventListener
+    btf.removeGlobalFnEvent('pjaxSendOnce')
+    btf.removeGlobalFnEvent('themeChange')
+
+    // reset readmode
+    const $bodyClassList = document.body.classList
+    if ($bodyClassList.contains('read-mode')) $bodyClassList.remove('read-mode')
+
+    triggerPjaxFn(window.globalFn.pjaxSend)
+  })
+
+  document.addEventListener('pjax:complete', () => {
+    btf.removeGlobalFnEvent('pjaxCompleteOnce')
+    document.querySelectorAll('script[data-pjax]').forEach(item => {
+      const newScript = document.createElement('script')
+      const content = item.text || item.textContent || item.innerHTML || ""
+      Array.from(item.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value))
+      newScript.appendChild(document.createTextNode(content))
+      item.parentNode.replaceChild(newScript, item)
+    })
+
+    triggerPjaxFn(window.globalFn.pjaxComplete)
+  })
+
+  document.addEventListener('pjax:error', e => {
+    if (e.request.status === 404) {
+      true
+        ? pjax.loadUrl('/404.html')
+        : window.location.href = e.request.responseURL
+    }
+  })
+})</script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜尋</span><i class="fas fa-spinner fa-pulse" id="loading-status" hidden="hidden"></i><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="text-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  資料載入中</span></div><div class="local-search-input"><input placeholder="搜尋文章" type="text"/></div><hr/><div id="local-search-results"></div><div class="ais-Pagination" id="local-search-pagination" style="display:none;"><ul class="ais-Pagination-list"></ul></div><div id="local-search-stats"></div></div><div id="search-mask"></div><script src="/js/search/local-search.js"></script></div></div></body></html>

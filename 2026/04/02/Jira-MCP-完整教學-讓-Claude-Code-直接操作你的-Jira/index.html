@@ -1,0 +1,452 @@
+<!DOCTYPE html><html lang="zh-TW" data-theme="dark"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>Jira MCP 完整教學 — 讓 Claude Code 直接操作你的 Jira | Cheng's Tech &amp; Life</title><meta name="author" content="Cheng®"><meta name="copyright" content="Cheng®"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#0d0d0d"><meta name="description" content="Jira 每天都要登，改個狀態還要點半天，看著任務卡卡的動不了。但如果能讓 Claude Code 直接操作 Jira，「改狀態」「建 Subtask」「查進度」全部自動跑，是不是爽多了。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Jira MCP 完整教學 — 讓 Claude Code 直接操作你的 Jira">
+<meta property="og:url" content="https://mark22013333.github.io/2026/04/02/Jira-MCP-%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8-%E8%AE%93-Claude-Code-%E7%9B%B4%E6%8E%A5%E6%93%8D%E4%BD%9C%E4%BD%A0%E7%9A%84-Jira/index.html">
+<meta property="og:site_name" content="Cheng&#39;s Tech &amp; Life">
+<meta property="og:description" content="Jira 每天都要登，改個狀態還要點半天，看著任務卡卡的動不了。但如果能讓 Claude Code 直接操作 Jira，「改狀態」「建 Subtask」「查進度」全部自動跑，是不是爽多了。">
+<meta property="og:locale" content="zh_TW">
+<meta property="og:image" content="https://mark22013333.github.io/img/20260402-01.webp">
+<meta property="article:published_time" content="2026-04-02T00:30:00.000Z">
+<meta property="article:modified_time" content="2026-04-13T01:53:53.647Z">
+<meta property="article:author" content="Cheng®">
+<meta property="article:tag" content="MCP">
+<meta property="article:tag" content="Claude Code">
+<meta property="article:tag" content="開發工具">
+<meta property="article:tag" content="Jira">
+<meta property="article:tag" content="Atlassian">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://mark22013333.github.io/img/20260402-01.webp"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Jira MCP 完整教學 — 讓 Claude Code 直接操作你的 Jira",
+  "url": "https://mark22013333.github.io/2026/04/02/Jira-MCP-%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8-%E8%AE%93-Claude-Code-%E7%9B%B4%E6%8E%A5%E6%93%8D%E4%BD%9C%E4%BD%A0%E7%9A%84-Jira/",
+  "image": "https://mark22013333.github.io/img/20260402-01.webp",
+  "datePublished": "2026-04-02T00:30:00.000Z",
+  "dateModified": "2026-04-13T01:53:53.647Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "Cheng®",
+      "url": "https://mark22013333.github.io"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://mark22013333.github.io/2026/04/02/Jira-MCP-%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8-%E8%AE%93-Claude-Code-%E7%9B%B4%E6%8E%A5%E6%93%8D%E4%BD%9C%E4%BD%A0%E7%9A%84-Jira/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//www.google-analytics.com" crossorigin=""/><link rel="preconnect" href="//fonts.googleapis.com" crossorigin=""/><link rel="preconnect" href="//busuanzi.ibruce.info"/><meta name="google-site-verification" content="6ywUr8k2n_CT1PFYJzlSvI3CZ-JmJ55RYbA39VrFBDs"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!true && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          const hour = new Date().getHours()
+          const isNight = hour <= 9 || hour >= 18
+          if (theme === undefined) isNight ? activateDarkMode() : activateLightMode()
+          else theme === 'light' ? activateLightMode() : activateDarkMode()
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script async="async" src="https://www.googletagmanager.com/gtag/js?id=G-JBV14NRDH3"></script><script>window.dataLayer = window.dataLayer || []
+function gtag(){dataLayer.push(arguments)}
+gtag('js', new Date())
+gtag('config', 'G-JBV14NRDH3')
+btf.addGlobalFn('pjaxComplete', () => {
+  gtag('config', 'G-JBV14NRDH3', {'page_path': window.location.pathname})
+}, 'google_analytics')
+</script><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Titillium+Web&amp;display=swap" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"pagination":{"enable":false,"hitsPerPage":8},"languages":{"hits_empty":"找不到符合您查詢的內容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '複製成功',
+    error: '複製失敗',
+    noSupport: '瀏覽器不支援'
+  },
+  relativeDate: {
+    homepage: false,
+    post: true
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '剛剛',
+    min: '分鐘前',
+    hour: '小時前',
+    day: '天前',
+    month: '個月前'
+  },
+  copyright: {"limitCount":1,"languages":{"author":"作者: Cheng®","link":"連結: ","source":"來源: Cheng's Tech & Life","info":"著作權歸作者所有。如需商業轉載，請聯絡作者獲得授權，非商業轉載請註明出處😁。"}},
+  lightbox: 'fancybox',
+  Snackbar: {"chs_to_cht":"已切換為繁體中文","cht_to_chs":"已切換為簡體中文","day_to_night":"已切換為深色模式","night_to_day":"已切換為淺色模式","bgLight":"#49b1f5","bgDark":"#1f1f1f","position":"top-center"},
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid/dist/infinitegrid.min.js',
+    buttonText: '載入更多'
+  },
+  isPhotoFigcaption: true,
+  islazyloadPlugin: false,
+  isAnchor: true,
+  percent: {
+    toc: true,
+    rightside: true,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Jira MCP 完整教學 — 讓 Claude Code 直接操作你的 Jira',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><link rel="stylesheet" href="/css/kkbox-player.css"><link rel="stylesheet" href="/css/tag-cloud-fancy.css"><link rel="stylesheet" href="/css/font-resize.css"><link rel="stylesheet" href="/css/dark-palette.css"><link rel="stylesheet" href="/css/loading-override.css"><link rel="alternate" href="/atom.xml" title="Cheng's Tech & Life" type="application/atom+xml">
+</head><body><div id="loading-box"><div class="loading-glass-overlay"></div><div class="loading-indicator"><div class="loading-dot"></div><div class="loading-dot"></div><div class="loading-dot"></div></div></div><script>(()=>{
+  const $loadingBox = document.getElementById('loading-box')
+  const $body = document.body
+  const preloader = {
+    endLoading: () => {
+      if ($loadingBox.classList.contains('loaded')) return
+      $body.style.overflow = ''
+      $loadingBox.classList.add('loaded')
+    },
+    initLoading: () => {
+      $body.style.overflow = 'hidden'
+      $loadingBox.classList.remove('loaded')
+    }
+  }
+
+  preloader.initLoading()
+
+  if (document.readyState === 'complete') {
+    preloader.endLoading()
+  } else {
+    window.addEventListener('load', preloader.endLoading)
+    document.addEventListener('DOMContentLoaded', preloader.endLoading)
+    setTimeout(preloader.endLoading, 7000)
+  }
+
+  if (true) {
+    btf.addGlobalFn('pjaxSend', preloader.initLoading, 'preloader_init')
+    btf.addGlobalFn('pjaxComplete', preloader.endLoading, 'preloader_end')
+  }
+})()</script><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="https://lh3.googleusercontent.com/pw/ABLVV87_po8nBc6F_tXcoYDmtzMGWxHuhhrbguYILCjmjWKLOS8DTpubm0YoQLKgjyjRIZyV5TjYe7XVEz_YU4squfr37GTZqPZP1hlMVZ_MIgXpTxWu73M=w1200" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">114</div></a><a href="/tags/"><div class="headline">標籤</div><div class="length-num">50</div></a><a href="/categories/"><div class="headline">分類</div><div class="length-num">9</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首頁-Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 時間軸-archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 標籤-tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分類-Categories</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-list"></i><span> 其他列表</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音樂-Music</span></a></li><li><a class="site-page child" href="/gallery/"><i class="fa-fw fas fa-images"></i><span> 畫館-Gallery</span></a></li></ul></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg fixed" id="page-header" style="background-image: url(/img/20260402-01.webp);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><img class="site-icon" src="https://lh3.googleusercontent.com/pw/ABLVV87_po8nBc6F_tXcoYDmtzMGWxHuhhrbguYILCjmjWKLOS8DTpubm0YoQLKgjyjRIZyV5TjYe7XVEz_YU4squfr37GTZqPZP1hlMVZ_MIgXpTxWu73M=w1200" alt="Logo"><span class="site-name">Cheng's Tech &amp; Life</span></a><a class="nav-page-title" href="/"><span class="site-name">Jira MCP 完整教學 — 讓 Claude Code 直接操作你的 Jira</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首頁</span></span></a></span><div id="menus"><div id="search-button" title="Ctrl+K / Cmd+K"><span class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜尋</span></span></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首頁-Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 時間軸-archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 標籤-tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分類-Categories</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-list"></i><span> 其他列表</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音樂-Music</span></a></li><li><a class="site-page child" href="/gallery/"><i class="fa-fw fas fa-images"></i><span> 畫館-Gallery</span></a></li></ul></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">Jira MCP 完整教學 — 讓 Claude Code 直接操作你的 Jira</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">發表於</span><time class="post-meta-date-created" datetime="2026-04-02T00:30:00.000Z" title="發表於 2026-04-02 08:30:00">2026-04-02</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新於</span><time class="post-meta-date-updated" datetime="2026-04-13T01:53:53.647Z" title="更新於 2026-04-13 09:53:53">2026-04-13</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Claude-Code/">Claude Code</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">總字數:</span><span class="word-count">1.6k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">閱讀時間:</span><span>5分鐘</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">瀏覽量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><p>Jira 每天都要登，改個狀態還要點半天，看著任務卡卡的動不了。但如果能讓 Claude Code 直接操作 Jira，「改狀態」「建 Subtask」「查進度」全部自動跑，是不是爽多了？</p>
+<p>這不是在做夢。現在的 MCP（Model Context Protocol）讓 Claude Code 能跟 Jira 溝通，整個工作流程可以變得超流暢。今天我就來分享怎麼設定，以及實際能幹什麼。</p>
+<h2 id="先理解-MCP-是什麼"><a href="#先理解-MCP-是什麼" class="headerlink" title="先理解 MCP 是什麼"></a>先理解 MCP 是什麼</h2><p>MCP 簡單來說，就是讓 Claude Code 這樣的 AI 工具能夠跟外部系統（像 Jira、Confluence）對話的協議。你不用寫複雜的 API 呼叫，Claude 自己就能透過 MCP 去讀寫 Jira 的資料。</p>
+<p>想像 MCP 像是翻譯官，你跟 Claude 說「幫我查最近的 Bug」，Claude 透過 MCP 自動翻譯成 Jira 能聽懂的語言，然後把結果再講給你聽。</p>
+<h2 id="三個-Jira-MCP-選項，怎麼選？"><a href="#三個-Jira-MCP-選項，怎麼選？" class="headerlink" title="三個 Jira MCP 選項，怎麼選？"></a>三個 Jira MCP 選項，怎麼選？</h2><p>市面上有三個主要選項：</p>
+<table>
+<thead>
+<tr>
+<th>選項</th>
+<th>開發者</th>
+<th>工具數量</th>
+<th>推薦度</th>
+<th>備註</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Atlassian Rovo MCP</td>
+<td>Atlassian 官方</td>
+<td>25 個工具</td>
+<td>★★★</td>
+<td>官方背書但功能少</td>
+</tr>
+<tr>
+<td>sooperset&#x2F;mcp-atlassian</td>
+<td>社群開發</td>
+<td>72 個工具</td>
+<td>★★★★★</td>
+<td><strong>強烈推薦</strong> 功能最完整</td>
+</tr>
+<tr>
+<td>cosmix&#x2F;jira-mcp</td>
+<td>社群開發</td>
+<td>7 個工具</td>
+<td>★★</td>
+<td>已停止維護</td>
+</tr>
+</tbody></table>
+<p><strong>直接結論：用 sooperset&#x2F;mcp-atlassian</strong>，49 個 Jira 工具 + 23 個 Confluence 工具，真的有夠方便。</p>
+<h2 id="安裝步驟（5-分鐘快速版）"><a href="#安裝步驟（5-分鐘快速版）" class="headerlink" title="安裝步驟（5 分鐘快速版）"></a>安裝步驟（5 分鐘快速版）</h2><h3 id="1-取得-Jira-API-Token"><a href="#1-取得-Jira-API-Token" class="headerlink" title="1. 取得 Jira API Token"></a>1. 取得 Jira API Token</h3><p>首先，登入你的 Jira Cloud：</p>
+<ol>
+<li>去 <code>https://id.atlassian.com/manage-profile/security/api-tokens</code></li>
+<li>點 <strong>Create API token</strong></li>
+<li>給個名字，像「Claude Code」</li>
+<li>複製 token（別貼出去啦）</li>
+</ol>
+<p><strong>Server 或 Data Center 用戶？</strong> 改用 Personal Access Token (PAT)，步驟類似。</p>
+<h3 id="2-設定-env-檔案"><a href="#2-設定-env-檔案" class="headerlink" title="2. 設定 .env 檔案"></a>2. 設定 .env 檔案</h3><p>在你的 Claude Code 工作目錄裡，建立 <code>.env</code> 檔案：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">JIRA_HOST=https://你的公司.atlassian.net</span><br><span class="line">JIRA_EMAIL=你的email@company.com</span><br><span class="line">JIRA_API_TOKEN=剛剛複製的那個token</span><br></pre></td></tr></table></figure>
+
+<p><strong>安全提醒：</strong> 別把 <code>.env</code> 上傳到 Git。加進 <code>.gitignore</code>：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">.env</span><br><span class="line">.env.local</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-安裝-MCP"><a href="#3-安裝-MCP" class="headerlink" title="3. 安裝 MCP"></a>3. 安裝 MCP</h3><p>用 Claude Code 的 MCP 管理工具安裝：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">claude mcp add sooperset/mcp-atlassian</span><br></pre></td></tr></table></figure>
+
+<p>或者，手動編輯 Claude 的 config（位置：<code>~/.config/claude-code/mcp.json</code> 或 <code>~/.claude/claude.json</code>，取決於你的系統）：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;mcps&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;atlassian&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;type&quot;</span><span class="punctuation">:</span> <span class="string">&quot;npm&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;package&quot;</span><span class="punctuation">:</span> <span class="string">&quot;sooperset/mcp-atlassian&quot;</span></span><br><span class="line">    <span class="punctuation">&#125;</span></span><br><span class="line">  <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="4-驗證安裝"><a href="#4-驗證安裝" class="headerlink" title="4. 驗證安裝"></a>4. 驗證安裝</h3><p>開 Claude Code，試試看：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">@claude 列出我最近的 Jira 任務</span><br></pre></td></tr></table></figure>
+
+<p>如果跑出任務清單，恭喜，成功了。</p>
+<h2 id="還能加-Confluence？"><a href="#還能加-Confluence？" class="headerlink" title="還能加 Confluence？"></a>還能加 Confluence？</h2><p>當然行。同個 API Token 可以用，Confluence 自動就能連。72 個工具中，23 個是 Confluence 的。</p>
+<h2 id="實用場景，讓你真的省時間"><a href="#實用場景，讓你真的省時間" class="headerlink" title="實用場景，讓你真的省時間"></a>實用場景，讓你真的省時間</h2><h3 id="場景-1-早上-Standup"><a href="#場景-1-早上-Standup" class="headerlink" title="場景 1: 早上 Standup"></a>場景 1: 早上 Standup</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">@claude 幫我列出本週的 Jira 任務，狀態是「In Progress」的，然後給我一個簡短的進度總結</span><br></pre></td></tr></table></figure>
+
+<p>Claude 會幫你自動拉出相關任務，不用開 Jira 網頁版。</p>
+<h3 id="場景-2-寫完-Code，自動更新-Jira"><a href="#場景-2-寫完-Code，自動更新-Jira" class="headerlink" title="場景 2: 寫完 Code，自動更新 Jira"></a>場景 2: 寫完 Code，自動更新 Jira</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">@claude 我剛完成 PROJ-123 的功能，幫我把狀態改成「Ready for Review」，然後加個 Comment：「已實作完成，等待 Code Review」</span><br></pre></td></tr></table></figure>
+
+<p>直接改狀態、留言，一行指令搞定。</p>
+<h3 id="場景-3-Sprint-Planning-時批量建立-Subtask"><a href="#場景-3-Sprint-Planning-時批量建立-Subtask" class="headerlink" title="場景 3: Sprint Planning 時批量建立 Subtask"></a>場景 3: Sprint Planning 時批量建立 Subtask</h3><p>假設你有一大堆任務要拆分：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">@claude 幫我把 PROJ-456（實作使用者登入功能）拆成以下 Subtask：</span><br><span class="line">1. 後端 API 實作</span><br><span class="line">2. 前端表單介面</span><br><span class="line">3. 單元測試</span><br><span class="line">4. 整合測試</span><br></pre></td></tr></table></figure>
+
+<p>一次建好，手不用酸。</p>
+<h3 id="場景-4-自動生成週報"><a href="#場景-4-自動生成週報" class="headerlink" title="場景 4: 自動生成週報"></a>場景 4: 自動生成週報</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">@claude 抓出我這週完成的所有 Jira 任務，整理成週報格式，包括：</span><br><span class="line">- 完成的任務列表</span><br><span class="line">- 目前進行中的任務</span><br><span class="line">- 下週的計畫</span><br></pre></td></tr></table></figure>
+
+<p>直接貼給 PM，省掉手動統計的麻煩。</p>
+<h3 id="場景-5-快速回報-Bug"><a href="#場景-5-快速回報-Bug" class="headerlink" title="場景 5: 快速回報 Bug"></a>場景 5: 快速回報 Bug</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">@claude 幫我在 PROJ 專案建立一個 Bug，標題「登入頁面在 Safari 上破版」，優先級「High」，指派給 @frontend-team，並加上以下描述：[描述內容]</span><br></pre></td></tr></table></figure>
+
+<p>不用手動填一堆欄位。</p>
+<h3 id="場景-6-時間追蹤"><a href="#場景-6-時間追蹤" class="headerlink" title="場景 6: 時間追蹤"></a>場景 6: 時間追蹤</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">@claude 幫我在 PROJ-789 上記錄 4 小時的工時，分類「Development」</span><br></pre></td></tr></table></figure>
+
+<p>對常常忘記打卡的人真的有救。</p>
+<h2 id="JQL-快速參考（查詢語言）"><a href="#JQL-快速參考（查詢語言）" class="headerlink" title="JQL 快速參考（查詢語言）"></a>JQL 快速參考（查詢語言）</h2><p>Claude 會幫你組 JQL（Jira Query Language），但知道一些常用的會很有幫助：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"># 我指派的任務</span><br><span class="line">assignee = currentUser()</span><br><span class="line"></span><br><span class="line"># 我建立的 Issue</span><br><span class="line">creator = currentUser()</span><br><span class="line"></span><br><span class="line"># 本週完成的任務</span><br><span class="line">resolved &gt;= -7d AND status = Done</span><br><span class="line"></span><br><span class="line"># 高優先級、進行中的 Bug</span><br><span class="line">priority = High AND type = Bug AND status = &quot;In Progress&quot;</span><br><span class="line"></span><br><span class="line"># 特定專案的所有任務</span><br><span class="line">project = PROJ</span><br><span class="line"></span><br><span class="line"># 搜尋特定文字</span><br><span class="line">text ~ &quot;登入功能&quot;</span><br></pre></td></tr></table></figure>
+
+<p>用起來就像：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">@claude 找出 PROJ 專案中，優先級是 High，狀態是 In Progress 的所有任務</span><br></pre></td></tr></table></figure>
+
+<p>Claude 自動轉成 JQL，拉出來給你看。</p>
+<h2 id="安全眉角（別踩坑啦）"><a href="#安全眉角（別踩坑啦）" class="headerlink" title="安全眉角（別踩坑啦）"></a>安全眉角（別踩坑啦）</h2><h3 id="1-API-Token-要保密"><a href="#1-API-Token-要保密" class="headerlink" title="1. API Token 要保密"></a>1. API Token 要保密</h3><ul>
+<li>千萬別簽入 Git</li>
+<li>別傳給陌生人</li>
+<li>別在公開頻道貼出來</li>
+<li>定期換個 Token</li>
+</ul>
+<h3 id="2-權限會被繼承"><a href="#2-權限會被繼承" class="headerlink" title="2. 權限會被繼承"></a>2. 權限會被繼承</h3><p>用你的帳戶登的 Token，所以 Claude 只能做你能做的事。想讓 Claude 改別人的任務？你必須有那個權限。</p>
+<h3 id="3-寫入操作要小心"><a href="#3-寫入操作要小心" class="headerlink" title="3. 寫入操作要小心"></a>3. 寫入操作要小心</h3><p>別讓 Claude 自動更新一大堆任務，除非你真的百分百確定要改什麼。先測試小的改動。</p>
+<h3 id="4-Rate-Limit-有上限"><a href="#4-Rate-Limit-有上限" class="headerlink" title="4. Rate Limit 有上限"></a>4. Rate Limit 有上限</h3><p>Jira Cloud 的 API 有速率限制，大量操作時要注意。一般使用不會碰到天花板，但如果你想一次建 500 個 Subtask，可能會被卡住。改天分批就行。</p>
+<h2 id="常見問題"><a href="#常見問題" class="headerlink" title="常見問題"></a>常見問題</h2><p><strong>Q: 能用 Jira Server 嗎？</strong><br>A: 可以，改用 PAT 認證。把 <code>JIRA_API_TOKEN</code> 換成 Personal Access Token 就行。</p>
+<p><strong>Q: Claude Code 會看到我的 Jira 密碼嗎？</strong><br>A: 不會。API Token 是特殊的認證方式，密碼完全不會洩露。</p>
+<p><strong>Q: 可以在 IDE 裡直接改 Jira 嗎？</strong><br>A: 可以。Claude Code 就是整合在 IDE 裡面，所以邊寫 Code 邊改任務狀態，一點都不奇怪。</p>
+<p><strong>Q: 那 Confluence 呢？</strong><br>A: 同個 Token，自動支援。用 Claude 查文件、新增頁面、更新內容，全都可以。</p>
+<h2 id="繞了一大圈，最後的話"><a href="#繞了一大圈，最後的話" class="headerlink" title="繞了一大圈，最後的話"></a>繞了一大圈，最後的話</h2><p>MCP 這個東西，初次設定有點小麻煩，但一旦跑起來，真的改變工作流程。不用一直開 Jira 網頁，不用手動填欄位，全部讓 Claude 幫你搞定。</p>
+<p>尤其對那種每天任務超多、狀態一直變的人來說，這套絕對能省下不少時間。值得花 5 分鐘試試看。</p>
+<p>有問題？來個 GitHub Issue，社群很活躍，通常有人能幫忙。</p>
+<hr>
+<h2 id="參考資源"><a href="#參考資源" class="headerlink" title="參考資源"></a>參考資源</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://github.com/sooperset/mcp-atlassian">sooperset&#x2F;mcp-atlassian GitHub</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/atlassian-labs/rovo-mcp">Atlassian Rovo MCP</a></li>
+<li><a target="_blank" rel="noopener" href="https://claude.ai/docs">Claude Code 官方文件</a></li>
+<li><a target="_blank" rel="noopener" href="https://support.atlassian.com/atlassian-account/docs/manage-api-tokens-for-your-atlassian-account/">Jira Cloud API Token 說明</a></li>
+<li><a target="_blank" rel="noopener" href="https://support.atlassian.com/jira-service-management-cloud/docs/jira-query-language-jql/">JQL 完整文件</a></li>
+</ul>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://mark22013333.github.io">Cheng®</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章連結: </span><span class="post-copyright-info"><a href="https://mark22013333.github.io/2026/04/02/Jira-MCP-%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8-%E8%AE%93-Claude-Code-%E7%9B%B4%E6%8E%A5%E6%93%8D%E4%BD%9C%E4%BD%A0%E7%9A%84-Jira/">https://mark22013333.github.io/2026/04/02/Jira-MCP-完整教學-讓-Claude-Code-直接操作你的-Jira/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版權聲明: </span><span class="post-copyright-info">本部落格所有文章除特別聲明外，均採用<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 授權協議。轉載請註明來源 <a href="https://mark22013333.github.io" target="_blank">Cheng's Tech & Life</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/MCP/">MCP</a><a class="post-meta__tags" href="/tags/Claude-Code/">Claude Code</a><a class="post-meta__tags" href="/tags/%E9%96%8B%E7%99%BC%E5%B7%A5%E5%85%B7/">開發工具</a><a class="post-meta__tags" href="/tags/Jira/">Jira</a><a class="post-meta__tags" href="/tags/Atlassian/">Atlassian</a></div><div class="post-share"><div class="social-share" data-image="/img/20260402-01.webp" data-sites="facebook,x"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><div class="post-reward"><div class="reward-badges"><a class="sponsor-glow-btn" href="https://www.buymeacoffee.com/mark22013333" target="_blank" rel="noopener noreferrer" title="Buy Me A Coffee"><img src="https://img.shields.io/badge/Buy_Me_A_Coffee-FFDD00?style=for-the-badge&amp;logo=buy-me-a-coffee&amp;logoColor=black" alt="Buy Me A Coffee"/></a><a class="sponsor-glow-btn" href="https://p.ecpay.com.tw/EFC3F8F" target="_blank" rel="noopener noreferrer" title="綠界贊助"><img src="https://img.shields.io/badge/☕_%E8%AB%8B%E6%88%91%E5%96%9D%E6%9D%AF%E5%92%96%E5%95%A1-Donate-11998e?style=for-the-badge&amp;logo=coffee&amp;logoColor=white" alt="綠界贊助"/></a><a class="sponsor-glow-btn" href="https://calendly.com/markcheng00806-intumit/15min" target="_blank" rel="noopener noreferrer" title="預約時間"><img src="https://img.shields.io/badge/📅_%E9%A0%90%E7%B4%84_15_%E5%88%86%E9%90%98-Book_Time-0072ff?style=for-the-badge" alt="預約時間"/></a><p class="reward-badges-note">你的鼓勵將被轉換為我明天繼續加班的動力（真的）。 ❤️</p></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2026/04/02/Claude-Code-Context-%E7%AE%A1%E7%90%86%E6%94%BB%E7%95%A5-%E7%82%BA%E4%BB%80%E9%BA%BC%E4%BD%A0%E7%9A%84-AI-%E8%B6%8A%E7%94%A8%E8%B6%8A%E7%AC%A8%E4%BB%A5%E5%8F%8A%E6%80%8E%E9%BA%BC%E4%BF%AE/" title="Claude Code Context 管理攻略 — 為什麼你的 AI 越用越笨，以及怎麼修"><img class="cover" src="/img/20260402-03.webp" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">Claude Code Context 管理攻略 — 為什麼你的 AI 越用越笨，以及怎麼修</div></div><div class="info-2"><div class="info-item-1">你有沒有遇過這種狀況：用 Claude Code 寫到一半，突然發現它開始忘東忘西，code 質量明顯下降，甚至會重複做已經做過的事情？ 那不是 Claude 變笨了，是你的 context window 快爆炸了。 這篇要聊的就是 Claude Code 最重要但最容易被忽視的東西：context 管理。不懂這個，你再聰明的 AI 助手也會被你用到逐漸失能。 Context Window 是你最寶貴的資源先講白一點：Claude 的 context window（你可以理解成 AI 能夠「記住」的東西）是有限的。每一次對話、每個你讀的檔案、每個指令的輸出，全部都會佔用 context。 當 context 開始滿的時候，Claude 的表現就會下降。它會開始「健忘」，做錯事情的頻率變高。這不是 bug，這是物理限制。 想像一下你的大腦 RAM，用滿了就會 lag。Claude 也是一樣。 所以context 管理就是你在用 Claude Code 時最重要的事。你可以寫得很完美，但如果 context 一直堆積垃圾，再完美的 code 也救不了。 給 Claude 驗證的方式這...</div></div></div></a><a class="pagination-related" href="/2026/04/03/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260403/" title="AI 與科技新聞摘要 — 2026/04/03"><img class="cover" src="/img/20260403-02.webp" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">AI 與科技新聞摘要 — 2026/04/03</div></div><div class="info-2"><div class="info-item-1">這週科技圈又有幾個有夠猛的進展——Pinterest 用上生產級 MCP 生態系統、Chrome 又被爆零日漏洞、MCP 供應鏈安全拉警報、OpenAI 併購力道凶猛，以及 Red Hat 帶著 MCP Server 開發者預覽版現身。 Pinterest 部署生產級 MCP 生態系統Pinterest 工程團隊最近釋出了他們的生產級 MCP 生態系統細節，有夠扯欸。他們不是只搞個玩具出來，而是打造了完整的基礎設施，整合 Presto、Spark、Airflow 等領域特定的伺服器，配上中央註冊表和人工審核治理機制。 數字會說話：月均 66,000 次呼叫、844 個活躍使用者，每個月幫公司省下 7,000 小時。這表示 MCP 已經從「有趣的實驗」升級成真實生產系統，開始在大規模工程團隊的日常工作流中發揮實際價值。這對整個 MCP 生態發展是個正面信號。  原文來源：Pinterest engineering brings MCP to production scale  Chrome 零日漏洞 CVE-2026-5281 遭實際利用Google 又挨了一刀。CVE-2026-...</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相關推薦</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2026/04/01/Claude-Code-Remote-Control-%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8-%E7%94%A8%E6%89%8B%E6%A9%9F%E9%81%99%E6%8E%A7%E4%BD%A0%E7%9A%84%E7%B5%82%E7%AB%AF%E6%A9%9F/" title="Claude Code Channels 完整教學 — 讓 Telegram、Discord 直接推訊息進你的終端機"><img class="cover" src="/img/20260401-03.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-04-01</div><div class="info-item-2">Claude Code Channels 完整教學 — 讓 Telegram、Discord 直接推訊息進你的終端機</div></div><div class="info-2"><div class="info-item-1">CI pipeline 掛了。以前的流程：收到 Slack 通知 → 打開筆電 → 開終端機 → 跑 Claude Code → 找問題 → 修。現在？Telegram 一響，訊息直接灌進你正在跑的 Claude Code session，Claude 自己去讀 log、找原因、甚至幫你改 code。你不用打開筆電，甚至不用離開 Telegram。 這就是 Channels。  Channel 不是 MCP，也不是 Remote Control先釐清定位。Claude Code 現在有一堆「讓你不在電腦前也能操作」的方式，很容易搞混。 MCP Server 是被動的——Claude 需要的時候去問它，它不會主動推東西過來。Remote Control 是你自己在手機上操作正在跑的 session。Channels 是事件驅動的——外面有事情發生（Telegram 訊息、CI webhook、Discord 訊息），主動推進你的 session，Claude 自動反應。    方式 方向 觸發者    MCP Server Claude 主動查詢 Claude   Remote C...</div></div></div></a><a class="pagination-related" href="/2026/04/10/MarkItDown-%E5%BE%AE%E8%BB%9F%E5%87%BA%E5%93%81%E7%9A%84%E4%BB%BB%E4%BD%95%E6%AA%94%E6%A1%88%E8%BD%89-Markdown-%E5%B7%A5%E5%85%B7/" title="MarkItDown - 微軟出品的「任何檔案轉 Markdown」工具"><img class="cover" src="/img/20260410-01.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-04-10</div><div class="info-item-2">MarkItDown - 微軟出品的「任何檔案轉 Markdown」工具</div></div><div class="info-2"><div class="info-item-1">PDF 丟進 LLM 前要先做什麼？轉文字。Word 呢？也是轉文字。PowerPoint？一樣。問題來了：轉成純文字會丟掉所有結構——標題層級沒了、表格扁平化了、清單變成一坨散文。LLM 拿到這種東西，理解力直接打折。 微軟的 MarkItDown 就是為了解決這個前處理痛點而生的。一行指令，把幾乎任何格式的檔案轉成 Markdown，保留標題、表格、清單的結構。97K+ stars，MIT 授權，三行 code 就能用。 為什麼是 Markdown 而不是純文字主流 LLM 的訓練資料裡大量包含 Markdown。對模型來說，收到一份有 ## 標題和 | 表格的 Markdown，比收到一坨沒結構的純文字好懂太多，token 數也不會明顯增加。 MarkItDown 的定位很明確：不做高保真的文件格式互轉（那是 Pandoc 的事），專門為 LLM 管線設計的前處理工具。犧牲排版的視覺還原度，換取語意結構的完整保留。 支援哪些格式覆蓋面有夠廣：  文件類：PDF、Word（.docx）、PowerPoint（.pptx）、Excel（.xlsx &#x2F; .xls） 網頁...</div></div></div></a><a class="pagination-related" href="/2026/03/24/DBHub-%E8%B3%87%E6%96%99%E5%BA%AB-MCP-Server-%E5%AE%89%E8%A3%9D%E8%88%87%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97/" title="DBHub — 讓 AI 直接查資料庫的 MCP Server 安裝與使用指南"><img class="cover" src="/img/20260324-02.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-03-24</div><div class="info-item-2">DBHub — 讓 AI 直接查資料庫的 MCP Server 安裝與使用指南</div></div><div class="info-2"><div class="info-item-1">寫 SQL、跑查詢、複製結果、貼給 AI、等回覆、發現少撈了一個欄位、再跑一次。這個迴圈跑過三輪以上的人，大概都會冒出同一個念頭：讓 AI 自己去查不就好了？ DBHub 就是幹這件事的。Bytebase 團隊開源的資料庫 MCP Server，裝上去之後 AI 直接透過 MCP 協定存取資料庫——查結構、跑 SQL 都行，你不用再當中間人搬運資料。 支援的資料庫MSSQL、MySQL、PostgreSQL、MariaDB、SQLite、Oracle，涵蓋範圍比預期廣。安裝走 npx 或 Docker 都行。 安裝方式專案級安裝連線資訊只在當前專案目錄下生效，不會跨專案污染。 MSSQL： 1claude mcp add dbhub --scope project -- npx @bytebase/dbhub --transport stdio --dsn &quot;sqlserver://user:password@host:port/database&quot;  MySQL： 1claude mcp add dbhub --scope project -- npx @by...</div></div></div></a><a class="pagination-related" href="/2026/04/06/Self-Evolving-Agents-%E8%AE%93-AI-Agent-%E8%87%AA%E5%B7%B1%E9%80%B2%E5%8C%96%E7%9A%84%E5%AE%8C%E6%95%B4%E6%8A%80%E8%A1%93%E5%9C%B0%E5%9C%96/" title="Self-Evolving Agents - 讓 AI Agent 自己進化的完整技術地圖"><img class="cover" src="/img/20260406-01.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-04-06</div><div class="info-item-2">Self-Evolving Agents - 讓 AI Agent 自己進化的完整技術地圖</div></div><div class="info-2"><div class="info-item-1">前陣子在看 University of Glasgow 的研究，發現一個有夠猛的方向：AI Agent 能夠自己進化，不用人類干預就越來越強。以前我們都以為模型 deploy 下去就固定了，沒想到還有這麼多角度可以自我優化。 Agent 自己進化，到底在進化什麼？Self-Evolving Agent 的核心概念其實很簡單：讓系統在運作過程中自動改善自己。但「改善」這個詞太寬泛了。這波操作跨越 4 個維度： 第一個維度是 LLM 本身的行為。透過 Reinforcement Learning 和 self-play 這類技巧，模型能從自己的嘗試裡學習。STaR（Self-Taught Reasoner）就是代表作，它讓模型從推理過程中的成功案例自動學習。Absolute Zero 是今年新出的，直接從零資料開始自我對弈，效果炸了。 第二個維度是 Prompt 優化。有人用進化演算法，有人用梯度下降，用 TextGrad 或 OPRO 這樣的框架，系統能自動調整提示詞。不用人類手工調整，程式自己試出更有效的 prompt。 第三個維度是記憶機制。A-MEM 和 Mem0 專注在怎麼...</div></div></div></a><a class="pagination-related" href="/2026/04/09/OpenSoul-%E4%BB%A5%E5%A4%A7%E8%85%A6%E7%A5%9E%E7%B6%93%E7%B5%90%E6%A7%8B%E7%82%BA%E9%9D%88%E6%84%9F%E7%9A%84%E8%AA%8D%E7%9F%A5-AI-%E6%A1%86%E6%9E%B6/" title="OpenSoul - 以大腦神經結構為靈感的認知 AI 框架"><img class="cover" src="/img/20260409-01.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-04-09</div><div class="info-item-2">OpenSoul - 以大腦神經結構為靈感的認知 AI 框架</div></div><div class="info-2"><div class="info-item-1">每次開新的 ChatGPT 對話，它都不記得你昨天講了什麼。用 Claude Code 開新 session，前一輪的 debug 心得全部歸零。LLM 的記憶，基本上跟金魚差不多。 OpenSoul 試圖改變這件事。它在 LLM 之上疊了一層認知架構，靈感來自人腦的神經結構——海馬迴管情節記憶、新皮質管語意記憶、基底核管程序記憶，甚至還有多巴胺和血清素的虛擬版本來調控 AI 的「情緒」。聽起來很科幻？確實，但它的設計文件讀起來比大多數「AI 認知」專案都嚴謹得多。 三層記憶圖譜OpenSoul 把記憶存在 FalkorDB（基於 Redis 的圖資料庫）裡，分成三層： 情節記憶（Episodic Memory）對應海馬迴，記錄具體的對話片段。「你上次說你喜歡喝咖啡」——就是這一層在運作。 語意記憶（Semantic Memory）對應新皮質，儲存從對話中提煉出來的通用知識。「Python 是程式語言」這種事實性資訊住在這裡。 程序記憶（Procedural Memory）對應基底核，記住「這個使用者常犯的錯」之類的行為模式。 每次對話時，系統用 EcphoryRAG 做聯想檢索...</div></div></div></a><a class="pagination-related" href="/2026/04/04/Agent-Broker-%E7%94%A8-Discord-%E6%93%8D%E6%8E%A7-AI-Coding-Agent-%E7%9A%84-Rust-%E6%A9%8B%E6%8E%A5%E6%9C%8D%E5%8B%99/" title="Agent Broker - 用 Discord 操控 AI Coding Agent 的 Rust 橋接服務"><img class="cover" src="/img/20260404-01.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-04-04</div><div class="info-item-2">Agent Broker - 用 Discord 操控 AI Coding Agent 的 Rust 橋接服務</div></div><div class="info-2"><div class="info-item-1">Discord 頻道裡 @mention 一個 bot，它就能幫你寫程式、code review、分析架構。背後串接的是 Claude Code、Kiro CLI、Codex 這些 AI coding agent。Agent Broker 就是那個站在中間的翻譯官——用 Rust 寫的橋接服務，把 Discord 和任何支援 ACP 協定的 coding CLI 串在一起。 這東西解決什麼問題團隊裡不是每個人都習慣開終端機跟 AI 互動。有些人就是活在 Discord 裡面，開會在 Discord、討論在 Discord、連摸魚都在 Discord。Agent Broker 的邏輯很直接：既然人在 Discord，那 AI 也該在 Discord。 核心架構長這樣：使用者在 Discord 打字 → Agent Broker 收到後轉成 ACP 協定的 JSON-RPC → 丟給後端 CLI（Claude Code、Kiro、Codex 都行）→ AI 回應串流回 Discord 即時顯示。每個 Discord thread 會 spawn 一個獨立的 CLI process，多...</div></div></div></a></div></div><hr class="custom-hr"/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 評論</span></div></div><div class="comment-wrap"><div><div id="giscus-wrap"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="https://lh3.googleusercontent.com/pw/ABLVV87_po8nBc6F_tXcoYDmtzMGWxHuhhrbguYILCjmjWKLOS8DTpubm0YoQLKgjyjRIZyV5TjYe7XVEz_YU4squfr37GTZqPZP1hlMVZ_MIgXpTxWu73M=w1200" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">Cheng®</div><div class="author-info-description">Backend Developer / 技術筆記 & AI 新聞分享</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">114</div></a><a href="/tags/"><div class="headline">標籤</div><div class="length-num">50</div></a><a href="/categories/"><div class="headline">分類</div><div class="length-num">9</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/mark22013333"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons"><a class="social-icon" href="https://github.com/mark22013333" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:mark22013333@gmail.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a></div><div class="card-info-sponsor"><a class="sponsor-glow-btn" href="https://www.buymeacoffee.com/mark22013333" target="_blank" rel="noopener noreferrer" title="Buy Me A Coffee"><img src="https://img.shields.io/badge/Buy_Me_A_Coffee-FFDD00?style=for-the-badge&amp;logo=buy-me-a-coffee&amp;logoColor=black" alt="Buy Me A Coffee"/></a><a class="sponsor-glow-btn" href="https://p.ecpay.com.tw/EFC3F8F" target="_blank" rel="noopener noreferrer" title="綠界贊助"><img src="https://img.shields.io/badge/☕_%E8%AB%8B%E6%88%91%E5%96%9D%E6%9D%AF%E5%92%96%E5%95%A1-Donate-11998e?style=for-the-badge&amp;logo=coffee&amp;logoColor=white" alt="綠界贊助"/></a><a class="sponsor-glow-btn" href="https://calendly.com/markcheng00806-intumit/15min" target="_blank" rel="noopener noreferrer" title="預約時間"><img src="https://img.shields.io/badge/📅_%E9%A0%90%E7%B4%84_15_%E5%88%86%E9%90%98-Book_Time-0072ff?style=for-the-badge" alt="預約時間"/></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">這裡記錄我在後端開發路上踩過的坑、學到的東西，也會分享每日 AI 與科技新聞觀點。歡迎一起交流！</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目錄</span><span class="toc-percentage"></span></div><div class="toc-content is-expand"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%88%E7%90%86%E8%A7%A3-MCP-%E6%98%AF%E4%BB%80%E9%BA%BC"><span class="toc-number">1.</span> <span class="toc-text">先理解 MCP 是什麼</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89%E5%80%8B-Jira-MCP-%E9%81%B8%E9%A0%85%EF%BC%8C%E6%80%8E%E9%BA%BC%E9%81%B8%EF%BC%9F"><span class="toc-number">2.</span> <span class="toc-text">三個 Jira MCP 選項，怎麼選？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%89%E8%A3%9D%E6%AD%A5%E9%A9%9F%EF%BC%885-%E5%88%86%E9%90%98%E5%BF%AB%E9%80%9F%E7%89%88%EF%BC%89"><span class="toc-number">3.</span> <span class="toc-text">安裝步驟（5 分鐘快速版）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E5%8F%96%E5%BE%97-Jira-API-Token"><span class="toc-number">3.1.</span> <span class="toc-text">1. 取得 Jira API Token</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E8%A8%AD%E5%AE%9A-env-%E6%AA%94%E6%A1%88"><span class="toc-number">3.2.</span> <span class="toc-text">2. 設定 .env 檔案</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E5%AE%89%E8%A3%9D-MCP"><span class="toc-number">3.3.</span> <span class="toc-text">3. 安裝 MCP</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-%E9%A9%97%E8%AD%89%E5%AE%89%E8%A3%9D"><span class="toc-number">3.4.</span> <span class="toc-text">4. 驗證安裝</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%82%84%E8%83%BD%E5%8A%A0-Confluence%EF%BC%9F"><span class="toc-number">4.</span> <span class="toc-text">還能加 Confluence？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AF%A6%E7%94%A8%E5%A0%B4%E6%99%AF%EF%BC%8C%E8%AE%93%E4%BD%A0%E7%9C%9F%E7%9A%84%E7%9C%81%E6%99%82%E9%96%93"><span class="toc-number">5.</span> <span class="toc-text">實用場景，讓你真的省時間</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A0%B4%E6%99%AF-1-%E6%97%A9%E4%B8%8A-Standup"><span class="toc-number">5.1.</span> <span class="toc-text">場景 1: 早上 Standup</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A0%B4%E6%99%AF-2-%E5%AF%AB%E5%AE%8C-Code%EF%BC%8C%E8%87%AA%E5%8B%95%E6%9B%B4%E6%96%B0-Jira"><span class="toc-number">5.2.</span> <span class="toc-text">場景 2: 寫完 Code，自動更新 Jira</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A0%B4%E6%99%AF-3-Sprint-Planning-%E6%99%82%E6%89%B9%E9%87%8F%E5%BB%BA%E7%AB%8B-Subtask"><span class="toc-number">5.3.</span> <span class="toc-text">場景 3: Sprint Planning 時批量建立 Subtask</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A0%B4%E6%99%AF-4-%E8%87%AA%E5%8B%95%E7%94%9F%E6%88%90%E9%80%B1%E5%A0%B1"><span class="toc-number">5.4.</span> <span class="toc-text">場景 4: 自動生成週報</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A0%B4%E6%99%AF-5-%E5%BF%AB%E9%80%9F%E5%9B%9E%E5%A0%B1-Bug"><span class="toc-number">5.5.</span> <span class="toc-text">場景 5: 快速回報 Bug</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A0%B4%E6%99%AF-6-%E6%99%82%E9%96%93%E8%BF%BD%E8%B9%A4"><span class="toc-number">5.6.</span> <span class="toc-text">場景 6: 時間追蹤</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#JQL-%E5%BF%AB%E9%80%9F%E5%8F%83%E8%80%83%EF%BC%88%E6%9F%A5%E8%A9%A2%E8%AA%9E%E8%A8%80%EF%BC%89"><span class="toc-number">6.</span> <span class="toc-text">JQL 快速參考（查詢語言）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%89%E5%85%A8%E7%9C%89%E8%A7%92%EF%BC%88%E5%88%A5%E8%B8%A9%E5%9D%91%E5%95%A6%EF%BC%89"><span class="toc-number">7.</span> <span class="toc-text">安全眉角（別踩坑啦）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-API-Token-%E8%A6%81%E4%BF%9D%E5%AF%86"><span class="toc-number">7.1.</span> <span class="toc-text">1. API Token 要保密</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E6%AC%8A%E9%99%90%E6%9C%83%E8%A2%AB%E7%B9%BC%E6%89%BF"><span class="toc-number">7.2.</span> <span class="toc-text">2. 權限會被繼承</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E5%AF%AB%E5%85%A5%E6%93%8D%E4%BD%9C%E8%A6%81%E5%B0%8F%E5%BF%83"><span class="toc-number">7.3.</span> <span class="toc-text">3. 寫入操作要小心</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-Rate-Limit-%E6%9C%89%E4%B8%8A%E9%99%90"><span class="toc-number">7.4.</span> <span class="toc-text">4. Rate Limit 有上限</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B8%B8%E8%A6%8B%E5%95%8F%E9%A1%8C"><span class="toc-number">8.</span> <span class="toc-text">常見問題</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%B9%9E%E4%BA%86%E4%B8%80%E5%A4%A7%E5%9C%88%EF%BC%8C%E6%9C%80%E5%BE%8C%E7%9A%84%E8%A9%B1"><span class="toc-number">9.</span> <span class="toc-text">繞了一大圈，最後的話</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%83%E8%80%83%E8%B3%87%E6%BA%90"><span class="toc-number">10.</span> <span class="toc-text">參考資源</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2026/04/13/Claude-Code-vs-Cursor-vs-GitHub-Copilot-2026-AI-Coding-%E5%B7%A5%E5%85%B7%E4%B8%89%E5%B7%A8%E9%A0%AD%E5%AE%8C%E6%95%B4%E6%AF%94%E8%BC%83/" title="Claude Code vs Cursor vs GitHub Copilot — 2026 AI Coding 工具三巨頭完整比較"><img src="/img/20260413-compare.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Claude Code vs Cursor vs GitHub Copilot — 2026 AI Coding 工具三巨頭完整比較"/></a><div class="content"><a class="title" href="/2026/04/13/Claude-Code-vs-Cursor-vs-GitHub-Copilot-2026-AI-Coding-%E5%B7%A5%E5%85%B7%E4%B8%89%E5%B7%A8%E9%A0%AD%E5%AE%8C%E6%95%B4%E6%AF%94%E8%BC%83/" title="Claude Code vs Cursor vs GitHub Copilot — 2026 AI Coding 工具三巨頭完整比較">Claude Code vs Cursor vs GitHub Copilot — 2026 AI Coding 工具三巨頭完整比較</a><time datetime="2026-04-13T06:00:00.000Z" title="發表於 2026-04-13 14:00:00">2026-04-13</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/04/13/Claude-Code-%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8%E7%B4%A2%E5%BC%95-%E5%BE%9E%E5%85%A5%E9%96%80%E5%88%B0%E9%80%B2%E9%9A%8E%E7%9A%84%E6%89%80%E6%9C%89%E6%96%87%E7%AB%A0%E6%95%B4%E7%90%86/" title="Claude Code 完整教學索引 — 從入門到進階的所有文章整理"><img src="/img/20260413-pillar.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Claude Code 完整教學索引 — 從入門到進階的所有文章整理"/></a><div class="content"><a class="title" href="/2026/04/13/Claude-Code-%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8%E7%B4%A2%E5%BC%95-%E5%BE%9E%E5%85%A5%E9%96%80%E5%88%B0%E9%80%B2%E9%9A%8E%E7%9A%84%E6%89%80%E6%9C%89%E6%96%87%E7%AB%A0%E6%95%B4%E7%90%86/" title="Claude Code 完整教學索引 — 從入門到進階的所有文章整理">Claude Code 完整教學索引 — 從入門到進階的所有文章整理</a><time datetime="2026-04-13T02:00:00.000Z" title="發表於 2026-04-13 10:00:00">2026-04-13</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/04/12/AI-Hedge-Fund-%E7%94%A8-19-%E5%80%8B-AI-Agent-%E6%A8%A1%E6%93%AC%E6%8A%95%E8%B3%87%E5%A7%94%E5%93%A1%E6%9C%83/" title="AI Hedge Fund - 用 19 個 AI Agent 模擬投資委員會"><img src="/img/20260412-01.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="AI Hedge Fund - 用 19 個 AI Agent 模擬投資委員會"/></a><div class="content"><a class="title" href="/2026/04/12/AI-Hedge-Fund-%E7%94%A8-19-%E5%80%8B-AI-Agent-%E6%A8%A1%E6%93%AC%E6%8A%95%E8%B3%87%E5%A7%94%E5%93%A1%E6%9C%83/" title="AI Hedge Fund - 用 19 個 AI Agent 模擬投資委員會">AI Hedge Fund - 用 19 個 AI Agent 模擬投資委員會</a><time datetime="2026-04-12T00:30:00.000Z" title="發表於 2026-04-12 08:30:00">2026-04-12</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/04/12/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260412/" title="AI 與科技新聞摘要 - 2026/04/12"><img src="/img/20260412-02.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="AI 與科技新聞摘要 - 2026/04/12"/></a><div class="content"><a class="title" href="/2026/04/12/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260412/" title="AI 與科技新聞摘要 - 2026/04/12">AI 與科技新聞摘要 - 2026/04/12</a><time datetime="2026-04-12T00:30:00.000Z" title="發表於 2026-04-12 08:30:00">2026-04-12</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/04/12/%E5%8F%B0%E7%81%A3-AI-%E5%9F%BA%E6%9C%AC%E6%B3%95%E4%B8%8A%E8%B7%AF%E4%BA%86-%E4%B8%80%E5%80%8B%E5%B7%A5%E7%A8%8B%E5%B8%AB%E7%9A%84%E6%94%BF%E7%AD%96%E8%A7%80%E5%AF%9F/" title="台灣 AI 基本法上路了 — 一個工程師的政策觀察"><img src="/img/20260412-03.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="台灣 AI 基本法上路了 — 一個工程師的政策觀察"/></a><div class="content"><a class="title" href="/2026/04/12/%E5%8F%B0%E7%81%A3-AI-%E5%9F%BA%E6%9C%AC%E6%B3%95%E4%B8%8A%E8%B7%AF%E4%BA%86-%E4%B8%80%E5%80%8B%E5%B7%A5%E7%A8%8B%E5%B8%AB%E7%9A%84%E6%94%BF%E7%AD%96%E8%A7%80%E5%AF%9F/" title="台灣 AI 基本法上路了 — 一個工程師的政策觀察">台灣 AI 基本法上路了 — 一個工程師的政策觀察</a><time datetime="2026-04-12T00:30:00.000Z" title="發表於 2026-04-12 08:30:00">2026-04-12</time></div></div></div></div></div></div></main><footer id="footer" style="background-image: url(/img/20260402-01.webp);"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2024 - 2026 By Cheng®</span></div><div class="footer_custom_text">Written by Cheng® — 自律，從當下的一念開始。</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="閱讀模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日夜模式切換"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="單欄和雙欄切換"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="設定"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目錄"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="前往評論"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到頂端"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.umd.min.js"></script><script src="https://cdn.jsdelivr.net/npm/instant.page/instantpage.min.js" type="module"></script><script src="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.js"></script><div class="js-pjax"><script>(() => {
+  const isShuoshuo = GLOBAL_CONFIG_SITE.pageType === 'shuoshuo'
+  const option = {"mapping":"pathname","strict":0,"reactionsEnabled":1,"emitMetadata":0,"inputPosition":"bottom","lang":"zh-TW"}
+
+  const getGiscusTheme = theme => theme === 'dark' ? 'dark' : 'light'
+
+  const createScriptElement = config => {
+    const ele = document.createElement('script')
+    Object.entries(config).forEach(([key, value]) => {
+      ele.setAttribute(key, value)
+    })
+    return ele
+  }
+
+  const loadGiscus = (el = document, key) => {
+    const mappingConfig = isShuoshuo
+      ? { 'data-mapping': 'specific', 'data-term': key }
+      : { 'data-mapping': (option && option['data-mapping']) || 'pathname' }
+
+    const giscusConfig = {
+      src: 'https://giscus.app/client.js',
+      'data-repo': 'mark22013333/mark22013333.github.io',
+      'data-repo-id': 'R_kgDOLAxa6A',
+      'data-category-id': 'DIC_kwDOLAxa6M4C5eO9',
+      'data-theme': getGiscusTheme(document.documentElement.getAttribute('data-theme')),
+      'data-reactions-enabled': '1',
+      crossorigin: 'anonymous',
+      async: true,
+      ...option,
+      ...mappingConfig
+    }
+
+    const scriptElement = createScriptElement(giscusConfig)
+
+    el.querySelector('#giscus-wrap').appendChild(scriptElement)
+
+    if (isShuoshuo) {
+      window.shuoshuoComment.destroyGiscus = () => {
+        if (el.children.length) {
+          el.innerHTML = ''
+          el.classList.add('no-comment')
+        }
+      }
+    }
+  }
+
+  const changeGiscusTheme = theme => {
+    const iframe = document.querySelector('#giscus-wrap iframe')
+    if (iframe) {
+      const message = {
+        giscus: {
+          setConfig: {
+            theme: getGiscusTheme(theme)
+          }
+        }
+      }
+      iframe.contentWindow.postMessage(message, 'https://giscus.app')
+    }
+  }
+
+  btf.addGlobalFn('themeChange', changeGiscusTheme, 'giscus')
+
+  if (isShuoshuo) {
+    'Giscus' === 'Giscus'
+      ? window.shuoshuoComment = { loadComment: loadGiscus }
+      : window.loadOtherComment = loadGiscus
+    return
+  }
+
+  if ('Giscus' === 'Giscus' || !true) {
+    if (true) btf.loadComment(document.getElementById('giscus-wrap'), loadGiscus)
+    else loadGiscus()
+  } else {
+    window.loadOtherComment = loadGiscus
+  }
+})()</script></div><script src="/js/kkbox-player.js"></script><script src="/js/archives-pagination.js"></script><script src="/js/font-resize.js"></script><script src="/js/dark-palette.js"></script><script defer="defer" id="fluttering_ribbon" mobile="false" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/canvas-fluttering-ribbon.min.js"></script><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/activate-power-mode.min.js"></script><script>POWERMODE.colorful = true;
+POWERMODE.shake = true;
+POWERMODE.mobile = true;
+document.body.addEventListener('input', POWERMODE);
+</script><script src="https://cdn.jsdelivr.net/npm/pjax/pjax.min.js" defer="defer"></script><script>document.addEventListener('DOMContentLoaded', () => {
+  const pjaxSelectors = ["meta[property=\"og:image\"]","meta[property=\"og:title\"]","meta[property=\"og:url\"]","meta[property=\"og:description\"]","link[rel=\"canonical\"]","head > title","#config-diff","#body-wrap","#rightside-config-hide","#rightside-config-show",".js-pjax"]
+
+  window.pjax = new Pjax({
+    elements: 'a:not([target="_blank"])',
+    selectors: pjaxSelectors,
+    cacheBust: false,
+    analytics: true,
+    scrollRestoration: false
+  })
+
+  const triggerPjaxFn = (val) => {
+    if (!val) return
+    Object.values(val).forEach(fn => {
+      try {
+        fn()
+      } catch (err) {
+        console.debug('Pjax callback failed:', err)
+      }
+    })
+  }
+
+  document.addEventListener('pjax:send', () => {
+    // removeEventListener
+    btf.removeGlobalFnEvent('pjaxSendOnce')
+    btf.removeGlobalFnEvent('themeChange')
+
+    // reset readmode
+    const $bodyClassList = document.body.classList
+    if ($bodyClassList.contains('read-mode')) $bodyClassList.remove('read-mode')
+
+    triggerPjaxFn(window.globalFn.pjaxSend)
+  })
+
+  document.addEventListener('pjax:complete', () => {
+    btf.removeGlobalFnEvent('pjaxCompleteOnce')
+    document.querySelectorAll('script[data-pjax]').forEach(item => {
+      const newScript = document.createElement('script')
+      const content = item.text || item.textContent || item.innerHTML || ""
+      Array.from(item.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value))
+      newScript.appendChild(document.createTextNode(content))
+      item.parentNode.replaceChild(newScript, item)
+    })
+
+    triggerPjaxFn(window.globalFn.pjaxComplete)
+  })
+
+  document.addEventListener('pjax:error', e => {
+    if (e.request.status === 404) {
+      true
+        ? pjax.loadUrl('/404.html')
+        : window.location.href = e.request.responseURL
+    }
+  })
+})</script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜尋</span><i class="fas fa-spinner fa-pulse" id="loading-status" hidden="hidden"></i><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="text-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  資料載入中</span></div><div class="local-search-input"><input placeholder="搜尋文章" type="text"/></div><hr/><div id="local-search-results"></div><div class="ais-Pagination" id="local-search-pagination" style="display:none;"><ul class="ais-Pagination-list"></ul></div><div id="local-search-stats"></div></div><div id="search-mask"></div><script src="/js/search/local-search.js"></script></div></div></body></html>

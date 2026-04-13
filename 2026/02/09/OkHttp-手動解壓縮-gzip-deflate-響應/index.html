@@ -1,0 +1,385 @@
+<!DOCTYPE html><html lang="zh-TW" data-theme="dark"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>OkHttp 手動解壓縮 gzip/deflate 響應 | Cheng's Tech &amp; Life</title><meta name="author" content="Cheng®"><meta name="copyright" content="Cheng®"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#0d0d0d"><meta name="description" content="大多數時候，OkHttp 會自動解壓 gzip 響應。但某些老舊 server 或特殊場景，response 的 Content-Encoding 是 gzip&#x2F;deflate，但 OkHttp 沒有自動幫你解。問題場景 通常是這些情況： 1。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="OkHttp 手動解壓縮 gzip&#x2F;deflate 響應">
+<meta property="og:url" content="https://mark22013333.github.io/2026/02/09/OkHttp-%E6%89%8B%E5%8B%95%E8%A7%A3%E5%A3%93%E7%B8%AE-gzip-deflate-%E9%9F%BF%E6%87%89/index.html">
+<meta property="og:site_name" content="Cheng&#39;s Tech &amp; Life">
+<meta property="og:description" content="大多數時候，OkHttp 會自動解壓 gzip 響應。但某些老舊 server 或特殊場景，response 的 Content-Encoding 是 gzip&#x2F;deflate，但 OkHttp 沒有自動幫你解。問題場景 通常是這些情況： 1。">
+<meta property="og:locale" content="zh_TW">
+<meta property="og:image" content="https://mark22013333.github.io/img/20260209-01.webp">
+<meta property="article:published_time" content="2026-02-09T00:30:00.000Z">
+<meta property="article:modified_time" content="2026-04-13T02:00:09.858Z">
+<meta property="article:author" content="Cheng®">
+<meta property="article:tag" content="Java">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://mark22013333.github.io/img/20260209-01.webp"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "OkHttp 手動解壓縮 gzip/deflate 響應",
+  "url": "https://mark22013333.github.io/2026/02/09/OkHttp-%E6%89%8B%E5%8B%95%E8%A7%A3%E5%A3%93%E7%B8%AE-gzip-deflate-%E9%9F%BF%E6%87%89/",
+  "image": "https://mark22013333.github.io/img/20260209-01.webp",
+  "datePublished": "2026-02-09T00:30:00.000Z",
+  "dateModified": "2026-04-13T02:00:09.858Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "Cheng®",
+      "url": "https://mark22013333.github.io"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://mark22013333.github.io/2026/02/09/OkHttp-%E6%89%8B%E5%8B%95%E8%A7%A3%E5%A3%93%E7%B8%AE-gzip-deflate-%E9%9F%BF%E6%87%89/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//www.google-analytics.com" crossorigin=""/><link rel="preconnect" href="//fonts.googleapis.com" crossorigin=""/><link rel="preconnect" href="//busuanzi.ibruce.info"/><meta name="google-site-verification" content="6ywUr8k2n_CT1PFYJzlSvI3CZ-JmJ55RYbA39VrFBDs"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!true && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          const hour = new Date().getHours()
+          const isNight = hour <= 9 || hour >= 18
+          if (theme === undefined) isNight ? activateDarkMode() : activateLightMode()
+          else theme === 'light' ? activateLightMode() : activateDarkMode()
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script async="async" src="https://www.googletagmanager.com/gtag/js?id=G-JBV14NRDH3"></script><script>window.dataLayer = window.dataLayer || []
+function gtag(){dataLayer.push(arguments)}
+gtag('js', new Date())
+gtag('config', 'G-JBV14NRDH3')
+btf.addGlobalFn('pjaxComplete', () => {
+  gtag('config', 'G-JBV14NRDH3', {'page_path': window.location.pathname})
+}, 'google_analytics')
+</script><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Titillium+Web&amp;display=swap" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"pagination":{"enable":false,"hitsPerPage":8},"languages":{"hits_empty":"找不到符合您查詢的內容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '複製成功',
+    error: '複製失敗',
+    noSupport: '瀏覽器不支援'
+  },
+  relativeDate: {
+    homepage: false,
+    post: true
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '剛剛',
+    min: '分鐘前',
+    hour: '小時前',
+    day: '天前',
+    month: '個月前'
+  },
+  copyright: {"limitCount":1,"languages":{"author":"作者: Cheng®","link":"連結: ","source":"來源: Cheng's Tech & Life","info":"著作權歸作者所有。如需商業轉載，請聯絡作者獲得授權，非商業轉載請註明出處😁。"}},
+  lightbox: 'fancybox',
+  Snackbar: {"chs_to_cht":"已切換為繁體中文","cht_to_chs":"已切換為簡體中文","day_to_night":"已切換為深色模式","night_to_day":"已切換為淺色模式","bgLight":"#49b1f5","bgDark":"#1f1f1f","position":"top-center"},
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid/dist/infinitegrid.min.js',
+    buttonText: '載入更多'
+  },
+  isPhotoFigcaption: true,
+  islazyloadPlugin: false,
+  isAnchor: true,
+  percent: {
+    toc: true,
+    rightside: true,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'OkHttp 手動解壓縮 gzip/deflate 響應',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><link rel="stylesheet" href="/css/kkbox-player.css"><link rel="stylesheet" href="/css/tag-cloud-fancy.css"><link rel="stylesheet" href="/css/font-resize.css"><link rel="stylesheet" href="/css/dark-palette.css"><link rel="stylesheet" href="/css/loading-override.css"><link rel="alternate" href="/atom.xml" title="Cheng's Tech & Life" type="application/atom+xml">
+</head><body><div id="loading-box"><div class="loading-glass-overlay"></div><div class="loading-indicator"><div class="loading-dot"></div><div class="loading-dot"></div><div class="loading-dot"></div></div></div><script>(()=>{
+  const $loadingBox = document.getElementById('loading-box')
+  const $body = document.body
+  const preloader = {
+    endLoading: () => {
+      if ($loadingBox.classList.contains('loaded')) return
+      $body.style.overflow = ''
+      $loadingBox.classList.add('loaded')
+    },
+    initLoading: () => {
+      $body.style.overflow = 'hidden'
+      $loadingBox.classList.remove('loaded')
+    }
+  }
+
+  preloader.initLoading()
+
+  if (document.readyState === 'complete') {
+    preloader.endLoading()
+  } else {
+    window.addEventListener('load', preloader.endLoading)
+    document.addEventListener('DOMContentLoaded', preloader.endLoading)
+    setTimeout(preloader.endLoading, 7000)
+  }
+
+  if (true) {
+    btf.addGlobalFn('pjaxSend', preloader.initLoading, 'preloader_init')
+    btf.addGlobalFn('pjaxComplete', preloader.endLoading, 'preloader_end')
+  }
+})()</script><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="https://lh3.googleusercontent.com/pw/ABLVV87_po8nBc6F_tXcoYDmtzMGWxHuhhrbguYILCjmjWKLOS8DTpubm0YoQLKgjyjRIZyV5TjYe7XVEz_YU4squfr37GTZqPZP1hlMVZ_MIgXpTxWu73M=w1200" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">114</div></a><a href="/tags/"><div class="headline">標籤</div><div class="length-num">50</div></a><a href="/categories/"><div class="headline">分類</div><div class="length-num">9</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首頁-Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 時間軸-archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 標籤-tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分類-Categories</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-list"></i><span> 其他列表</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音樂-Music</span></a></li><li><a class="site-page child" href="/gallery/"><i class="fa-fw fas fa-images"></i><span> 畫館-Gallery</span></a></li></ul></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg fixed" id="page-header" style="background-image: url(/img/20260209-01.webp);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><img class="site-icon" src="https://lh3.googleusercontent.com/pw/ABLVV87_po8nBc6F_tXcoYDmtzMGWxHuhhrbguYILCjmjWKLOS8DTpubm0YoQLKgjyjRIZyV5TjYe7XVEz_YU4squfr37GTZqPZP1hlMVZ_MIgXpTxWu73M=w1200" alt="Logo"><span class="site-name">Cheng's Tech &amp; Life</span></a><a class="nav-page-title" href="/"><span class="site-name">OkHttp 手動解壓縮 gzip/deflate 響應</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首頁</span></span></a></span><div id="menus"><div id="search-button" title="Ctrl+K / Cmd+K"><span class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜尋</span></span></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首頁-Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 時間軸-archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 標籤-tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分類-Categories</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-list"></i><span> 其他列表</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音樂-Music</span></a></li><li><a class="site-page child" href="/gallery/"><i class="fa-fw fas fa-images"></i><span> 畫館-Gallery</span></a></li></ul></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">OkHttp 手動解壓縮 gzip/deflate 響應</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">發表於</span><time class="post-meta-date-created" datetime="2026-02-09T00:30:00.000Z" title="發表於 2026-02-09 08:30:00">2026-02-09</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新於</span><time class="post-meta-date-updated" datetime="2026-04-13T02:00:09.858Z" title="更新於 2026-04-13 10:00:09">2026-04-13</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Java/">Java</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">總字數:</span><span class="word-count">1.1k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">閱讀時間:</span><span>4分鐘</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">瀏覽量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><p>大多數時候，OkHttp 會自動解壓 gzip 響應。但某些老舊 server 或特殊場景，response 的 Content-Encoding 是 gzip&#x2F;deflate，但 OkHttp 沒有自動幫你解。這時就要自己手動解壓。</p>
+<h2 id="問題場景"><a href="#問題場景" class="headerlink" title="問題場景"></a>問題場景</h2><p>通常是這些情況：</p>
+<ol>
+<li>Server 回傳 Content-Encoding: gzip，但沒有設定好 headers</li>
+<li>某些代理或中間層加了壓縮但沒遵循標準</li>
+<li>特殊的嵌入式系統的 API</li>
+<li>需要在 interceptor 層級處理壓縮和解壓</li>
+</ol>
+<h2 id="實作-UnzippingInterceptor"><a href="#實作-UnzippingInterceptor" class="headerlink" title="實作 UnzippingInterceptor"></a>實作 UnzippingInterceptor</h2><p>直接上完整代碼：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> okhttp3.Interceptor;</span><br><span class="line"><span class="keyword">import</span> okhttp3.Response;</span><br><span class="line"><span class="keyword">import</span> okio.BufferedSource;</span><br><span class="line"><span class="keyword">import</span> okio.GzipSource;</span><br><span class="line"><span class="keyword">import</span> okio.Okio;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">UnzippingInterceptor</span> <span class="keyword">implements</span> <span class="title class_">Interceptor</span> &#123;</span><br><span class="line">    </span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> Response <span class="title function_">intercept</span><span class="params">(Chain chain)</span> <span class="keyword">throws</span> IOException &#123;</span><br><span class="line">        <span class="type">Response</span> <span class="variable">response</span> <span class="operator">=</span> chain.proceed(chain.request());</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">return</span> unzip(response);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">private</span> Response <span class="title function_">unzip</span><span class="params">(Response response)</span> <span class="keyword">throws</span> IOException &#123;</span><br><span class="line">        <span class="type">String</span> <span class="variable">contentEncoding</span> <span class="operator">=</span> response.header(<span class="string">&quot;Content-Encoding&quot;</span>);</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// 如果沒有設定 Content-Encoding，直接返回</span></span><br><span class="line">        <span class="keyword">if</span> (contentEncoding == <span class="literal">null</span> || contentEncoding.isEmpty()) &#123;</span><br><span class="line">            <span class="keyword">return</span> response;</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// 如果已經是 identity（未壓縮），直接返回</span></span><br><span class="line">        <span class="keyword">if</span> (<span class="string">&quot;identity&quot;</span>.equalsIgnoreCase(contentEncoding)) &#123;</span><br><span class="line">            <span class="keyword">return</span> response;</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// 只處理 gzip</span></span><br><span class="line">        <span class="keyword">if</span> (<span class="string">&quot;gzip&quot;</span>.equalsIgnoreCase(contentEncoding)) &#123;</span><br><span class="line">            <span class="keyword">return</span> unzipGzip(response);</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// deflate 也可以支援，但比較少見</span></span><br><span class="line">        <span class="keyword">if</span> (<span class="string">&quot;deflate&quot;</span>.equalsIgnoreCase(contentEncoding)) &#123;</span><br><span class="line">            <span class="keyword">return</span> unzipDeflate(response);</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// 其他編碼就算了</span></span><br><span class="line">        <span class="keyword">return</span> response;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">private</span> Response <span class="title function_">unzipGzip</span><span class="params">(Response response)</span> <span class="keyword">throws</span> IOException &#123;</span><br><span class="line">        <span class="comment">// 檢查 body 是否存在</span></span><br><span class="line">        <span class="keyword">if</span> (response.body() == <span class="literal">null</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span> response;</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// 用 GzipSource 解壓</span></span><br><span class="line">        <span class="type">GzipSource</span> <span class="variable">gzipSource</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">GzipSource</span>(response.body().source());</span><br><span class="line">        <span class="type">BufferedSource</span> <span class="variable">decompressed</span> <span class="operator">=</span> Okio.buffer(gzipSource);</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// 重建 response，移除 Content-Encoding header</span></span><br><span class="line">        <span class="keyword">return</span> response.newBuilder()</span><br><span class="line">                .body(<span class="keyword">new</span> <span class="title class_">UncompressedResponseBody</span>(decompressed))</span><br><span class="line">                .removeHeader(<span class="string">&quot;Content-Encoding&quot;</span>)</span><br><span class="line">                .removeHeader(<span class="string">&quot;Content-Length&quot;</span>)  <span class="comment">// 解壓後長度會改變</span></span><br><span class="line">                .build();</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">private</span> Response <span class="title function_">unzipDeflate</span><span class="params">(Response response)</span> <span class="keyword">throws</span> IOException &#123;</span><br><span class="line">        <span class="keyword">if</span> (response.body() == <span class="literal">null</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span> response;</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// deflate 的處理類似，但用 InflaterSource</span></span><br><span class="line">        <span class="type">InflaterSource</span> <span class="variable">inflaterSource</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">InflaterSource</span>(response.body().source(), <span class="keyword">new</span> <span class="title class_">Inflater</span>(<span class="literal">true</span>));</span><br><span class="line">        <span class="type">BufferedSource</span> <span class="variable">decompressed</span> <span class="operator">=</span> Okio.buffer(inflaterSource);</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">return</span> response.newBuilder()</span><br><span class="line">                .body(<span class="keyword">new</span> <span class="title class_">UncompressedResponseBody</span>(decompressed))</span><br><span class="line">                .removeHeader(<span class="string">&quot;Content-Encoding&quot;</span>)</span><br><span class="line">                .removeHeader(<span class="string">&quot;Content-Length&quot;</span>)</span><br><span class="line">                .build();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>配套的 ResponseBody 類：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> okhttp3.MediaType;</span><br><span class="line"><span class="keyword">import</span> okhttp3.ResponseBody;</span><br><span class="line"><span class="keyword">import</span> okio.BufferedSource;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">UncompressedResponseBody</span> <span class="keyword">extends</span> <span class="title class_">ResponseBody</span> &#123;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> BufferedSource source;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">UncompressedResponseBody</span><span class="params">(BufferedSource source)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.source = source;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> MediaType <span class="title function_">contentType</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="type">long</span> <span class="title function_">contentLength</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> -<span class="number">1</span>;  <span class="comment">// 解壓後長度未知</span></span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> BufferedSource <span class="title function_">source</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> source;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="怎麼用"><a href="#怎麼用" class="headerlink" title="怎麼用"></a>怎麼用</h2><p>在 OkHttpClient 初始化時加上 interceptor：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">OkHttpClient</span> <span class="variable">httpClient</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">OkHttpClient</span>.Builder()</span><br><span class="line">    .addInterceptor(<span class="keyword">new</span> <span class="title class_">UnzippingInterceptor</span>())</span><br><span class="line">    .build();</span><br><span class="line"></span><br><span class="line"><span class="type">Retrofit</span> <span class="variable">retrofit</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Retrofit</span>.Builder()</span><br><span class="line">    .baseUrl(<span class="string">&quot;https://api.example.com&quot;</span>)</span><br><span class="line">    .client(httpClient)</span><br><span class="line">    .addConverterFactory(GsonConverterFactory.create())</span><br><span class="line">    .build();</span><br><span class="line"></span><br><span class="line"><span class="type">MyService</span> <span class="variable">service</span> <span class="operator">=</span> retrofit.create(MyService.class);</span><br></pre></td></tr></table></figure>
+
+<p>之後所有的 gzip 響應都會自動解壓。</p>
+<h2 id="更簡潔的版本"><a href="#更簡潔的版本" class="headerlink" title="更簡潔的版本"></a>更簡潔的版本</h2><p>如果只需要 gzip 支援，可以簡化：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">GzipInterceptor</span> <span class="keyword">implements</span> <span class="title class_">Interceptor</span> &#123;</span><br><span class="line">    </span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> Response <span class="title function_">intercept</span><span class="params">(Chain chain)</span> <span class="keyword">throws</span> IOException &#123;</span><br><span class="line">        <span class="type">Response</span> <span class="variable">response</span> <span class="operator">=</span> chain.proceed(chain.request());</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">if</span> (<span class="string">&quot;gzip&quot;</span>.equalsIgnoreCase(response.header(<span class="string">&quot;Content-Encoding&quot;</span>)) </span><br><span class="line">            &amp;&amp; response.body() != <span class="literal">null</span>) &#123;</span><br><span class="line">            </span><br><span class="line">            <span class="type">GzipSource</span> <span class="variable">gzipSource</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">GzipSource</span>(response.body().source());</span><br><span class="line">            <span class="type">BufferedSource</span> <span class="variable">decompressed</span> <span class="operator">=</span> Okio.buffer(gzipSource);</span><br><span class="line">            </span><br><span class="line">            <span class="keyword">return</span> response.newBuilder()</span><br><span class="line">                    .body(<span class="keyword">new</span> <span class="title class_">UncompressedResponseBody</span>(decompressed))</span><br><span class="line">                    .removeHeader(<span class="string">&quot;Content-Encoding&quot;</span>)</span><br><span class="line">                    .removeHeader(<span class="string">&quot;Content-Length&quot;</span>)</span><br><span class="line">                    .build();</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">return</span> response;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="測試"><a href="#測試" class="headerlink" title="測試"></a>測試</h2><p>怎麼驗證 interceptor 確實在解壓：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Mock server 回傳 gzip 響應</span></span><br><span class="line"><span class="type">MockWebServer</span> <span class="variable">mockWebServer</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">MockWebServer</span>();</span><br><span class="line">mockWebServer.enqueue(<span class="keyword">new</span> <span class="title class_">MockResponse</span>()</span><br><span class="line">    .setHeader(<span class="string">&quot;Content-Encoding&quot;</span>, <span class="string">&quot;gzip&quot;</span>)</span><br><span class="line">    .setBody(gzipBody)  <span class="comment">// 壓縮過的 body</span></span><br><span class="line">);</span><br><span class="line"></span><br><span class="line"><span class="type">OkHttpClient</span> <span class="variable">httpClient</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">OkHttpClient</span>.Builder()</span><br><span class="line">    .addInterceptor(<span class="keyword">new</span> <span class="title class_">GzipInterceptor</span>())</span><br><span class="line">    .build();</span><br><span class="line"></span><br><span class="line"><span class="type">Request</span> <span class="variable">request</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Request</span>.Builder()</span><br><span class="line">    .url(mockWebServer.url(<span class="string">&quot;/&quot;</span>))</span><br><span class="line">    .build();</span><br><span class="line"></span><br><span class="line"><span class="type">Response</span> <span class="variable">response</span> <span class="operator">=</span> httpClient.newCall(request).execute();</span><br><span class="line"></span><br><span class="line"><span class="comment">// 驗證：Content-Encoding header 應該被移除</span></span><br><span class="line">assertNull(response.header(<span class="string">&quot;Content-Encoding&quot;</span>));</span><br><span class="line"></span><br><span class="line"><span class="comment">// 驗證：body 應該是解壓後的內容</span></span><br><span class="line"><span class="type">String</span> <span class="variable">body</span> <span class="operator">=</span> response.body().string();</span><br><span class="line">assertEquals(<span class="string">&quot;original content&quot;</span>, body);  <span class="comment">// 應該是原始內容，不是壓縮過的</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="進階：支援其他編碼"><a href="#進階：支援其他編碼" class="headerlink" title="進階：支援其他編碼"></a>進階：支援其他編碼</h2><p>如果要支援更多編碼（br、compress 等），可以擴展：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> Response <span class="title function_">handleBrotli</span><span class="params">(Response response)</span> <span class="keyword">throws</span> IOException &#123;</span><br><span class="line">    <span class="keyword">if</span> (response.body() == <span class="literal">null</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> response;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 需要 brotli4j library</span></span><br><span class="line">    <span class="comment">// BrotliDecoderJNI.decompress(...)</span></span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> response;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>但大多數情況，gzip 夠用了。</p>
+<h2 id="常見坑"><a href="#常見坑" class="headerlink" title="常見坑"></a>常見坑</h2><p><strong>1. 忘記檢查 body 是否為 null</strong></p>
+<p>某些 response（比如 204 No Content）沒有 body：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 爛做法</span></span><br><span class="line"><span class="type">GzipSource</span> <span class="variable">gzipSource</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">GzipSource</span>(response.body().source());  <span class="comment">// NPE!</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 正確做法</span></span><br><span class="line"><span class="keyword">if</span> (response.body() == <span class="literal">null</span>) &#123;</span><br><span class="line">    <span class="keyword">return</span> response;</span><br><span class="line">&#125;</span><br><span class="line"><span class="type">GzipSource</span> <span class="variable">gzipSource</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">GzipSource</span>(response.body().source());</span><br></pre></td></tr></table></figure>
+
+<p><strong>2. 忘記移除 Content-Encoding header</strong></p>
+<p>解壓後應該移除：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">.removeHeader(<span class="string">&quot;Content-Encoding&quot;</span>)  <span class="comment">// 必須</span></span><br></pre></td></tr></table></figure>
+
+<p>否則下游的 JSON 解析器可能會嘗試再解一次。</p>
+<p><strong>3. Content-Length 會變</strong></p>
+<p>解壓後長度改變，最好移除：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">.removeHeader(<span class="string">&quot;Content-Length&quot;</span>)  <span class="comment">// 解壓後無效</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>4. 某些 library 會自動解壓</strong></p>
+<p>OkHttp 3.4+ 預設會移除 gzip，Retrofit 的某些版本也會。加 interceptor 前先確認是否真的需要。</p>
+<h2 id="實務建議"><a href="#實務建議" class="headerlink" title="實務建議"></a>實務建議</h2><ol>
+<li><strong>優先用自動解壓</strong> - OkHttp 和 Retrofit 通常會自動處理，不需要手動</li>
+<li><strong>只在真的需要時加 interceptor</strong> - 某些舊 server 或特殊 API</li>
+<li><strong>加上日誌便於 debug</strong> - 記錄什麼時候觸發了解壓</li>
+<li><strong>測試 edge case</strong> - 包括沒有 body、已經解壓過的 response</li>
+</ol>
+<p>大多數時候根本用不到這個 interceptor，但知道怎麼做能救急。踩過的坑就寫在這裡。</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://mark22013333.github.io">Cheng®</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章連結: </span><span class="post-copyright-info"><a href="https://mark22013333.github.io/2026/02/09/OkHttp-%E6%89%8B%E5%8B%95%E8%A7%A3%E5%A3%93%E7%B8%AE-gzip-deflate-%E9%9F%BF%E6%87%89/">https://mark22013333.github.io/2026/02/09/OkHttp-手動解壓縮-gzip-deflate-響應/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版權聲明: </span><span class="post-copyright-info">本部落格所有文章除特別聲明外，均採用<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 授權協議。轉載請註明來源 <a href="https://mark22013333.github.io" target="_blank">Cheng's Tech & Life</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Java/">Java</a></div><div class="post-share"><div class="social-share" data-image="/img/20260209-01.webp" data-sites="facebook,x"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><div class="post-reward"><div class="reward-badges"><a class="sponsor-glow-btn" href="https://www.buymeacoffee.com/mark22013333" target="_blank" rel="noopener noreferrer" title="Buy Me A Coffee"><img src="https://img.shields.io/badge/Buy_Me_A_Coffee-FFDD00?style=for-the-badge&amp;logo=buy-me-a-coffee&amp;logoColor=black" alt="Buy Me A Coffee"/></a><a class="sponsor-glow-btn" href="https://p.ecpay.com.tw/EFC3F8F" target="_blank" rel="noopener noreferrer" title="綠界贊助"><img src="https://img.shields.io/badge/☕_%E8%AB%8B%E6%88%91%E5%96%9D%E6%9D%AF%E5%92%96%E5%95%A1-Donate-11998e?style=for-the-badge&amp;logo=coffee&amp;logoColor=white" alt="綠界贊助"/></a><a class="sponsor-glow-btn" href="https://calendly.com/markcheng00806-intumit/15min" target="_blank" rel="noopener noreferrer" title="預約時間"><img src="https://img.shields.io/badge/📅_%E9%A0%90%E7%B4%84_15_%E5%88%86%E9%90%98-Book_Time-0072ff?style=for-the-badge" alt="預約時間"/></a><p class="reward-badges-note">你的鼓勵將被轉換為我明天繼續加班的動力（真的）。 ❤️</p></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2026/01/29/Jackson-JSON-%E4%BD%BF%E7%94%A8%E6%8A%80%E5%B7%A7-JsonNode-%E9%81%8D%E6%AD%B7%E8%88%87-path/" title="Jackson JSON 使用技巧 - JsonNode 遍歷與 path()"><img class="cover" src="/img/20260129-01.webp" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">Jackson JSON 使用技巧 - JsonNode 遍歷與 path()</div></div><div class="info-2"><div class="info-item-1">Jackson 是 Java 裡最強的 JSON 庫，但新手常搞不清楚 JsonNode 的各種遍歷方法，還有 path() 和 get() 的差別。踩過坑以後，整理出來給大家。 JsonNode 遍歷拿到一個 JsonNode，要怎麼遍歷裡面的欄位？有好幾種方法。 方法 1：用 fields() 取得 Iterator12345678910111213141516171819202122232425ObjectMapper mapper = new ObjectMapper();String json = &quot;&quot;&quot;&#123;    &quot;name&quot;: &quot;Alice&quot;,    &quot;age&quot;: 30,    &quot;email&quot;: &quot;alice@example.com&quot;&#125;&quot;&quot;&quot;;JsonNode node = mapper.readTree(json);// fields() 回傳 Iterator&lt;Map.Entry&...</div></div></div></a><a class="pagination-related" href="/2026/02/20/Java-8-%E6%99%82%E9%96%93-API-%E8%88%87-LinkedHashMap-%E7%AD%86%E8%A8%98/" title="Java 8 時間 API 與 LinkedHashMap 使用筆記"><img class="cover" src="/img/20260220-01.webp" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">Java 8 時間 API 與 LinkedHashMap 使用筆記</div></div><div class="info-2"><div class="info-item-1">Java 8 的時間 API 用起來比之前的 Date、Calendar 不知道爽幾倍。但新 API 的時區轉換常常爆炸，因為邏輯和以前差很多。LinkedHashMap 是保持插入順序的 Map，常被小看但超實用。一次整理出來。 Java 8 時間 API 基礎主要類123456789101112131415161718192021222324import java.time.*;// LocalDateTime - 純日期時間，沒有時區LocalDateTime now = LocalDateTime.now();System.out.println(now);  // 2026-02-20T14:30:45.123456// LocalDate - 只有日期LocalDate today = LocalDate.now();System.out.println(today);  // 2026-02-20// LocalTime - 只有時間LocalTime time = LocalTime.now();System.out.println(time);  // 14:3...</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相關推薦</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2025/05/01/%F0%9F%94%81-%E8%A7%A3%E6%B1%BA-Java-%E4%B8%AD%E7%9A%84-ABA-%E5%95%8F%E9%A1%8C-%E2%80%94-%E4%BD%BF%E7%94%A8-AtomicStampedReference/" title="🔁 解決 Java 中的 ABA 問題 — 使用 AtomicStampedReference"><img class="cover" src="/img/20250501-02.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-05-01</div><div class="info-item-2">🔁 解決 Java 中的 ABA 問題 — 使用 AtomicStampedReference</div></div><div class="info-2"><div class="info-item-1"> ❓ 什麼是 ABA 問題？ABA 問題發生在使用 CAS（Compare-And-Swap）時：  執行緒 A 讀到某個變數值為 A 執行緒 B 將該變數從 A ➝ B ➝ A 執行緒 A 再次使用 CAS，認為值沒變，繼續執行，但其實值已變動過！  這會導致程式誤以為狀態未變，但實際上已經被其他執行緒修改過。  🧰 解法：使用 AtomicStampedReferenceJava 提供 AtomicStampedReference&lt;T&gt;，這是一種「附加版本號（stamp）」的原子參考，可以避免 ABA 問題。 它在每次變更時，都會同步更新一個 stamp 值，用來追蹤版本。  🧪 範例程式碼123456789101112131415161718192021222324252627import java.util.concurrent.atomic.AtomicStampedReference;public class AbaProblemSolution &#123;    public static void main(String[] args) &#12...</div></div></div></a><a class="pagination-related" href="/2024/05/17/Hibernate-DiscriminatorColumn%E8%AA%AA%E6%98%8E/" title="Hibernate → @DiscriminatorColumn說明"><img class="cover" src="/img/20240517-01.png" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2024-05-17</div><div class="info-item-2">Hibernate → @DiscriminatorColumn說明</div></div><div class="info-2"><div class="info-item-1">@DiscriminatorColumn 註解用於在 JPA 繼承結構中，為單表策略 (InheritanceType.SINGLE_TABLE) 的繼承層次結構指定區分列。這樣，JPA 可以使用這個列來識別每一行對應的具體實體類型。 讓我們詳細解釋一下： 註解部分1@DiscriminatorColumn(name=&quot;accountType&quot;, discriminatorType = DiscriminatorType.STRING)   @DiscriminatorColumn：這個註解指定了用來區分不同實體類型的列。 name=&quot;accountType&quot;：這指定了區分列的名稱為 accountType。這個列將會被添加到生成的單表中，用來存儲每一行對應的實體類型。 discriminatorType = DiscriminatorType.STRING：這指定了區分列的類型為 STRING。區分列可以是 STRING、CHAR 或 INTEGER。  作用當使用 InheritanceType.SINGLE_TABLE 繼承策略時，所...</div></div></div></a><a class="pagination-related" href="/2025/05/21/Spring-Bean-Scope-%E5%85%AD%E7%A8%AE%E4%BD%9C%E7%94%A8%E5%9F%9F/" title="Spring Bean Scope 六種作用域完整解析"><img class="cover" src="/img/20250521-01.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-05-21</div><div class="info-item-2">Spring Bean Scope 六種作用域完整解析</div></div><div class="info-2"><div class="info-item-1">之前在專案裡因為搞不清楚 Bean scope，導致一個坑埋了好久才發現。乾脆就把 Spring 的六種 scope 整理一下，這樣以後不會再踩到相同的坑。 六種 Scope 速覽Spring Bean 的六種 scope 分別是：  singleton - 預設，整個 container 只有一個實例 prototype - 每次 getBean 都新建一個實例 request - 每個 HTTP request 一個實例 session - 每個 HTTP session 一個實例 application - 整個 ServletContext 一個實例 websocket - 每個 WebSocket session 一個實例  後面四種（request、session、application、websocket）只在 web application 中可用。 Singleton 作用域這是預設的 scope。如果你沒有特別指定，Spring 就會把 Bean 當成 singleton： 123456@Componentpublic class UserService &#...</div></div></div></a><a class="pagination-related" href="/2025/02/16/%E5%A4%9A%E5%9F%B7%E8%A1%8C%E7%B7%92%E7%9A%84%E7%9B%B8%E9%97%9C%E8%A1%93%E8%AA%9E/" title="多執行緒的相關術語"><img class="cover" src="/img/20250216.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-02-16</div><div class="info-item-2">多執行緒的相關術語</div></div><div class="info-2"><div class="info-item-1"> 序列（串行）：任務依照先後順序逐一執行，必須等前一個任務完成後，下一個任務才會開始執行。 並發（交替執行）：多個任務在同一單位時間內交替執行，從宏觀上看似乎同時進行，但在任何特定時刻，實際上僅有一個任務在執行。這種模式通常發生在單核心或單執行緒環境下。 平行（真正同時執行）：多個任務能夠在相同時刻真正地同時運行，這通常依賴於多核心處理器或多處理器系統，使得各任務可分派到不同的核心上同步執行。  1. 序列（串行）所有任務按順序執行，一個完成後才開始下一個。 程式碼12345678910111213141516171819202122public class SequentialExample &#123;    public static void main(String[] args) &#123;        long startTime = System.currentTimeMillis();        task(&quot;Task 1&quot;);        task(&quot;Task 2&quot;);        task(&quot;Task...</div></div></div></a><a class="pagination-related" href="/2024/03/20/HashMap-%E2%86%92-putIfAbsent/" title="HashMap → putIfAbsent()"><img class="cover" src="/img/DALL-2024-03-20.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2024-03-20</div><div class="info-item-2">HashMap → putIfAbsent()</div></div><div class="info-2"><div class="info-item-1">putIfAbsent() 是 HashMap 在 Java 中的一個實用方法，它屬於 Map 介面。這個方法用來在對應的鍵（key）不存在於映射中時，將一組key,value 放入映射(map)裡。如果映射先前已包含該鍵(key)的映射，則不做任何更動。putIfAbsent() 方法既可以確保不會不小心覆蓋已有的鍵值(key, value)，也可以用來在多執行緒環境下安全的更新map，假設映射本身是同步的或者是一個 ConcurrentHashMap。 方法簽名 1V putIfAbsent(K key, V value) K: 鍵的類型 V: 值的類型 返回值：如果映射中已經有這個鍵，則返回鍵對應的舊值；如果沒有，則返回 null（並且將新的鍵值對插入映射）。 範例1以下是使用 putIfAbsent() 方法的一個簡單範例： 1234567891011121314151617181920212223import java.util.HashMap;import java.util.Map;public class PutIfAbsentExample &#123;    ...</div></div></div></a><a class="pagination-related" href="/2025/12/05/Java-Optional-%E5%AE%8C%E6%95%B4%E7%94%A8%E6%B3%95%E6%8C%87%E5%8D%97/" title="Java Optional 完整用法指南"><img class="cover" src="/img/20251205-01.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-12-05</div><div class="info-item-2">Java Optional 完整用法指南</div></div><div class="info-2"><div class="info-item-1">Optional 是 Java 8 引入的概念，初看很簡單，其實用法超深。一開始很多人覺得 Optional 很煩，後來用對了才發現「真香」。最關鍵是理解它的三段式結構。 Optional 的三段式結構Optional 的用法可以分成三段：頭部（建立）→ 身體（轉換）→ 尾巴（取值） 12建立        轉換（0~多個）       取值Optional → filter/map/flatMap → orElse/ifPresent  頭部：建立 Optionalof() - 確定非 null1234567User user = new User(&quot;Alice&quot;);// 用 of() 當你確定值一定不為 nullOptional&lt;User&gt; opt = Optional.of(user);// 如果值是 null，直接拋 NullPointerExceptionOptional&lt;User&gt; opt2 = Optional.of(null);  // ❌ 拋 exception  ofNullable() - 可能 null12345...</div></div></div></a></div></div><hr class="custom-hr"/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 評論</span></div></div><div class="comment-wrap"><div><div id="giscus-wrap"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="https://lh3.googleusercontent.com/pw/ABLVV87_po8nBc6F_tXcoYDmtzMGWxHuhhrbguYILCjmjWKLOS8DTpubm0YoQLKgjyjRIZyV5TjYe7XVEz_YU4squfr37GTZqPZP1hlMVZ_MIgXpTxWu73M=w1200" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">Cheng®</div><div class="author-info-description">Backend Developer / 技術筆記 & AI 新聞分享</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">114</div></a><a href="/tags/"><div class="headline">標籤</div><div class="length-num">50</div></a><a href="/categories/"><div class="headline">分類</div><div class="length-num">9</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/mark22013333"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons"><a class="social-icon" href="https://github.com/mark22013333" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:mark22013333@gmail.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a></div><div class="card-info-sponsor"><a class="sponsor-glow-btn" href="https://www.buymeacoffee.com/mark22013333" target="_blank" rel="noopener noreferrer" title="Buy Me A Coffee"><img src="https://img.shields.io/badge/Buy_Me_A_Coffee-FFDD00?style=for-the-badge&amp;logo=buy-me-a-coffee&amp;logoColor=black" alt="Buy Me A Coffee"/></a><a class="sponsor-glow-btn" href="https://p.ecpay.com.tw/EFC3F8F" target="_blank" rel="noopener noreferrer" title="綠界贊助"><img src="https://img.shields.io/badge/☕_%E8%AB%8B%E6%88%91%E5%96%9D%E6%9D%AF%E5%92%96%E5%95%A1-Donate-11998e?style=for-the-badge&amp;logo=coffee&amp;logoColor=white" alt="綠界贊助"/></a><a class="sponsor-glow-btn" href="https://calendly.com/markcheng00806-intumit/15min" target="_blank" rel="noopener noreferrer" title="預約時間"><img src="https://img.shields.io/badge/📅_%E9%A0%90%E7%B4%84_15_%E5%88%86%E9%90%98-Book_Time-0072ff?style=for-the-badge" alt="預約時間"/></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">這裡記錄我在後端開發路上踩過的坑、學到的東西，也會分享每日 AI 與科技新聞觀點。歡迎一起交流！</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目錄</span><span class="toc-percentage"></span></div><div class="toc-content is-expand"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%95%8F%E9%A1%8C%E5%A0%B4%E6%99%AF"><span class="toc-number">1.</span> <span class="toc-text">問題場景</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AF%A6%E4%BD%9C-UnzippingInterceptor"><span class="toc-number">2.</span> <span class="toc-text">實作 UnzippingInterceptor</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%8E%E9%BA%BC%E7%94%A8"><span class="toc-number">3.</span> <span class="toc-text">怎麼用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9B%B4%E7%B0%A1%E6%BD%94%E7%9A%84%E7%89%88%E6%9C%AC"><span class="toc-number">4.</span> <span class="toc-text">更簡潔的版本</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%B8%AC%E8%A9%A6"><span class="toc-number">5.</span> <span class="toc-text">測試</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%80%B2%E9%9A%8E%EF%BC%9A%E6%94%AF%E6%8F%B4%E5%85%B6%E4%BB%96%E7%B7%A8%E7%A2%BC"><span class="toc-number">6.</span> <span class="toc-text">進階：支援其他編碼</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B8%B8%E8%A6%8B%E5%9D%91"><span class="toc-number">7.</span> <span class="toc-text">常見坑</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AF%A6%E5%8B%99%E5%BB%BA%E8%AD%B0"><span class="toc-number">8.</span> <span class="toc-text">實務建議</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2026/04/13/Claude-Code-vs-Cursor-vs-GitHub-Copilot-2026-AI-Coding-%E5%B7%A5%E5%85%B7%E4%B8%89%E5%B7%A8%E9%A0%AD%E5%AE%8C%E6%95%B4%E6%AF%94%E8%BC%83/" title="Claude Code vs Cursor vs GitHub Copilot — 2026 AI Coding 工具三巨頭完整比較"><img src="/img/20260413-compare.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Claude Code vs Cursor vs GitHub Copilot — 2026 AI Coding 工具三巨頭完整比較"/></a><div class="content"><a class="title" href="/2026/04/13/Claude-Code-vs-Cursor-vs-GitHub-Copilot-2026-AI-Coding-%E5%B7%A5%E5%85%B7%E4%B8%89%E5%B7%A8%E9%A0%AD%E5%AE%8C%E6%95%B4%E6%AF%94%E8%BC%83/" title="Claude Code vs Cursor vs GitHub Copilot — 2026 AI Coding 工具三巨頭完整比較">Claude Code vs Cursor vs GitHub Copilot — 2026 AI Coding 工具三巨頭完整比較</a><time datetime="2026-04-13T06:00:00.000Z" title="發表於 2026-04-13 14:00:00">2026-04-13</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/04/13/Claude-Code-%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8%E7%B4%A2%E5%BC%95-%E5%BE%9E%E5%85%A5%E9%96%80%E5%88%B0%E9%80%B2%E9%9A%8E%E7%9A%84%E6%89%80%E6%9C%89%E6%96%87%E7%AB%A0%E6%95%B4%E7%90%86/" title="Claude Code 完整教學索引 — 從入門到進階的所有文章整理"><img src="/img/20260413-pillar.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Claude Code 完整教學索引 — 從入門到進階的所有文章整理"/></a><div class="content"><a class="title" href="/2026/04/13/Claude-Code-%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8%E7%B4%A2%E5%BC%95-%E5%BE%9E%E5%85%A5%E9%96%80%E5%88%B0%E9%80%B2%E9%9A%8E%E7%9A%84%E6%89%80%E6%9C%89%E6%96%87%E7%AB%A0%E6%95%B4%E7%90%86/" title="Claude Code 完整教學索引 — 從入門到進階的所有文章整理">Claude Code 完整教學索引 — 從入門到進階的所有文章整理</a><time datetime="2026-04-13T02:00:00.000Z" title="發表於 2026-04-13 10:00:00">2026-04-13</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/04/12/AI-Hedge-Fund-%E7%94%A8-19-%E5%80%8B-AI-Agent-%E6%A8%A1%E6%93%AC%E6%8A%95%E8%B3%87%E5%A7%94%E5%93%A1%E6%9C%83/" title="AI Hedge Fund - 用 19 個 AI Agent 模擬投資委員會"><img src="/img/20260412-01.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="AI Hedge Fund - 用 19 個 AI Agent 模擬投資委員會"/></a><div class="content"><a class="title" href="/2026/04/12/AI-Hedge-Fund-%E7%94%A8-19-%E5%80%8B-AI-Agent-%E6%A8%A1%E6%93%AC%E6%8A%95%E8%B3%87%E5%A7%94%E5%93%A1%E6%9C%83/" title="AI Hedge Fund - 用 19 個 AI Agent 模擬投資委員會">AI Hedge Fund - 用 19 個 AI Agent 模擬投資委員會</a><time datetime="2026-04-12T00:30:00.000Z" title="發表於 2026-04-12 08:30:00">2026-04-12</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/04/12/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260412/" title="AI 與科技新聞摘要 - 2026/04/12"><img src="/img/20260412-02.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="AI 與科技新聞摘要 - 2026/04/12"/></a><div class="content"><a class="title" href="/2026/04/12/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260412/" title="AI 與科技新聞摘要 - 2026/04/12">AI 與科技新聞摘要 - 2026/04/12</a><time datetime="2026-04-12T00:30:00.000Z" title="發表於 2026-04-12 08:30:00">2026-04-12</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/04/12/%E5%8F%B0%E7%81%A3-AI-%E5%9F%BA%E6%9C%AC%E6%B3%95%E4%B8%8A%E8%B7%AF%E4%BA%86-%E4%B8%80%E5%80%8B%E5%B7%A5%E7%A8%8B%E5%B8%AB%E7%9A%84%E6%94%BF%E7%AD%96%E8%A7%80%E5%AF%9F/" title="台灣 AI 基本法上路了 — 一個工程師的政策觀察"><img src="/img/20260412-03.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="台灣 AI 基本法上路了 — 一個工程師的政策觀察"/></a><div class="content"><a class="title" href="/2026/04/12/%E5%8F%B0%E7%81%A3-AI-%E5%9F%BA%E6%9C%AC%E6%B3%95%E4%B8%8A%E8%B7%AF%E4%BA%86-%E4%B8%80%E5%80%8B%E5%B7%A5%E7%A8%8B%E5%B8%AB%E7%9A%84%E6%94%BF%E7%AD%96%E8%A7%80%E5%AF%9F/" title="台灣 AI 基本法上路了 — 一個工程師的政策觀察">台灣 AI 基本法上路了 — 一個工程師的政策觀察</a><time datetime="2026-04-12T00:30:00.000Z" title="發表於 2026-04-12 08:30:00">2026-04-12</time></div></div></div></div></div></div></main><footer id="footer" style="background-image: url(/img/20260209-01.webp);"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2024 - 2026 By Cheng®</span></div><div class="footer_custom_text">Written by Cheng® — 自律，從當下的一念開始。</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="閱讀模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日夜模式切換"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="單欄和雙欄切換"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="設定"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目錄"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="前往評論"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到頂端"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.umd.min.js"></script><script src="https://cdn.jsdelivr.net/npm/instant.page/instantpage.min.js" type="module"></script><script src="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.js"></script><div class="js-pjax"><script>(() => {
+  const isShuoshuo = GLOBAL_CONFIG_SITE.pageType === 'shuoshuo'
+  const option = {"mapping":"pathname","strict":0,"reactionsEnabled":1,"emitMetadata":0,"inputPosition":"bottom","lang":"zh-TW"}
+
+  const getGiscusTheme = theme => theme === 'dark' ? 'dark' : 'light'
+
+  const createScriptElement = config => {
+    const ele = document.createElement('script')
+    Object.entries(config).forEach(([key, value]) => {
+      ele.setAttribute(key, value)
+    })
+    return ele
+  }
+
+  const loadGiscus = (el = document, key) => {
+    const mappingConfig = isShuoshuo
+      ? { 'data-mapping': 'specific', 'data-term': key }
+      : { 'data-mapping': (option && option['data-mapping']) || 'pathname' }
+
+    const giscusConfig = {
+      src: 'https://giscus.app/client.js',
+      'data-repo': 'mark22013333/mark22013333.github.io',
+      'data-repo-id': 'R_kgDOLAxa6A',
+      'data-category-id': 'DIC_kwDOLAxa6M4C5eO9',
+      'data-theme': getGiscusTheme(document.documentElement.getAttribute('data-theme')),
+      'data-reactions-enabled': '1',
+      crossorigin: 'anonymous',
+      async: true,
+      ...option,
+      ...mappingConfig
+    }
+
+    const scriptElement = createScriptElement(giscusConfig)
+
+    el.querySelector('#giscus-wrap').appendChild(scriptElement)
+
+    if (isShuoshuo) {
+      window.shuoshuoComment.destroyGiscus = () => {
+        if (el.children.length) {
+          el.innerHTML = ''
+          el.classList.add('no-comment')
+        }
+      }
+    }
+  }
+
+  const changeGiscusTheme = theme => {
+    const iframe = document.querySelector('#giscus-wrap iframe')
+    if (iframe) {
+      const message = {
+        giscus: {
+          setConfig: {
+            theme: getGiscusTheme(theme)
+          }
+        }
+      }
+      iframe.contentWindow.postMessage(message, 'https://giscus.app')
+    }
+  }
+
+  btf.addGlobalFn('themeChange', changeGiscusTheme, 'giscus')
+
+  if (isShuoshuo) {
+    'Giscus' === 'Giscus'
+      ? window.shuoshuoComment = { loadComment: loadGiscus }
+      : window.loadOtherComment = loadGiscus
+    return
+  }
+
+  if ('Giscus' === 'Giscus' || !true) {
+    if (true) btf.loadComment(document.getElementById('giscus-wrap'), loadGiscus)
+    else loadGiscus()
+  } else {
+    window.loadOtherComment = loadGiscus
+  }
+})()</script></div><script src="/js/kkbox-player.js"></script><script src="/js/archives-pagination.js"></script><script src="/js/font-resize.js"></script><script src="/js/dark-palette.js"></script><script defer="defer" id="fluttering_ribbon" mobile="false" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/canvas-fluttering-ribbon.min.js"></script><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/activate-power-mode.min.js"></script><script>POWERMODE.colorful = true;
+POWERMODE.shake = true;
+POWERMODE.mobile = true;
+document.body.addEventListener('input', POWERMODE);
+</script><script src="https://cdn.jsdelivr.net/npm/pjax/pjax.min.js" defer="defer"></script><script>document.addEventListener('DOMContentLoaded', () => {
+  const pjaxSelectors = ["meta[property=\"og:image\"]","meta[property=\"og:title\"]","meta[property=\"og:url\"]","meta[property=\"og:description\"]","link[rel=\"canonical\"]","head > title","#config-diff","#body-wrap","#rightside-config-hide","#rightside-config-show",".js-pjax"]
+
+  window.pjax = new Pjax({
+    elements: 'a:not([target="_blank"])',
+    selectors: pjaxSelectors,
+    cacheBust: false,
+    analytics: true,
+    scrollRestoration: false
+  })
+
+  const triggerPjaxFn = (val) => {
+    if (!val) return
+    Object.values(val).forEach(fn => {
+      try {
+        fn()
+      } catch (err) {
+        console.debug('Pjax callback failed:', err)
+      }
+    })
+  }
+
+  document.addEventListener('pjax:send', () => {
+    // removeEventListener
+    btf.removeGlobalFnEvent('pjaxSendOnce')
+    btf.removeGlobalFnEvent('themeChange')
+
+    // reset readmode
+    const $bodyClassList = document.body.classList
+    if ($bodyClassList.contains('read-mode')) $bodyClassList.remove('read-mode')
+
+    triggerPjaxFn(window.globalFn.pjaxSend)
+  })
+
+  document.addEventListener('pjax:complete', () => {
+    btf.removeGlobalFnEvent('pjaxCompleteOnce')
+    document.querySelectorAll('script[data-pjax]').forEach(item => {
+      const newScript = document.createElement('script')
+      const content = item.text || item.textContent || item.innerHTML || ""
+      Array.from(item.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value))
+      newScript.appendChild(document.createTextNode(content))
+      item.parentNode.replaceChild(newScript, item)
+    })
+
+    triggerPjaxFn(window.globalFn.pjaxComplete)
+  })
+
+  document.addEventListener('pjax:error', e => {
+    if (e.request.status === 404) {
+      true
+        ? pjax.loadUrl('/404.html')
+        : window.location.href = e.request.responseURL
+    }
+  })
+})</script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜尋</span><i class="fas fa-spinner fa-pulse" id="loading-status" hidden="hidden"></i><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="text-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  資料載入中</span></div><div class="local-search-input"><input placeholder="搜尋文章" type="text"/></div><hr/><div id="local-search-results"></div><div class="ais-Pagination" id="local-search-pagination" style="display:none;"><ul class="ais-Pagination-list"></ul></div><div id="local-search-stats"></div></div><div id="search-mask"></div><script src="/js/search/local-search.js"></script></div></div></body></html>
