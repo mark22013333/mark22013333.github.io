@@ -1,0 +1,413 @@
+<!DOCTYPE html><html lang="zh-TW" data-theme="dark"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>Claude Code Ultraplan 完整教學 — 把規劃交給雲端，讓 Claude 替你想 30 分鐘 | Cheng's Tech &amp; Life</title><meta name="author" content="Cheng®"><meta name="copyright" content="Cheng®"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#0d0d0d"><meta name="description" content="Ultraplan 把 Claude Code 的規劃階段搬到雲端容器，Claude 在雲端讀你的 repo、起草實作計劃，你在本地繼續工作，計劃準備好再回來 review。Pro 或 Max 訂閱可用。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Claude Code Ultraplan 完整教學 — 把規劃交給雲端，讓 Claude 替你想 30 分鐘">
+<meta property="og:url" content="https://mark22013333.github.io/2026/04/23/Claude-Code-Ultraplan-%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8-%E6%8A%8A%E8%A6%8F%E5%8A%83%E4%BA%A4%E7%B5%A6%E9%9B%B2%E7%AB%AF/index.html">
+<meta property="og:site_name" content="Cheng&#39;s Tech &amp; Life">
+<meta property="og:description" content="Ultraplan 把 Claude Code 的規劃階段搬到雲端容器，Claude 在雲端讀你的 repo、起草實作計劃，你在本地繼續工作，計劃準備好再回來 review。Pro 或 Max 訂閱可用。">
+<meta property="og:locale" content="zh_TW">
+<meta property="og:image" content="https://mark22013333.github.io/img/20260423-03.webp">
+<meta property="article:published_time" content="2026-04-23T09:00:00.000Z">
+<meta property="article:modified_time" content="2026-04-23T11:11:01.665Z">
+<meta property="article:author" content="Cheng®">
+<meta property="article:tag" content="Claude Code">
+<meta property="article:tag" content="教學">
+<meta property="article:tag" content="Ultraplan">
+<meta property="article:tag" content="規劃">
+<meta property="article:tag" content="cloud">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://mark22013333.github.io/img/20260423-03.webp"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Claude Code Ultraplan 完整教學 — 把規劃交給雲端，讓 Claude 替你想 30 分鐘",
+  "url": "https://mark22013333.github.io/2026/04/23/Claude-Code-Ultraplan-%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8-%E6%8A%8A%E8%A6%8F%E5%8A%83%E4%BA%A4%E7%B5%A6%E9%9B%B2%E7%AB%AF/",
+  "image": "https://mark22013333.github.io/img/20260423-03.webp",
+  "datePublished": "2026-04-23T09:00:00.000Z",
+  "dateModified": "2026-04-23T11:11:01.665Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "Cheng®",
+      "url": "https://mark22013333.github.io"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://mark22013333.github.io/2026/04/23/Claude-Code-Ultraplan-%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8-%E6%8A%8A%E8%A6%8F%E5%8A%83%E4%BA%A4%E7%B5%A6%E9%9B%B2%E7%AB%AF/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//www.google-analytics.com" crossorigin=""/><link rel="preconnect" href="//fonts.googleapis.com" crossorigin=""/><link rel="preconnect" href="//busuanzi.ibruce.info"/><meta name="google-site-verification" content="6ywUr8k2n_CT1PFYJzlSvI3CZ-JmJ55RYbA39VrFBDs"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!true && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          const hour = new Date().getHours()
+          const isNight = hour <= 9 || hour >= 18
+          if (theme === undefined) isNight ? activateDarkMode() : activateLightMode()
+          else theme === 'light' ? activateLightMode() : activateDarkMode()
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script async="async" src="https://www.googletagmanager.com/gtag/js?id=G-JBV14NRDH3"></script><script>window.dataLayer = window.dataLayer || []
+function gtag(){dataLayer.push(arguments)}
+gtag('js', new Date())
+gtag('config', 'G-JBV14NRDH3')
+btf.addGlobalFn('pjaxComplete', () => {
+  gtag('config', 'G-JBV14NRDH3', {'page_path': window.location.pathname})
+}, 'google_analytics')
+</script><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Titillium+Web&amp;display=swap" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"pagination":{"enable":false,"hitsPerPage":8},"languages":{"hits_empty":"找不到符合您查詢的內容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '複製成功',
+    error: '複製失敗',
+    noSupport: '瀏覽器不支援'
+  },
+  relativeDate: {
+    homepage: false,
+    post: true
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '剛剛',
+    min: '分鐘前',
+    hour: '小時前',
+    day: '天前',
+    month: '個月前'
+  },
+  copyright: {"limitCount":1,"languages":{"author":"作者: Cheng®","link":"連結: ","source":"來源: Cheng's Tech & Life","info":"著作權歸作者所有。如需商業轉載，請聯絡作者獲得授權，非商業轉載請註明出處😁。"}},
+  lightbox: 'fancybox',
+  Snackbar: {"chs_to_cht":"已切換為繁體中文","cht_to_chs":"已切換為簡體中文","day_to_night":"已切換為深色模式","night_to_day":"已切換為淺色模式","bgLight":"#49b1f5","bgDark":"#1f1f1f","position":"top-center"},
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid/dist/infinitegrid.min.js',
+    buttonText: '載入更多'
+  },
+  isPhotoFigcaption: true,
+  islazyloadPlugin: false,
+  isAnchor: true,
+  percent: {
+    toc: true,
+    rightside: true,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Claude Code Ultraplan 完整教學 — 把規劃交給雲端，讓 Claude 替你想 30 分鐘',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><link rel="stylesheet" href="/css/kkbox-player.css"><link rel="stylesheet" href="/css/tag-cloud-fancy.css"><link rel="stylesheet" href="/css/font-resize.css"><link rel="stylesheet" href="/css/dark-palette.css"><link rel="stylesheet" href="/css/loading-override.css"><link rel="alternate" href="/atom.xml" title="Cheng's Tech & Life" type="application/atom+xml">
+</head><body><div id="loading-box"><div class="loading-glass-overlay"></div><div class="loading-indicator"><div class="loading-dot"></div><div class="loading-dot"></div><div class="loading-dot"></div></div></div><script>(()=>{
+  const $loadingBox = document.getElementById('loading-box')
+  const $body = document.body
+  const preloader = {
+    endLoading: () => {
+      if ($loadingBox.classList.contains('loaded')) return
+      $body.style.overflow = ''
+      $loadingBox.classList.add('loaded')
+    },
+    initLoading: () => {
+      $body.style.overflow = 'hidden'
+      $loadingBox.classList.remove('loaded')
+    }
+  }
+
+  preloader.initLoading()
+
+  if (document.readyState === 'complete') {
+    preloader.endLoading()
+  } else {
+    window.addEventListener('load', preloader.endLoading)
+    document.addEventListener('DOMContentLoaded', preloader.endLoading)
+    setTimeout(preloader.endLoading, 7000)
+  }
+
+  if (true) {
+    btf.addGlobalFn('pjaxSend', preloader.initLoading, 'preloader_init')
+    btf.addGlobalFn('pjaxComplete', preloader.endLoading, 'preloader_end')
+  }
+})()</script><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="https://lh3.googleusercontent.com/pw/ABLVV87_po8nBc6F_tXcoYDmtzMGWxHuhhrbguYILCjmjWKLOS8DTpubm0YoQLKgjyjRIZyV5TjYe7XVEz_YU4squfr37GTZqPZP1hlMVZ_MIgXpTxWu73M=w1200" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">161</div></a><a href="/tags/"><div class="headline">標籤</div><div class="length-num">142</div></a><a href="/categories/"><div class="headline">分類</div><div class="length-num">12</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首頁-Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 時間軸-archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 標籤-tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分類-Categories</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-list"></i><span> 其他列表</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音樂-Music</span></a></li><li><a class="site-page child" href="/gallery/"><i class="fa-fw fas fa-images"></i><span> 畫館-Gallery</span></a></li></ul></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg fixed" id="page-header" style="background-image: url(/img/20260423-03.webp);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><img class="site-icon" src="https://lh3.googleusercontent.com/pw/ABLVV87_po8nBc6F_tXcoYDmtzMGWxHuhhrbguYILCjmjWKLOS8DTpubm0YoQLKgjyjRIZyV5TjYe7XVEz_YU4squfr37GTZqPZP1hlMVZ_MIgXpTxWu73M=w1200" alt="Logo"><span class="site-name">Cheng's Tech &amp; Life</span></a><a class="nav-page-title" href="/"><span class="site-name">Claude Code Ultraplan 完整教學 — 把規劃交給雲端，讓 Claude 替你想 30 分鐘</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首頁</span></span></a></span><div id="menus"><div id="search-button" title="Ctrl+K / Cmd+K"><span class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜尋</span></span></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首頁-Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 時間軸-archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 標籤-tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分類-Categories</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-list"></i><span> 其他列表</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音樂-Music</span></a></li><li><a class="site-page child" href="/gallery/"><i class="fa-fw fas fa-images"></i><span> 畫館-Gallery</span></a></li></ul></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">Claude Code Ultraplan 完整教學 — 把規劃交給雲端，讓 Claude 替你想 30 分鐘</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">發表於</span><time class="post-meta-date-created" datetime="2026-04-23T09:00:00.000Z" title="發表於 2026-04-23 09:00:00">2026-04-23</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新於</span><time class="post-meta-date-updated" datetime="2026-04-23T11:11:01.665Z" title="更新於 2026-04-23 11:11:01">2026-04-23</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Claude-Code/">Claude Code</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">總字數:</span><span class="word-count">1.5k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">閱讀時間:</span><span>4分鐘</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">瀏覽量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><p>普通規劃和 Ultraplan 的差距，不是 Claude 有多聰明。是你等不等它想清楚。</p>
+<p>在本地跑 plan mode 的時候，Claude 開始思考，你的終端機就被佔住了。你可以等它想，也可以去做別的事，但你不知道它什麼時候想完，也沒辦法在它思考過程中給它回饋。最後它端出一個計劃，你看了之後說「這個方向不對」，然後重來。</p>
+<p>Ultraplan 把這個流程整個翻轉。Claude 去雲端想，你繼續在本地工作。計劃生成完，它給你一個連結，你開瀏覽器去 review，可以在特定段落留言、用 emoji 反應表示認可或疑慮、要求局部修改，最後選擇怎麼執行。整個過程 Claude 替你佔用的是雲端算力，不是你的終端機。</p>
+<hr>
+<h2 id="它在後台做什麼"><a href="#它在後台做什麼" class="headerlink" title="它在後台做什麼"></a>它在後台做什麼</h2><p>輸入 <code>/ultraplan 你的任務描述</code> 之後，會看到一個確認提示。確認之後，流程啟動：</p>
+<p><strong>第一步，雲端環境準備。</strong> Claude 在 Anthropic 的雲端伺服器上配置一個臨時容器，把你的 GitHub 倉庫 clone 進去。如果你的 repo 有 setup script，它會執行來安裝依賴、建立環境。</p>
+<p><strong>第二步，讀懂 repo。</strong> Claude 在雲端容器裡讀你的 codebase——目錄結構、主要檔案、相關 module。這個步驟讓它對整個專案有完整的 context，不是只靠你的描述。</p>
+<p><strong>第三步，起草計劃。</strong> 基於對 repo 的理解，Claude 寫出一份完整的實作計劃。這一步可能花 20-30 分鐘，在雲端跑，你的終端機全程可以繼續用。</p>
+<hr>
+<h2 id="在瀏覽器裡-review"><a href="#在瀏覽器裡-review" class="headerlink" title="在瀏覽器裡 review"></a>在瀏覽器裡 review</h2><p>計劃準備好的時候，終端機會跳出提示和一個瀏覽器連結。計劃呈現在一個專屬的 review 介面裡：</p>
+<p><strong>Inline comments</strong>：點擊任何段落，留言問問題或提修改意見，Claude 會即時回應並修改對應段落。</p>
+<p><strong>Emoji reactions</strong>：對一個段落用 emoji 反應（✅ 認可、❓ 疑問、🚩 有問題），不需要打字，Claude 讀到這些 reaction 也會做對應調整。</p>
+<p><strong>Outline sidebar</strong>：左側有大綱，可以快速跳到計劃的任何一個 section，對於長計劃特別有用。</p>
+<p>這個設計讓「規劃 review」變成一個可以異步進行的過程。你不需要在 review 的時候全神貫注地看完整份計劃，可以快速掃過、對有疑問的地方留言，讓 Claude 在你繼續工作的時候在背景修改。</p>
+<hr>
+<h2 id="三種執行方式"><a href="#三種執行方式" class="headerlink" title="三種執行方式"></a>三種執行方式</h2><p>Review 完成，確認計劃方向沒問題之後，終端機的 dialog 會問你怎麼執行：</p>
+<p><strong>Implement here</strong>：把計劃注入當前 session 的 context，Claude 從計劃開始繼續執行。適合你已經在這個 session 裡做了一些相關的前置工作。</p>
+<p><strong>Start new session</strong>：清空當前 session，只帶著計劃開始新的對話。適合需要一個乾淨 context 的長任務，避免之前的對話干擾。</p>
+<p><strong>Cancel</strong>：把計劃存成檔案，暫時不執行。適合你想先存下計劃、之後決定怎麼用。</p>
+<hr>
+<h2 id="使用前的幾個確認"><a href="#使用前的幾個確認" class="headerlink" title="使用前的幾個確認"></a>使用前的幾個確認</h2><p>要跑 Ultraplan，三個條件都要滿足：</p>
+<p><strong>1. Claude Code v2.1.101 或更新版本。</strong> 用 <code>claude --version</code> 確認，版本不夠用 <code>npm install -g @anthropic-ai/claude-code</code> 更新。</p>
+<p><strong>2. GitHub-hosted 的 repo。</strong> Ultraplan 需要 clone 你的 repo 到雲端容器，所以 repo 必須在 GitHub 上，且你的帳號有存取權限。本地的 git repo（沒有推到 GitHub）目前不支援。</p>
+<p><strong>3. Pro 或 Max 訂閱。</strong> Ultraplan 不在 Free 方案裡，需要 Pro（$20&#x2F;月）或 Max（$100&#x2F;月）。</p>
+<hr>
+<h2 id="什麼情況下用最划算"><a href="#什麼情況下用最划算" class="headerlink" title="什麼情況下用最划算"></a>什麼情況下用最划算</h2><p>Ultraplan 對規劃本身會消耗比較多的 token，不是每個任務都適合用。</p>
+<p><strong>值得用的情境</strong>：跨多個文件的功能，或涉及架構決策的任務。這類任務需要 Claude 先理解整個 repo 的結構，本地 plan mode 的 context 限制會讓它漏掉重要的關係，Ultraplan 的雲端環境可以讀得更完整。</p>
+<p><strong>不划算的情境</strong>：單一文件的修改、已經很清楚怎麼做的任務、或 repo 很小的情況。這些用本地 plan mode 或直接執行就夠了。</p>
+<p>Ultraplan 的核心價值是：讓你不用在「等 Claude 想清楚」和「做別的事」之間二選一。如果你的任務複雜到需要花 30 分鐘規劃，那個 30 分鐘你本來就不應該坐在終端機前面等著。</p>
+<hr>
+<h2 id="跟本地-plan-mode-的差別"><a href="#跟本地-plan-mode-的差別" class="headerlink" title="跟本地 plan mode 的差別"></a>跟本地 plan mode 的差別</h2><table>
+<thead>
+<tr>
+<th></th>
+<th>本地 plan mode</th>
+<th>Ultraplan</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>執行位置</td>
+<td>本地</td>
+<td>雲端容器</td>
+</tr>
+<tr>
+<td>終端機是否被佔用</td>
+<td>是</td>
+<td>否</td>
+</tr>
+<tr>
+<td>repo 讀取深度</td>
+<td>受 context window 限制</td>
+<td>完整 clone</td>
+</tr>
+<tr>
+<td>review 方式</td>
+<td>在 terminal 看文字</td>
+<td>瀏覽器互動介面</td>
+</tr>
+<tr>
+<td>需求</td>
+<td>任何訂閱</td>
+<td>Pro&#x2F;Max + GitHub repo</td>
+</tr>
+</tbody></table>
+<p>這不是「Ultraplan 比較好」的問題，是不同任務選對應的工具。短任務、或你想直接跟 Claude 來回確認方向，用本地 plan 更快。長任務、需要 Claude 深入讀 codebase、你想在規劃階段做異步 review，Ultraplan 才值得用。</p>
+<hr>
+<h2 id="接下來可以探索"><a href="#接下來可以探索" class="headerlink" title="接下來可以探索"></a>接下來可以探索</h2><p>Ultraplan 和 Claude Code 的其他幾個功能搭配起來效果更好。</p>
+<p><strong>搭配 Git Worktrees</strong>：用 Ultraplan 先在雲端規劃，再用 Git Worktrees 在本地的多個分支同時執行不同的任務塊，避免不同功能互相干擾。</p>
+<p><strong>搭配 &#x2F;resume</strong>：Ultraplan 生成的計劃很長，用 &#x2F;resume 恢復 session 的時候，v2.1.116 之後的版本對大型 session 的恢復速度快了 67%，不用等太久。</p>
+<p><strong>搭配 Monitor tool</strong>：執行期間用 Monitor 在背景追蹤進度，不需要一直盯著終端機。</p>
+<p>本質上，Ultraplan 是把「規劃」和「執行」切開的機制。切開之後，你可以獨立優化每一段，而不是把它們擠在同一個 session 裡、彼此干擾。</p>
+<blockquote>
+<p>原文來源：<a target="_blank" rel="noopener" href="https://code.claude.com/docs/en/ultraplan">Plan in the cloud with ultraplan - Claude Code Docs</a><br>原文來源：<a target="_blank" rel="noopener" href="https://betterstack.com/community/guides/ai/claude-code-ultraplan/">Claude Code Ultraplan: Cloud-Based Interactive Planning - Better Stack</a></p>
+</blockquote>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://mark22013333.github.io">Cheng®</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章連結: </span><span class="post-copyright-info"><a href="https://mark22013333.github.io/2026/04/23/Claude-Code-Ultraplan-%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8-%E6%8A%8A%E8%A6%8F%E5%8A%83%E4%BA%A4%E7%B5%A6%E9%9B%B2%E7%AB%AF/">https://mark22013333.github.io/2026/04/23/Claude-Code-Ultraplan-完整教學-把規劃交給雲端/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版權聲明: </span><span class="post-copyright-info">本部落格所有文章除特別聲明外，均採用<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 授權協議。轉載請註明來源 <a href="https://mark22013333.github.io" target="_blank">Cheng's Tech & Life</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Claude-Code/">Claude Code</a><a class="post-meta__tags" href="/tags/%E6%95%99%E5%AD%B8/">教學</a><a class="post-meta__tags" href="/tags/Ultraplan/">Ultraplan</a><a class="post-meta__tags" href="/tags/%E8%A6%8F%E5%8A%83/">規劃</a><a class="post-meta__tags" href="/tags/cloud/">cloud</a></div><div class="post-share"><div class="social-share" data-image="/img/20260423-03.webp" data-sites="facebook,x"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><div class="post-reward"><div class="reward-badges"><a class="sponsor-glow-btn" href="https://www.buymeacoffee.com/mark22013333" target="_blank" rel="noopener noreferrer" title="Buy Me A Coffee"><img src="https://img.shields.io/badge/Buy_Me_A_Coffee-FFDD00?style=for-the-badge&amp;logo=buy-me-a-coffee&amp;logoColor=black" alt="Buy Me A Coffee"/></a><a class="sponsor-glow-btn" href="https://p.ecpay.com.tw/EFC3F8F" target="_blank" rel="noopener noreferrer" title="綠界贊助"><img src="https://img.shields.io/badge/☕_%E8%AB%8B%E6%88%91%E5%96%9D%E6%9D%AF%E5%92%96%E5%95%A1-Donate-11998e?style=for-the-badge&amp;logo=coffee&amp;logoColor=white" alt="綠界贊助"/></a><a class="sponsor-glow-btn" href="https://calendly.com/markcheng00806-intumit/15min" target="_blank" rel="noopener noreferrer" title="預約時間"><img src="https://img.shields.io/badge/📅_%E9%A0%90%E7%B4%84_15_%E5%88%86%E9%90%98-Book_Time-0072ff?style=for-the-badge" alt="預約時間"/></a><p class="reward-badges-note">你的鼓勵將被轉換為我明天繼續加班的動力（真的）。 ❤️</p></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related full-width" href="/2026/04/23/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260423/" title="AI 與科技新聞摘要 - 2026/04/23"><img class="cover" src="/img/20260423-02.webp" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">AI 與科技新聞摘要 - 2026/04/23</div></div><div class="info-2"><div class="info-item-1">$1,000,000,000,000。 這不是 Anthropic 的融資額，是它在二級市場的估值。4 月 23 日，Anthropic 在 Forge Global 等二級市場交易平台的隱含估值越過了兆美元門檻，同時間 OpenAI 停在 $8,800 億，低於它自己去年底 $8,520 億的官方估值。 這個數字的荒謬感在於，Anthropic 連 IPO 都還沒有。公開市場對它完全無從定價。但機構投資人搶得如此激烈，把二級流通股票的要價推到了傳統估值方法難以支撐的位置。這不是理性定價，是稀缺性恐慌——害怕現在不買，以後根本買不到。 同一週，Google Cloud Next 2026 在拉斯維加斯展示了一套重新架構的 agent 基礎設施，A2A 協定正式量產，支援者從六個框架變成幾乎整個生態系。 有些事情正在同時改變，它們之間有關聯。  Google Cloud Next 2026 — Vertex AI 不見了，Gemini Enterprise 接手4 月 22 日 Google Cloud Next 2026 最大的一個動作，不是發布新功能，是改名。 Vertex A...</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相關推薦</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2026/04/08/Claude-Code-powerup-%E4%BA%92%E5%8B%95%E5%BC%8F%E6%95%99%E5%AD%B8%E8%88%87-April-2026-%E9%87%8D%E9%BB%9E%E6%9B%B4%E6%96%B0%E5%AE%8C%E6%95%B4%E6%8C%87%E5%8D%97/" title="Claude Code &#x2F;powerup 互動式教學與 April 2026 重點更新完整指南"><img class="cover" src="/img/20260408-03.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-04-08</div><div class="info-item-2">Claude Code &#x2F;powerup 互動式教學與 April 2026 重點更新完整指南</div></div><div class="info-2"><div class="info-item-1">打開 Claude Code 輸入 /powerup，終端機裡跑出一段互動式動畫教學。不用開瀏覽器、不用翻文件，在你寫程式的地方直接學怎麼用這個工具。這是 v2.1.89 加進來的新功能，搭配同一時期的 MCP 500K 上限、headless defer 機制和 &#x2F;cost 增強，四月的第一週就塞了四個版本更新。 &#x2F;powerup：終端機裡的互動教學/powerup 的設計哲學很明確——新手不需要離開終端機就能學會 Claude Code 的核心功能。每個 lesson 都有動畫示範，不是只給你看文字說明，而是實際在終端機裡播放操作過程。 12345# 啟動 Claude Code 後直接打/powerup# 會看到課程選單，選你想學的功能# 每個課程有互動式的 step-by-step 引導  跟一般文件的差別在哪？文件告訴你「你可以用 &#x2F;loop 設定排程」，&#x2F;powerup 則是在終端機裡示範整個設定流程，讓你跟著操作。學習曲線直接壓平一截。 對比一下其他 AI coding 工具的新手引導：Cursor 靠的是 GUI 裡的 to...</div></div></div></a><a class="pagination-related" href="/2026/04/22/GitHub-Copilot-%E5%81%9C%E6%AD%A2%E6%96%B0%E7%94%A8%E6%88%B6%E8%A8%BB%E5%86%8A%E5%BE%8C%E5%B7%A5%E7%A8%8B%E5%B8%AB%E6%80%8E%E9%BA%BC%E5%B9%B3%E7%A7%BB%E5%88%B0-Claude-Code/" title="GitHub Copilot 停止新用戶註冊後，工程師怎麼平移到 Claude Code"><img class="cover" src="/img/20260422-03.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-04-22</div><div class="info-item-2">GitHub Copilot 停止新用戶註冊後，工程師怎麼平移到 Claude Code</div></div><div class="info-2"><div class="info-item-1">GitHub Copilot 在 4 月 20 日暫停了所有個人方案的新用戶註冊。同時，Pro 方案的用戶即將失去 Claude Opus 模型的存取權。 如果你是剛好要開新帳號的工程師，或者是衝著 Opus 去的 Pro 用戶，現在是個評估要不要換工具的時間點。 這篇是從 Copilot 遷移到 Claude Code 的操作指南，不是比較評測（已有一篇），也不是勸你換工具。你得自己決定值不值得換，但換之前至少要知道怎麼換、換了之後哪些習慣要調整。  先搞清楚兩個工具的根本差異遷移前最重要的一件事不是「A 功能在哪裡」，而是「這個工具假設你怎麼工作」。不懂這個，你會用 Copilot 的思維用 Claude Code，然後覺得它很難用。 Copilot 的設計假設：你在 IDE 裡工作，AI 在旁邊輔助。你寫程式，AI 補全、提建議、回答問題。主導者是你，AI 是智慧自動補全。 Claude Code 的設計假設：你在 terminal 裡工作，AI 和你一起做事。你描述目標或問題，AI 讀檔案、跑指令、修程式碼。主導者更模糊——Claude Code 可以接管一個任務然後跑到...</div></div></div></a><a class="pagination-related" href="/2026/03/24/Claude-Code-Hooks-%E5%AE%8C%E6%95%B4%E6%8C%87%E5%8D%97-%E8%AE%93-AI-%E8%87%AA%E5%8B%95%E5%8C%96%E4%B8%8D%E5%86%8D%E9%9D%A0%E9%81%8B%E6%B0%A3/" title="Claude Code Hooks 完整指南 — 讓 AI 自動化不再靠運氣"><img class="cover" src="/img/20260324-06.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-03-24</div><div class="info-item-2">Claude Code Hooks 完整指南 — 讓 AI 自動化不再靠運氣</div></div><div class="info-2"><div class="info-item-1">你有沒有遇過這種狀況：叫 Claude Code 改完檔案，結果忘了跑 formatter，code review 被打回來的全是 style issue？ 或者更痛的——Claude 很盡責地幫你改了五個檔案，你說「好了可以了」，它就真的停了。然後你才發現 test 沒跑、lint 沒過、有一個 .env 被改到。 Hooks 就是拿來解決這類問題的。它不是什麼 AI 魔法，反而是整套 Claude Code 裡面最不 AI 的部分——純粹的 shell 腳本，在特定時間點被觸發，做你設定好的事情。確定性的行為，不靠 LLM 判斷。  概念：Hook 是什麼？一句話講完：在 Claude Code 生命週期的特定節點，自動執行你寫的腳本。 跟 Git hooks 很像。pre-commit hook 在 commit 前跑 lint，Claude Code 的 PreToolUse hook 在工具執行前跑你的檢查。概念相通，只是觸發的時機不一樣。 目前支援的 hook 事件超過 20 個，常用的幾個：    事件 觸發時機    PreToolUse 工具執行前，可以攔截  ...</div></div></div></a><a class="pagination-related" href="/2026/03/29/Claude-Desktop-%E4%B8%89%E7%A8%AE%E6%A8%A1%E5%BC%8F%E6%80%8E%E9%BA%BC%E5%88%87-Chat-Cowork-Code-%E5%AE%8C%E6%95%B4%E5%B0%8E%E8%A6%BD/" title="Claude Desktop 三種模式怎麼切？Chat、Cowork、Code 完整導覽"><img class="cover" src="/img/20260329-03.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-03-29</div><div class="info-item-2">Claude Desktop 三種模式怎麼切？Chat、Cowork、Code 完整導覽</div></div><div class="info-2"><div class="info-item-1">打開 Claude Desktop，上面三個 tab 寫著 Chat、Cowork、Code。第一次看到的人大概會問：這三個到底差在哪？什麼時候該用哪個？ 答案比想像中簡單——它們不是三個不同的 AI，是同一個 Claude 的三種工作模式，各自對應不同的使用場景和權限範圍。 Chat：快問快答的主場Chat 是最輕量的模式。問問題、腦力激盪、幫你改改文案、翻譯一段文字——這些不需要動到檔案系統、不需要跑程式的事情，Chat 就夠了。 有兩個功能值得記住。第一個是 Quick Entry：在 Mac 上連按兩下 Option 鍵，會跳出一個浮動對話框，不用切到 Claude 視窗就能丟問題。會議之間的三十秒空檔，打開來問一句「剛才那個 dashboard 上的 DAU 數字怎麼算的」剛好。 第二個是截圖分享。直接把螢幕畫面丟給 Claude 看，省去「那個按鈕在左邊第三排…不對，是第四排」的來回描述。 Chat 也能串 Desktop Connector，接上 Apple Notes 之類的本機工具。但整體來說，它的定位就是快速對話，不是拿來做大型專案的。 Cowork：需要動手...</div></div></div></a><a class="pagination-related" href="/2026/04/01/Claude-Code-Remote-Control-%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8-%E7%94%A8%E6%89%8B%E6%A9%9F%E9%81%99%E6%8E%A7%E4%BD%A0%E7%9A%84%E7%B5%82%E7%AB%AF%E6%A9%9F/" title="Claude Code Channels 完整教學 — 讓 Telegram、Discord 直接推訊息進你的終端機"><img class="cover" src="/img/20260401-03.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-04-01</div><div class="info-item-2">Claude Code Channels 完整教學 — 讓 Telegram、Discord 直接推訊息進你的終端機</div></div><div class="info-2"><div class="info-item-1">CI pipeline 掛了。以前的流程：收到 Slack 通知 → 打開筆電 → 開終端機 → 跑 Claude Code → 找問題 → 修。現在？Telegram 一響，訊息直接灌進你正在跑的 Claude Code session，Claude 自己去讀 log、找原因、甚至幫你改 code。你不用打開筆電，甚至不用離開 Telegram。 這就是 Channels。  Channel 不是 MCP，也不是 Remote Control先釐清定位。Claude Code 現在有一堆「讓你不在電腦前也能操作」的方式，很容易搞混。 MCP Server 是被動的——Claude 需要的時候去問它，它不會主動推東西過來。Remote Control 是你自己在手機上操作正在跑的 session。Channels 是事件驅動的——外面有事情發生（Telegram 訊息、CI webhook、Discord 訊息），主動推進你的 session，Claude 自動反應。    方式 方向 觸發者    MCP Server Claude 主動查詢 Claude   Remote C...</div></div></div></a><a class="pagination-related" href="/2026/04/01/%E9%80%8F%E9%81%8E-iMessage-%E8%88%87-Claude-Code-%E5%B0%8D%E8%A9%B1-%E5%AE%8C%E6%95%B4%E8%A8%AD%E5%AE%9A%E6%95%99%E5%AD%B8/" title="透過 iMessage 與 Claude Code 對話 — 完整設定教學"><img class="cover" src="/img/20260401-04.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-04-01</div><div class="info-item-2">透過 iMessage 與 Claude Code 對話 — 完整設定教學</div></div><div class="info-2"><div class="info-item-1">人不在電腦前，但 Claude Code session 正在跑。手機震了一下——不是 LINE，不是 Slack，是 iMessage。你直接在訊息 App 裡打「幫我跑一下測試」，幾秒後 Claude 回你結果。整個過程你連筆電都沒打開。 上次介紹了 Channels 的整體架構，Telegram、Discord、iMessage 三個平台都帶過一輪。但 iMessage 這條路線有太多眉角沒講到——self-chat 的 echo 迴圈、is_from_me 的詭異行為、號碼格式踩坑。這篇專門把 iMessage Channel 從頭到尾拆開來講，包括那些官方文件沒寫清楚的 troubleshooting。  前置需求——四個條件缺一不可開始之前先確認： macOS 電腦。iMessage Channel 的原理是直接讀你 Mac 上的 ~/Library/Messages/chat.db，這是 macOS 獨有的 SQLite 資料庫。Windows 和 Linux 沒有這個東西，所以 iMessage Channel 是 macOS 限定。 Claude Code CL...</div></div></div></a></div></div><hr class="custom-hr"/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 評論</span></div></div><div class="comment-wrap"><div><div id="giscus-wrap"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="https://lh3.googleusercontent.com/pw/ABLVV87_po8nBc6F_tXcoYDmtzMGWxHuhhrbguYILCjmjWKLOS8DTpubm0YoQLKgjyjRIZyV5TjYe7XVEz_YU4squfr37GTZqPZP1hlMVZ_MIgXpTxWu73M=w1200" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">Cheng®</div><div class="author-info-description">Backend Developer / 技術筆記 & AI 新聞分享</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">161</div></a><a href="/tags/"><div class="headline">標籤</div><div class="length-num">142</div></a><a href="/categories/"><div class="headline">分類</div><div class="length-num">12</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/mark22013333"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons"><a class="social-icon" href="https://github.com/mark22013333" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:mark22013333@gmail.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a></div><div class="card-info-sponsor"><a class="sponsor-glow-btn" href="https://www.buymeacoffee.com/mark22013333" target="_blank" rel="noopener noreferrer" title="Buy Me A Coffee"><img src="https://img.shields.io/badge/Buy_Me_A_Coffee-FFDD00?style=for-the-badge&amp;logo=buy-me-a-coffee&amp;logoColor=black" alt="Buy Me A Coffee"/></a><a class="sponsor-glow-btn" href="https://p.ecpay.com.tw/EFC3F8F" target="_blank" rel="noopener noreferrer" title="綠界贊助"><img src="https://img.shields.io/badge/☕_%E8%AB%8B%E6%88%91%E5%96%9D%E6%9D%AF%E5%92%96%E5%95%A1-Donate-11998e?style=for-the-badge&amp;logo=coffee&amp;logoColor=white" alt="綠界贊助"/></a><a class="sponsor-glow-btn" href="https://calendly.com/markcheng00806-intumit/15min" target="_blank" rel="noopener noreferrer" title="預約時間"><img src="https://img.shields.io/badge/📅_%E9%A0%90%E7%B4%84_15_%E5%88%86%E9%90%98-Book_Time-0072ff?style=for-the-badge" alt="預約時間"/></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">這裡記錄我在後端開發路上踩過的坑、學到的東西，也會分享每日 AI 與科技新聞觀點。歡迎一起交流！</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目錄</span><span class="toc-percentage"></span></div><div class="toc-content is-expand"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%83%E5%9C%A8%E5%BE%8C%E5%8F%B0%E5%81%9A%E4%BB%80%E9%BA%BC"><span class="toc-number">1.</span> <span class="toc-text">它在後台做什麼</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9C%A8%E7%80%8F%E8%A6%BD%E5%99%A8%E8%A3%A1-review"><span class="toc-number">2.</span> <span class="toc-text">在瀏覽器裡 review</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89%E7%A8%AE%E5%9F%B7%E8%A1%8C%E6%96%B9%E5%BC%8F"><span class="toc-number">3.</span> <span class="toc-text">三種執行方式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8%E5%89%8D%E7%9A%84%E5%B9%BE%E5%80%8B%E7%A2%BA%E8%AA%8D"><span class="toc-number">4.</span> <span class="toc-text">使用前的幾個確認</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%80%E9%BA%BC%E6%83%85%E6%B3%81%E4%B8%8B%E7%94%A8%E6%9C%80%E5%88%92%E7%AE%97"><span class="toc-number">5.</span> <span class="toc-text">什麼情況下用最划算</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%B7%9F%E6%9C%AC%E5%9C%B0-plan-mode-%E7%9A%84%E5%B7%AE%E5%88%A5"><span class="toc-number">6.</span> <span class="toc-text">跟本地 plan mode 的差別</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%8E%A5%E4%B8%8B%E4%BE%86%E5%8F%AF%E4%BB%A5%E6%8E%A2%E7%B4%A2"><span class="toc-number">7.</span> <span class="toc-text">接下來可以探索</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2026/04/23/Claude-Code-Ultraplan-%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8-%E6%8A%8A%E8%A6%8F%E5%8A%83%E4%BA%A4%E7%B5%A6%E9%9B%B2%E7%AB%AF/" title="Claude Code Ultraplan 完整教學 — 把規劃交給雲端，讓 Claude 替你想 30 分鐘"><img src="/img/20260423-03.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Claude Code Ultraplan 完整教學 — 把規劃交給雲端，讓 Claude 替你想 30 分鐘"/></a><div class="content"><a class="title" href="/2026/04/23/Claude-Code-Ultraplan-%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8-%E6%8A%8A%E8%A6%8F%E5%8A%83%E4%BA%A4%E7%B5%A6%E9%9B%B2%E7%AB%AF/" title="Claude Code Ultraplan 完整教學 — 把規劃交給雲端，讓 Claude 替你想 30 分鐘">Claude Code Ultraplan 完整教學 — 把規劃交給雲端，讓 Claude 替你想 30 分鐘</a><time datetime="2026-04-23T09:00:00.000Z" title="發表於 2026-04-23 09:00:00">2026-04-23</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/04/23/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260423/" title="AI 與科技新聞摘要 - 2026/04/23"><img src="/img/20260423-02.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="AI 與科技新聞摘要 - 2026/04/23"/></a><div class="content"><a class="title" href="/2026/04/23/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260423/" title="AI 與科技新聞摘要 - 2026/04/23">AI 與科技新聞摘要 - 2026/04/23</a><time datetime="2026-04-23T08:30:00.000Z" title="發表於 2026-04-23 08:30:00">2026-04-23</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/04/23/Agent-Skills-%E7%B5%A6-AI-%E7%B7%A8%E7%A2%BC%E5%8A%A9%E6%89%8B%E7%9A%84%E5%B7%A5%E7%A8%8B%E7%B4%80%E5%BE%8B%E6%8C%87%E4%BB%A4%E9%9B%86/" title="Agent Skills — 給 AI 編碼助手的工程紀律指令集"><img src="/img/20260423-01.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Agent Skills — 給 AI 編碼助手的工程紀律指令集"/></a><div class="content"><a class="title" href="/2026/04/23/Agent-Skills-%E7%B5%A6-AI-%E7%B7%A8%E7%A2%BC%E5%8A%A9%E6%89%8B%E7%9A%84%E5%B7%A5%E7%A8%8B%E7%B4%80%E5%BE%8B%E6%8C%87%E4%BB%A4%E9%9B%86/" title="Agent Skills — 給 AI 編碼助手的工程紀律指令集">Agent Skills — 給 AI 編碼助手的工程紀律指令集</a><time datetime="2026-04-23T08:00:00.000Z" title="發表於 2026-04-23 08:00:00">2026-04-23</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/04/22/GitHub-Copilot-%E5%81%9C%E6%AD%A2%E6%96%B0%E7%94%A8%E6%88%B6%E8%A8%BB%E5%86%8A%E5%BE%8C%E5%B7%A5%E7%A8%8B%E5%B8%AB%E6%80%8E%E9%BA%BC%E5%B9%B3%E7%A7%BB%E5%88%B0-Claude-Code/" title="GitHub Copilot 停止新用戶註冊後，工程師怎麼平移到 Claude Code"><img src="/img/20260422-03.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="GitHub Copilot 停止新用戶註冊後，工程師怎麼平移到 Claude Code"/></a><div class="content"><a class="title" href="/2026/04/22/GitHub-Copilot-%E5%81%9C%E6%AD%A2%E6%96%B0%E7%94%A8%E6%88%B6%E8%A8%BB%E5%86%8A%E5%BE%8C%E5%B7%A5%E7%A8%8B%E5%B8%AB%E6%80%8E%E9%BA%BC%E5%B9%B3%E7%A7%BB%E5%88%B0-Claude-Code/" title="GitHub Copilot 停止新用戶註冊後，工程師怎麼平移到 Claude Code">GitHub Copilot 停止新用戶註冊後，工程師怎麼平移到 Claude Code</a><time datetime="2026-04-22T09:00:00.000Z" title="發表於 2026-04-22 09:00:00">2026-04-22</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/04/22/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260422/" title="AI 與科技新聞摘要 - 2026/04/22"><img src="/img/20260422-02.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="AI 與科技新聞摘要 - 2026/04/22"/></a><div class="content"><a class="title" href="/2026/04/22/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260422/" title="AI 與科技新聞摘要 - 2026/04/22">AI 與科技新聞摘要 - 2026/04/22</a><time datetime="2026-04-22T08:30:00.000Z" title="發表於 2026-04-22 08:30:00">2026-04-22</time></div></div></div></div></div></div></main><footer id="footer" style="background-image: url(/img/20260423-03.webp);"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2024 - 2026 By Cheng®</span></div><div class="footer_custom_text">Written by Cheng® — 自律，從當下的一念開始。</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="閱讀模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日夜模式切換"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="單欄和雙欄切換"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="設定"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目錄"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="前往評論"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到頂端"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.umd.min.js"></script><script src="https://cdn.jsdelivr.net/npm/instant.page/instantpage.min.js" type="module"></script><script src="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.js"></script><div class="js-pjax"><script>(() => {
+  const isShuoshuo = GLOBAL_CONFIG_SITE.pageType === 'shuoshuo'
+  const option = {"mapping":"pathname","strict":0,"reactionsEnabled":1,"emitMetadata":0,"inputPosition":"bottom","lang":"zh-TW"}
+
+  const getGiscusTheme = theme => theme === 'dark' ? 'dark' : 'light'
+
+  const createScriptElement = config => {
+    const ele = document.createElement('script')
+    Object.entries(config).forEach(([key, value]) => {
+      ele.setAttribute(key, value)
+    })
+    return ele
+  }
+
+  const loadGiscus = (el = document, key) => {
+    const mappingConfig = isShuoshuo
+      ? { 'data-mapping': 'specific', 'data-term': key }
+      : { 'data-mapping': (option && option['data-mapping']) || 'pathname' }
+
+    const giscusConfig = {
+      src: 'https://giscus.app/client.js',
+      'data-repo': 'mark22013333/mark22013333.github.io',
+      'data-repo-id': 'R_kgDOLAxa6A',
+      'data-category-id': 'DIC_kwDOLAxa6M4C5eO9',
+      'data-theme': getGiscusTheme(document.documentElement.getAttribute('data-theme')),
+      'data-reactions-enabled': '1',
+      crossorigin: 'anonymous',
+      async: true,
+      ...option,
+      ...mappingConfig
+    }
+
+    const scriptElement = createScriptElement(giscusConfig)
+
+    el.querySelector('#giscus-wrap').appendChild(scriptElement)
+
+    if (isShuoshuo) {
+      window.shuoshuoComment.destroyGiscus = () => {
+        if (el.children.length) {
+          el.innerHTML = ''
+          el.classList.add('no-comment')
+        }
+      }
+    }
+  }
+
+  const changeGiscusTheme = theme => {
+    const iframe = document.querySelector('#giscus-wrap iframe')
+    if (iframe) {
+      const message = {
+        giscus: {
+          setConfig: {
+            theme: getGiscusTheme(theme)
+          }
+        }
+      }
+      iframe.contentWindow.postMessage(message, 'https://giscus.app')
+    }
+  }
+
+  btf.addGlobalFn('themeChange', changeGiscusTheme, 'giscus')
+
+  if (isShuoshuo) {
+    'Giscus' === 'Giscus'
+      ? window.shuoshuoComment = { loadComment: loadGiscus }
+      : window.loadOtherComment = loadGiscus
+    return
+  }
+
+  if ('Giscus' === 'Giscus' || !true) {
+    if (true) btf.loadComment(document.getElementById('giscus-wrap'), loadGiscus)
+    else loadGiscus()
+  } else {
+    window.loadOtherComment = loadGiscus
+  }
+})()</script></div><script src="/js/kkbox-player.js"></script><script src="/js/archives-pagination.js"></script><script src="/js/font-resize.js"></script><script src="/js/dark-palette.js"></script><script defer="defer" id="fluttering_ribbon" mobile="false" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/canvas-fluttering-ribbon.min.js"></script><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/activate-power-mode.min.js"></script><script>POWERMODE.colorful = true;
+POWERMODE.shake = true;
+POWERMODE.mobile = true;
+document.body.addEventListener('input', POWERMODE);
+</script><script src="https://cdn.jsdelivr.net/npm/pjax/pjax.min.js" defer="defer"></script><script>document.addEventListener('DOMContentLoaded', () => {
+  const pjaxSelectors = ["meta[property=\"og:image\"]","meta[property=\"og:title\"]","meta[property=\"og:url\"]","meta[property=\"og:description\"]","link[rel=\"canonical\"]","head > title","#config-diff","#body-wrap","#rightside-config-hide","#rightside-config-show",".js-pjax"]
+
+  window.pjax = new Pjax({
+    elements: 'a:not([target="_blank"])',
+    selectors: pjaxSelectors,
+    cacheBust: false,
+    analytics: true,
+    scrollRestoration: false
+  })
+
+  const triggerPjaxFn = (val) => {
+    if (!val) return
+    Object.values(val).forEach(fn => {
+      try {
+        fn()
+      } catch (err) {
+        console.debug('Pjax callback failed:', err)
+      }
+    })
+  }
+
+  document.addEventListener('pjax:send', () => {
+    // removeEventListener
+    btf.removeGlobalFnEvent('pjaxSendOnce')
+    btf.removeGlobalFnEvent('themeChange')
+
+    // reset readmode
+    const $bodyClassList = document.body.classList
+    if ($bodyClassList.contains('read-mode')) $bodyClassList.remove('read-mode')
+
+    triggerPjaxFn(window.globalFn.pjaxSend)
+  })
+
+  document.addEventListener('pjax:complete', () => {
+    btf.removeGlobalFnEvent('pjaxCompleteOnce')
+    document.querySelectorAll('script[data-pjax]').forEach(item => {
+      const newScript = document.createElement('script')
+      const content = item.text || item.textContent || item.innerHTML || ""
+      Array.from(item.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value))
+      newScript.appendChild(document.createTextNode(content))
+      item.parentNode.replaceChild(newScript, item)
+    })
+
+    triggerPjaxFn(window.globalFn.pjaxComplete)
+  })
+
+  document.addEventListener('pjax:error', e => {
+    if (e.request.status === 404) {
+      true
+        ? pjax.loadUrl('/404.html')
+        : window.location.href = e.request.responseURL
+    }
+  })
+})</script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜尋</span><i class="fas fa-spinner fa-pulse" id="loading-status" hidden="hidden"></i><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="text-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  資料載入中</span></div><div class="local-search-input"><input placeholder="搜尋文章" type="text"/></div><hr/><div id="local-search-results"></div><div class="ais-Pagination" id="local-search-pagination" style="display:none;"><ul class="ais-Pagination-list"></ul></div><div id="local-search-stats"></div></div><div id="search-mask"></div><script src="/js/search/local-search.js"></script></div></div></body></html>

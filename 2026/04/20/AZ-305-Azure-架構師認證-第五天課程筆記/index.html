@@ -1,0 +1,539 @@
+<!DOCTYPE html><html lang="zh-TW" data-theme="dark"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>AZ-305 Azure 架構師認證 - 第五天課程筆記 | Cheng's Tech &amp; Life</title><meta name="author" content="Cheng®"><meta name="copyright" content="Cheng®"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#0d0d0d"><meta name="description" content="英語版題庫 2026-04-17 起變動 20%，繁中版兩到三週內同步。50～60 題、700 分過關、答錯不倒扣。第五天把考試報名、考場選擇、備考策略、六題範例解析壓成一天，整個課程在「怎麼考過」這一步收尾。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="AZ-305 Azure 架構師認證 - 第五天課程筆記">
+<meta property="og:url" content="https://mark22013333.github.io/2026/04/20/AZ-305-Azure-%E6%9E%B6%E6%A7%8B%E5%B8%AB%E8%AA%8D%E8%AD%89-%E7%AC%AC%E4%BA%94%E5%A4%A9%E8%AA%B2%E7%A8%8B%E7%AD%86%E8%A8%98/index.html">
+<meta property="og:site_name" content="Cheng&#39;s Tech &amp; Life">
+<meta property="og:description" content="英語版題庫 2026-04-17 起變動 20%，繁中版兩到三週內同步。50～60 題、700 分過關、答錯不倒扣。第五天把考試報名、考場選擇、備考策略、六題範例解析壓成一天，整個課程在「怎麼考過」這一步收尾。">
+<meta property="og:locale" content="zh_TW">
+<meta property="og:image" content="https://mark22013333.github.io/img/20260420-az305.webp">
+<meta property="article:published_time" content="2026-04-20T13:30:00.000Z">
+<meta property="article:modified_time" content="2026-04-20T13:20:43.832Z">
+<meta property="article:author" content="Cheng®">
+<meta property="article:tag" content="Azure">
+<meta property="article:tag" content="AZ-305">
+<meta property="article:tag" content="證照考試">
+<meta property="article:tag" content="Microsoft Learn">
+<meta property="article:tag" content="Pearson VUE">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://mark22013333.github.io/img/20260420-az305.webp"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "AZ-305 Azure 架構師認證 - 第五天課程筆記",
+  "url": "https://mark22013333.github.io/2026/04/20/AZ-305-Azure-%E6%9E%B6%E6%A7%8B%E5%B8%AB%E8%AA%8D%E8%AD%89-%E7%AC%AC%E4%BA%94%E5%A4%A9%E8%AA%B2%E7%A8%8B%E7%AD%86%E8%A8%98/",
+  "image": "https://mark22013333.github.io/img/20260420-az305.webp",
+  "datePublished": "2026-04-20T13:30:00.000Z",
+  "dateModified": "2026-04-20T13:20:43.832Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "Cheng®",
+      "url": "https://mark22013333.github.io"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://mark22013333.github.io/2026/04/20/AZ-305-Azure-%E6%9E%B6%E6%A7%8B%E5%B8%AB%E8%AA%8D%E8%AD%89-%E7%AC%AC%E4%BA%94%E5%A4%A9%E8%AA%B2%E7%A8%8B%E7%AD%86%E8%A8%98/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//www.google-analytics.com" crossorigin=""/><link rel="preconnect" href="//fonts.googleapis.com" crossorigin=""/><link rel="preconnect" href="//busuanzi.ibruce.info"/><meta name="google-site-verification" content="6ywUr8k2n_CT1PFYJzlSvI3CZ-JmJ55RYbA39VrFBDs"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!true && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          const hour = new Date().getHours()
+          const isNight = hour <= 9 || hour >= 18
+          if (theme === undefined) isNight ? activateDarkMode() : activateLightMode()
+          else theme === 'light' ? activateLightMode() : activateDarkMode()
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script async="async" src="https://www.googletagmanager.com/gtag/js?id=G-JBV14NRDH3"></script><script>window.dataLayer = window.dataLayer || []
+function gtag(){dataLayer.push(arguments)}
+gtag('js', new Date())
+gtag('config', 'G-JBV14NRDH3')
+btf.addGlobalFn('pjaxComplete', () => {
+  gtag('config', 'G-JBV14NRDH3', {'page_path': window.location.pathname})
+}, 'google_analytics')
+</script><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Titillium+Web&amp;display=swap" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"pagination":{"enable":false,"hitsPerPage":8},"languages":{"hits_empty":"找不到符合您查詢的內容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '複製成功',
+    error: '複製失敗',
+    noSupport: '瀏覽器不支援'
+  },
+  relativeDate: {
+    homepage: false,
+    post: true
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '剛剛',
+    min: '分鐘前',
+    hour: '小時前',
+    day: '天前',
+    month: '個月前'
+  },
+  copyright: {"limitCount":1,"languages":{"author":"作者: Cheng®","link":"連結: ","source":"來源: Cheng's Tech & Life","info":"著作權歸作者所有。如需商業轉載，請聯絡作者獲得授權，非商業轉載請註明出處😁。"}},
+  lightbox: 'fancybox',
+  Snackbar: {"chs_to_cht":"已切換為繁體中文","cht_to_chs":"已切換為簡體中文","day_to_night":"已切換為深色模式","night_to_day":"已切換為淺色模式","bgLight":"#49b1f5","bgDark":"#1f1f1f","position":"top-center"},
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid/dist/infinitegrid.min.js',
+    buttonText: '載入更多'
+  },
+  isPhotoFigcaption: true,
+  islazyloadPlugin: false,
+  isAnchor: true,
+  percent: {
+    toc: true,
+    rightside: true,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'AZ-305 Azure 架構師認證 - 第五天課程筆記',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><link rel="stylesheet" href="/css/kkbox-player.css"><link rel="stylesheet" href="/css/tag-cloud-fancy.css"><link rel="stylesheet" href="/css/font-resize.css"><link rel="stylesheet" href="/css/dark-palette.css"><link rel="stylesheet" href="/css/loading-override.css"><link rel="alternate" href="/atom.xml" title="Cheng's Tech & Life" type="application/atom+xml">
+</head><body><div id="loading-box"><div class="loading-glass-overlay"></div><div class="loading-indicator"><div class="loading-dot"></div><div class="loading-dot"></div><div class="loading-dot"></div></div></div><script>(()=>{
+  const $loadingBox = document.getElementById('loading-box')
+  const $body = document.body
+  const preloader = {
+    endLoading: () => {
+      if ($loadingBox.classList.contains('loaded')) return
+      $body.style.overflow = ''
+      $loadingBox.classList.add('loaded')
+    },
+    initLoading: () => {
+      $body.style.overflow = 'hidden'
+      $loadingBox.classList.remove('loaded')
+    }
+  }
+
+  preloader.initLoading()
+
+  if (document.readyState === 'complete') {
+    preloader.endLoading()
+  } else {
+    window.addEventListener('load', preloader.endLoading)
+    document.addEventListener('DOMContentLoaded', preloader.endLoading)
+    setTimeout(preloader.endLoading, 7000)
+  }
+
+  if (true) {
+    btf.addGlobalFn('pjaxSend', preloader.initLoading, 'preloader_init')
+    btf.addGlobalFn('pjaxComplete', preloader.endLoading, 'preloader_end')
+  }
+})()</script><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="https://lh3.googleusercontent.com/pw/ABLVV87_po8nBc6F_tXcoYDmtzMGWxHuhhrbguYILCjmjWKLOS8DTpubm0YoQLKgjyjRIZyV5TjYe7XVEz_YU4squfr37GTZqPZP1hlMVZ_MIgXpTxWu73M=w1200" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">161</div></a><a href="/tags/"><div class="headline">標籤</div><div class="length-num">142</div></a><a href="/categories/"><div class="headline">分類</div><div class="length-num">12</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首頁-Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 時間軸-archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 標籤-tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分類-Categories</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-list"></i><span> 其他列表</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音樂-Music</span></a></li><li><a class="site-page child" href="/gallery/"><i class="fa-fw fas fa-images"></i><span> 畫館-Gallery</span></a></li></ul></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg fixed" id="page-header" style="background-image: url(/img/20260420-az305.webp);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><img class="site-icon" src="https://lh3.googleusercontent.com/pw/ABLVV87_po8nBc6F_tXcoYDmtzMGWxHuhhrbguYILCjmjWKLOS8DTpubm0YoQLKgjyjRIZyV5TjYe7XVEz_YU4squfr37GTZqPZP1hlMVZ_MIgXpTxWu73M=w1200" alt="Logo"><span class="site-name">Cheng's Tech &amp; Life</span></a><a class="nav-page-title" href="/"><span class="site-name">AZ-305 Azure 架構師認證 - 第五天課程筆記</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首頁</span></span></a></span><div id="menus"><div id="search-button" title="Ctrl+K / Cmd+K"><span class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜尋</span></span></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首頁-Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 時間軸-archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 標籤-tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分類-Categories</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-list"></i><span> 其他列表</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音樂-Music</span></a></li><li><a class="site-page child" href="/gallery/"><i class="fa-fw fas fa-images"></i><span> 畫館-Gallery</span></a></li></ul></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">AZ-305 Azure 架構師認證 - 第五天課程筆記</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">發表於</span><time class="post-meta-date-created" datetime="2026-04-20T13:30:00.000Z" title="發表於 2026-04-20 13:30:00">2026-04-20</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新於</span><time class="post-meta-date-updated" datetime="2026-04-20T13:20:43.832Z" title="更新於 2026-04-20 13:20:43">2026-04-20</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E5%BE%AE%E8%BB%9F%E8%AA%B2%E7%A8%8B/">微軟課程</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">總字數:</span><span class="word-count">3.8k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">閱讀時間:</span><span>11分鐘</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">瀏覽量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><p>**20%**。這是英語版 AZ-305 題庫在 2026-04-17 更新的變動比例。新題範疇集中在監控、備份、遷移——也就是第四天才剛上完的東西。繁中、簡中、港版會在兩到三週內陸續同步，6 月底前完成。</p>
+<p>想像你準備某科期末考準備到一半，突然老師改了五分之一的題目——這大概是大部分考生最怕聽到的消息。第五天講師開場就先打這劑強心針：<strong>怎麼把這個變動納進備考時程</strong>。</p>
+<p>這篇是 AZ-305 第五天的課堂筆記。前四天講技術，這一天全部講「怎麼考過」——從報名、考場選擇、費用優惠、到六題範例解析，整個考試流程被壓在最後一天過完。</p>
+<hr>
+<h2 id="考試定位：兩張考才拿得到專家級"><a href="#考試定位：兩張考才拿得到專家級" class="headerlink" title="考試定位：兩張考才拿得到專家級"></a>考試定位：兩張考才拿得到專家級</h2><p>AZ-305 是 Azure Solutions Architect Expert <strong>三星專家級</strong>認證。這個級別的設計是：<strong>必須同時通過 AZ-305 跟 AZ-104（Azure Administrator Associate）</strong>，微軟才會核發專家證書。</p>
+<p>順序不限。可以先考 AZ-305 再補 AZ-104，也可以反過來。但只有一張的話，只會拿到對應的單一認證，不會有專家級徽章。</p>
+<p>這個設計的邏輯很清楚：架構師不能只會畫架構圖，還得懂基礎操作。AZ-104 證明你會開機、會設網路、會管帳號；AZ-305 證明你能把這些零件組成解決方案。兩張加起來才是完整的架構師。</p>
+<hr>
+<h2 id="認證入口：從電子書找進去"><a href="#認證入口：從電子書找進去" class="headerlink" title="認證入口：從電子書找進去"></a>認證入口：從電子書找進去</h2><p>入口在 Microsoft Learn 的電子書：「設計 Microsoft Azure 基礎結構解決方案」→ 右上角「相關認證」。</p>
+<p>進去之後有個小技巧——<strong>網址最後的 <code>zh-cn</code> 改成 <code>zh-tw</code> 就是繁中、改 <code>zh-hk</code> 就是港版</strong>。內容完全一致，只是翻譯的用詞風格不同。中港台三個版本各有偏好，挑看得最順的即可。</p>
+<p>關於那個英語版題庫變動 20% 的消息，有個訊號值得注意：其他語系的同步要等兩到三週。這段期間如果你考的是英語版，<strong>建議把第四天（監控、備份、遷移）的內容再加強一輪</strong>，因為新題範疇就在那邊。考繁中、簡中、港版的話，最好等同步完再考；除非你 5 月上旬就必須考完，否則緩個兩週壓力會小很多。</p>
+<hr>
+<h2 id="註冊帳號：這條地雷很大"><a href="#註冊帳號：這條地雷很大" class="headerlink" title="註冊帳號：這條地雷很大"></a>註冊帳號：這條地雷很大</h2><p><strong>強烈建議用個人帳戶註冊</strong>（Hotmail &#x2F; Outlook 等）。絕對不要用公司帳戶。</p>
+<p>原因是這樣的——微軟認證綁的是帳戶，不是人。如果你離職，公司帳戶會被 HR 或 IT 收回，你花了 83 美元考到的證書就一起被收回去了。微軟<strong>無法回復</strong>這類認證，最多就是個客服工單跑流程最後被駁回。</p>
+<p>基本資料也有坑。地址、城市務必填真實且為英文：微軟極低機率會寄送實體禮品卡，中文地址在海外物流系統轉不出來。</p>
+<p>右下角的 Email 欄位是<strong>收取報考確認信的唯一管道、也是報考成功的唯一憑證</strong>——填錯一次就沒補救方法，必須重開帳號。</p>
+<p>費曼式的檢查清單：認證就像你的結婚證書，上面的名字要跟身份證一致，收件地址要真的能收到信，帳號要是你離職後還保得住的那個。這三條沒做對，後面都是白忙一場。</p>
+<hr>
+<h2 id="考場選擇：線上還是實體？"><a href="#考場選擇：線上還是實體？" class="headerlink" title="考場選擇：線上還是實體？"></a>考場選擇：線上還是實體？</h2><p>微軟認證統一由 <strong>Pearson VUE</strong> 代理。兩種應考方式，各有坑。</p>
+<p><strong>線上考試 OnVUE</strong>：自家電腦安裝軟體、自備環境。關鍵細節：</p>
+<ul>
+<li>監考員同時監考多場，不是專職盯你</li>
+<li>網路斷線、鏡頭看不到人 → <strong>直接判定作弊、中止考試，費用不退</strong></li>
+<li>伺服器在海外，中國大陸考生網路風險高</li>
+<li>適合：有穩定海外連線、考過多次的熟練考生</li>
+</ul>
+<p><strong>實體考試中心</strong>（講師強烈建議首考者用這個）：</p>
+<ul>
+<li>台灣（台北、桃園、台南、花蓮等）、香港（多區）、中國大陸省會級城市基本都有</li>
+<li>偏遠地區會例外（例如貴州貴安新區大數據中心區）</li>
+<li><strong>一次最多可勾選 3 個考場</strong>，不同考場的開放日不一</li>
+</ul>
+<p>選考場有四個訣竅：</p>
+<ol>
+<li><strong>區域優先</strong>：離自己最近的考場當主選，但同時勾選 2-3 個備案</li>
+<li><strong>時間靈活</strong>：主考場時段不合適就換稍遠但週末或工作日可選的</li>
+<li><strong>避開熱門時段</strong>：單一考場通常 4 台機器，上午場人滿；別人先考完離場會給你心理壓力</li>
+<li><strong>建議下午 10:00～11:00 場</strong>：人少、安靜、不被干擾</li>
+</ol>
+<p>考場列表裡<strong>黃底可展開</strong>代表該日尚有其他時段，點「瀏覽更多時間」就能看到。</p>
+<hr>
+<h2 id="改期、取消、費用：規則比想像寬鬆"><a href="#改期、取消、費用：規則比想像寬鬆" class="headerlink" title="改期、取消、費用：規則比想像寬鬆"></a>改期、取消、費用：規則比想像寬鬆</h2><p>免費改期、取消各 <strong>1 次機會</strong>，共兩次操作空間。必須在考試開始前 <strong>24 小時以上</strong>完成。24 小時內無法改、<strong>遲到無法補救</strong>。</p>
+<blockquote>
+<p>千萬不要遲到。遲到等於考試報廢，無法改簽、也無法用免費券彌補。</p>
+</blockquote>
+<p>費用這邊有個要點：</p>
+<ul>
+<li><strong>原價 83 美元</strong>（USD 計費，不是人民幣）</li>
+<li><strong>ESI 優惠</strong>：公司加入微軟 ESI 計畫，個人帳號綁定後自動帶入 <strong>50% 折扣</strong></li>
+<li><strong>免費考試券</strong>：取消考試後會退回，可用於下次預約</li>
+</ul>
+<p>關鍵操作細節：<strong>使用免費考試券前必須刪除 ESI 折扣</strong>。考試券沒辦法對打完折的殘額再折，只能扣原價。理想目標是報名總價歸零（Total USD 0.00）。</p>
+<p>證件要求：<strong>帶有照片的身份證件</strong>（身份證 &#x2F; 護照 &#x2F; 工作證都可，但必須有照片）。註冊時只留姓名、沒有臉部辨識，到考場時靠照片證件核對本人。無照片一律不讓進。</p>
+<p>建議考試時程：今天（2026-04-17）起 1 個月內（5&#x2F;16 前）考完最佳。<strong>一個月是剛好的複習窗口</strong>——太早寫不完，太晚會忘。</p>
+<hr>
+<h2 id="證書效期：1-年-免費-Renew"><a href="#證書效期：1-年-免費-Renew" class="headerlink" title="證書效期：1 年 + 免費 Renew"></a>證書效期：1 年 + 免費 Renew</h2><p>專家級認證有效期是 1 年。有效期過半（約 6 個月）時微軟會寄信提醒續訂。</p>
+<p>續訂不用重新註冊或付費：</p>
+<ul>
+<li>登入認證頁面 → 點「Renew」→ 線上作答約 <strong>26 題</strong></li>
+<li>通過後自動延展 1 年</li>
+</ul>
+<p>這個設計對持續學習者很友善。你通過一次之後，只要每年花一兩小時回頭複習、做 26 題線上測驗，證書就能一直續下去。</p>
+<hr>
+<h2 id="複習策略：官方資源才是金礦"><a href="#複習策略：官方資源才是金礦" class="headerlink" title="複習策略：官方資源才是金礦"></a>複習策略：官方資源才是金礦</h2><blockquote>
+<p>核心原則：<strong>尊重官方、以官方為主</strong>。不要迷信外部傳言或付費題庫，官方資料才是最珍貴的備考來源。</p>
+</blockquote>
+<p>官方資源就兩個：</p>
+<ol>
+<li><strong>電子書（Study Guide）</strong>：從頭到尾至少讀 1～2 遍，每章都要讀完</li>
+<li><strong>免費練習評估（Practice Assessment）</strong>：50 題，不會出現於考試，但能驗證知識點</li>
+</ol>
+<p>就這兩個。沒有官方備考影片——AZ-305 知識點太廣、橫跨多個服務，微軟沒做專門影片。所有「一週速通 AZ-305」之類的 YouTube 內容都是第三方，參考就好。</p>
+<p>官方公佈的知識點佔比跟課程安排略有差異，實際體驗大致是：</p>
+<ul>
+<li><strong>基礎結構（計算、網路、儲存、資料庫）→ 最大頭，約 60%</strong></li>
+<li><strong>Identity（Microsoft Entra ID）+ 治理（Policy &#x2F; RBAC）→ 約 15~20%</strong></li>
+<li><strong>業務連續性（備份、遷移、監控）→ 佔比最少，但每次都會出</strong></li>
+</ul>
+<p>側重順序建議：</p>
+<ol>
+<li>計算、網路、儲存、資料庫（Day 1～Day 3 的內容）</li>
+<li>Identity、RBAC、Azure Policy</li>
+<li>備份與遷移（Day 4 內容）——佔比少但必考</li>
+</ol>
+<p>還有個容易忽略的點：<strong>AZ-305 屬於 AZ-104 的進階延伸</strong>，題庫含有基礎操作層級的題目（如基本使用者管理）。複習時可以回頭看 AZ-104 內容做補強，別因為你是「架構師」就跳過操作細節。</p>
+<hr>
+<h2 id="題型與評分：微軟相對寬容"><a href="#題型與評分：微軟相對寬容" class="headerlink" title="題型與評分：微軟相對寬容"></a>題型與評分：微軟相對寬容</h2><p>題數：每人 <strong>50～60 題</strong>（隨機抽題，每人題目不一樣）。滿分 1000，<strong>700 分合格</strong>。時間通常 1 小時內可完成。</p>
+<p>所有答案都在螢幕上用滑鼠點選或拖拉，<strong>不需鍵盤打字</strong>。</p>
+<p>題型共六種：</p>
+<ol>
+<li><strong>單選題</strong>：選項前為<strong>圓框</strong></li>
+<li><strong>多選題</strong>：選項前為<strong>方框</strong>；題幹會明示「Select X」要選幾個</li>
+<li><strong>判斷題</strong>：Yes &#x2F; No</li>
+<li><strong>下拉選單題</strong>（Dropdown）：題幹中插下拉框</li>
+<li><strong>熱點題</strong>（Hotspot &#x2F; 拖拉）：左邊選項、右邊空格，有文字版與白框版</li>
+<li><strong>拖拉排序題</strong>（<strong>最難</strong>）：先挑出正確選項，再按正確順序排列</li>
+</ol>
+<p>評分規則微軟算是寬容：</p>
+<ul>
+<li><strong>單選</strong>：對就得分、錯不扣分</li>
+<li><strong>多選</strong>：對一個給部分分數、漏選不滿分、<strong>多選錯的不倒扣</strong></li>
+<li>比某些「選錯倒扣分」的測驗人性許多</li>
+</ul>
+<p>題幹語言的坑：題幹、選項依選定的語系翻譯，但<strong>服務名稱（Azure 服務）、圖片內文字一律英文不翻譯</strong>。讀題時要留意圖片內的英文專有名詞，尤其是縮寫（VMSS、PPG、AOAG）和相似名稱（Availability Set vs Availability Zone vs Proximity Placement Group）。</p>
+<hr>
+<h2 id="做題技巧：倒著讀題法"><a href="#做題技巧：倒著讀題法" class="headerlink" title="做題技巧：倒著讀題法"></a>做題技巧：倒著讀題法</h2><p>長題幹加表格資料是 AZ-305 的特色。講師的倒著讀題法很值得學：</p>
+<ol>
+<li><strong>先讀最後的問題</strong>（真正要回答的那一句）</li>
+<li><strong>再讀答案選項</strong>（先框定待選空間）</li>
+<li><strong>最後回頭讀題幹</strong>（帶著問題比對條件）</li>
+</ol>
+<p>這個方法的原理很費曼：題幹是被問題框住的資訊，先知道問題才知道哪些資訊重要、哪些是干擾項。反過來從頭讀，大腦會試著記住所有細節——考試時間根本不夠這樣讀。</p>
+<p>兩個額外提醒：</p>
+<p><strong>注意單選 &#x2F; 多選圖示</strong>。圓框只能挑一個，方框必須選滿正確數量才給分。搞錯會痛失整題的分。</p>
+<p><strong>不過度鑽牛角尖</strong>。官方出題偶有瑕疵（例如「刪除資源組」情境忽略 7 天冷卻期）。以官方視為「正確」的答案為主，不要在細節上鑽——實務上需要額外步驟，不代表考試就該選那個答案。</p>
+<hr>
+<h2 id="六題範例：建立考點敏感度"><a href="#六題範例：建立考點敏感度" class="headerlink" title="六題範例：建立考點敏感度"></a>六題範例：建立考點敏感度</h2><p>課程最後挑了幾題有代表性的範例。這些不是要背答案，是要<strong>建立看到關鍵字就觸發的反射</strong>。</p>
+<h3 id="範例-1：Proximity-Placement-Group"><a href="#範例-1：Proximity-Placement-Group" class="headerlink" title="範例 1：Proximity Placement Group"></a>範例 1：Proximity Placement Group</h3><blockquote>
+<p>部署多台 VM，希望彼此之間網路延遲愈低愈好，應該選哪種功能？</p>
+</blockquote>
+<p>✅ 正解：<strong>Proximity Placement Group</strong></p>
+<p>干擾項與為什麼不選：</p>
+<ul>
+<li>Availability Set &#x2F; Availability Zone：強調「高可用」或「跨區容災」，<strong>不是為了延遲</strong></li>
+<li>VMSS（Virtual Machine Scale Set）：解決「彈性擴展」，跟延遲<strong>無直接關係</strong></li>
+</ul>
+<p>反射規則：看到「<strong>低延遲 &#x2F; low latency</strong>」就直接聯想到 Proximity Placement Group。</p>
+<h3 id="範例-2：資源組刪除受阻"><a href="#範例-2：資源組刪除受阻" class="headerlink" title="範例 2：資源組刪除受阻"></a>範例 2：資源組刪除受阻</h3><blockquote>
+<p>嘗試刪除某 Resource Group，系統提示無法刪除。最常見的三種原因？</p>
+</blockquote>
+<ul>
+<li>資源組內含 <strong>Recovery Services Vault</strong>，其中仍存放備份資料</li>
+<li>資源組被設定了 <strong>Lock</strong>（CanNotDelete &#x2F; ReadOnly）</li>
+<li>備份保險箱<strong>剛停用保護，尚在 7 天冷卻期內</strong>，無法立即刪除</li>
+</ul>
+<p>反射規則：Recovery Services Vault 啟用「軟刪除（Soft Delete）」後，停用保護也會保留資料一段時間——急著刪資源組時常卡在這裡。</p>
+<h3 id="範例-3：Access-Review-的適用對象"><a href="#範例-3：Access-Review-的適用對象" class="headerlink" title="範例 3：Access Review 的適用對象"></a>範例 3：Access Review 的適用對象</h3><blockquote>
+<p>希望定期檢視外部合作單位的存取權限，選擇合適的 Entra ID 功能。</p>
+</blockquote>
+<p>✅ 正解：<strong>Access Review</strong>（存取檢閱）</p>
+<p>可針對 Guest 使用者、群組成員、應用程式指派做定期檢查。特別常用於管理 <strong>B2B Guest 帳號</strong>。</p>
+<p>反射規則：關鍵字「<strong>定期檢視</strong>」+「<strong>外部使用者 &#x2F; Guest</strong>」&#x3D; Access Review。</p>
+<h3 id="範例-4：動態群組（Dynamic-Group）"><a href="#範例-4：動態群組（Dynamic-Group）" class="headerlink" title="範例 4：動態群組（Dynamic Group）"></a>範例 4：動態群組（Dynamic Group）</h3><blockquote>
+<p>希望使用者依部門屬性自動加入對應群組，不想手動加人。</p>
+</blockquote>
+<p>✅ 正解：<strong>Dynamic Group</strong>（規則式成員資格）</p>
+<p>以屬性（如 Department、Country）組合條件自動納入成員。</p>
+<p>干擾項：Assigned Group 需要逐一加入，不符合「自動化」訴求。</p>
+<p>反射規則：要注意區分「<strong>Dynamic User</strong>」與「<strong>Dynamic Device</strong>」——題目會明確指定是使用者還是裝置。</p>
+<h3 id="範例-5：授予目錄角色（Directory-Role）"><a href="#範例-5：授予目錄角色（Directory-Role）" class="headerlink" title="範例 5：授予目錄角色（Directory Role）"></a>範例 5：授予目錄角色（Directory Role）</h3><blockquote>
+<p>需要授予使用者「管理其他使用者帳號」的權限，又不想給最高的全域管理員。</p>
+</blockquote>
+<p>✅ 正解：<strong>User Administrator</strong>（使用者管理員）</p>
+<p>可新增、修改、重設密碼等。</p>
+<p>反射規則：AZ-305 會<strong>反覆測試「最小權限（Least Privilege）」</strong>。題目問誰最合適時，選那個剛好夠用、不多給的角色。</p>
+<h3 id="範例-6：SSO-存取地端-Web-App"><a href="#範例-6：SSO-存取地端-Web-App" class="headerlink" title="範例 6：SSO 存取地端 Web App"></a>範例 6：SSO 存取地端 Web App</h3><blockquote>
+<p>使用者在外面要以 Entra ID 帳號單一登入存取地端的 Web 應用，同時做條件式判斷。</p>
+</blockquote>
+<p>✅ 正解：<strong>Application Proxy + Conditional Access</strong></p>
+<ul>
+<li>Application Proxy 把地端應用發佈到 Entra ID</li>
+<li>Conditional Access 控管登入條件（例如必須 MFA、必須從企業網路）</li>
+</ul>
+<p>干擾項與為什麼不選：VPN 雖可連線，但<strong>不屬於 SSO</strong>，也缺少 Conditional Access 的細部控制。</p>
+<p>反射規則：關鍵字「<strong>地端 Web App + SSO + 外部存取</strong>」&#x3D; Application Proxy。</p>
+<hr>
+<h2 id="補充參考網站"><a href="#補充參考網站" class="headerlink" title="補充參考網站"></a>補充參考網站</h2><table>
+<thead>
+<tr>
+<th>資源</th>
+<th>角色</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Microsoft Learn（電子書 + Practice Assessment）</td>
+<td>最準、最貼近真題風格，官方出的一切都要看</td>
+</tr>
+<tr>
+<td>Practice Assessment</td>
+<td>官方模擬題，<strong>務必做</strong></td>
+</tr>
+<tr>
+<td>ExamTopics</td>
+<td>大量題庫可練，但答案常與留言版討論相左；<strong>不要盲信單一來源</strong>，用社群投票+官方文件交叉比對</td>
+</tr>
+<tr>
+<td>Microsoft Learn 官方文件</td>
+<td>釐清服務差異時的最終裁判</td>
+</tr>
+</tbody></table>
+<p>ExamTopics 上<strong>若某題社群投票分歧</strong>，代表真題可能已更新或題意模糊，遇到這種題目<strong>以官方文件為準</strong>。</p>
+<hr>
+<h2 id="讀到這裡，可以開始報名了"><a href="#讀到這裡，可以開始報名了" class="headerlink" title="讀到這裡，可以開始報名了"></a>讀到這裡，可以開始報名了</h2><p>前四天講技術，第五天講流程。技術會過時，流程不會。一年後你回頭看這份筆記，服務名稱可能已經改、介面可能已經換，但「倒著讀題」「選最小權限」「以官方為準」這些做事方式會一直用得到。</p>
+<p>AZ-305 的真正價值不在證書本身——是<strong>它逼你把散落在各個專案裡的架構經驗，重新組織成一套有內在一致性的判斷框架</strong>。考試通過只是副產品。</p>
+<p>學完這個可以接著學什麼？三個方向：</p>
+<p><strong>往深走</strong>：AZ-104（Azure Administrator Associate）補完專家級的另一半。這兩張都過了，才真的拿到「Solutions Architect Expert」徽章。</p>
+<p><strong>往廣走</strong>：AZ-400（DevOps Engineer Expert）或 AZ-204（Developer Associate）。前者處理 CI&#x2F;CD 與自動化，後者處理實際寫 code 時的 Azure SDK 用法。</p>
+<p><strong>往 AI 走</strong>：AI-102（Azure AI Engineer Associate）或 DP-100（Data Scientist Associate）。AI 時代的架構師要懂 AI service 怎麼落地進企業架構。</p>
+<p>背後就一條線——架構師的能力不是知道所有服務的名字，是<strong>在陌生情境下能快速挑出適合的組合</strong>。前四天教你有什麼零件，第五天教你怎麼證明自己會用。</p>
+<p>願每位準備 AZ-305 的工程師，都能在一個月內拿到那 700 分。</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://mark22013333.github.io">Cheng®</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章連結: </span><span class="post-copyright-info"><a href="https://mark22013333.github.io/2026/04/20/AZ-305-Azure-%E6%9E%B6%E6%A7%8B%E5%B8%AB%E8%AA%8D%E8%AD%89-%E7%AC%AC%E4%BA%94%E5%A4%A9%E8%AA%B2%E7%A8%8B%E7%AD%86%E8%A8%98/">https://mark22013333.github.io/2026/04/20/AZ-305-Azure-架構師認證-第五天課程筆記/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版權聲明: </span><span class="post-copyright-info">本部落格所有文章除特別聲明外，均採用<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 授權協議。轉載請註明來源 <a href="https://mark22013333.github.io" target="_blank">Cheng's Tech & Life</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Azure/">Azure</a><a class="post-meta__tags" href="/tags/AZ-305/">AZ-305</a><a class="post-meta__tags" href="/tags/%E8%AD%89%E7%85%A7%E8%80%83%E8%A9%A6/">證照考試</a><a class="post-meta__tags" href="/tags/Microsoft-Learn/">Microsoft Learn</a><a class="post-meta__tags" href="/tags/Pearson-VUE/">Pearson VUE</a></div><div class="post-share"><div class="social-share" data-image="/img/20260420-az305.webp" data-sites="facebook,x"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><div class="post-reward"><div class="reward-badges"><a class="sponsor-glow-btn" href="https://www.buymeacoffee.com/mark22013333" target="_blank" rel="noopener noreferrer" title="Buy Me A Coffee"><img src="https://img.shields.io/badge/Buy_Me_A_Coffee-FFDD00?style=for-the-badge&amp;logo=buy-me-a-coffee&amp;logoColor=black" alt="Buy Me A Coffee"/></a><a class="sponsor-glow-btn" href="https://p.ecpay.com.tw/EFC3F8F" target="_blank" rel="noopener noreferrer" title="綠界贊助"><img src="https://img.shields.io/badge/☕_%E8%AB%8B%E6%88%91%E5%96%9D%E6%9D%AF%E5%92%96%E5%95%A1-Donate-11998e?style=for-the-badge&amp;logo=coffee&amp;logoColor=white" alt="綠界贊助"/></a><a class="sponsor-glow-btn" href="https://calendly.com/markcheng00806-intumit/15min" target="_blank" rel="noopener noreferrer" title="預約時間"><img src="https://img.shields.io/badge/📅_%E9%A0%90%E7%B4%84_15_%E5%88%86%E9%90%98-Book_Time-0072ff?style=for-the-badge" alt="預約時間"/></a><p class="reward-badges-note">你的鼓勵將被轉換為我明天繼續加班的動力（真的）。 ❤️</p></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2026/04/20/Claude-Code-Monitor-Tool-%E8%AE%93-AI-%E5%83%8F%E8%A3%9D%E4%BA%86%E9%9B%B7%E9%81%94%E4%B8%80%E6%A8%A3%E7%9B%AF%E8%91%97%E8%83%8C%E6%99%AF%E7%A8%8B%E5%BA%8F/" title="Claude Code Monitor Tool — 讓 AI 像裝了雷達一樣盯著背景程序"><img class="cover" src="/img/20260420-03.webp" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">Claude Code Monitor Tool — 讓 AI 像裝了雷達一樣盯著背景程序</div></div><div class="info-2"><div class="info-item-1">一個 /loop 每兩分鐘跑一次 pytest 的任務，在 10 分鐘裡會燒掉 5 個 API call——其中 4 個完全沒拿到有用資訊。 每次 Claude 醒來、載入 context、發 prompt、收 response，然後看到「測試還在跑，下次再來」，就這樣重複四次。token 照算、時間照花、noise 照寫進 transcript。 Claude Code v2.1.98 新增的 Monitor Tool，把這個模式整個翻過來。 想像一下你家的煙霧偵測器。它不是每 30 秒跳出來問你「廚房起火了嗎？」，而是靜靜地掛在天花板上，真的有煙才會叫。Monitor Tool 就是給 Claude 裝煙霧偵測器：背景跑一個程序，每一行 stdout 都是一個事件，事件真的來了才會叫醒 Claude。沒事件的時候，Claude 在做別的事，不花 token 也不佔 context。 這個差異在帳單上很具體。以前你要求「幫我盯著 server.log，出現 5xx 就通知」，只能用 /loop 或 watch，每次輪詢都要付出一次 Claude 的 thinking round...</div></div></div></a><a class="pagination-related" href="/2026/04/20/GH-300-GitHub-Copilot-%E8%AA%8D%E8%AD%89-%E7%AC%AC%E4%BA%94%E5%A4%A9%E8%AA%B2%E7%A8%8B%E7%AD%86%E8%A8%98/" title="GH-300 GitHub Copilot 認證 - 第五天課程筆記"><img class="cover" src="/img/20260420-gh300.webp" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">GH-300 GitHub Copilot 認證 - 第五天課程筆記</div></div><div class="info-2"><div class="info-item-1">課程走到最後一天，講師把前四天技術細節全部擺到一邊，丟出四個詞：人負責、流程優先、上下文工程、版本選擇。然後說：「記這四個就好。」 一開始以為是虛招。但把 GH-300 整份考綱攤開後會發現——這四個詞是骨架，前四天的所有 Copilot 功能、Coding Agent、SpecKit、TDD 三 Agent、自訂指令、企業治理，全部都是這四個骨頭上長出的肉。 這就是費曼式的學習：能把整門課壓成一句話的人，才真的學會了。 這篇是 GH-300 的課堂筆記，不是原創深度解析，重點是把第五天上到的東西整理清楚，對應到實務上可以拿去用的行動。  責任制的 AI：六大原則不是投影片上的裝飾微軟 Responsible AI 框架有六個原則，在 GH-300 的考試跟企業導入場合反覆出現。一開始看會以為是 PR 用的官腔，但仔細讀會發現每一條都扣著工程師日常會踩到的坑。 把六條濃縮成一個類比：AI 就像實習生。很聰明、學得快，但沒有責任能力。六個原則都是為了回答同一個問題——這個實習生搞砸了，誰要負責？ 公平性（Fairness）。模型對不同族群、不同程式風格、不同語言的反應要一致。Cop...</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相關推薦</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2026/04/13/AZ-305-Azure-%E8%A7%A3%E6%B1%BA%E6%96%B9%E6%A1%88%E6%9E%B6%E6%A7%8B%E5%B8%AB-%E7%AC%AC%E4%B8%80%E5%A4%A9%E8%AA%B2%E7%A8%8B%E7%AD%86%E8%A8%98/" title="AZ-305 Azure 解決方案架構師 — 第一天課程筆記"><img class="cover" src="/img/20260413-az305.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-04-13</div><div class="info-item-2">AZ-305 Azure 解決方案架構師 — 第一天課程筆記</div></div><div class="info-2"><div class="info-item-1">五天的課，第一天就佔考試 35%。開場就被告知「今天最重要」——治理、計算、非關係性存儲，三個模塊一次塞完。 AZ-305 是微軟認證裡面的三星等級（最高級），全名叫 Designing Microsoft Azure Infrastructure Solutions。不是叫你去按按鈕建 VM，而是要你在各種場景下選出「最適合的架構」。考試題目幾乎都是情境題，給你一堆需求讓你挑方案。 Azure 四層管理架構Azure 的資源管理長這樣： 12345Tenant（租戶）  └── Management Group（管理組）        └── Subscription（訂閱）= 計費單元              └── Resource Group（資源組）                    └── Resource（資源）= 實際服務  上面兩層考定義跟功能，下面兩層考 Policy 跟 RBAC 怎麼控制。 幾個容易搞混的點： Management Group 是拿來模擬企業組織架構的，可以巢狀嵌套。你有三個部門、每個部門底下有區域團隊，就用 Management G...</div></div></div></a><a class="pagination-related" href="/2026/04/15/AZ-305-Azure-%E6%9E%B6%E6%A7%8B%E8%A8%AD%E8%A8%88%E5%B8%AB-%E7%AC%AC%E4%B8%89%E5%A4%A9%E8%AA%B2%E7%A8%8B%E7%AD%86%E8%A8%98/" title="AZ-305 Azure 架構設計師 - 第三天課程筆記"><img class="cover" src="/img/20260415-az305.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-04-15</div><div class="info-item-2">AZ-305 Azure 架構設計師 - 第三天課程筆記</div></div><div class="info-2"><div class="info-item-1">「VPN Gateway vs ExpressRoute，百分之百會考。」 講師在講到網路設計那段的時候直接講明了。AZ-305 第三天涵蓋三大主題：身分驗證（Entra ID）、監視（Azure Monitor）、網路設計。其中網路是整個考試裡最難的部分，特別是本地與雲端的混合連接場景。 零信任模型 - 假設你已經被入侵第三天一開始就講 Zero Trust。核心原則就一句：Assume Breach——假設已經被入侵，所有存取請求都需要驗證，不管是從內網還是外網來的。 零信任透過 Microsoft Entra ID（前身是 Azure Active Directory）來實現，涵蓋存取控制、身分治理、身分保護、外部系統整合。 Entra ID 三種部署情境雲端優先：帳號主要在 Entra ID，適合新創和雲原生企業。混合式：本地 AD 透過 Entra Connect 同步到雲端，適合傳統企業。外部標識（B2C）：使用者自行註冊，面向消費者的應用在用。 Entra Connect 的同步不是單純的帳密複製，有嚴格的規則和路徑。同步前要在雲端先配好接收端。 四大考點條件式存取...</div></div></div></a><a class="pagination-related" href="/2026/04/16/AZ-305-Azure-%E6%9E%B6%E6%A7%8B%E5%B8%AB%E8%AA%8D%E8%AD%89-%E7%AC%AC%E5%9B%9B%E5%A4%A9%E8%AA%B2%E7%A8%8B%E7%AD%86%E8%A8%98/" title="AZ-305 Azure 架構師認證 - 第四天課程筆記"><img class="cover" src="/img/20260416-az305.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-04-16</div><div class="info-item-2">AZ-305 Azure 架構師認證 - 第四天課程筆記</div></div><div class="info-2"><div class="info-item-1">一台 VM，沒有公用 IP。它要存取同一個 Azure 帳號底下的 SQL Database。聽起來很簡單，但這兩個東西活在不同的世界——VM 是 IaaS，SQL Database 是 PaaS，中間隔著一層 REST API 公用端點。 AZ-305 第四天的考題，超過一半在考這類「東西都在你家裡，但就是走不通」的連通性問題。 打通 VNet 到 PaaS 的兩條路Service Endpoints 像是在你家社區圍牆上開一扇門，讓整條街的住戶都能走捷徑到附近的便利商店。設定在 VNet 層級，一次打通整個服務類型（例如所有 Storage 帳戶），限同區域，完全免費。缺點是粒度太粗——你打開了 Storage 的門，這個區域所有 Storage 帳戶都能存取，沒辦法指定只連某一個。 Private Endpoints 則是在你家客廳裡裝一條專線電話，直接撥到特定那間便利商店的特定櫃台。它會在你的 VNet 裡面生成一張網路介面（NIC），帶有私人 IP，可以精確鎖定到某個 Storage 帳戶的 Blob 子服務。支援跨區域，但需要額外設定私人 DNS 區域，而且要付費。 ...</div></div></div></a><a class="pagination-related" href="/2026/04/14/AZ-305-Azure-%E8%A7%A3%E6%B1%BA%E6%96%B9%E6%A1%88%E6%9E%B6%E6%A7%8B%E5%B8%AB-%E7%AC%AC%E4%BA%8C%E5%A4%A9%E8%AA%B2%E7%A8%8B%E7%AD%86%E8%A8%98/" title="AZ-305 Azure 解決方案架構師 — 第二天課程筆記"><img class="cover" src="/img/20260414-az305d2.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-04-14</div><div class="info-item-2">AZ-305 Azure 解決方案架構師 — 第二天課程筆記</div></div><div class="info-2"><div class="info-item-1">Day 1 把治理、計算、非關係性存儲講完了（佔考試 35%），Day 2 進入關聯式資料庫、大數據架構、消息與事件機制。 Azure SQL Database 五種部署方式   方式 控制程度 適用場景    SQL on VM 最高 需要 100% 功能相容、完全控制   Managed Instance 高 99% 相容，託管基礎架構的過渡方案   Elastic Pool 中 多個資料庫共享資源   SQL Database 低 單一資料庫，最簡單   服務連接器 低 直接連接雲端 SQL 實例   微軟的推薦順序很明確：PaaS 優先（Azure SQL Database），安全又簡單。真的需要完全控制才用 SQL on VM。Managed Instance 是過渡方案——沒辦法直接從 VM 跳 PaaS 的時候，先停在 MI 慢慢遷。 架構層級長這樣：SQL Server 實例（邏輯服務器）→ Elastic Pool（彈性池）→ Database（資料庫）。 定價模式與 SKU三種定價模式   模式 說明 適用場景    DTU 固定計算單位，簡單易懂 開發&#x...</div></div></div></a><a class="pagination-related" href="/2026/04/13/DP-300-Azure-%E8%B3%87%E6%96%99%E5%BA%AB%E7%AE%A1%E7%90%86%E5%93%A1-%E7%AC%AC%E4%B8%80%E5%A4%A9%E8%AA%B2%E7%A8%8B%E7%AD%86%E8%A8%98/" title="DP-300 Azure 資料庫管理員 — 第一天課程筆記"><img class="cover" src="/img/20260413-dp300.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-04-13</div><div class="info-item-2">DP-300 Azure 資料庫管理員 — 第一天課程筆記</div></div><div class="info-2"><div class="info-item-1">DBA 這個角色，在現在的企業裡已經不是只管資料庫了。精簡人力之後，你可能同時要兼資料工程師、分析師，搞不好連 BI 都要你碰。DP-300 就是在這個背景下設計的——它不從零教你 SQL，而是假設你有基礎，直接教你怎麼在 Azure 上管理資料庫。 SQL Server 不只是一顆引擎很多人對 SQL Server 的印象還停留在「資料庫」，但從 2008 版開始它就不是了。現在的 SQL Server 是一個完整的資料平台，裡面包了四大服務：    服務 縮寫 功能 雲端對應    Database Engine SSDE 核心資料庫引擎 Azure SQL   Integration Services SSIS ETL 資料整合 Azure Data Factory   Analysis Services SSAS 資料分析（BI） Power BI   Reporting Services SSRS 報表服務 Power BI   新版還內建了 Machine Learning Services，可以直接對資料庫的資料跑機器學習。版本一路從 7.0 → 2000 → 20...</div></div></div></a><a class="pagination-related" href="/2026/04/15/DP-300-Azure-%E8%B3%87%E6%96%99%E5%BA%AB%E7%AE%A1%E7%90%86%E5%93%A1-%E7%AC%AC%E4%B8%89%E5%A4%A9%E8%AA%B2%E7%A8%8B%E7%AD%86%E8%A8%98/" title="DP-300 Azure 資料庫管理員 - 第三天課程筆記"><img class="cover" src="/img/20260415-01.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-04-15</div><div class="info-item-2">DP-300 Azure 資料庫管理員 - 第三天課程筆記</div></div><div class="info-2"><div class="info-item-1">硬碟被偷走的那一刻，你的資料庫有幾層保護？ DP-300 第三天的主題只有一個字：安全。從最基礎的「誰可以連進來」到「DBA 自己都解不開的加密」，一整天下來把 SQL Server 的安全體系從頭到尾走了一遍。這篇筆記整理了考試會考的重點，也記錄了一些實務上容易搞混的觀念。 安全主體 - 搞清楚 Login、User、Role 的關係授權的第一步是搞清楚「你是誰」。SQL Server 把身份分成三層： Login 是伺服器層級的門票，讓你進入 SQL Server 的第一關。User 是 Login 映射到特定資料庫後產生的身份。Role 等同群組概念，你不直接對 User 授權，而是把 User 加進 Role，再對 Role 授權。  ⚠️ AWS 的 Role、Azure RBAC 的 Role、SQL Server 的 Role 雖然名稱都叫 Role，含義完全不同。踩過這個坑的人應該不少。  Contained Database User - 雲端時代的解法傳統模式下 Login 跟 User 是分開的，遷移資料庫的時候 Login 不會跟著走，結果 AlwaysO...</div></div></div></a></div></div><hr class="custom-hr"/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 評論</span></div></div><div class="comment-wrap"><div><div id="giscus-wrap"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="https://lh3.googleusercontent.com/pw/ABLVV87_po8nBc6F_tXcoYDmtzMGWxHuhhrbguYILCjmjWKLOS8DTpubm0YoQLKgjyjRIZyV5TjYe7XVEz_YU4squfr37GTZqPZP1hlMVZ_MIgXpTxWu73M=w1200" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">Cheng®</div><div class="author-info-description">Backend Developer / 技術筆記 & AI 新聞分享</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">161</div></a><a href="/tags/"><div class="headline">標籤</div><div class="length-num">142</div></a><a href="/categories/"><div class="headline">分類</div><div class="length-num">12</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/mark22013333"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons"><a class="social-icon" href="https://github.com/mark22013333" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:mark22013333@gmail.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a></div><div class="card-info-sponsor"><a class="sponsor-glow-btn" href="https://www.buymeacoffee.com/mark22013333" target="_blank" rel="noopener noreferrer" title="Buy Me A Coffee"><img src="https://img.shields.io/badge/Buy_Me_A_Coffee-FFDD00?style=for-the-badge&amp;logo=buy-me-a-coffee&amp;logoColor=black" alt="Buy Me A Coffee"/></a><a class="sponsor-glow-btn" href="https://p.ecpay.com.tw/EFC3F8F" target="_blank" rel="noopener noreferrer" title="綠界贊助"><img src="https://img.shields.io/badge/☕_%E8%AB%8B%E6%88%91%E5%96%9D%E6%9D%AF%E5%92%96%E5%95%A1-Donate-11998e?style=for-the-badge&amp;logo=coffee&amp;logoColor=white" alt="綠界贊助"/></a><a class="sponsor-glow-btn" href="https://calendly.com/markcheng00806-intumit/15min" target="_blank" rel="noopener noreferrer" title="預約時間"><img src="https://img.shields.io/badge/📅_%E9%A0%90%E7%B4%84_15_%E5%88%86%E9%90%98-Book_Time-0072ff?style=for-the-badge" alt="預約時間"/></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">這裡記錄我在後端開發路上踩過的坑、學到的東西，也會分享每日 AI 與科技新聞觀點。歡迎一起交流！</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目錄</span><span class="toc-percentage"></span></div><div class="toc-content is-expand"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%80%83%E8%A9%A6%E5%AE%9A%E4%BD%8D%EF%BC%9A%E5%85%A9%E5%BC%B5%E8%80%83%E6%89%8D%E6%8B%BF%E5%BE%97%E5%88%B0%E5%B0%88%E5%AE%B6%E7%B4%9A"><span class="toc-number">1.</span> <span class="toc-text">考試定位：兩張考才拿得到專家級</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%AA%8D%E8%AD%89%E5%85%A5%E5%8F%A3%EF%BC%9A%E5%BE%9E%E9%9B%BB%E5%AD%90%E6%9B%B8%E6%89%BE%E9%80%B2%E5%8E%BB"><span class="toc-number">2.</span> <span class="toc-text">認證入口：從電子書找進去</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%A8%BB%E5%86%8A%E5%B8%B3%E8%99%9F%EF%BC%9A%E9%80%99%E6%A2%9D%E5%9C%B0%E9%9B%B7%E5%BE%88%E5%A4%A7"><span class="toc-number">3.</span> <span class="toc-text">註冊帳號：這條地雷很大</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%80%83%E5%A0%B4%E9%81%B8%E6%93%87%EF%BC%9A%E7%B7%9A%E4%B8%8A%E9%82%84%E6%98%AF%E5%AF%A6%E9%AB%94%EF%BC%9F"><span class="toc-number">4.</span> <span class="toc-text">考場選擇：線上還是實體？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%94%B9%E6%9C%9F%E3%80%81%E5%8F%96%E6%B6%88%E3%80%81%E8%B2%BB%E7%94%A8%EF%BC%9A%E8%A6%8F%E5%89%87%E6%AF%94%E6%83%B3%E5%83%8F%E5%AF%AC%E9%AC%86"><span class="toc-number">5.</span> <span class="toc-text">改期、取消、費用：規則比想像寬鬆</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%AD%89%E6%9B%B8%E6%95%88%E6%9C%9F%EF%BC%9A1-%E5%B9%B4-%E5%85%8D%E8%B2%BB-Renew"><span class="toc-number">6.</span> <span class="toc-text">證書效期：1 年 + 免費 Renew</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%A4%87%E7%BF%92%E7%AD%96%E7%95%A5%EF%BC%9A%E5%AE%98%E6%96%B9%E8%B3%87%E6%BA%90%E6%89%8D%E6%98%AF%E9%87%91%E7%A4%A6"><span class="toc-number">7.</span> <span class="toc-text">複習策略：官方資源才是金礦</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%A1%8C%E5%9E%8B%E8%88%87%E8%A9%95%E5%88%86%EF%BC%9A%E5%BE%AE%E8%BB%9F%E7%9B%B8%E5%B0%8D%E5%AF%AC%E5%AE%B9"><span class="toc-number">8.</span> <span class="toc-text">題型與評分：微軟相對寬容</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%81%9A%E9%A1%8C%E6%8A%80%E5%B7%A7%EF%BC%9A%E5%80%92%E8%91%97%E8%AE%80%E9%A1%8C%E6%B3%95"><span class="toc-number">9.</span> <span class="toc-text">做題技巧：倒著讀題法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%AD%E9%A1%8C%E7%AF%84%E4%BE%8B%EF%BC%9A%E5%BB%BA%E7%AB%8B%E8%80%83%E9%BB%9E%E6%95%8F%E6%84%9F%E5%BA%A6"><span class="toc-number">10.</span> <span class="toc-text">六題範例：建立考點敏感度</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AF%84%E4%BE%8B-1%EF%BC%9AProximity-Placement-Group"><span class="toc-number">10.1.</span> <span class="toc-text">範例 1：Proximity Placement Group</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AF%84%E4%BE%8B-2%EF%BC%9A%E8%B3%87%E6%BA%90%E7%B5%84%E5%88%AA%E9%99%A4%E5%8F%97%E9%98%BB"><span class="toc-number">10.2.</span> <span class="toc-text">範例 2：資源組刪除受阻</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AF%84%E4%BE%8B-3%EF%BC%9AAccess-Review-%E7%9A%84%E9%81%A9%E7%94%A8%E5%B0%8D%E8%B1%A1"><span class="toc-number">10.3.</span> <span class="toc-text">範例 3：Access Review 的適用對象</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AF%84%E4%BE%8B-4%EF%BC%9A%E5%8B%95%E6%85%8B%E7%BE%A4%E7%B5%84%EF%BC%88Dynamic-Group%EF%BC%89"><span class="toc-number">10.4.</span> <span class="toc-text">範例 4：動態群組（Dynamic Group）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AF%84%E4%BE%8B-5%EF%BC%9A%E6%8E%88%E4%BA%88%E7%9B%AE%E9%8C%84%E8%A7%92%E8%89%B2%EF%BC%88Directory-Role%EF%BC%89"><span class="toc-number">10.5.</span> <span class="toc-text">範例 5：授予目錄角色（Directory Role）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AF%84%E4%BE%8B-6%EF%BC%9ASSO-%E5%AD%98%E5%8F%96%E5%9C%B0%E7%AB%AF-Web-App"><span class="toc-number">10.6.</span> <span class="toc-text">範例 6：SSO 存取地端 Web App</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%A3%9C%E5%85%85%E5%8F%83%E8%80%83%E7%B6%B2%E7%AB%99"><span class="toc-number">11.</span> <span class="toc-text">補充參考網站</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%AE%80%E5%88%B0%E9%80%99%E8%A3%A1%EF%BC%8C%E5%8F%AF%E4%BB%A5%E9%96%8B%E5%A7%8B%E5%A0%B1%E5%90%8D%E4%BA%86"><span class="toc-number">12.</span> <span class="toc-text">讀到這裡，可以開始報名了</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2026/04/23/Claude-Code-Ultraplan-%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8-%E6%8A%8A%E8%A6%8F%E5%8A%83%E4%BA%A4%E7%B5%A6%E9%9B%B2%E7%AB%AF/" title="Claude Code Ultraplan 完整教學 — 把規劃交給雲端，讓 Claude 替你想 30 分鐘"><img src="/img/20260423-03.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Claude Code Ultraplan 完整教學 — 把規劃交給雲端，讓 Claude 替你想 30 分鐘"/></a><div class="content"><a class="title" href="/2026/04/23/Claude-Code-Ultraplan-%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8-%E6%8A%8A%E8%A6%8F%E5%8A%83%E4%BA%A4%E7%B5%A6%E9%9B%B2%E7%AB%AF/" title="Claude Code Ultraplan 完整教學 — 把規劃交給雲端，讓 Claude 替你想 30 分鐘">Claude Code Ultraplan 完整教學 — 把規劃交給雲端，讓 Claude 替你想 30 分鐘</a><time datetime="2026-04-23T09:00:00.000Z" title="發表於 2026-04-23 09:00:00">2026-04-23</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/04/23/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260423/" title="AI 與科技新聞摘要 - 2026/04/23"><img src="/img/20260423-02.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="AI 與科技新聞摘要 - 2026/04/23"/></a><div class="content"><a class="title" href="/2026/04/23/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260423/" title="AI 與科技新聞摘要 - 2026/04/23">AI 與科技新聞摘要 - 2026/04/23</a><time datetime="2026-04-23T08:30:00.000Z" title="發表於 2026-04-23 08:30:00">2026-04-23</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/04/23/Agent-Skills-%E7%B5%A6-AI-%E7%B7%A8%E7%A2%BC%E5%8A%A9%E6%89%8B%E7%9A%84%E5%B7%A5%E7%A8%8B%E7%B4%80%E5%BE%8B%E6%8C%87%E4%BB%A4%E9%9B%86/" title="Agent Skills — 給 AI 編碼助手的工程紀律指令集"><img src="/img/20260423-01.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Agent Skills — 給 AI 編碼助手的工程紀律指令集"/></a><div class="content"><a class="title" href="/2026/04/23/Agent-Skills-%E7%B5%A6-AI-%E7%B7%A8%E7%A2%BC%E5%8A%A9%E6%89%8B%E7%9A%84%E5%B7%A5%E7%A8%8B%E7%B4%80%E5%BE%8B%E6%8C%87%E4%BB%A4%E9%9B%86/" title="Agent Skills — 給 AI 編碼助手的工程紀律指令集">Agent Skills — 給 AI 編碼助手的工程紀律指令集</a><time datetime="2026-04-23T08:00:00.000Z" title="發表於 2026-04-23 08:00:00">2026-04-23</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/04/22/GitHub-Copilot-%E5%81%9C%E6%AD%A2%E6%96%B0%E7%94%A8%E6%88%B6%E8%A8%BB%E5%86%8A%E5%BE%8C%E5%B7%A5%E7%A8%8B%E5%B8%AB%E6%80%8E%E9%BA%BC%E5%B9%B3%E7%A7%BB%E5%88%B0-Claude-Code/" title="GitHub Copilot 停止新用戶註冊後，工程師怎麼平移到 Claude Code"><img src="/img/20260422-03.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="GitHub Copilot 停止新用戶註冊後，工程師怎麼平移到 Claude Code"/></a><div class="content"><a class="title" href="/2026/04/22/GitHub-Copilot-%E5%81%9C%E6%AD%A2%E6%96%B0%E7%94%A8%E6%88%B6%E8%A8%BB%E5%86%8A%E5%BE%8C%E5%B7%A5%E7%A8%8B%E5%B8%AB%E6%80%8E%E9%BA%BC%E5%B9%B3%E7%A7%BB%E5%88%B0-Claude-Code/" title="GitHub Copilot 停止新用戶註冊後，工程師怎麼平移到 Claude Code">GitHub Copilot 停止新用戶註冊後，工程師怎麼平移到 Claude Code</a><time datetime="2026-04-22T09:00:00.000Z" title="發表於 2026-04-22 09:00:00">2026-04-22</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/04/22/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260422/" title="AI 與科技新聞摘要 - 2026/04/22"><img src="/img/20260422-02.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="AI 與科技新聞摘要 - 2026/04/22"/></a><div class="content"><a class="title" href="/2026/04/22/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260422/" title="AI 與科技新聞摘要 - 2026/04/22">AI 與科技新聞摘要 - 2026/04/22</a><time datetime="2026-04-22T08:30:00.000Z" title="發表於 2026-04-22 08:30:00">2026-04-22</time></div></div></div></div></div></div></main><footer id="footer" style="background-image: url(/img/20260420-az305.webp);"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2024 - 2026 By Cheng®</span></div><div class="footer_custom_text">Written by Cheng® — 自律，從當下的一念開始。</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="閱讀模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日夜模式切換"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="單欄和雙欄切換"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="設定"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目錄"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="前往評論"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到頂端"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.umd.min.js"></script><script src="https://cdn.jsdelivr.net/npm/instant.page/instantpage.min.js" type="module"></script><script src="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.js"></script><div class="js-pjax"><script>(() => {
+  const isShuoshuo = GLOBAL_CONFIG_SITE.pageType === 'shuoshuo'
+  const option = {"mapping":"pathname","strict":0,"reactionsEnabled":1,"emitMetadata":0,"inputPosition":"bottom","lang":"zh-TW"}
+
+  const getGiscusTheme = theme => theme === 'dark' ? 'dark' : 'light'
+
+  const createScriptElement = config => {
+    const ele = document.createElement('script')
+    Object.entries(config).forEach(([key, value]) => {
+      ele.setAttribute(key, value)
+    })
+    return ele
+  }
+
+  const loadGiscus = (el = document, key) => {
+    const mappingConfig = isShuoshuo
+      ? { 'data-mapping': 'specific', 'data-term': key }
+      : { 'data-mapping': (option && option['data-mapping']) || 'pathname' }
+
+    const giscusConfig = {
+      src: 'https://giscus.app/client.js',
+      'data-repo': 'mark22013333/mark22013333.github.io',
+      'data-repo-id': 'R_kgDOLAxa6A',
+      'data-category-id': 'DIC_kwDOLAxa6M4C5eO9',
+      'data-theme': getGiscusTheme(document.documentElement.getAttribute('data-theme')),
+      'data-reactions-enabled': '1',
+      crossorigin: 'anonymous',
+      async: true,
+      ...option,
+      ...mappingConfig
+    }
+
+    const scriptElement = createScriptElement(giscusConfig)
+
+    el.querySelector('#giscus-wrap').appendChild(scriptElement)
+
+    if (isShuoshuo) {
+      window.shuoshuoComment.destroyGiscus = () => {
+        if (el.children.length) {
+          el.innerHTML = ''
+          el.classList.add('no-comment')
+        }
+      }
+    }
+  }
+
+  const changeGiscusTheme = theme => {
+    const iframe = document.querySelector('#giscus-wrap iframe')
+    if (iframe) {
+      const message = {
+        giscus: {
+          setConfig: {
+            theme: getGiscusTheme(theme)
+          }
+        }
+      }
+      iframe.contentWindow.postMessage(message, 'https://giscus.app')
+    }
+  }
+
+  btf.addGlobalFn('themeChange', changeGiscusTheme, 'giscus')
+
+  if (isShuoshuo) {
+    'Giscus' === 'Giscus'
+      ? window.shuoshuoComment = { loadComment: loadGiscus }
+      : window.loadOtherComment = loadGiscus
+    return
+  }
+
+  if ('Giscus' === 'Giscus' || !true) {
+    if (true) btf.loadComment(document.getElementById('giscus-wrap'), loadGiscus)
+    else loadGiscus()
+  } else {
+    window.loadOtherComment = loadGiscus
+  }
+})()</script></div><script src="/js/kkbox-player.js"></script><script src="/js/archives-pagination.js"></script><script src="/js/font-resize.js"></script><script src="/js/dark-palette.js"></script><script defer="defer" id="fluttering_ribbon" mobile="false" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/canvas-fluttering-ribbon.min.js"></script><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/activate-power-mode.min.js"></script><script>POWERMODE.colorful = true;
+POWERMODE.shake = true;
+POWERMODE.mobile = true;
+document.body.addEventListener('input', POWERMODE);
+</script><script src="https://cdn.jsdelivr.net/npm/pjax/pjax.min.js" defer="defer"></script><script>document.addEventListener('DOMContentLoaded', () => {
+  const pjaxSelectors = ["meta[property=\"og:image\"]","meta[property=\"og:title\"]","meta[property=\"og:url\"]","meta[property=\"og:description\"]","link[rel=\"canonical\"]","head > title","#config-diff","#body-wrap","#rightside-config-hide","#rightside-config-show",".js-pjax"]
+
+  window.pjax = new Pjax({
+    elements: 'a:not([target="_blank"])',
+    selectors: pjaxSelectors,
+    cacheBust: false,
+    analytics: true,
+    scrollRestoration: false
+  })
+
+  const triggerPjaxFn = (val) => {
+    if (!val) return
+    Object.values(val).forEach(fn => {
+      try {
+        fn()
+      } catch (err) {
+        console.debug('Pjax callback failed:', err)
+      }
+    })
+  }
+
+  document.addEventListener('pjax:send', () => {
+    // removeEventListener
+    btf.removeGlobalFnEvent('pjaxSendOnce')
+    btf.removeGlobalFnEvent('themeChange')
+
+    // reset readmode
+    const $bodyClassList = document.body.classList
+    if ($bodyClassList.contains('read-mode')) $bodyClassList.remove('read-mode')
+
+    triggerPjaxFn(window.globalFn.pjaxSend)
+  })
+
+  document.addEventListener('pjax:complete', () => {
+    btf.removeGlobalFnEvent('pjaxCompleteOnce')
+    document.querySelectorAll('script[data-pjax]').forEach(item => {
+      const newScript = document.createElement('script')
+      const content = item.text || item.textContent || item.innerHTML || ""
+      Array.from(item.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value))
+      newScript.appendChild(document.createTextNode(content))
+      item.parentNode.replaceChild(newScript, item)
+    })
+
+    triggerPjaxFn(window.globalFn.pjaxComplete)
+  })
+
+  document.addEventListener('pjax:error', e => {
+    if (e.request.status === 404) {
+      true
+        ? pjax.loadUrl('/404.html')
+        : window.location.href = e.request.responseURL
+    }
+  })
+})</script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜尋</span><i class="fas fa-spinner fa-pulse" id="loading-status" hidden="hidden"></i><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="text-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  資料載入中</span></div><div class="local-search-input"><input placeholder="搜尋文章" type="text"/></div><hr/><div id="local-search-results"></div><div class="ais-Pagination" id="local-search-pagination" style="display:none;"><ul class="ais-Pagination-list"></ul></div><div id="local-search-stats"></div></div><div id="search-mask"></div><script src="/js/search/local-search.js"></script></div></div></body></html>

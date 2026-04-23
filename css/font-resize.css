@@ -1,0 +1,45 @@
+/* Font Resize - Fixed button on left side to avoid rightside buttons */
+#font-resize-btn {
+  position: fixed;
+  left: 15px;
+  bottom: 15px;
+  z-index: 10000;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: var(--card-bg, #fff);
+  color: var(--font-color, #4c4948);
+  border: 1px solid var(--card-border-color, #e3e8f7);
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+#font-resize-btn:hover {
+  transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+/* Font size scaling classes */
+.font-size-medium #content-inner,
+.font-size-medium .post-content,
+.font-size-medium .card-content,
+.font-size-medium .card-announcement .content,
+.font-size-medium .aside-content {
+  font-size: 1.1rem;
+  line-height: 1.9;
+}
+
+.font-size-large #content-inner,
+.font-size-large .post-content,
+.font-size-large .card-content,
+.font-size-large .card-announcement .content,
+.font-size-large .aside-content {
+  font-size: 1.25rem;
+  line-height: 2;
+}

@@ -1,0 +1,106 @@
+/* AI Music Floating Player */
+#music-fixed-player {
+  position: fixed;
+  right: -360px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 360px;
+  height: 580px;
+  z-index: 9999;
+  border-radius: 12px 0 0 12px;
+  overflow: hidden;
+  box-shadow: -2px 0 15px rgba(0, 0, 0, 0.25);
+  transition: right 0.35s ease;
+  background: #111;
+  display: flex;
+  flex-direction: column;
+}
+
+#music-fixed-player.open {
+  right: 0;
+}
+
+#music-iframe {
+  flex: 1;
+  width: 100%;
+  border: none;
+  display: block;
+  background: #111;
+}
+
+/* Shuffle / next button inside panel */
+#music-shuffle {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  z-index: 10001;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #6c5ce7, #a29bfe);
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  font-size: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 10px rgba(108, 92, 231, 0.4);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+#music-shuffle:hover {
+  transform: scale(1.1);
+  box-shadow: 0 4px 16px rgba(108, 92, 231, 0.6);
+}
+
+#music-shuffle.spin {
+  animation: shuffle-spin 0.6s ease;
+}
+
+@keyframes shuffle-spin {
+  0% { transform: rotate(0deg) scale(1); }
+  50% { transform: rotate(180deg) scale(1.2); }
+  100% { transform: rotate(360deg) scale(1); }
+}
+
+/* Toggle button on screen edge */
+#music-toggle {
+  position: fixed;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 10000;
+  width: 40px;
+  height: 40px;
+  border-radius: 8px 0 0 8px;
+  background: linear-gradient(135deg, #6c5ce7, #1a1a2e);
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: -2px 2px 8px rgba(0, 0, 0, 0.3);
+  transition: right 0.35s ease;
+}
+
+#music-toggle.open {
+  right: 360px;
+}
+
+#music-toggle:hover {
+  opacity: 0.9;
+}
+
+@media screen and (max-width: 768px) {
+  #music-fixed-player {
+    width: 300px;
+    height: 480px;
+    right: -300px;
+  }
+  #music-toggle.open {
+    right: 300px;
+  }
+}

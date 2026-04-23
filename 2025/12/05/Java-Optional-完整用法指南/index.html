@@ -1,0 +1,438 @@
+<!DOCTYPE html><html lang="zh-TW" data-theme="dark"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>Java Optional 完整用法指南 | Cheng's Tech &amp; Life</title><meta name="author" content="Cheng®"><meta name="copyright" content="Cheng®"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#0d0d0d"><meta name="description" content="Optional 是 Java 8 引入的概念，初看很簡單，其實用法超深。一開始很多人覺得 Optional 很煩，後來用對了才發現「真香」。最關鍵是理解它的三段式結構。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Java Optional 完整用法指南">
+<meta property="og:url" content="https://mark22013333.github.io/2025/12/05/Java-Optional-%E5%AE%8C%E6%95%B4%E7%94%A8%E6%B3%95%E6%8C%87%E5%8D%97/index.html">
+<meta property="og:site_name" content="Cheng&#39;s Tech &amp; Life">
+<meta property="og:description" content="Optional 是 Java 8 引入的概念，初看很簡單，其實用法超深。一開始很多人覺得 Optional 很煩，後來用對了才發現「真香」。最關鍵是理解它的三段式結構。">
+<meta property="og:locale" content="zh_TW">
+<meta property="og:image" content="https://mark22013333.github.io/img/20251205-01.webp">
+<meta property="article:published_time" content="2025-12-05T00:30:00.000Z">
+<meta property="article:modified_time" content="2026-04-13T02:00:09.836Z">
+<meta property="article:author" content="Cheng®">
+<meta property="article:tag" content="Java">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://mark22013333.github.io/img/20251205-01.webp"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Java Optional 完整用法指南",
+  "url": "https://mark22013333.github.io/2025/12/05/Java-Optional-%E5%AE%8C%E6%95%B4%E7%94%A8%E6%B3%95%E6%8C%87%E5%8D%97/",
+  "image": "https://mark22013333.github.io/img/20251205-01.webp",
+  "datePublished": "2025-12-05T00:30:00.000Z",
+  "dateModified": "2026-04-13T02:00:09.836Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "Cheng®",
+      "url": "https://mark22013333.github.io"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://mark22013333.github.io/2025/12/05/Java-Optional-%E5%AE%8C%E6%95%B4%E7%94%A8%E6%B3%95%E6%8C%87%E5%8D%97/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//www.google-analytics.com" crossorigin=""/><link rel="preconnect" href="//fonts.googleapis.com" crossorigin=""/><link rel="preconnect" href="//busuanzi.ibruce.info"/><meta name="google-site-verification" content="6ywUr8k2n_CT1PFYJzlSvI3CZ-JmJ55RYbA39VrFBDs"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!true && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          const hour = new Date().getHours()
+          const isNight = hour <= 9 || hour >= 18
+          if (theme === undefined) isNight ? activateDarkMode() : activateLightMode()
+          else theme === 'light' ? activateLightMode() : activateDarkMode()
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script async="async" src="https://www.googletagmanager.com/gtag/js?id=G-JBV14NRDH3"></script><script>window.dataLayer = window.dataLayer || []
+function gtag(){dataLayer.push(arguments)}
+gtag('js', new Date())
+gtag('config', 'G-JBV14NRDH3')
+btf.addGlobalFn('pjaxComplete', () => {
+  gtag('config', 'G-JBV14NRDH3', {'page_path': window.location.pathname})
+}, 'google_analytics')
+</script><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Titillium+Web&amp;display=swap" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"pagination":{"enable":false,"hitsPerPage":8},"languages":{"hits_empty":"找不到符合您查詢的內容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '複製成功',
+    error: '複製失敗',
+    noSupport: '瀏覽器不支援'
+  },
+  relativeDate: {
+    homepage: false,
+    post: true
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '剛剛',
+    min: '分鐘前',
+    hour: '小時前',
+    day: '天前',
+    month: '個月前'
+  },
+  copyright: {"limitCount":1,"languages":{"author":"作者: Cheng®","link":"連結: ","source":"來源: Cheng's Tech & Life","info":"著作權歸作者所有。如需商業轉載，請聯絡作者獲得授權，非商業轉載請註明出處😁。"}},
+  lightbox: 'fancybox',
+  Snackbar: {"chs_to_cht":"已切換為繁體中文","cht_to_chs":"已切換為簡體中文","day_to_night":"已切換為深色模式","night_to_day":"已切換為淺色模式","bgLight":"#49b1f5","bgDark":"#1f1f1f","position":"top-center"},
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid/dist/infinitegrid.min.js',
+    buttonText: '載入更多'
+  },
+  isPhotoFigcaption: true,
+  islazyloadPlugin: false,
+  isAnchor: true,
+  percent: {
+    toc: true,
+    rightside: true,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Java Optional 完整用法指南',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><link rel="stylesheet" href="/css/kkbox-player.css"><link rel="stylesheet" href="/css/tag-cloud-fancy.css"><link rel="stylesheet" href="/css/font-resize.css"><link rel="stylesheet" href="/css/dark-palette.css"><link rel="stylesheet" href="/css/loading-override.css"><link rel="alternate" href="/atom.xml" title="Cheng's Tech & Life" type="application/atom+xml">
+</head><body><div id="loading-box"><div class="loading-glass-overlay"></div><div class="loading-indicator"><div class="loading-dot"></div><div class="loading-dot"></div><div class="loading-dot"></div></div></div><script>(()=>{
+  const $loadingBox = document.getElementById('loading-box')
+  const $body = document.body
+  const preloader = {
+    endLoading: () => {
+      if ($loadingBox.classList.contains('loaded')) return
+      $body.style.overflow = ''
+      $loadingBox.classList.add('loaded')
+    },
+    initLoading: () => {
+      $body.style.overflow = 'hidden'
+      $loadingBox.classList.remove('loaded')
+    }
+  }
+
+  preloader.initLoading()
+
+  if (document.readyState === 'complete') {
+    preloader.endLoading()
+  } else {
+    window.addEventListener('load', preloader.endLoading)
+    document.addEventListener('DOMContentLoaded', preloader.endLoading)
+    setTimeout(preloader.endLoading, 7000)
+  }
+
+  if (true) {
+    btf.addGlobalFn('pjaxSend', preloader.initLoading, 'preloader_init')
+    btf.addGlobalFn('pjaxComplete', preloader.endLoading, 'preloader_end')
+  }
+})()</script><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="https://lh3.googleusercontent.com/pw/ABLVV87_po8nBc6F_tXcoYDmtzMGWxHuhhrbguYILCjmjWKLOS8DTpubm0YoQLKgjyjRIZyV5TjYe7XVEz_YU4squfr37GTZqPZP1hlMVZ_MIgXpTxWu73M=w1200" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">161</div></a><a href="/tags/"><div class="headline">標籤</div><div class="length-num">142</div></a><a href="/categories/"><div class="headline">分類</div><div class="length-num">12</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首頁-Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 時間軸-archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 標籤-tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分類-Categories</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-list"></i><span> 其他列表</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音樂-Music</span></a></li><li><a class="site-page child" href="/gallery/"><i class="fa-fw fas fa-images"></i><span> 畫館-Gallery</span></a></li></ul></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg fixed" id="page-header" style="background-image: url(/img/20251205-01.webp);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><img class="site-icon" src="https://lh3.googleusercontent.com/pw/ABLVV87_po8nBc6F_tXcoYDmtzMGWxHuhhrbguYILCjmjWKLOS8DTpubm0YoQLKgjyjRIZyV5TjYe7XVEz_YU4squfr37GTZqPZP1hlMVZ_MIgXpTxWu73M=w1200" alt="Logo"><span class="site-name">Cheng's Tech &amp; Life</span></a><a class="nav-page-title" href="/"><span class="site-name">Java Optional 完整用法指南</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首頁</span></span></a></span><div id="menus"><div id="search-button" title="Ctrl+K / Cmd+K"><span class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜尋</span></span></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首頁-Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 時間軸-archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 標籤-tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分類-Categories</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-list"></i><span> 其他列表</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音樂-Music</span></a></li><li><a class="site-page child" href="/gallery/"><i class="fa-fw fas fa-images"></i><span> 畫館-Gallery</span></a></li></ul></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">Java Optional 完整用法指南</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">發表於</span><time class="post-meta-date-created" datetime="2025-12-05T00:30:00.000Z" title="發表於 2025-12-05 00:30:00">2025-12-05</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新於</span><time class="post-meta-date-updated" datetime="2026-04-13T02:00:09.836Z" title="更新於 2026-04-13 02:00:09">2026-04-13</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Java/">Java</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">總字數:</span><span class="word-count">1.8k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">閱讀時間:</span><span>8分鐘</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">瀏覽量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><p>Optional 是 Java 8 引入的概念，初看很簡單，其實用法超深。一開始很多人覺得 Optional 很煩，後來用對了才發現「真香」。最關鍵是理解它的三段式結構。</p>
+<h2 id="Optional-的三段式結構"><a href="#Optional-的三段式結構" class="headerlink" title="Optional 的三段式結構"></a>Optional 的三段式結構</h2><p>Optional 的用法可以分成三段：<strong>頭部（建立）→ 身體（轉換）→ 尾巴（取值）</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">建立        轉換（0~多個）       取值</span><br><span class="line">Optional → filter/map/flatMap → orElse/ifPresent</span><br></pre></td></tr></table></figure>
+
+<h2 id="頭部：建立-Optional"><a href="#頭部：建立-Optional" class="headerlink" title="頭部：建立 Optional"></a>頭部：建立 Optional</h2><h3 id="of-確定非-null"><a href="#of-確定非-null" class="headerlink" title="of() - 確定非 null"></a>of() - 確定非 null</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">User</span> <span class="variable">user</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">User</span>(<span class="string">&quot;Alice&quot;</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 用 of() 當你確定值一定不為 null</span></span><br><span class="line">Optional&lt;User&gt; opt = Optional.of(user);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 如果值是 null，直接拋 NullPointerException</span></span><br><span class="line">Optional&lt;User&gt; opt2 = Optional.of(<span class="literal">null</span>);  <span class="comment">// ❌ 拋 exception</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="ofNullable-可能-null"><a href="#ofNullable-可能-null" class="headerlink" title="ofNullable() - 可能 null"></a>ofNullable() - 可能 null</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">User</span> <span class="variable">user</span> <span class="operator">=</span> getUserFromDB(<span class="number">123</span>);  <span class="comment">// 可能回傳 null</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 用 ofNullable 當不確定值是否為 null</span></span><br><span class="line">Optional&lt;User&gt; opt = Optional.ofNullable(user);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 如果 user 是 null，opt 就是 empty Optional，不會拋 exception</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="empty-明確的空"><a href="#empty-明確的空" class="headerlink" title="empty() - 明確的空"></a>empty() - 明確的空</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 當你要返回「明確沒有值」時</span></span><br><span class="line">Optional&lt;User&gt; opt = Optional.empty();</span><br></pre></td></tr></table></figure>
+
+<h2 id="身體：轉換資料"><a href="#身體：轉換資料" class="headerlink" title="身體：轉換資料"></a>身體：轉換資料</h2><h3 id="filter-條件篩選"><a href="#filter-條件篩選" class="headerlink" title="filter() - 條件篩選"></a>filter() - 條件篩選</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">Optional&lt;User&gt; user = Optional.ofNullable(getUser());</span><br><span class="line"></span><br><span class="line"><span class="comment">// filter：條件滿足則保留，不滿足變成 empty</span></span><br><span class="line">Optional&lt;User&gt; adult = user</span><br><span class="line">    .filter(u -&gt; u.getAge() &gt;= <span class="number">18</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 等等於</span></span><br><span class="line"><span class="keyword">if</span> (user.isPresent() &amp;&amp; user.get().getAge() &gt;= <span class="number">18</span>) &#123;</span><br><span class="line">    <span class="comment">// 有值</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>實務例子：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> Optional&lt;User&gt; <span class="title function_">findActiveUser</span><span class="params">(Long userId)</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> Optional.ofNullable(userRepository.findById(userId))</span><br><span class="line">        .filter(u -&gt; u.isActive());  <span class="comment">// 只返回活躍的使用者</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="map-轉換值"><a href="#map-轉換值" class="headerlink" title="map() - 轉換值"></a>map() - 轉換值</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">Optional&lt;User&gt; user = Optional.ofNullable(getUser());</span><br><span class="line"></span><br><span class="line"><span class="comment">// map：如果有值，轉換它；沒值則保持 empty</span></span><br><span class="line">Optional&lt;String&gt; name = user</span><br><span class="line">    .map(u -&gt; u.getName());</span><br><span class="line"></span><br><span class="line"><span class="comment">// 等等於</span></span><br><span class="line">Optional&lt;String&gt; name;</span><br><span class="line"><span class="keyword">if</span> (user.isPresent()) &#123;</span><br><span class="line">    name = Optional.of(user.get().getName());</span><br><span class="line">&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    name = Optional.empty();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>map 會自動處理 null：</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Optional&lt;User&gt; user = Optional.ofNullable(getUser());</span><br><span class="line"></span><br><span class="line">Optional&lt;String&gt; email = user</span><br><span class="line">    .map(u -&gt; u.getEmail());  <span class="comment">// 如果 getEmail() 回傳 null，變成 empty</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 不用自己檢查 null</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="flatMap-值本身是-Optional"><a href="#flatMap-值本身是-Optional" class="headerlink" title="flatMap() - 值本身是 Optional"></a>flatMap() - 值本身是 Optional</h3><p>當轉換函式本身回傳 Optional 時，用 flatMap：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> Optional&lt;Address&gt; <span class="title function_">getAddress</span><span class="params">(User user)</span> &#123;</span><br><span class="line">    <span class="comment">// 這個方法本身回傳 Optional</span></span><br><span class="line">    <span class="keyword">return</span> Optional.ofNullable(user.getAddress());</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">Optional&lt;User&gt; user = Optional.ofNullable(getUser());</span><br><span class="line"></span><br><span class="line"><span class="comment">// 錯誤做法 - map 會包裝兩層 Optional</span></span><br><span class="line">Optional&lt;Optional&lt;Address&gt;&gt; address1 = user</span><br><span class="line">    .map(u -&gt; getAddress(u));  <span class="comment">// Optional&lt;Optional&lt;Address&gt;&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 正確做法 - flatMap 會自動展開</span></span><br><span class="line">Optional&lt;Address&gt; address = user</span><br><span class="line">    .flatMap(u -&gt; getAddress(u));  <span class="comment">// Optional&lt;Address&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>flatMap 原理：</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// map(f) 的邏輯：</span></span><br><span class="line"><span class="comment">// if (value.present) &#123; return Optional.of(f(value)); &#125; else &#123; return empty; &#125;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// flatMap(f) 的邏輯：</span></span><br><span class="line"><span class="comment">// if (value.present) &#123; return f(value);  &#125; else &#123; return empty; &#125;</span></span><br><span class="line"><span class="comment">// 注意：f 本身回傳 Optional，flatMap 不會再包一層</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="or-替代來源（Java-9-）"><a href="#or-替代來源（Java-9-）" class="headerlink" title="or() - 替代來源（Java 9+）"></a>or() - 替代來源（Java 9+）</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">Optional&lt;User&gt; primaryUser = findUserInDB(<span class="number">123</span>);</span><br><span class="line">Optional&lt;User&gt; backupUser = findUserInCache(<span class="number">123</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 如果 primaryUser 是 empty，用 backupUser</span></span><br><span class="line">Optional&lt;User&gt; user = primaryUser.or(() -&gt; backupUser);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 等等於</span></span><br><span class="line">Optional&lt;User&gt; user;</span><br><span class="line"><span class="keyword">if</span> (primaryUser.isPresent()) &#123;</span><br><span class="line">    user = primaryUser;</span><br><span class="line">&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    user = backupUser;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="stream-轉成-Stream（Java-9-）"><a href="#stream-轉成-Stream（Java-9-）" class="headerlink" title="stream() - 轉成 Stream（Java 9+）"></a>stream() - 轉成 Stream（Java 9+）</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">List&lt;User&gt; users = Arrays.asList(user1, user2);</span><br><span class="line"></span><br><span class="line">users.stream()</span><br><span class="line">    .map(u -&gt; findUserProfile(u.getId()))  <span class="comment">// Optional&lt;Profile&gt;</span></span><br><span class="line">    .flatMap(Optional::stream)              <span class="comment">// 展開 Optional</span></span><br><span class="line">    .forEach(System.out::println);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 等等於</span></span><br><span class="line">users.stream()</span><br><span class="line">    .map(u -&gt; findUserProfile(u.getId()))</span><br><span class="line">    .filter(Optional::isPresent)</span><br><span class="line">    .map(Optional::get)</span><br><span class="line">    .forEach(System.out::println);</span><br></pre></td></tr></table></figure>
+
+<h2 id="尾巴：取值"><a href="#尾巴：取值" class="headerlink" title="尾巴：取值"></a>尾巴：取值</h2><h3 id="ifPresent-有值時執行"><a href="#ifPresent-有值時執行" class="headerlink" title="ifPresent() - 有值時執行"></a>ifPresent() - 有值時執行</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">Optional&lt;User&gt; user = Optional.ofNullable(getUser());</span><br><span class="line"></span><br><span class="line">user.ifPresent(u -&gt; &#123;</span><br><span class="line">    System.out.println(<span class="string">&quot;User: &quot;</span> + u.getName());</span><br><span class="line">    updateUserActivity(u);</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 等等於</span></span><br><span class="line"><span class="keyword">if</span> (user.isPresent()) &#123;</span><br><span class="line">    System.out.println(<span class="string">&quot;User: &quot;</span> + user.get().getName());</span><br><span class="line">    updateUserActivity(user.get());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="ifPresentOrElse-有值-無值分別處理（Java-9-）"><a href="#ifPresentOrElse-有值-無值分別處理（Java-9-）" class="headerlink" title="ifPresentOrElse() - 有值&#x2F;無值分別處理（Java 9+）"></a>ifPresentOrElse() - 有值&#x2F;無值分別處理（Java 9+）</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">Optional&lt;User&gt; user = Optional.ofNullable(getUser());</span><br><span class="line"></span><br><span class="line">user.ifPresentOrElse(</span><br><span class="line">    u -&gt; System.out.println(<span class="string">&quot;Found: &quot;</span> + u.getName()),</span><br><span class="line">    () -&gt; System.out.println(<span class="string">&quot;User not found&quot;</span>)</span><br><span class="line">);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 等等於</span></span><br><span class="line"><span class="keyword">if</span> (user.isPresent()) &#123;</span><br><span class="line">    System.out.println(<span class="string">&quot;Found: &quot;</span> + user.get().getName());</span><br><span class="line">&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    System.out.println(<span class="string">&quot;User not found&quot;</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="orElse-無值時回傳預設值"><a href="#orElse-無值時回傳預設值" class="headerlink" title="orElse() - 無值時回傳預設值"></a>orElse() - 無值時回傳預設值</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Optional&lt;User&gt; user = Optional.ofNullable(getUser());</span><br><span class="line"></span><br><span class="line"><span class="comment">// 如果沒有值，回傳預設使用者</span></span><br><span class="line"><span class="type">User</span> <span class="variable">result</span> <span class="operator">=</span> user.orElse(createDefaultUser());</span><br></pre></td></tr></table></figure>
+
+<p><strong>重要：orElse 的預設值會被直接求值</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">User</span> <span class="variable">result</span> <span class="operator">=</span> user.orElse(expensiveUserCreation());</span><br><span class="line"><span class="comment">// 即使 user 有值，expensiveUserCreation() 也會被執行！</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 這在迴圈中特別糟糕</span></span><br><span class="line"><span class="keyword">for</span> (Long userId : userIds) &#123;</span><br><span class="line">    <span class="type">User</span> <span class="variable">u</span> <span class="operator">=</span> findUser(userId).orElse(createDefaultUser());</span><br><span class="line">    <span class="comment">// 每次迴圈都會呼叫 createDefaultUser，即使找到了使用者</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="orElseGet-無值時才執行函式（Lazy）"><a href="#orElseGet-無值時才執行函式（Lazy）" class="headerlink" title="orElseGet() - 無值時才執行函式（Lazy）"></a>orElseGet() - 無值時才執行函式（Lazy）</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">Optional&lt;User&gt; user = Optional.ofNullable(getUser());</span><br><span class="line"></span><br><span class="line"><span class="comment">// 只有在沒有值時，才執行 lambda</span></span><br><span class="line"><span class="type">User</span> <span class="variable">result</span> <span class="operator">=</span> user.orElseGet(() -&gt; createDefaultUser());</span><br><span class="line"></span><br><span class="line"><span class="comment">// 在迴圈中</span></span><br><span class="line"><span class="keyword">for</span> (Long userId : userIds) &#123;</span><br><span class="line">    <span class="type">User</span> <span class="variable">u</span> <span class="operator">=</span> findUser(userId).orElseGet(() -&gt; createDefaultUser());</span><br><span class="line">    <span class="comment">// createDefaultUser() 只在真正沒找到時才執行</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>orElse vs orElseGet 的差異表：</strong></p>
+<table>
+<thead>
+<tr>
+<th>情境</th>
+<th>orElse</th>
+<th>orElseGet</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Optional 有值</td>
+<td>預設值被求值</td>
+<td>預設值不被求值（不執行）</td>
+</tr>
+<tr>
+<td>Optional 無值</td>
+<td>預設值被求值</td>
+<td>預設值被求值（執行 supplier）</td>
+</tr>
+<tr>
+<td>預設值耗時</td>
+<td>浪費計算</td>
+<td>只在需要時才計算</td>
+</tr>
+</tbody></table>
+<h3 id="orElseThrow-無值時拋-exception"><a href="#orElseThrow-無值時拋-exception" class="headerlink" title="orElseThrow() - 無值時拋 exception"></a>orElseThrow() - 無值時拋 exception</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">Optional&lt;User&gt; user = Optional.ofNullable(getUser(<span class="number">123</span>));</span><br><span class="line"></span><br><span class="line"><span class="comment">// 如果沒找到，拋 NoSuchElementException</span></span><br><span class="line"><span class="type">User</span> <span class="variable">u</span> <span class="operator">=</span> user.orElseThrow();</span><br><span class="line"></span><br><span class="line"><span class="comment">// 或自訂 exception</span></span><br><span class="line"><span class="type">User</span> <span class="variable">u</span> <span class="operator">=</span> user.orElseThrow(() -&gt; </span><br><span class="line">    <span class="keyword">new</span> <span class="title class_">UserNotFoundException</span>(<span class="string">&quot;User 123 not found&quot;</span>)</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+
+<h2 id="實務範例"><a href="#實務範例" class="headerlink" title="實務範例"></a>實務範例</h2><h3 id="場景-1：API-回應"><a href="#場景-1：API-回應" class="headerlink" title="場景 1：API 回應"></a>場景 1：API 回應</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@GetMapping(&quot;/user/&#123;id&#125;&quot;)</span></span><br><span class="line"><span class="keyword">public</span> ResponseEntity&lt;?&gt; getUser(<span class="meta">@PathVariable</span> Long id) &#123;</span><br><span class="line">    <span class="keyword">return</span> userService.findUser(id)</span><br><span class="line">        .map(user -&gt; ResponseEntity.ok(user))</span><br><span class="line">        .orElseGet(() -&gt; ResponseEntity.notFound().build());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="場景-2：DB-查詢-預設值"><a href="#場景-2：DB-查詢-預設值" class="headerlink" title="場景 2：DB 查詢 + 預設值"></a>場景 2：DB 查詢 + 預設值</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Service</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">UserService</span> &#123;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">public</span> User <span class="title function_">getUserOrDefault</span><span class="params">(Long id)</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> userRepository.findById(id)</span><br><span class="line">            .orElseGet(() -&gt; &#123;</span><br><span class="line">                <span class="type">User</span> <span class="variable">defaultUser</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">User</span>();</span><br><span class="line">                defaultUser.setName(<span class="string">&quot;Unknown&quot;</span>);</span><br><span class="line">                <span class="keyword">return</span> defaultUser;</span><br><span class="line">            &#125;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="場景-3：鏈接多個查詢"><a href="#場景-3：鏈接多個查詢" class="headerlink" title="場景 3：鏈接多個查詢"></a>場景 3：鏈接多個查詢</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 查詢優先級：DB → Cache → Default</span></span><br><span class="line"><span class="keyword">public</span> User <span class="title function_">getUser</span><span class="params">(Long id)</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> findUserInDB(id)</span><br><span class="line">        .or(() -&gt; findUserInCache(id))</span><br><span class="line">        .or(() -&gt; Optional.of(createDefaultUser()))</span><br><span class="line">        .get();  <span class="comment">// 最終一定有值，安全 .get()</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="場景-4：過濾和轉換"><a href="#場景-4：過濾和轉換" class="headerlink" title="場景 4：過濾和轉換"></a>場景 4：過濾和轉換</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">List&lt;Long&gt; userIds = userRepository.findActiveUserIds();</span><br><span class="line"></span><br><span class="line">List&lt;String&gt; activeNames = userIds.stream()</span><br><span class="line">    .map(id -&gt; findUser(id))               <span class="comment">// Optional&lt;User&gt;</span></span><br><span class="line">    .filter(Optional::isPresent)           <span class="comment">// 過濾有值的</span></span><br><span class="line">    .map(Optional::get)                    <span class="comment">// 取出 User</span></span><br><span class="line">    .filter(u -&gt; u.getLoginCount() &gt; <span class="number">0</span>)   <span class="comment">// 再過濾</span></span><br><span class="line">    .map(User::getName)                    <span class="comment">// 取名字</span></span><br><span class="line">    .collect(Collectors.toList());</span><br></pre></td></tr></table></figure>
+
+<h2 id="常見踩坑"><a href="#常見踩坑" class="headerlink" title="常見踩坑"></a>常見踩坑</h2><p><strong>坑 1：orElse 的預設值總是被求值</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 錯誤 - 浪費 I/O</span></span><br><span class="line"><span class="type">String</span> <span class="variable">config</span> <span class="operator">=</span> loadConfig()</span><br><span class="line">    .orElse(fetchFromRemoteServer());  <span class="comment">// 會被執行！</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 正確</span></span><br><span class="line"><span class="type">String</span> <span class="variable">config</span> <span class="operator">=</span> loadConfig()</span><br><span class="line">    .orElseGet(() -&gt; fetchFromRemoteServer());  <span class="comment">// lazy</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>坑 2：get() 可能拋 exception</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 危險</span></span><br><span class="line"><span class="type">User</span> <span class="variable">user</span> <span class="operator">=</span> Optional.ofNullable(getUser()).get();  <span class="comment">// 可能拋 NoSuchElementException</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 安全</span></span><br><span class="line"><span class="type">User</span> <span class="variable">user</span> <span class="operator">=</span> Optional.ofNullable(getUser())</span><br><span class="line">    .orElseThrow(() -&gt; <span class="keyword">new</span> <span class="title class_">UserNotFoundException</span>());</span><br><span class="line"></span><br><span class="line"><span class="comment">// 或</span></span><br><span class="line">Optional&lt;User&gt; opt = Optional.ofNullable(getUser());</span><br><span class="line"><span class="keyword">if</span> (opt.isPresent()) &#123;</span><br><span class="line">    <span class="type">User</span> <span class="variable">user</span> <span class="operator">=</span> opt.get();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>坑 3：map 陷阱 - 轉換函式回傳 null</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">Optional&lt;User&gt; user = Optional.of(<span class="keyword">new</span> <span class="title class_">User</span>(<span class="string">&quot;Alice&quot;</span>));</span><br><span class="line"></span><br><span class="line"><span class="comment">// 如果 getEmail() 回傳 null，map 的結果是 empty，不是 null</span></span><br><span class="line">Optional&lt;String&gt; email = user.map(u -&gt; u.getEmail());</span><br><span class="line"></span><br><span class="line"><span class="comment">// 所以這是安全的</span></span><br><span class="line"><span class="type">String</span> <span class="variable">result</span> <span class="operator">=</span> email.orElse(<span class="string">&quot;no-email&quot;</span>);  <span class="comment">// 不會是 null</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>坑 4：連鎖 filter 造成複雜代碼</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 複雜的鏈接</span></span><br><span class="line">Optional&lt;String&gt; result = userRepository.findById(<span class="number">123</span>)</span><br><span class="line">    .filter(u -&gt; u.isActive())</span><br><span class="line">    .filter(u -&gt; u.hasRole(<span class="string">&quot;ADMIN&quot;</span>))</span><br><span class="line">    .map(u -&gt; u.getEmail())</span><br><span class="line">    .filter(email -&gt; email.contains(<span class="string">&quot;@&quot;</span>))</span><br><span class="line">    .map(String::toUpperCase);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 用 stream 會更清楚</span></span><br><span class="line">Stream&lt;String&gt; results = userRepository.findById(<span class="number">123</span>)</span><br><span class="line">    .stream()</span><br><span class="line">    .filter(u -&gt; u.isActive() &amp;&amp; u.hasRole(<span class="string">&quot;ADMIN&quot;</span>))</span><br><span class="line">    .map(User::getEmail)</span><br><span class="line">    .filter(email -&gt; email.contains(<span class="string">&quot;@&quot;</span>))</span><br><span class="line">    .map(String::toUpperCase);</span><br></pre></td></tr></table></figure>
+
+<h2 id="何時使用-Optional"><a href="#何時使用-Optional" class="headerlink" title="何時使用 Optional"></a>何時使用 Optional</h2><p><strong>該用 Optional：</strong></p>
+<ul>
+<li>回傳值可能 null</li>
+<li>API 方法簽名想明確表達「可能無值」</li>
+<li>函式式風格的串接操作</li>
+</ul>
+<p><strong>不該用 Optional：</strong></p>
+<ul>
+<li>方法參數（用 @Nullable annotation 就好）</li>
+<li>集合：不用 Optional<List>，用空集合</li>
+<li>必須有值的情況</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 不好</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">process</span><span class="params">(Optional&lt;User&gt; user)</span> &#123;</span><br><span class="line">    <span class="comment">// 呼叫時 process(Optional.of(user)) 很彆扭</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 好</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">process</span><span class="params">(User user)</span> &#123;</span><br><span class="line">    <span class="comment">// 或用 @Nullable</span></span><br><span class="line">    <span class="comment">// public void process(@Nullable User user)</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 不好</span></span><br><span class="line"><span class="keyword">public</span> Optional&lt;List&lt;User&gt;&gt; <span class="title function_">findUsers</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> Optional.ofNullable(query());  <span class="comment">// 用空集合更好</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 好</span></span><br><span class="line"><span class="keyword">public</span> List&lt;User&gt; <span class="title function_">findUsers</span><span class="params">()</span> &#123;</span><br><span class="line">    List&lt;User&gt; results = query();</span><br><span class="line">    <span class="keyword">return</span> results != <span class="literal">null</span> ? results : Collections.emptyList();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="最後的話"><a href="#最後的話" class="headerlink" title="最後的話"></a>最後的話</h2><p>Optional 一開始覺得拖泥帶水，用熟了才發現真的香。關鍵是記住三段式結構，懂得區分 map 和 flatMap，特別是 orElse 和 orElseGet 的差異。用好了，程式不但 null-safe，還超函式式。沒有 Optional 前的 Java，得自己檢查一堆 if (obj !&#x3D; null)，現在直接用 .orElse()，乾淨多了。</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://mark22013333.github.io">Cheng®</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章連結: </span><span class="post-copyright-info"><a href="https://mark22013333.github.io/2025/12/05/Java-Optional-%E5%AE%8C%E6%95%B4%E7%94%A8%E6%B3%95%E6%8C%87%E5%8D%97/">https://mark22013333.github.io/2025/12/05/Java-Optional-完整用法指南/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版權聲明: </span><span class="post-copyright-info">本部落格所有文章除特別聲明外，均採用<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 授權協議。轉載請註明來源 <a href="https://mark22013333.github.io" target="_blank">Cheng's Tech & Life</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Java/">Java</a></div><div class="post-share"><div class="social-share" data-image="/img/20251205-01.webp" data-sites="facebook,x"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><div class="post-reward"><div class="reward-badges"><a class="sponsor-glow-btn" href="https://www.buymeacoffee.com/mark22013333" target="_blank" rel="noopener noreferrer" title="Buy Me A Coffee"><img src="https://img.shields.io/badge/Buy_Me_A_Coffee-FFDD00?style=for-the-badge&amp;logo=buy-me-a-coffee&amp;logoColor=black" alt="Buy Me A Coffee"/></a><a class="sponsor-glow-btn" href="https://p.ecpay.com.tw/EFC3F8F" target="_blank" rel="noopener noreferrer" title="綠界贊助"><img src="https://img.shields.io/badge/☕_%E8%AB%8B%E6%88%91%E5%96%9D%E6%9D%AF%E5%92%96%E5%95%A1-Donate-11998e?style=for-the-badge&amp;logo=coffee&amp;logoColor=white" alt="綠界贊助"/></a><a class="sponsor-glow-btn" href="https://calendly.com/markcheng00806-intumit/15min" target="_blank" rel="noopener noreferrer" title="預約時間"><img src="https://img.shields.io/badge/📅_%E9%A0%90%E7%B4%84_15_%E5%88%86%E9%90%98-Book_Time-0072ff?style=for-the-badge" alt="預約時間"/></a><p class="reward-badges-note">你的鼓勵將被轉換為我明天繼續加班的動力（真的）。 ❤️</p></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2025/11/24/Java-%E5%AF%A6%E9%AB%94%E9%A1%9E%E7%89%A9%E4%BB%B6%E6%AF%94%E8%BC%83-equals-%E8%88%87-hashCode-%E6%AD%A3%E7%A2%BA%E5%AF%A6%E4%BD%9C/" title="Java 實體類物件比較 - equals 與 hashCode 正確實作"><img class="cover" src="/img/20251124-01.webp" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">Java 實體類物件比較 - equals 與 hashCode 正確實作</div></div><div class="info-2"><div class="info-item-1">比較兩個物件相等這種事，看似簡單但超容易踩坑。特別是涉及 equals 和 hashCode 時，小細節搞錯就會爆。見過太多人只覆寫 equals 不覆寫 hashCode，或用 BigDecimal 的 equals 爆掉的慘案。 核心概念要比較兩個物件相等，**必須同時覆寫 equals() 和 hashCode()**。 為什麼？因為 HashMap、HashSet 等容器依賴 hashCode 和 equals 配合： 123456789// 容器先用 hashCode 定位，再用 equals 驗證Map&lt;User, String&gt; map = new HashMap&lt;&gt;();User u1 = new User(1L, &quot;Alice&quot;);map.put(u1, &quot;value1&quot;);User u2 = new User(1L, &quot;Alice&quot;);// 如果只覆寫 equals 不覆寫 hashCode：// u1 和 u2 hashCode 不同 → 容器認為是不同的鍵// map.ge...</div></div></div></a><a class="pagination-related" href="/2025/12/16/Java-Retry-%E9%87%8D%E8%A9%A6%E6%A9%9F%E5%88%B6-%E6%8C%87%E6%95%B8%E9%80%80%E9%81%BF%E6%A8%A1%E7%89%88/" title="Java Retry 重試機制 - 指數退避模版"><img class="cover" src="/img/20251216-01.webp" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">Java Retry 重試機制 - 指數退避模版</div></div><div class="info-2"><div class="info-item-1">遠端呼叫爆了，重試一下通常就活了。但如果一直狂轟，server 只會更爆。所以咱們要聰明一點，用指數退避（exponential backoff）的方式慢慢來。 為啥要指數退避直接 retry 沒有 delay 的問題：  Server 還沒回過來，馬上再打一次，等於雪上加霜 頻繁重試反而加重服務負擔 看起來像 DDoS 攻擊 XD  指數退避的邏輯：  第 1 次失敗，等 2 秒再試 第 2 次失敗，等 4 秒再試 第 3 次失敗，等 8 秒再試 以此類推…  給 server 喘息的時間，機率就高很多。 通用模版12345678910111213141516171819202122232425262728public boolean retry(int maxAttempts, int initialDelaySeconds, Runnable action) &#123;    int attempts = 0;    int delay = initialDelaySeconds;        while (attempts &lt; maxAttempts) &#12...</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相關推薦</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2024/03/21/HashMap-%E2%86%92-computeIfAbsent/" title="HashMap → computeIfAbsent()"><img class="cover" src="/img/DALL-2024-03-21.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2024-03-21</div><div class="info-item-2">HashMap → computeIfAbsent()</div></div><div class="info-2"><div class="info-item-1">12345678910// 當key不存在，就執行第二個參數的函數，並回傳執行後的值，然後也會put// 如果函數返回 null，則不會put// 如果函數本身拋出（未經檢查的）異常，則重新拋出異常，則不會putpublic static void main(String[] args) &#123;    Map&lt;String, Integer&gt; stringLength = new HashMap&lt;&gt;();    stringLength.put(&quot;John&quot;, 2);    int i = stringLength.computeIfAbsent(&quot;John&quot;, String::length);    System.out.println(&quot;i = &quot; + i);    System.out.println(&quot;stringLength = &quot; + stringLength);&#125;  這段程式碼看起來沒有明顯的錯誤，但可以做一些優化。 12345678910publ...</div></div></div></a><a class="pagination-related" href="/2026/02/20/Java-8-%E6%99%82%E9%96%93-API-%E8%88%87-LinkedHashMap-%E7%AD%86%E8%A8%98/" title="Java 8 時間 API 與 LinkedHashMap 使用筆記"><img class="cover" src="/img/20260220-01.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-02-20</div><div class="info-item-2">Java 8 時間 API 與 LinkedHashMap 使用筆記</div></div><div class="info-2"><div class="info-item-1">Java 8 的時間 API 用起來比之前的 Date、Calendar 不知道爽幾倍。但新 API 的時區轉換常常爆炸，因為邏輯和以前差很多。LinkedHashMap 是保持插入順序的 Map，常被小看但超實用。一次整理出來。 Java 8 時間 API 基礎主要類123456789101112131415161718192021222324import java.time.*;// LocalDateTime - 純日期時間，沒有時區LocalDateTime now = LocalDateTime.now();System.out.println(now);  // 2026-02-20T14:30:45.123456// LocalDate - 只有日期LocalDate today = LocalDate.now();System.out.println(today);  // 2026-02-20// LocalTime - 只有時間LocalTime time = LocalTime.now();System.out.println(time);  // 14:3...</div></div></div></a><a class="pagination-related" href="/2025/05/21/Spring-Bean-Scope-%E5%85%AD%E7%A8%AE%E4%BD%9C%E7%94%A8%E5%9F%9F/" title="Spring Bean Scope 六種作用域完整解析"><img class="cover" src="/img/20250521-01.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-05-21</div><div class="info-item-2">Spring Bean Scope 六種作用域完整解析</div></div><div class="info-2"><div class="info-item-1">之前在專案裡因為搞不清楚 Bean scope，導致一個坑埋了好久才發現。乾脆就把 Spring 的六種 scope 整理一下，這樣以後不會再踩到相同的坑。 六種 Scope 速覽Spring Bean 的六種 scope 分別是：  singleton - 預設，整個 container 只有一個實例 prototype - 每次 getBean 都新建一個實例 request - 每個 HTTP request 一個實例 session - 每個 HTTP session 一個實例 application - 整個 ServletContext 一個實例 websocket - 每個 WebSocket session 一個實例  後面四種（request、session、application、websocket）只在 web application 中可用。 Singleton 作用域這是預設的 scope。如果你沒有特別指定，Spring 就會把 Bean 當成 singleton： 123456@Componentpublic class UserService &#...</div></div></div></a><a class="pagination-related" href="/2025/05/10/Spring-Bean-%E8%88%87-ComponentScan-%E7%9A%84%E5%B7%AE%E7%95%B0/" title="Spring @Bean 與 @ComponentScan 的差異"><img class="cover" src="/img/20250510-01.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-05-10</div><div class="info-item-2">Spring @Bean 與 @ComponentScan 的差異</div></div><div class="info-2"><div class="info-item-1">@Bean 跟 @ComponentScan 都能把東西丟進 Spring 容器，但搞混這兩個的人比你想像的多。一個是手動、一個是自動，適用場景完全不同。 @Bean — 手動註冊。你在 @Configuration 裡面寫程式碼，明確告訴 Spring 怎麼建立這個 Bean。@ComponentScan — 自動掃描。Spring 自動找出你用 @Component、@Service、@Repository 標注的類別，然後註冊成 Bean。 兩者各有用途，也可以混用。 @Bean 怎麼用@Bean 通常用在 @Configuration class 裡面。你寫一個方法，用 @Bean 標注，Spring 就會把這個方法回傳的物件當成 Bean 註冊進去。 12345678910111213@Configurationpublic class AppConfig &#123;        @Bean    public DataSource dataSource() &#123;        return new DataSource();    &#125;      ...</div></div></div></a><a class="pagination-related" href="/2024/05/17/Hibernate-DiscriminatorColumn%E8%AA%AA%E6%98%8E/" title="Hibernate → @DiscriminatorColumn說明"><img class="cover" src="/img/20240517-01.png" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2024-05-17</div><div class="info-item-2">Hibernate → @DiscriminatorColumn說明</div></div><div class="info-2"><div class="info-item-1">@DiscriminatorColumn 註解用於在 JPA 繼承結構中，為單表策略 (InheritanceType.SINGLE_TABLE) 的繼承層次結構指定區分列。這樣，JPA 可以使用這個列來識別每一行對應的具體實體類型。 讓我們詳細解釋一下： 註解部分1@DiscriminatorColumn(name=&quot;accountType&quot;, discriminatorType = DiscriminatorType.STRING)   @DiscriminatorColumn：這個註解指定了用來區分不同實體類型的列。 name=&quot;accountType&quot;：這指定了區分列的名稱為 accountType。這個列將會被添加到生成的單表中，用來存儲每一行對應的實體類型。 discriminatorType = DiscriminatorType.STRING：這指定了區分列的類型為 STRING。區分列可以是 STRING、CHAR 或 INTEGER。  作用當使用 InheritanceType.SINGLE_TABLE 繼承策略時，所...</div></div></div></a><a class="pagination-related" href="/2026/01/18/Java-Stream-%E6%93%8D%E4%BD%9C%E9%9B%86%E9%8C%A6-%E5%90%88%E4%BD%B5Map-List%E8%BD%89Map-%E6%8E%92%E5%BA%8F/" title="Java Stream 操作集錦 - 合併 Map、List 轉 Map、物件排序"><img class="cover" src="/img/20260118-01.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-01-18</div><div class="info-item-2">Java Stream 操作集錦 - 合併 Map、List 轉 Map、物件排序</div></div><div class="info-2"><div class="info-item-1">Stream 操作是 Java 8+ 的大招。三個最常用的場景：合併多個 Map、把 List 轉成 Map、排序物件。一次整理出來，以後就 copy-paste 吧。 1. Stream 合併多個 Map經常要把好幾個 Map 合起來，最直白的做法是逐個 put： 123456789101112131415Map&lt;String, Integer&gt; map1 = new HashMap&lt;&gt;();map1.put(&quot;Apple&quot;, 10);map1.put(&quot;Banana&quot;, 20);Map&lt;String, Integer&gt; map2 = new HashMap&lt;&gt;();map2.put(&quot;Orange&quot;, 15);map2.put(&quot;Pear&quot;, 25);Map&lt;String, Integer&gt; map3 = new HashMap&lt;&gt;();map3.put(&quot;Cherry&quot;, 30);// 爛做法Map&lt...</div></div></div></a></div></div><hr class="custom-hr"/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 評論</span></div></div><div class="comment-wrap"><div><div id="giscus-wrap"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="https://lh3.googleusercontent.com/pw/ABLVV87_po8nBc6F_tXcoYDmtzMGWxHuhhrbguYILCjmjWKLOS8DTpubm0YoQLKgjyjRIZyV5TjYe7XVEz_YU4squfr37GTZqPZP1hlMVZ_MIgXpTxWu73M=w1200" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">Cheng®</div><div class="author-info-description">Backend Developer / 技術筆記 & AI 新聞分享</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">161</div></a><a href="/tags/"><div class="headline">標籤</div><div class="length-num">142</div></a><a href="/categories/"><div class="headline">分類</div><div class="length-num">12</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/mark22013333"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons"><a class="social-icon" href="https://github.com/mark22013333" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:mark22013333@gmail.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a></div><div class="card-info-sponsor"><a class="sponsor-glow-btn" href="https://www.buymeacoffee.com/mark22013333" target="_blank" rel="noopener noreferrer" title="Buy Me A Coffee"><img src="https://img.shields.io/badge/Buy_Me_A_Coffee-FFDD00?style=for-the-badge&amp;logo=buy-me-a-coffee&amp;logoColor=black" alt="Buy Me A Coffee"/></a><a class="sponsor-glow-btn" href="https://p.ecpay.com.tw/EFC3F8F" target="_blank" rel="noopener noreferrer" title="綠界贊助"><img src="https://img.shields.io/badge/☕_%E8%AB%8B%E6%88%91%E5%96%9D%E6%9D%AF%E5%92%96%E5%95%A1-Donate-11998e?style=for-the-badge&amp;logo=coffee&amp;logoColor=white" alt="綠界贊助"/></a><a class="sponsor-glow-btn" href="https://calendly.com/markcheng00806-intumit/15min" target="_blank" rel="noopener noreferrer" title="預約時間"><img src="https://img.shields.io/badge/📅_%E9%A0%90%E7%B4%84_15_%E5%88%86%E9%90%98-Book_Time-0072ff?style=for-the-badge" alt="預約時間"/></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">這裡記錄我在後端開發路上踩過的坑、學到的東西，也會分享每日 AI 與科技新聞觀點。歡迎一起交流！</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目錄</span><span class="toc-percentage"></span></div><div class="toc-content is-expand"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Optional-%E7%9A%84%E4%B8%89%E6%AE%B5%E5%BC%8F%E7%B5%90%E6%A7%8B"><span class="toc-number">1.</span> <span class="toc-text">Optional 的三段式結構</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%A0%AD%E9%83%A8%EF%BC%9A%E5%BB%BA%E7%AB%8B-Optional"><span class="toc-number">2.</span> <span class="toc-text">頭部：建立 Optional</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#of-%E7%A2%BA%E5%AE%9A%E9%9D%9E-null"><span class="toc-number">2.1.</span> <span class="toc-text">of() - 確定非 null</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ofNullable-%E5%8F%AF%E8%83%BD-null"><span class="toc-number">2.2.</span> <span class="toc-text">ofNullable() - 可能 null</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#empty-%E6%98%8E%E7%A2%BA%E7%9A%84%E7%A9%BA"><span class="toc-number">2.3.</span> <span class="toc-text">empty() - 明確的空</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%BA%AB%E9%AB%94%EF%BC%9A%E8%BD%89%E6%8F%9B%E8%B3%87%E6%96%99"><span class="toc-number">3.</span> <span class="toc-text">身體：轉換資料</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#filter-%E6%A2%9D%E4%BB%B6%E7%AF%A9%E9%81%B8"><span class="toc-number">3.1.</span> <span class="toc-text">filter() - 條件篩選</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#map-%E8%BD%89%E6%8F%9B%E5%80%BC"><span class="toc-number">3.2.</span> <span class="toc-text">map() - 轉換值</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#flatMap-%E5%80%BC%E6%9C%AC%E8%BA%AB%E6%98%AF-Optional"><span class="toc-number">3.3.</span> <span class="toc-text">flatMap() - 值本身是 Optional</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#or-%E6%9B%BF%E4%BB%A3%E4%BE%86%E6%BA%90%EF%BC%88Java-9-%EF%BC%89"><span class="toc-number">3.4.</span> <span class="toc-text">or() - 替代來源（Java 9+）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#stream-%E8%BD%89%E6%88%90-Stream%EF%BC%88Java-9-%EF%BC%89"><span class="toc-number">3.5.</span> <span class="toc-text">stream() - 轉成 Stream（Java 9+）</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B0%BE%E5%B7%B4%EF%BC%9A%E5%8F%96%E5%80%BC"><span class="toc-number">4.</span> <span class="toc-text">尾巴：取值</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#ifPresent-%E6%9C%89%E5%80%BC%E6%99%82%E5%9F%B7%E8%A1%8C"><span class="toc-number">4.1.</span> <span class="toc-text">ifPresent() - 有值時執行</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ifPresentOrElse-%E6%9C%89%E5%80%BC-%E7%84%A1%E5%80%BC%E5%88%86%E5%88%A5%E8%99%95%E7%90%86%EF%BC%88Java-9-%EF%BC%89"><span class="toc-number">4.2.</span> <span class="toc-text">ifPresentOrElse() - 有值&#x2F;無值分別處理（Java 9+）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#orElse-%E7%84%A1%E5%80%BC%E6%99%82%E5%9B%9E%E5%82%B3%E9%A0%90%E8%A8%AD%E5%80%BC"><span class="toc-number">4.3.</span> <span class="toc-text">orElse() - 無值時回傳預設值</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#orElseGet-%E7%84%A1%E5%80%BC%E6%99%82%E6%89%8D%E5%9F%B7%E8%A1%8C%E5%87%BD%E5%BC%8F%EF%BC%88Lazy%EF%BC%89"><span class="toc-number">4.4.</span> <span class="toc-text">orElseGet() - 無值時才執行函式（Lazy）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#orElseThrow-%E7%84%A1%E5%80%BC%E6%99%82%E6%8B%8B-exception"><span class="toc-number">4.5.</span> <span class="toc-text">orElseThrow() - 無值時拋 exception</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AF%A6%E5%8B%99%E7%AF%84%E4%BE%8B"><span class="toc-number">5.</span> <span class="toc-text">實務範例</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A0%B4%E6%99%AF-1%EF%BC%9AAPI-%E5%9B%9E%E6%87%89"><span class="toc-number">5.1.</span> <span class="toc-text">場景 1：API 回應</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A0%B4%E6%99%AF-2%EF%BC%9ADB-%E6%9F%A5%E8%A9%A2-%E9%A0%90%E8%A8%AD%E5%80%BC"><span class="toc-number">5.2.</span> <span class="toc-text">場景 2：DB 查詢 + 預設值</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A0%B4%E6%99%AF-3%EF%BC%9A%E9%8F%88%E6%8E%A5%E5%A4%9A%E5%80%8B%E6%9F%A5%E8%A9%A2"><span class="toc-number">5.3.</span> <span class="toc-text">場景 3：鏈接多個查詢</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A0%B4%E6%99%AF-4%EF%BC%9A%E9%81%8E%E6%BF%BE%E5%92%8C%E8%BD%89%E6%8F%9B"><span class="toc-number">5.4.</span> <span class="toc-text">場景 4：過濾和轉換</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B8%B8%E8%A6%8B%E8%B8%A9%E5%9D%91"><span class="toc-number">6.</span> <span class="toc-text">常見踩坑</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BD%95%E6%99%82%E4%BD%BF%E7%94%A8-Optional"><span class="toc-number">7.</span> <span class="toc-text">何時使用 Optional</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9C%80%E5%BE%8C%E7%9A%84%E8%A9%B1"><span class="toc-number">8.</span> <span class="toc-text">最後的話</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2026/04/23/Claude-Code-Ultraplan-%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8-%E6%8A%8A%E8%A6%8F%E5%8A%83%E4%BA%A4%E7%B5%A6%E9%9B%B2%E7%AB%AF/" title="Claude Code Ultraplan 完整教學 — 把規劃交給雲端，讓 Claude 替你想 30 分鐘"><img src="/img/20260423-03.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Claude Code Ultraplan 完整教學 — 把規劃交給雲端，讓 Claude 替你想 30 分鐘"/></a><div class="content"><a class="title" href="/2026/04/23/Claude-Code-Ultraplan-%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8-%E6%8A%8A%E8%A6%8F%E5%8A%83%E4%BA%A4%E7%B5%A6%E9%9B%B2%E7%AB%AF/" title="Claude Code Ultraplan 完整教學 — 把規劃交給雲端，讓 Claude 替你想 30 分鐘">Claude Code Ultraplan 完整教學 — 把規劃交給雲端，讓 Claude 替你想 30 分鐘</a><time datetime="2026-04-23T09:00:00.000Z" title="發表於 2026-04-23 09:00:00">2026-04-23</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/04/23/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260423/" title="AI 與科技新聞摘要 - 2026/04/23"><img src="/img/20260423-02.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="AI 與科技新聞摘要 - 2026/04/23"/></a><div class="content"><a class="title" href="/2026/04/23/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260423/" title="AI 與科技新聞摘要 - 2026/04/23">AI 與科技新聞摘要 - 2026/04/23</a><time datetime="2026-04-23T08:30:00.000Z" title="發表於 2026-04-23 08:30:00">2026-04-23</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/04/23/Agent-Skills-%E7%B5%A6-AI-%E7%B7%A8%E7%A2%BC%E5%8A%A9%E6%89%8B%E7%9A%84%E5%B7%A5%E7%A8%8B%E7%B4%80%E5%BE%8B%E6%8C%87%E4%BB%A4%E9%9B%86/" title="Agent Skills — 給 AI 編碼助手的工程紀律指令集"><img src="/img/20260423-01.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Agent Skills — 給 AI 編碼助手的工程紀律指令集"/></a><div class="content"><a class="title" href="/2026/04/23/Agent-Skills-%E7%B5%A6-AI-%E7%B7%A8%E7%A2%BC%E5%8A%A9%E6%89%8B%E7%9A%84%E5%B7%A5%E7%A8%8B%E7%B4%80%E5%BE%8B%E6%8C%87%E4%BB%A4%E9%9B%86/" title="Agent Skills — 給 AI 編碼助手的工程紀律指令集">Agent Skills — 給 AI 編碼助手的工程紀律指令集</a><time datetime="2026-04-23T08:00:00.000Z" title="發表於 2026-04-23 08:00:00">2026-04-23</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/04/22/GitHub-Copilot-%E5%81%9C%E6%AD%A2%E6%96%B0%E7%94%A8%E6%88%B6%E8%A8%BB%E5%86%8A%E5%BE%8C%E5%B7%A5%E7%A8%8B%E5%B8%AB%E6%80%8E%E9%BA%BC%E5%B9%B3%E7%A7%BB%E5%88%B0-Claude-Code/" title="GitHub Copilot 停止新用戶註冊後，工程師怎麼平移到 Claude Code"><img src="/img/20260422-03.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="GitHub Copilot 停止新用戶註冊後，工程師怎麼平移到 Claude Code"/></a><div class="content"><a class="title" href="/2026/04/22/GitHub-Copilot-%E5%81%9C%E6%AD%A2%E6%96%B0%E7%94%A8%E6%88%B6%E8%A8%BB%E5%86%8A%E5%BE%8C%E5%B7%A5%E7%A8%8B%E5%B8%AB%E6%80%8E%E9%BA%BC%E5%B9%B3%E7%A7%BB%E5%88%B0-Claude-Code/" title="GitHub Copilot 停止新用戶註冊後，工程師怎麼平移到 Claude Code">GitHub Copilot 停止新用戶註冊後，工程師怎麼平移到 Claude Code</a><time datetime="2026-04-22T09:00:00.000Z" title="發表於 2026-04-22 09:00:00">2026-04-22</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/04/22/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260422/" title="AI 與科技新聞摘要 - 2026/04/22"><img src="/img/20260422-02.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="AI 與科技新聞摘要 - 2026/04/22"/></a><div class="content"><a class="title" href="/2026/04/22/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260422/" title="AI 與科技新聞摘要 - 2026/04/22">AI 與科技新聞摘要 - 2026/04/22</a><time datetime="2026-04-22T08:30:00.000Z" title="發表於 2026-04-22 08:30:00">2026-04-22</time></div></div></div></div></div></div></main><footer id="footer" style="background-image: url(/img/20251205-01.webp);"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2024 - 2026 By Cheng®</span></div><div class="footer_custom_text">Written by Cheng® — 自律，從當下的一念開始。</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="閱讀模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日夜模式切換"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="單欄和雙欄切換"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="設定"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目錄"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="前往評論"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到頂端"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.umd.min.js"></script><script src="https://cdn.jsdelivr.net/npm/instant.page/instantpage.min.js" type="module"></script><script src="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.js"></script><div class="js-pjax"><script>(() => {
+  const isShuoshuo = GLOBAL_CONFIG_SITE.pageType === 'shuoshuo'
+  const option = {"mapping":"pathname","strict":0,"reactionsEnabled":1,"emitMetadata":0,"inputPosition":"bottom","lang":"zh-TW"}
+
+  const getGiscusTheme = theme => theme === 'dark' ? 'dark' : 'light'
+
+  const createScriptElement = config => {
+    const ele = document.createElement('script')
+    Object.entries(config).forEach(([key, value]) => {
+      ele.setAttribute(key, value)
+    })
+    return ele
+  }
+
+  const loadGiscus = (el = document, key) => {
+    const mappingConfig = isShuoshuo
+      ? { 'data-mapping': 'specific', 'data-term': key }
+      : { 'data-mapping': (option && option['data-mapping']) || 'pathname' }
+
+    const giscusConfig = {
+      src: 'https://giscus.app/client.js',
+      'data-repo': 'mark22013333/mark22013333.github.io',
+      'data-repo-id': 'R_kgDOLAxa6A',
+      'data-category-id': 'DIC_kwDOLAxa6M4C5eO9',
+      'data-theme': getGiscusTheme(document.documentElement.getAttribute('data-theme')),
+      'data-reactions-enabled': '1',
+      crossorigin: 'anonymous',
+      async: true,
+      ...option,
+      ...mappingConfig
+    }
+
+    const scriptElement = createScriptElement(giscusConfig)
+
+    el.querySelector('#giscus-wrap').appendChild(scriptElement)
+
+    if (isShuoshuo) {
+      window.shuoshuoComment.destroyGiscus = () => {
+        if (el.children.length) {
+          el.innerHTML = ''
+          el.classList.add('no-comment')
+        }
+      }
+    }
+  }
+
+  const changeGiscusTheme = theme => {
+    const iframe = document.querySelector('#giscus-wrap iframe')
+    if (iframe) {
+      const message = {
+        giscus: {
+          setConfig: {
+            theme: getGiscusTheme(theme)
+          }
+        }
+      }
+      iframe.contentWindow.postMessage(message, 'https://giscus.app')
+    }
+  }
+
+  btf.addGlobalFn('themeChange', changeGiscusTheme, 'giscus')
+
+  if (isShuoshuo) {
+    'Giscus' === 'Giscus'
+      ? window.shuoshuoComment = { loadComment: loadGiscus }
+      : window.loadOtherComment = loadGiscus
+    return
+  }
+
+  if ('Giscus' === 'Giscus' || !true) {
+    if (true) btf.loadComment(document.getElementById('giscus-wrap'), loadGiscus)
+    else loadGiscus()
+  } else {
+    window.loadOtherComment = loadGiscus
+  }
+})()</script></div><script src="/js/kkbox-player.js"></script><script src="/js/archives-pagination.js"></script><script src="/js/font-resize.js"></script><script src="/js/dark-palette.js"></script><script defer="defer" id="fluttering_ribbon" mobile="false" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/canvas-fluttering-ribbon.min.js"></script><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/activate-power-mode.min.js"></script><script>POWERMODE.colorful = true;
+POWERMODE.shake = true;
+POWERMODE.mobile = true;
+document.body.addEventListener('input', POWERMODE);
+</script><script src="https://cdn.jsdelivr.net/npm/pjax/pjax.min.js" defer="defer"></script><script>document.addEventListener('DOMContentLoaded', () => {
+  const pjaxSelectors = ["meta[property=\"og:image\"]","meta[property=\"og:title\"]","meta[property=\"og:url\"]","meta[property=\"og:description\"]","link[rel=\"canonical\"]","head > title","#config-diff","#body-wrap","#rightside-config-hide","#rightside-config-show",".js-pjax"]
+
+  window.pjax = new Pjax({
+    elements: 'a:not([target="_blank"])',
+    selectors: pjaxSelectors,
+    cacheBust: false,
+    analytics: true,
+    scrollRestoration: false
+  })
+
+  const triggerPjaxFn = (val) => {
+    if (!val) return
+    Object.values(val).forEach(fn => {
+      try {
+        fn()
+      } catch (err) {
+        console.debug('Pjax callback failed:', err)
+      }
+    })
+  }
+
+  document.addEventListener('pjax:send', () => {
+    // removeEventListener
+    btf.removeGlobalFnEvent('pjaxSendOnce')
+    btf.removeGlobalFnEvent('themeChange')
+
+    // reset readmode
+    const $bodyClassList = document.body.classList
+    if ($bodyClassList.contains('read-mode')) $bodyClassList.remove('read-mode')
+
+    triggerPjaxFn(window.globalFn.pjaxSend)
+  })
+
+  document.addEventListener('pjax:complete', () => {
+    btf.removeGlobalFnEvent('pjaxCompleteOnce')
+    document.querySelectorAll('script[data-pjax]').forEach(item => {
+      const newScript = document.createElement('script')
+      const content = item.text || item.textContent || item.innerHTML || ""
+      Array.from(item.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value))
+      newScript.appendChild(document.createTextNode(content))
+      item.parentNode.replaceChild(newScript, item)
+    })
+
+    triggerPjaxFn(window.globalFn.pjaxComplete)
+  })
+
+  document.addEventListener('pjax:error', e => {
+    if (e.request.status === 404) {
+      true
+        ? pjax.loadUrl('/404.html')
+        : window.location.href = e.request.responseURL
+    }
+  })
+})</script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜尋</span><i class="fas fa-spinner fa-pulse" id="loading-status" hidden="hidden"></i><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="text-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  資料載入中</span></div><div class="local-search-input"><input placeholder="搜尋文章" type="text"/></div><hr/><div id="local-search-results"></div><div class="ais-Pagination" id="local-search-pagination" style="display:none;"><ul class="ais-Pagination-list"></ul></div><div id="local-search-stats"></div></div><div id="search-mask"></div><script src="/js/search/local-search.js"></script></div></div></body></html>

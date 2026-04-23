@@ -1,0 +1,446 @@
+<!DOCTYPE html><html lang="zh-TW" data-theme="dark"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>淺談 Hash、Hashtable 與 HashMap | Cheng's Tech &amp; Life</title><meta name="author" content="Cheng®"><meta name="copyright" content="Cheng®"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#0d0d0d"><meta name="description" content="Hash 這玩意兒是程式世界的基礎，但一堆人搞不清楚 Hash、Hashtable、HashMap 的差別。常見情況：被問到為啥用 HashMap 不用 Hashtable，只能兩眼發直。Hash 的概念 Hash 就是把任意長度的資料「打碎」再「拼湊」成固定長度的代碼。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="淺談 Hash、Hashtable 與 HashMap">
+<meta property="og:url" content="https://mark22013333.github.io/2025/12/27/%E6%B7%BA%E8%AB%87-Hash-Hashtable-%E8%88%87-HashMap/index.html">
+<meta property="og:site_name" content="Cheng&#39;s Tech &amp; Life">
+<meta property="og:description" content="Hash 這玩意兒是程式世界的基礎，但一堆人搞不清楚 Hash、Hashtable、HashMap 的差別。常見情況：被問到為啥用 HashMap 不用 Hashtable，只能兩眼發直。Hash 的概念 Hash 就是把任意長度的資料「打碎」再「拼湊」成固定長度的代碼。">
+<meta property="og:locale" content="zh_TW">
+<meta property="og:image" content="https://mark22013333.github.io/img/20251227-01.webp">
+<meta property="article:published_time" content="2025-12-27T00:30:00.000Z">
+<meta property="article:modified_time" content="2026-04-13T02:00:09.940Z">
+<meta property="article:author" content="Cheng®">
+<meta property="article:tag" content="Collections">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://mark22013333.github.io/img/20251227-01.webp"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "淺談 Hash、Hashtable 與 HashMap",
+  "url": "https://mark22013333.github.io/2025/12/27/%E6%B7%BA%E8%AB%87-Hash-Hashtable-%E8%88%87-HashMap/",
+  "image": "https://mark22013333.github.io/img/20251227-01.webp",
+  "datePublished": "2025-12-27T00:30:00.000Z",
+  "dateModified": "2026-04-13T02:00:09.940Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "Cheng®",
+      "url": "https://mark22013333.github.io"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://mark22013333.github.io/2025/12/27/%E6%B7%BA%E8%AB%87-Hash-Hashtable-%E8%88%87-HashMap/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//www.google-analytics.com" crossorigin=""/><link rel="preconnect" href="//fonts.googleapis.com" crossorigin=""/><link rel="preconnect" href="//busuanzi.ibruce.info"/><meta name="google-site-verification" content="6ywUr8k2n_CT1PFYJzlSvI3CZ-JmJ55RYbA39VrFBDs"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!true && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          const hour = new Date().getHours()
+          const isNight = hour <= 9 || hour >= 18
+          if (theme === undefined) isNight ? activateDarkMode() : activateLightMode()
+          else theme === 'light' ? activateLightMode() : activateDarkMode()
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script async="async" src="https://www.googletagmanager.com/gtag/js?id=G-JBV14NRDH3"></script><script>window.dataLayer = window.dataLayer || []
+function gtag(){dataLayer.push(arguments)}
+gtag('js', new Date())
+gtag('config', 'G-JBV14NRDH3')
+btf.addGlobalFn('pjaxComplete', () => {
+  gtag('config', 'G-JBV14NRDH3', {'page_path': window.location.pathname})
+}, 'google_analytics')
+</script><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Titillium+Web&amp;display=swap" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"pagination":{"enable":false,"hitsPerPage":8},"languages":{"hits_empty":"找不到符合您查詢的內容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '複製成功',
+    error: '複製失敗',
+    noSupport: '瀏覽器不支援'
+  },
+  relativeDate: {
+    homepage: false,
+    post: true
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '剛剛',
+    min: '分鐘前',
+    hour: '小時前',
+    day: '天前',
+    month: '個月前'
+  },
+  copyright: {"limitCount":1,"languages":{"author":"作者: Cheng®","link":"連結: ","source":"來源: Cheng's Tech & Life","info":"著作權歸作者所有。如需商業轉載，請聯絡作者獲得授權，非商業轉載請註明出處😁。"}},
+  lightbox: 'fancybox',
+  Snackbar: {"chs_to_cht":"已切換為繁體中文","cht_to_chs":"已切換為簡體中文","day_to_night":"已切換為深色模式","night_to_day":"已切換為淺色模式","bgLight":"#49b1f5","bgDark":"#1f1f1f","position":"top-center"},
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid/dist/infinitegrid.min.js',
+    buttonText: '載入更多'
+  },
+  isPhotoFigcaption: true,
+  islazyloadPlugin: false,
+  isAnchor: true,
+  percent: {
+    toc: true,
+    rightside: true,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '淺談 Hash、Hashtable 與 HashMap',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><link rel="stylesheet" href="/css/kkbox-player.css"><link rel="stylesheet" href="/css/tag-cloud-fancy.css"><link rel="stylesheet" href="/css/font-resize.css"><link rel="stylesheet" href="/css/dark-palette.css"><link rel="stylesheet" href="/css/loading-override.css"><link rel="alternate" href="/atom.xml" title="Cheng's Tech & Life" type="application/atom+xml">
+</head><body><div id="loading-box"><div class="loading-glass-overlay"></div><div class="loading-indicator"><div class="loading-dot"></div><div class="loading-dot"></div><div class="loading-dot"></div></div></div><script>(()=>{
+  const $loadingBox = document.getElementById('loading-box')
+  const $body = document.body
+  const preloader = {
+    endLoading: () => {
+      if ($loadingBox.classList.contains('loaded')) return
+      $body.style.overflow = ''
+      $loadingBox.classList.add('loaded')
+    },
+    initLoading: () => {
+      $body.style.overflow = 'hidden'
+      $loadingBox.classList.remove('loaded')
+    }
+  }
+
+  preloader.initLoading()
+
+  if (document.readyState === 'complete') {
+    preloader.endLoading()
+  } else {
+    window.addEventListener('load', preloader.endLoading)
+    document.addEventListener('DOMContentLoaded', preloader.endLoading)
+    setTimeout(preloader.endLoading, 7000)
+  }
+
+  if (true) {
+    btf.addGlobalFn('pjaxSend', preloader.initLoading, 'preloader_init')
+    btf.addGlobalFn('pjaxComplete', preloader.endLoading, 'preloader_end')
+  }
+})()</script><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="https://lh3.googleusercontent.com/pw/ABLVV87_po8nBc6F_tXcoYDmtzMGWxHuhhrbguYILCjmjWKLOS8DTpubm0YoQLKgjyjRIZyV5TjYe7XVEz_YU4squfr37GTZqPZP1hlMVZ_MIgXpTxWu73M=w1200" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">161</div></a><a href="/tags/"><div class="headline">標籤</div><div class="length-num">142</div></a><a href="/categories/"><div class="headline">分類</div><div class="length-num">12</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首頁-Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 時間軸-archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 標籤-tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分類-Categories</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-list"></i><span> 其他列表</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音樂-Music</span></a></li><li><a class="site-page child" href="/gallery/"><i class="fa-fw fas fa-images"></i><span> 畫館-Gallery</span></a></li></ul></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg fixed" id="page-header" style="background-image: url(/img/20251227-01.webp);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><img class="site-icon" src="https://lh3.googleusercontent.com/pw/ABLVV87_po8nBc6F_tXcoYDmtzMGWxHuhhrbguYILCjmjWKLOS8DTpubm0YoQLKgjyjRIZyV5TjYe7XVEz_YU4squfr37GTZqPZP1hlMVZ_MIgXpTxWu73M=w1200" alt="Logo"><span class="site-name">Cheng's Tech &amp; Life</span></a><a class="nav-page-title" href="/"><span class="site-name">淺談 Hash、Hashtable 與 HashMap</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首頁</span></span></a></span><div id="menus"><div id="search-button" title="Ctrl+K / Cmd+K"><span class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜尋</span></span></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首頁-Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 時間軸-archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 標籤-tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分類-Categories</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-list"></i><span> 其他列表</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音樂-Music</span></a></li><li><a class="site-page child" href="/gallery/"><i class="fa-fw fas fa-images"></i><span> 畫館-Gallery</span></a></li></ul></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">淺談 Hash、Hashtable 與 HashMap</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">發表於</span><time class="post-meta-date-created" datetime="2025-12-27T00:30:00.000Z" title="發表於 2025-12-27 00:30:00">2025-12-27</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新於</span><time class="post-meta-date-updated" datetime="2026-04-13T02:00:09.940Z" title="更新於 2026-04-13 02:00:09">2026-04-13</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Java/">Java</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">總字數:</span><span class="word-count">1.8k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">閱讀時間:</span><span>7分鐘</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">瀏覽量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><p>Hash 這玩意兒是程式世界的基礎，但一堆人搞不清楚 Hash、Hashtable、HashMap 的差別。常見情況：被問到為啥用 HashMap 不用 Hashtable，只能兩眼發直。今天就一次講清楚。</p>
+<h2 id="Hash-的概念"><a href="#Hash-的概念" class="headerlink" title="Hash 的概念"></a>Hash 的概念</h2><p>Hash 就是把任意長度的資料「打碎」再「拼湊」成固定長度的代碼。</p>
+<h3 id="Hash-Function-做的事"><a href="#Hash-Function-做的事" class="headerlink" title="Hash Function 做的事"></a>Hash Function 做的事</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">String</span> <span class="variable">input</span> <span class="operator">=</span> <span class="string">&quot;This is a very long sentence with lots of words&quot;</span>;</span><br><span class="line"><span class="type">int</span> <span class="variable">hashCode</span> <span class="operator">=</span> input.hashCode();  <span class="comment">// 回傳一個整數，比如 -123456789</span></span><br></pre></td></tr></table></figure>
+
+<p>Hash Function 的特性：</p>
+<ol>
+<li><strong>決定性</strong> - 同一個輸入永遠產生同一個輸出</li>
+<li><strong>單向性</strong> - 不可逆，不能從 hash code 推回原始資料</li>
+<li><strong>雪崩效應</strong> - 輸入改一點點，輸出就完全不同</li>
+<li><strong>均勻分佈</strong> - 理想情況下，不同輸入的 hash 值均勻分佈在整個範圍</li>
+</ol>
+<h3 id="Hash-的應用"><a href="#Hash-的應用" class="headerlink" title="Hash 的應用"></a>Hash 的應用</h3><p><strong>1. 數位簽章</strong><br>確認資料沒有被竄改。簽署人計算文件的 hash 值，用私鑰加密。驗證人計算一遍 hash，再用公鑰解密比對。如果兩個 hash 相同，代表文件沒動過。</p>
+<p><strong>2. 資料完整性驗證</strong><br>下載檔案時，官方會提供 SHA256 checksum。你下載完自己算一次，比對是否相同。如果相同，代表沒有傳輸損壞或被中間人修改。</p>
+<p><strong>3. 密碼儲存</strong><br>千萬別存明文密碼。應該存 hash 值。使用者登入時，計算輸入密碼的 hash，和資料庫裡的比對。即使資料庫被盜，駭客也只能拿到 hash，推不回密碼。</p>
+<h3 id="編碼-vs-加密-vs-Hash"><a href="#編碼-vs-加密-vs-Hash" class="headerlink" title="編碼 vs 加密 vs Hash"></a>編碼 vs 加密 vs Hash</h3><p>很多人搞混這三個：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">編碼（Encoding）：ASCII、UTF-8、Base64</span><br><span class="line">  - 可逆</span><br><span class="line">  - 沒有金鑰</span><br><span class="line">  - 目的：轉換資料格式便於傳輸</span><br><span class="line">  - 例：Base64.encode(&quot;hello&quot;) = &quot;aGVsbG8=&quot;，decode 就回來了</span><br><span class="line"></span><br><span class="line">加密（Encryption）：AES、RSA</span><br><span class="line">  - 可逆（用密鑰）</span><br><span class="line">  - 需要金鑰</span><br><span class="line">  - 目的：保護資料機密性</span><br><span class="line">  - 例：AES.encrypt(&quot;hello&quot;, key) = &quot;xyz123&quot;，用 key 才能 decrypt</span><br><span class="line"></span><br><span class="line">Hash（雜湊）：MD5、SHA1、SHA256</span><br><span class="line">  - 不可逆</span><br><span class="line">  - 不需金鑰</span><br><span class="line">  - 目的：驗證資料完整性</span><br><span class="line">  - 例：SHA256(&quot;hello&quot;) = &quot;2cf24dba5fb0a30e26e83b2ac5b9e29e1b161e5c1fa7425e73043362938b9824&quot;</span><br></pre></td></tr></table></figure>
+
+<h2 id="Hash-Table-資料結構"><a href="#Hash-Table-資料結構" class="headerlink" title="Hash Table 資料結構"></a>Hash Table 資料結構</h2><p>Hash Table 是一種資料結構，用來解決「快速查找」問題。</p>
+<h3 id="基本概念"><a href="#基本概念" class="headerlink" title="基本概念"></a>基本概念</h3><p>傳統陣列的問題：</p>
+<ul>
+<li>有序查找（線性搜尋）：O(n)，要一個一個比</li>
+<li>二元搜尋：O(log n)，但需要排序</li>
+</ul>
+<p>Hash Table 用 hash code 當 index：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">要存 key=&quot;Alice&quot;, value=&quot;Engineer&quot;</span><br><span class="line">1. 計算 hash(&quot;Alice&quot;) = 5</span><br><span class="line">2. 放到 table[5] = &quot;Engineer&quot;</span><br><span class="line">3. 查詢時，直接看 table[5]，O(1) 完成！</span><br></pre></td></tr></table></figure>
+
+<p>理想情況下，查詢、插入、刪除都是 O(1)。</p>
+<h3 id="雜湊碰撞問題"><a href="#雜湊碰撞問題" class="headerlink" title="雜湊碰撞問題"></a>雜湊碰撞問題</h3><p>但現實有個問題：雜湊碰撞（hash collision）。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">hash(&quot;Alice&quot;) = 5</span><br><span class="line">hash(&quot;Bob&quot;) = 3</span><br><span class="line">hash(&quot;Cathy&quot;) = 5  // 碰撞了！都是 5</span><br></pre></td></tr></table></figure>
+
+<p>不同的鍵產生相同的 hash code，怎麼辦？有兩個常見解法：</p>
+<p><strong>1. Closed Addressing（閉放定址法）</strong></p>
+<p>在 table[5] 這個位置放一個 linked list 或其他結構，把所有碰撞的元素都存進去：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">table[5] -&gt; &quot;Alice&quot; -&gt; &quot;Cathy&quot; -&gt; null</span><br></pre></td></tr></table></figure>
+
+<p>查詢時要遍歷 linked list，最壞情況 O(n)。但如果 hash function 夠好，碰撞很少，平均還是接近 O(1)。</p>
+<p><strong>2. Open Addressing（開放定址法）</strong></p>
+<p>碰撞時，找個 empty slot 放進去：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">hash(&quot;Alice&quot;) = 5 -&gt; table[5]</span><br><span class="line">hash(&quot;Cathy&quot;) = 5（碰撞）-&gt; 找下一個 empty -&gt; table[6]</span><br></pre></td></tr></table></figure>
+
+<p>線性探測、二次探測等方法。</p>
+<h2 id="Java-的-Hashtable-類"><a href="#Java-的-Hashtable-類" class="headerlink" title="Java 的 Hashtable 類"></a>Java 的 Hashtable 類</h2><p>Hashtable 是 JDK 1.0 的遠古生物。</p>
+<h3 id="基本特性"><a href="#基本特性" class="headerlink" title="基本特性"></a>基本特性</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Hashtable&lt;String, Integer&gt; ht = <span class="keyword">new</span> <span class="title class_">Hashtable</span>&lt;&gt;();</span><br><span class="line">ht.put(<span class="string">&quot;Apple&quot;</span>, <span class="number">10</span>);</span><br><span class="line">ht.put(<span class="string">&quot;Banana&quot;</span>, <span class="number">20</span>);</span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="variable">price</span> <span class="operator">=</span> ht.get(<span class="string">&quot;Apple&quot;</span>);  <span class="comment">// 10</span></span><br><span class="line">ht.remove(<span class="string">&quot;Banana&quot;</span>);</span><br></pre></td></tr></table></figure>
+
+<p><strong>主要特性：</strong></p>
+<ul>
+<li><strong>執行緒安全</strong> - 幾乎所有方法都加了 <code>synchronized</code></li>
+<li><strong>Key 和 Value 都不能是 null</strong> - put(null, value) 直接 NPE</li>
+<li><strong>效能一般</strong> - synchronized 全都上，競爭激烈時效能堪憐</li>
+<li><strong>舊時代遺留</strong> - 現在已經棄用</li>
+</ul>
+<p>為啥不允許 null？因為 Hashtable 無法區分「鍵不存在」和「鍵對應的值是 null」。get() 回傳 null 時，你不知道是找不到，還是真的存了 null。</p>
+<h3 id="為啥要棄用"><a href="#為啥要棄用" class="headerlink" title="為啥要棄用"></a>為啥要棄用</h3><p>效能問題太嚴重。簡單的 get 操作：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">synchronized</span> V <span class="title function_">get</span><span class="params">(Object key)</span> &#123;</span><br><span class="line">    Entry tab[] = table;</span><br><span class="line">    <span class="type">int</span> <span class="variable">hash</span> <span class="operator">=</span> key.hashCode();</span><br><span class="line">    <span class="type">int</span> <span class="variable">index</span> <span class="operator">=</span> (hash &amp; <span class="number">0x7FFFFFFF</span>) % tab.length;</span><br><span class="line">    <span class="keyword">for</span> (Entry&lt;K,V&gt; e = tab[index] ; e != <span class="literal">null</span> ; e = e.next) &#123;</span><br><span class="line">        <span class="keyword">if</span> ((e.hash == hash) &amp;&amp; e.key.equals(key)) &#123;</span><br><span class="line">            <span class="keyword">return</span> e.value;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>整個方法都 synchronized，其他執行緒都要排隊。如果你有 100 個執行緒都在讀，全部堵住。</p>
+<h2 id="HashMap-類"><a href="#HashMap-類" class="headerlink" title="HashMap 類"></a>HashMap 類</h2><p>HashMap 是現代的選擇。</p>
+<h3 id="基本特性-1"><a href="#基本特性-1" class="headerlink" title="基本特性"></a>基本特性</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">Map&lt;String, Integer&gt; map = <span class="keyword">new</span> <span class="title class_">HashMap</span>&lt;&gt;();</span><br><span class="line">map.put(<span class="string">&quot;Apple&quot;</span>, <span class="number">10</span>);</span><br><span class="line">map.put(<span class="string">&quot;Banana&quot;</span>, <span class="number">20</span>);</span><br><span class="line">map.put(<span class="literal">null</span>, <span class="number">999</span>);  <span class="comment">// 允許 null key</span></span><br><span class="line">map.put(<span class="string">&quot;Orange&quot;</span>, <span class="literal">null</span>);  <span class="comment">// 允許 null value</span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="variable">price</span> <span class="operator">=</span> map.get(<span class="string">&quot;Apple&quot;</span>);  <span class="comment">// 10</span></span><br><span class="line"><span class="type">Integer</span> <span class="variable">missing</span> <span class="operator">=</span> map.get(<span class="string">&quot;NotExist&quot;</span>);  <span class="comment">// null</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>主要特性：</strong></p>
+<ul>
+<li><strong>不執行緒安全</strong> - 沒有 synchronized，多執行緒要自己同步或用 ConcurrentHashMap</li>
+<li><strong>Key 和 Value 可以是 null</strong> - 但只能有一個 null key</li>
+<li><strong>效能好</strong> - 沒有鎖的開銷</li>
+<li><strong>可預測的迭代順序</strong> - 不保證（1.7 是 bucket order，1.8+ 是 insertion order for linked entries）</li>
+</ul>
+<h3 id="HashMap-內部結構（Java-1-8-）"><a href="#HashMap-內部結構（Java-1-8-）" class="headerlink" title="HashMap 內部結構（Java 1.8+）"></a>HashMap 內部結構（Java 1.8+）</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 簡化版結構</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">HashMap</span>&lt;K, V&gt; &#123;</span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">final</span> <span class="type">int</span> <span class="variable">DEFAULT_CAPACITY</span> <span class="operator">=</span> <span class="number">16</span>;  <span class="comment">// 預設容量</span></span><br><span class="line">    Entry&lt;K, V&gt;[] table;  <span class="comment">// hash table</span></span><br><span class="line">    </span><br><span class="line">    <span class="keyword">public</span> V <span class="title function_">put</span><span class="params">(K key, V value)</span> &#123;</span><br><span class="line">        <span class="type">int</span> <span class="variable">hash</span> <span class="operator">=</span> hash(key);</span><br><span class="line">        <span class="type">int</span> <span class="variable">index</span> <span class="operator">=</span> hash % table.length;</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// 放到 table[index] 這個 bucket 裡</span></span><br><span class="line">        <span class="comment">// 如果碰撞，使用 linked list 或 red-black tree（Java 1.8）</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Java 1.8 之後的改進：</p>
+<ul>
+<li>碰撞少時用 linked list</li>
+<li>碰撞多時（超過 8 個）自動轉成 red-black tree，查詢快速到 O(log n)</li>
+</ul>
+<h3 id="什麼時候會-resize"><a href="#什麼時候會-resize" class="headerlink" title="什麼時候會 resize"></a>什麼時候會 resize</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">HashMap&lt;String, Integer&gt; map = <span class="keyword">new</span> <span class="title class_">HashMap</span>&lt;&gt;();  <span class="comment">// 容量 16</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 插入資料後，當 size &gt; capacity * loadFactor 時（預設 0.75）</span></span><br><span class="line"><span class="comment">// 16 * 0.75 = 12，所以第 13 個元素會觸發 resize</span></span><br><span class="line"><span class="comment">// 新容量 = 舊容量 * 2 = 32</span></span><br></pre></td></tr></table></figure>
+
+<p>Resize 很昂貴（要重新計算所有元素的 index），所以如果預先知道大小，最好初始化時指定：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Map&lt;String, Integer&gt; map = <span class="keyword">new</span> <span class="title class_">HashMap</span>&lt;&gt;(<span class="number">1000</span>);  <span class="comment">// 指定容量 1000</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="ConcurrentHashMap-是更好的選擇"><a href="#ConcurrentHashMap-是更好的選擇" class="headerlink" title="ConcurrentHashMap 是更好的選擇"></a>ConcurrentHashMap 是更好的選擇</h2><p>需要執行緒安全？別再用 Hashtable，用 ConcurrentHashMap：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Map&lt;String, Integer&gt; map = <span class="keyword">new</span> <span class="title class_">ConcurrentHashMap</span>&lt;&gt;();</span><br><span class="line">map.put(<span class="string">&quot;Apple&quot;</span>, <span class="number">10</span>);</span><br><span class="line">map.get(<span class="string">&quot;Apple&quot;</span>);</span><br></pre></td></tr></table></figure>
+
+<p><strong>優勢：</strong></p>
+<ul>
+<li><strong>分段鎖（Segment Lock）</strong> - 不是鎖整個表，而是分成多個段，每個段有自己的鎖</li>
+<li><strong>好效能</strong> - 多執行緒讀寫競爭不大</li>
+<li><strong>Key 和 Value 不能是 null</strong></li>
+</ul>
+<p>簡單概念：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">Hashtable:</span><br><span class="line">  [lock] [bucket1] [bucket2] [bucket3] ... [bucket16]</span><br><span class="line">  一個全域鎖，所有操作都要等</span><br><span class="line"></span><br><span class="line">ConcurrentHashMap:</span><br><span class="line">  [bucket1-4][bucket5-8][bucket9-12][bucket13-16]</span><br><span class="line">    [lock1]    [lock2]      [lock3]        [lock4]</span><br><span class="line">  4 個段，4 個鎖，最多 4 個執行緒並行操作</span><br></pre></td></tr></table></figure>
+
+<h2 id="Java-Collections-Framework"><a href="#Java-Collections-Framework" class="headerlink" title="Java Collections Framework"></a>Java Collections Framework</h2><p>Hashtable 和 HashMap 在 Java Collections 的位置不同。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">Collection（介面）</span><br><span class="line">├── Set</span><br><span class="line">│   ├── HashSet</span><br><span class="line">│   ├── LinkedHashSet</span><br><span class="line">│   └── TreeSet</span><br><span class="line">└── List</span><br><span class="line">    ├── ArrayList</span><br><span class="line">    ├── LinkedList</span><br><span class="line">    └── Vector</span><br><span class="line"></span><br><span class="line">Map（介面，不是 Collection 的子介面！）</span><br><span class="line">├── HashMap</span><br><span class="line">├── LinkedHashMap</span><br><span class="line">├── TreeMap</span><br><span class="line">├── ConcurrentHashMap</span><br><span class="line">└── Hashtable</span><br></pre></td></tr></table></figure>
+
+<p><strong>重點：Map 和 Collection 並列，不是包含關係。</strong></p>
+<p>這是因為 Map 是 key-value 結構，邏輯上和 Collection（單一元素）不同。</p>
+<h2 id="實務建議"><a href="#實務建議" class="headerlink" title="實務建議"></a>實務建議</h2><ol>
+<li><p><strong>新專案用 HashMap</strong> - 除非特殊需求，Hashtable 已死</p>
+</li>
+<li><p><strong>需要執行緒安全用 ConcurrentHashMap</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 不好</span></span><br><span class="line">Map&lt;String, Data&gt; map = Collections.synchronizedMap(<span class="keyword">new</span> <span class="title class_">HashMap</span>&lt;&gt;());</span><br><span class="line"></span><br><span class="line"><span class="comment">// 更好</span></span><br><span class="line">Map&lt;String, Data&gt; map = <span class="keyword">new</span> <span class="title class_">ConcurrentHashMap</span>&lt;&gt;();</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>保持插入順序用 LinkedHashMap</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Map&lt;String, Integer&gt; map = <span class="keyword">new</span> <span class="title class_">LinkedHashMap</span>&lt;&gt;();  <span class="comment">// 保持插入順序</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>預先知道大小，初始化容量</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Map&lt;String, String&gt; map = <span class="keyword">new</span> <span class="title class_">HashMap</span>&lt;&gt;(<span class="number">100</span>);  <span class="comment">// 避免頻繁 resize</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>永遠別用 null 作為 key</strong> - 會造成混亂</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 不好做法</span></span><br><span class="line">map.put(<span class="literal">null</span>, <span class="string">&quot;value&quot;</span>);</span><br><span class="line"><span class="keyword">if</span> (map.get(someKey) == <span class="literal">null</span>) &#123;  <span class="comment">// 不知道是 null key 還是 not found</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ol>
+<p>就醬，Hash 的世界沒那麼複雜，關鍵是理解基本概念，選對工具。</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://mark22013333.github.io">Cheng®</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章連結: </span><span class="post-copyright-info"><a href="https://mark22013333.github.io/2025/12/27/%E6%B7%BA%E8%AB%87-Hash-Hashtable-%E8%88%87-HashMap/">https://mark22013333.github.io/2025/12/27/淺談-Hash-Hashtable-與-HashMap/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版權聲明: </span><span class="post-copyright-info">本部落格所有文章除特別聲明外，均採用<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 授權協議。轉載請註明來源 <a href="https://mark22013333.github.io" target="_blank">Cheng's Tech & Life</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Collections/">Collections</a></div><div class="post-share"><div class="social-share" data-image="/img/20251227-01.webp" data-sites="facebook,x"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><div class="post-reward"><div class="reward-badges"><a class="sponsor-glow-btn" href="https://www.buymeacoffee.com/mark22013333" target="_blank" rel="noopener noreferrer" title="Buy Me A Coffee"><img src="https://img.shields.io/badge/Buy_Me_A_Coffee-FFDD00?style=for-the-badge&amp;logo=buy-me-a-coffee&amp;logoColor=black" alt="Buy Me A Coffee"/></a><a class="sponsor-glow-btn" href="https://p.ecpay.com.tw/EFC3F8F" target="_blank" rel="noopener noreferrer" title="綠界贊助"><img src="https://img.shields.io/badge/☕_%E8%AB%8B%E6%88%91%E5%96%9D%E6%9D%AF%E5%92%96%E5%95%A1-Donate-11998e?style=for-the-badge&amp;logo=coffee&amp;logoColor=white" alt="綠界贊助"/></a><a class="sponsor-glow-btn" href="https://calendly.com/markcheng00806-intumit/15min" target="_blank" rel="noopener noreferrer" title="預約時間"><img src="https://img.shields.io/badge/📅_%E9%A0%90%E7%B4%84_15_%E5%88%86%E9%90%98-Book_Time-0072ff?style=for-the-badge" alt="預約時間"/></a><p class="reward-badges-note">你的鼓勵將被轉換為我明天繼續加班的動力（真的）。 ❤️</p></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2025/12/16/Java-Retry-%E9%87%8D%E8%A9%A6%E6%A9%9F%E5%88%B6-%E6%8C%87%E6%95%B8%E9%80%80%E9%81%BF%E6%A8%A1%E7%89%88/" title="Java Retry 重試機制 - 指數退避模版"><img class="cover" src="/img/20251216-01.webp" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">Java Retry 重試機制 - 指數退避模版</div></div><div class="info-2"><div class="info-item-1">遠端呼叫爆了，重試一下通常就活了。但如果一直狂轟，server 只會更爆。所以咱們要聰明一點，用指數退避（exponential backoff）的方式慢慢來。 為啥要指數退避直接 retry 沒有 delay 的問題：  Server 還沒回過來，馬上再打一次，等於雪上加霜 頻繁重試反而加重服務負擔 看起來像 DDoS 攻擊 XD  指數退避的邏輯：  第 1 次失敗，等 2 秒再試 第 2 次失敗，等 4 秒再試 第 3 次失敗，等 8 秒再試 以此類推…  給 server 喘息的時間，機率就高很多。 通用模版12345678910111213141516171819202122232425262728public boolean retry(int maxAttempts, int initialDelaySeconds, Runnable action) &#123;    int attempts = 0;    int delay = initialDelaySeconds;        while (attempts &lt; maxAttempts) &#12...</div></div></div></a><a class="pagination-related" href="/2026/01/07/Java-Stream-%E9%81%8E%E6%BF%BE-List-JSON-%E9%87%8D%E8%A4%87%E8%B3%87%E6%96%99/" title="Java Stream 過濾 List&lt;JSON&gt; 重複資料"><img class="cover" src="/img/20260107-01.webp" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">Java Stream 過濾 List<JSON> 重複資料</div></div><div class="info-2"><div class="info-item-1">常常拿到一堆 JSON 格式的資料，裡面有一大堆重複的垃圾要清。用 List 直接 remove 重複項，會爆炸。用 Stream 搭配 Collectors，一行代碼搞定，超爽。 問題場景比如從 API 拿到的優惠券列表，user_create_time 相同的算是重複： 123456[  &#123;&quot;id&quot;: &quot;C001&quot;, &quot;user_create_time&quot;: &quot;2026-01-01 10:00:00&quot;, &quot;discount&quot;: &quot;10%&quot;&#125;,  &#123;&quot;id&quot;: &quot;C002&quot;, &quot;user_create_time&quot;: &quot;2026-01-01 10:00:00&quot;, &quot;discount&quot;: &quot;10%&quot;&#125;,  &#123;&quot;id&quot;: &quot;C003&quot;, &quot;user_c...</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相關推薦</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2026/02/20/Java-8-%E6%99%82%E9%96%93-API-%E8%88%87-LinkedHashMap-%E7%AD%86%E8%A8%98/" title="Java 8 時間 API 與 LinkedHashMap 使用筆記"><img class="cover" src="/img/20260220-01.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-02-20</div><div class="info-item-2">Java 8 時間 API 與 LinkedHashMap 使用筆記</div></div><div class="info-2"><div class="info-item-1">Java 8 的時間 API 用起來比之前的 Date、Calendar 不知道爽幾倍。但新 API 的時區轉換常常爆炸，因為邏輯和以前差很多。LinkedHashMap 是保持插入順序的 Map，常被小看但超實用。一次整理出來。 Java 8 時間 API 基礎主要類123456789101112131415161718192021222324import java.time.*;// LocalDateTime - 純日期時間，沒有時區LocalDateTime now = LocalDateTime.now();System.out.println(now);  // 2026-02-20T14:30:45.123456// LocalDate - 只有日期LocalDate today = LocalDate.now();System.out.println(today);  // 2026-02-20// LocalTime - 只有時間LocalTime time = LocalTime.now();System.out.println(time);  // 14:3...</div></div></div></a><a class="pagination-related" href="/2025/11/13/HashMap-%E8%BD%89-JSON-%E7%9A%84%E4%B8%89%E7%A8%AE%E6%96%B9%E5%BC%8F/" title="HashMap 轉 JSON 的三種方式"><img class="cover" src="/img/20251113-01.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-11-13</div><div class="info-item-2">HashMap 轉 JSON 的三種方式</div></div><div class="info-2"><div class="info-item-1">HashMap 轉 JSON 看似簡單，但真正用上去踩坑才多。有三種常見的方式，各有優缺點，選對一個才不會被 JsonProcessingException 折磨。 場景說明先假設有這樣的 HashMap： 1234567891011Map&lt;String, Object&gt; userMap = new HashMap&lt;&gt;();userMap.put(&quot;id&quot;, 123);userMap.put(&quot;name&quot;, &quot;Alice&quot;);userMap.put(&quot;email&quot;, &quot;alice@example.com&quot;);userMap.put(&quot;age&quot;, 30);userMap.put(&quot;tags&quot;, Arrays.asList(&quot;admin&quot;, &quot;developer&quot;));Map&lt;String, Object&gt; addressMap = new HashMap&lt;&gt;...</div></div></div></a><a class="pagination-related" href="/2026/01/18/Java-Stream-%E6%93%8D%E4%BD%9C%E9%9B%86%E9%8C%A6-%E5%90%88%E4%BD%B5Map-List%E8%BD%89Map-%E6%8E%92%E5%BA%8F/" title="Java Stream 操作集錦 - 合併 Map、List 轉 Map、物件排序"><img class="cover" src="/img/20260118-01.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-01-18</div><div class="info-item-2">Java Stream 操作集錦 - 合併 Map、List 轉 Map、物件排序</div></div><div class="info-2"><div class="info-item-1">Stream 操作是 Java 8+ 的大招。三個最常用的場景：合併多個 Map、把 List 轉成 Map、排序物件。一次整理出來，以後就 copy-paste 吧。 1. Stream 合併多個 Map經常要把好幾個 Map 合起來，最直白的做法是逐個 put： 123456789101112131415Map&lt;String, Integer&gt; map1 = new HashMap&lt;&gt;();map1.put(&quot;Apple&quot;, 10);map1.put(&quot;Banana&quot;, 20);Map&lt;String, Integer&gt; map2 = new HashMap&lt;&gt;();map2.put(&quot;Orange&quot;, 15);map2.put(&quot;Pear&quot;, 25);Map&lt;String, Integer&gt; map3 = new HashMap&lt;&gt;();map3.put(&quot;Cherry&quot;, 30);// 爛做法Map&lt...</div></div></div></a><a class="pagination-related" href="/2026/03/03/Java-%E9%9B%86%E5%90%88%E6%93%8D%E4%BD%9C-List-%E5%B7%AE%E9%9B%86%E8%88%87-Stream-%E5%88%86%E5%89%B2-JsonArray/" title="Java 集合操作 - List 差集與 Stream 分割 JsonArray"><img class="cover" src="/img/20260303-01.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-03-03</div><div class="info-item-2">Java 集合操作 - List 差集與 Stream 分割 JsonArray</div></div><div class="info-2"><div class="info-item-1">集合操作是日常編程的基礎，但很多人寫得很醜。本篇涵蓋三個常見的集合操作場景：List 差集、JsonArray 分割成 List，以及 Stream 查詢計數。這些小技巧能讓代碼更簡潔。 1. List 差集需求：從 list1 移除所有在 list2 裡出現的元素。 簡單但爛的做法1234567891011121314151617List&lt;String&gt; list1 = Arrays.asList(&quot;Apple&quot;, &quot;Banana&quot;, &quot;Cherry&quot;, &quot;Orange&quot;);List&lt;String&gt; list2 = Arrays.asList(&quot;Banana&quot;, &quot;Orange&quot;);// 爛做法 1：逐個刪（在迴圈中修改 list，會爆 ConcurrentModificationException）for (String item : list1) &#123;    if (list2.contains(item)) &#123; ...</div></div></div></a></div></div><hr class="custom-hr"/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 評論</span></div></div><div class="comment-wrap"><div><div id="giscus-wrap"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="https://lh3.googleusercontent.com/pw/ABLVV87_po8nBc6F_tXcoYDmtzMGWxHuhhrbguYILCjmjWKLOS8DTpubm0YoQLKgjyjRIZyV5TjYe7XVEz_YU4squfr37GTZqPZP1hlMVZ_MIgXpTxWu73M=w1200" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">Cheng®</div><div class="author-info-description">Backend Developer / 技術筆記 & AI 新聞分享</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">161</div></a><a href="/tags/"><div class="headline">標籤</div><div class="length-num">142</div></a><a href="/categories/"><div class="headline">分類</div><div class="length-num">12</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/mark22013333"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons"><a class="social-icon" href="https://github.com/mark22013333" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:mark22013333@gmail.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a></div><div class="card-info-sponsor"><a class="sponsor-glow-btn" href="https://www.buymeacoffee.com/mark22013333" target="_blank" rel="noopener noreferrer" title="Buy Me A Coffee"><img src="https://img.shields.io/badge/Buy_Me_A_Coffee-FFDD00?style=for-the-badge&amp;logo=buy-me-a-coffee&amp;logoColor=black" alt="Buy Me A Coffee"/></a><a class="sponsor-glow-btn" href="https://p.ecpay.com.tw/EFC3F8F" target="_blank" rel="noopener noreferrer" title="綠界贊助"><img src="https://img.shields.io/badge/☕_%E8%AB%8B%E6%88%91%E5%96%9D%E6%9D%AF%E5%92%96%E5%95%A1-Donate-11998e?style=for-the-badge&amp;logo=coffee&amp;logoColor=white" alt="綠界贊助"/></a><a class="sponsor-glow-btn" href="https://calendly.com/markcheng00806-intumit/15min" target="_blank" rel="noopener noreferrer" title="預約時間"><img src="https://img.shields.io/badge/📅_%E9%A0%90%E7%B4%84_15_%E5%88%86%E9%90%98-Book_Time-0072ff?style=for-the-badge" alt="預約時間"/></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">這裡記錄我在後端開發路上踩過的坑、學到的東西，也會分享每日 AI 與科技新聞觀點。歡迎一起交流！</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目錄</span><span class="toc-percentage"></span></div><div class="toc-content is-expand"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Hash-%E7%9A%84%E6%A6%82%E5%BF%B5"><span class="toc-number">1.</span> <span class="toc-text">Hash 的概念</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Hash-Function-%E5%81%9A%E7%9A%84%E4%BA%8B"><span class="toc-number">1.1.</span> <span class="toc-text">Hash Function 做的事</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Hash-%E7%9A%84%E6%87%89%E7%94%A8"><span class="toc-number">1.2.</span> <span class="toc-text">Hash 的應用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%B7%A8%E7%A2%BC-vs-%E5%8A%A0%E5%AF%86-vs-Hash"><span class="toc-number">1.3.</span> <span class="toc-text">編碼 vs 加密 vs Hash</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Hash-Table-%E8%B3%87%E6%96%99%E7%B5%90%E6%A7%8B"><span class="toc-number">2.</span> <span class="toc-text">Hash Table 資料結構</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5"><span class="toc-number">2.1.</span> <span class="toc-text">基本概念</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%9B%9C%E6%B9%8A%E7%A2%B0%E6%92%9E%E5%95%8F%E9%A1%8C"><span class="toc-number">2.2.</span> <span class="toc-text">雜湊碰撞問題</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Java-%E7%9A%84-Hashtable-%E9%A1%9E"><span class="toc-number">3.</span> <span class="toc-text">Java 的 Hashtable 類</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9F%BA%E6%9C%AC%E7%89%B9%E6%80%A7"><span class="toc-number">3.1.</span> <span class="toc-text">基本特性</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%82%BA%E5%95%A5%E8%A6%81%E6%A3%84%E7%94%A8"><span class="toc-number">3.2.</span> <span class="toc-text">為啥要棄用</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#HashMap-%E9%A1%9E"><span class="toc-number">4.</span> <span class="toc-text">HashMap 類</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9F%BA%E6%9C%AC%E7%89%B9%E6%80%A7-1"><span class="toc-number">4.1.</span> <span class="toc-text">基本特性</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#HashMap-%E5%85%A7%E9%83%A8%E7%B5%90%E6%A7%8B%EF%BC%88Java-1-8-%EF%BC%89"><span class="toc-number">4.2.</span> <span class="toc-text">HashMap 內部結構（Java 1.8+）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%80%E9%BA%BC%E6%99%82%E5%80%99%E6%9C%83-resize"><span class="toc-number">4.3.</span> <span class="toc-text">什麼時候會 resize</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ConcurrentHashMap-%E6%98%AF%E6%9B%B4%E5%A5%BD%E7%9A%84%E9%81%B8%E6%93%87"><span class="toc-number">5.</span> <span class="toc-text">ConcurrentHashMap 是更好的選擇</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Java-Collections-Framework"><span class="toc-number">6.</span> <span class="toc-text">Java Collections Framework</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AF%A6%E5%8B%99%E5%BB%BA%E8%AD%B0"><span class="toc-number">7.</span> <span class="toc-text">實務建議</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2026/04/23/Claude-Code-Ultraplan-%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8-%E6%8A%8A%E8%A6%8F%E5%8A%83%E4%BA%A4%E7%B5%A6%E9%9B%B2%E7%AB%AF/" title="Claude Code Ultraplan 完整教學 — 把規劃交給雲端，讓 Claude 替你想 30 分鐘"><img src="/img/20260423-03.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Claude Code Ultraplan 完整教學 — 把規劃交給雲端，讓 Claude 替你想 30 分鐘"/></a><div class="content"><a class="title" href="/2026/04/23/Claude-Code-Ultraplan-%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8-%E6%8A%8A%E8%A6%8F%E5%8A%83%E4%BA%A4%E7%B5%A6%E9%9B%B2%E7%AB%AF/" title="Claude Code Ultraplan 完整教學 — 把規劃交給雲端，讓 Claude 替你想 30 分鐘">Claude Code Ultraplan 完整教學 — 把規劃交給雲端，讓 Claude 替你想 30 分鐘</a><time datetime="2026-04-23T09:00:00.000Z" title="發表於 2026-04-23 09:00:00">2026-04-23</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/04/23/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260423/" title="AI 與科技新聞摘要 - 2026/04/23"><img src="/img/20260423-02.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="AI 與科技新聞摘要 - 2026/04/23"/></a><div class="content"><a class="title" href="/2026/04/23/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260423/" title="AI 與科技新聞摘要 - 2026/04/23">AI 與科技新聞摘要 - 2026/04/23</a><time datetime="2026-04-23T08:30:00.000Z" title="發表於 2026-04-23 08:30:00">2026-04-23</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/04/23/Agent-Skills-%E7%B5%A6-AI-%E7%B7%A8%E7%A2%BC%E5%8A%A9%E6%89%8B%E7%9A%84%E5%B7%A5%E7%A8%8B%E7%B4%80%E5%BE%8B%E6%8C%87%E4%BB%A4%E9%9B%86/" title="Agent Skills — 給 AI 編碼助手的工程紀律指令集"><img src="/img/20260423-01.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Agent Skills — 給 AI 編碼助手的工程紀律指令集"/></a><div class="content"><a class="title" href="/2026/04/23/Agent-Skills-%E7%B5%A6-AI-%E7%B7%A8%E7%A2%BC%E5%8A%A9%E6%89%8B%E7%9A%84%E5%B7%A5%E7%A8%8B%E7%B4%80%E5%BE%8B%E6%8C%87%E4%BB%A4%E9%9B%86/" title="Agent Skills — 給 AI 編碼助手的工程紀律指令集">Agent Skills — 給 AI 編碼助手的工程紀律指令集</a><time datetime="2026-04-23T08:00:00.000Z" title="發表於 2026-04-23 08:00:00">2026-04-23</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/04/22/GitHub-Copilot-%E5%81%9C%E6%AD%A2%E6%96%B0%E7%94%A8%E6%88%B6%E8%A8%BB%E5%86%8A%E5%BE%8C%E5%B7%A5%E7%A8%8B%E5%B8%AB%E6%80%8E%E9%BA%BC%E5%B9%B3%E7%A7%BB%E5%88%B0-Claude-Code/" title="GitHub Copilot 停止新用戶註冊後，工程師怎麼平移到 Claude Code"><img src="/img/20260422-03.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="GitHub Copilot 停止新用戶註冊後，工程師怎麼平移到 Claude Code"/></a><div class="content"><a class="title" href="/2026/04/22/GitHub-Copilot-%E5%81%9C%E6%AD%A2%E6%96%B0%E7%94%A8%E6%88%B6%E8%A8%BB%E5%86%8A%E5%BE%8C%E5%B7%A5%E7%A8%8B%E5%B8%AB%E6%80%8E%E9%BA%BC%E5%B9%B3%E7%A7%BB%E5%88%B0-Claude-Code/" title="GitHub Copilot 停止新用戶註冊後，工程師怎麼平移到 Claude Code">GitHub Copilot 停止新用戶註冊後，工程師怎麼平移到 Claude Code</a><time datetime="2026-04-22T09:00:00.000Z" title="發表於 2026-04-22 09:00:00">2026-04-22</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/04/22/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260422/" title="AI 與科技新聞摘要 - 2026/04/22"><img src="/img/20260422-02.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="AI 與科技新聞摘要 - 2026/04/22"/></a><div class="content"><a class="title" href="/2026/04/22/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260422/" title="AI 與科技新聞摘要 - 2026/04/22">AI 與科技新聞摘要 - 2026/04/22</a><time datetime="2026-04-22T08:30:00.000Z" title="發表於 2026-04-22 08:30:00">2026-04-22</time></div></div></div></div></div></div></main><footer id="footer" style="background-image: url(/img/20251227-01.webp);"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2024 - 2026 By Cheng®</span></div><div class="footer_custom_text">Written by Cheng® — 自律，從當下的一念開始。</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="閱讀模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日夜模式切換"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="單欄和雙欄切換"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="設定"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目錄"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="前往評論"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到頂端"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.umd.min.js"></script><script src="https://cdn.jsdelivr.net/npm/instant.page/instantpage.min.js" type="module"></script><script src="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.js"></script><div class="js-pjax"><script>(() => {
+  const isShuoshuo = GLOBAL_CONFIG_SITE.pageType === 'shuoshuo'
+  const option = {"mapping":"pathname","strict":0,"reactionsEnabled":1,"emitMetadata":0,"inputPosition":"bottom","lang":"zh-TW"}
+
+  const getGiscusTheme = theme => theme === 'dark' ? 'dark' : 'light'
+
+  const createScriptElement = config => {
+    const ele = document.createElement('script')
+    Object.entries(config).forEach(([key, value]) => {
+      ele.setAttribute(key, value)
+    })
+    return ele
+  }
+
+  const loadGiscus = (el = document, key) => {
+    const mappingConfig = isShuoshuo
+      ? { 'data-mapping': 'specific', 'data-term': key }
+      : { 'data-mapping': (option && option['data-mapping']) || 'pathname' }
+
+    const giscusConfig = {
+      src: 'https://giscus.app/client.js',
+      'data-repo': 'mark22013333/mark22013333.github.io',
+      'data-repo-id': 'R_kgDOLAxa6A',
+      'data-category-id': 'DIC_kwDOLAxa6M4C5eO9',
+      'data-theme': getGiscusTheme(document.documentElement.getAttribute('data-theme')),
+      'data-reactions-enabled': '1',
+      crossorigin: 'anonymous',
+      async: true,
+      ...option,
+      ...mappingConfig
+    }
+
+    const scriptElement = createScriptElement(giscusConfig)
+
+    el.querySelector('#giscus-wrap').appendChild(scriptElement)
+
+    if (isShuoshuo) {
+      window.shuoshuoComment.destroyGiscus = () => {
+        if (el.children.length) {
+          el.innerHTML = ''
+          el.classList.add('no-comment')
+        }
+      }
+    }
+  }
+
+  const changeGiscusTheme = theme => {
+    const iframe = document.querySelector('#giscus-wrap iframe')
+    if (iframe) {
+      const message = {
+        giscus: {
+          setConfig: {
+            theme: getGiscusTheme(theme)
+          }
+        }
+      }
+      iframe.contentWindow.postMessage(message, 'https://giscus.app')
+    }
+  }
+
+  btf.addGlobalFn('themeChange', changeGiscusTheme, 'giscus')
+
+  if (isShuoshuo) {
+    'Giscus' === 'Giscus'
+      ? window.shuoshuoComment = { loadComment: loadGiscus }
+      : window.loadOtherComment = loadGiscus
+    return
+  }
+
+  if ('Giscus' === 'Giscus' || !true) {
+    if (true) btf.loadComment(document.getElementById('giscus-wrap'), loadGiscus)
+    else loadGiscus()
+  } else {
+    window.loadOtherComment = loadGiscus
+  }
+})()</script></div><script src="/js/kkbox-player.js"></script><script src="/js/archives-pagination.js"></script><script src="/js/font-resize.js"></script><script src="/js/dark-palette.js"></script><script defer="defer" id="fluttering_ribbon" mobile="false" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/canvas-fluttering-ribbon.min.js"></script><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/activate-power-mode.min.js"></script><script>POWERMODE.colorful = true;
+POWERMODE.shake = true;
+POWERMODE.mobile = true;
+document.body.addEventListener('input', POWERMODE);
+</script><script src="https://cdn.jsdelivr.net/npm/pjax/pjax.min.js" defer="defer"></script><script>document.addEventListener('DOMContentLoaded', () => {
+  const pjaxSelectors = ["meta[property=\"og:image\"]","meta[property=\"og:title\"]","meta[property=\"og:url\"]","meta[property=\"og:description\"]","link[rel=\"canonical\"]","head > title","#config-diff","#body-wrap","#rightside-config-hide","#rightside-config-show",".js-pjax"]
+
+  window.pjax = new Pjax({
+    elements: 'a:not([target="_blank"])',
+    selectors: pjaxSelectors,
+    cacheBust: false,
+    analytics: true,
+    scrollRestoration: false
+  })
+
+  const triggerPjaxFn = (val) => {
+    if (!val) return
+    Object.values(val).forEach(fn => {
+      try {
+        fn()
+      } catch (err) {
+        console.debug('Pjax callback failed:', err)
+      }
+    })
+  }
+
+  document.addEventListener('pjax:send', () => {
+    // removeEventListener
+    btf.removeGlobalFnEvent('pjaxSendOnce')
+    btf.removeGlobalFnEvent('themeChange')
+
+    // reset readmode
+    const $bodyClassList = document.body.classList
+    if ($bodyClassList.contains('read-mode')) $bodyClassList.remove('read-mode')
+
+    triggerPjaxFn(window.globalFn.pjaxSend)
+  })
+
+  document.addEventListener('pjax:complete', () => {
+    btf.removeGlobalFnEvent('pjaxCompleteOnce')
+    document.querySelectorAll('script[data-pjax]').forEach(item => {
+      const newScript = document.createElement('script')
+      const content = item.text || item.textContent || item.innerHTML || ""
+      Array.from(item.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value))
+      newScript.appendChild(document.createTextNode(content))
+      item.parentNode.replaceChild(newScript, item)
+    })
+
+    triggerPjaxFn(window.globalFn.pjaxComplete)
+  })
+
+  document.addEventListener('pjax:error', e => {
+    if (e.request.status === 404) {
+      true
+        ? pjax.loadUrl('/404.html')
+        : window.location.href = e.request.responseURL
+    }
+  })
+})</script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜尋</span><i class="fas fa-spinner fa-pulse" id="loading-status" hidden="hidden"></i><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="text-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  資料載入中</span></div><div class="local-search-input"><input placeholder="搜尋文章" type="text"/></div><hr/><div id="local-search-results"></div><div class="ais-Pagination" id="local-search-pagination" style="display:none;"><ul class="ais-Pagination-list"></ul></div><div id="local-search-stats"></div></div><div id="search-mask"></div><script src="/js/search/local-search.js"></script></div></div></body></html>

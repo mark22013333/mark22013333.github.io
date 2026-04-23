@@ -1,0 +1,477 @@
+<!DOCTYPE html><html lang="zh-TW" data-theme="dark"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>Claude Managed Agents 完整教學 - 從零打造雲端 AI Agent | Cheng's Tech &amp; Life</title><meta name="author" content="Cheng®"><meta name="copyright" content="Cheng®"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#0d0d0d"><meta name="description" content="自己搭 AI agent 的基礎設施有多痛。沙箱要做、狀態要管、retry 要寫、工具執行要安全隔離、觀測性要加、容器要維護。光這些就能吃掉幾週的開發時間，而且你真正想解決的業務問題一行 code 都還沒寫。4&#x2F;8 Anthropic 推出 Claude Managed Agents，把上面這些全包了。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Claude Managed Agents 完整教學 - 從零打造雲端 AI Agent">
+<meta property="og:url" content="https://mark22013333.github.io/2026/04/10/Claude-Managed-Agents-%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8-%E5%BE%9E%E9%9B%B6%E6%89%93%E9%80%A0%E9%9B%B2%E7%AB%AF-AI-Agent/index.html">
+<meta property="og:site_name" content="Cheng&#39;s Tech &amp; Life">
+<meta property="og:description" content="自己搭 AI agent 的基礎設施有多痛。沙箱要做、狀態要管、retry 要寫、工具執行要安全隔離、觀測性要加、容器要維護。光這些就能吃掉幾週的開發時間，而且你真正想解決的業務問題一行 code 都還沒寫。4&#x2F;8 Anthropic 推出 Claude Managed Agents，把上面這些全包了。">
+<meta property="og:locale" content="zh_TW">
+<meta property="og:image" content="https://mark22013333.github.io/img/20260410-03.webp">
+<meta property="article:published_time" content="2026-04-10T00:30:00.000Z">
+<meta property="article:modified_time" content="2026-04-13T02:00:09.782Z">
+<meta property="article:author" content="Cheng®">
+<meta property="article:tag" content="AI Agent">
+<meta property="article:tag" content="Anthropic">
+<meta property="article:tag" content="開發工具">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://mark22013333.github.io/img/20260410-03.webp"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Claude Managed Agents 完整教學 - 從零打造雲端 AI Agent",
+  "url": "https://mark22013333.github.io/2026/04/10/Claude-Managed-Agents-%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8-%E5%BE%9E%E9%9B%B6%E6%89%93%E9%80%A0%E9%9B%B2%E7%AB%AF-AI-Agent/",
+  "image": "https://mark22013333.github.io/img/20260410-03.webp",
+  "datePublished": "2026-04-10T00:30:00.000Z",
+  "dateModified": "2026-04-13T02:00:09.782Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "Cheng®",
+      "url": "https://mark22013333.github.io"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://mark22013333.github.io/2026/04/10/Claude-Managed-Agents-%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8-%E5%BE%9E%E9%9B%B6%E6%89%93%E9%80%A0%E9%9B%B2%E7%AB%AF-AI-Agent/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//www.google-analytics.com" crossorigin=""/><link rel="preconnect" href="//fonts.googleapis.com" crossorigin=""/><link rel="preconnect" href="//busuanzi.ibruce.info"/><meta name="google-site-verification" content="6ywUr8k2n_CT1PFYJzlSvI3CZ-JmJ55RYbA39VrFBDs"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!true && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          const hour = new Date().getHours()
+          const isNight = hour <= 9 || hour >= 18
+          if (theme === undefined) isNight ? activateDarkMode() : activateLightMode()
+          else theme === 'light' ? activateLightMode() : activateDarkMode()
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script async="async" src="https://www.googletagmanager.com/gtag/js?id=G-JBV14NRDH3"></script><script>window.dataLayer = window.dataLayer || []
+function gtag(){dataLayer.push(arguments)}
+gtag('js', new Date())
+gtag('config', 'G-JBV14NRDH3')
+btf.addGlobalFn('pjaxComplete', () => {
+  gtag('config', 'G-JBV14NRDH3', {'page_path': window.location.pathname})
+}, 'google_analytics')
+</script><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Titillium+Web&amp;display=swap" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"pagination":{"enable":false,"hitsPerPage":8},"languages":{"hits_empty":"找不到符合您查詢的內容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '複製成功',
+    error: '複製失敗',
+    noSupport: '瀏覽器不支援'
+  },
+  relativeDate: {
+    homepage: false,
+    post: true
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '剛剛',
+    min: '分鐘前',
+    hour: '小時前',
+    day: '天前',
+    month: '個月前'
+  },
+  copyright: {"limitCount":1,"languages":{"author":"作者: Cheng®","link":"連結: ","source":"來源: Cheng's Tech & Life","info":"著作權歸作者所有。如需商業轉載，請聯絡作者獲得授權，非商業轉載請註明出處😁。"}},
+  lightbox: 'fancybox',
+  Snackbar: {"chs_to_cht":"已切換為繁體中文","cht_to_chs":"已切換為簡體中文","day_to_night":"已切換為深色模式","night_to_day":"已切換為淺色模式","bgLight":"#49b1f5","bgDark":"#1f1f1f","position":"top-center"},
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid/dist/infinitegrid.min.js',
+    buttonText: '載入更多'
+  },
+  isPhotoFigcaption: true,
+  islazyloadPlugin: false,
+  isAnchor: true,
+  percent: {
+    toc: true,
+    rightside: true,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Claude Managed Agents 完整教學 - 從零打造雲端 AI Agent',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><link rel="stylesheet" href="/css/kkbox-player.css"><link rel="stylesheet" href="/css/tag-cloud-fancy.css"><link rel="stylesheet" href="/css/font-resize.css"><link rel="stylesheet" href="/css/dark-palette.css"><link rel="stylesheet" href="/css/loading-override.css"><link rel="alternate" href="/atom.xml" title="Cheng's Tech & Life" type="application/atom+xml">
+</head><body><div id="loading-box"><div class="loading-glass-overlay"></div><div class="loading-indicator"><div class="loading-dot"></div><div class="loading-dot"></div><div class="loading-dot"></div></div></div><script>(()=>{
+  const $loadingBox = document.getElementById('loading-box')
+  const $body = document.body
+  const preloader = {
+    endLoading: () => {
+      if ($loadingBox.classList.contains('loaded')) return
+      $body.style.overflow = ''
+      $loadingBox.classList.add('loaded')
+    },
+    initLoading: () => {
+      $body.style.overflow = 'hidden'
+      $loadingBox.classList.remove('loaded')
+    }
+  }
+
+  preloader.initLoading()
+
+  if (document.readyState === 'complete') {
+    preloader.endLoading()
+  } else {
+    window.addEventListener('load', preloader.endLoading)
+    document.addEventListener('DOMContentLoaded', preloader.endLoading)
+    setTimeout(preloader.endLoading, 7000)
+  }
+
+  if (true) {
+    btf.addGlobalFn('pjaxSend', preloader.initLoading, 'preloader_init')
+    btf.addGlobalFn('pjaxComplete', preloader.endLoading, 'preloader_end')
+  }
+})()</script><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="https://lh3.googleusercontent.com/pw/ABLVV87_po8nBc6F_tXcoYDmtzMGWxHuhhrbguYILCjmjWKLOS8DTpubm0YoQLKgjyjRIZyV5TjYe7XVEz_YU4squfr37GTZqPZP1hlMVZ_MIgXpTxWu73M=w1200" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">161</div></a><a href="/tags/"><div class="headline">標籤</div><div class="length-num">142</div></a><a href="/categories/"><div class="headline">分類</div><div class="length-num">12</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首頁-Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 時間軸-archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 標籤-tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分類-Categories</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-list"></i><span> 其他列表</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音樂-Music</span></a></li><li><a class="site-page child" href="/gallery/"><i class="fa-fw fas fa-images"></i><span> 畫館-Gallery</span></a></li></ul></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg fixed" id="page-header" style="background-image: url(/img/20260410-03.webp);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><img class="site-icon" src="https://lh3.googleusercontent.com/pw/ABLVV87_po8nBc6F_tXcoYDmtzMGWxHuhhrbguYILCjmjWKLOS8DTpubm0YoQLKgjyjRIZyV5TjYe7XVEz_YU4squfr37GTZqPZP1hlMVZ_MIgXpTxWu73M=w1200" alt="Logo"><span class="site-name">Cheng's Tech &amp; Life</span></a><a class="nav-page-title" href="/"><span class="site-name">Claude Managed Agents 完整教學 - 從零打造雲端 AI Agent</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首頁</span></span></a></span><div id="menus"><div id="search-button" title="Ctrl+K / Cmd+K"><span class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜尋</span></span></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首頁-Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 時間軸-archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 標籤-tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分類-Categories</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-list"></i><span> 其他列表</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音樂-Music</span></a></li><li><a class="site-page child" href="/gallery/"><i class="fa-fw fas fa-images"></i><span> 畫館-Gallery</span></a></li></ul></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">Claude Managed Agents 完整教學 - 從零打造雲端 AI Agent</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">發表於</span><time class="post-meta-date-created" datetime="2026-04-10T00:30:00.000Z" title="發表於 2026-04-10 00:30:00">2026-04-10</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新於</span><time class="post-meta-date-updated" datetime="2026-04-13T02:00:09.782Z" title="更新於 2026-04-13 02:00:09">2026-04-13</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Claude-Code/">Claude Code</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">總字數:</span><span class="word-count">2k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">閱讀時間:</span><span>7分鐘</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">瀏覽量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><p>自己搭 AI agent 的基礎設施有多痛？沙箱要做、狀態要管、retry 要寫、工具執行要安全隔離、觀測性要加、容器要維護。光這些就能吃掉幾週的開發時間，而且你真正想解決的業務問題一行 code 都還沒寫。</p>
+<p>4&#x2F;8 Anthropic 推出 <strong>Claude Managed Agents</strong>，把上面這些全包了。你只要定義「agent 要做什麼」，基礎設施的部分 Anthropic 幫你扛。目前是公開測試版，所有 API 帳號都能用。</p>
+<h2 id="四個核心概念"><a href="#四個核心概念" class="headerlink" title="四個核心概念"></a>四個核心概念</h2><p>在動手之前，先搞清楚四個東西的關係：</p>
+<table>
+<thead>
+<tr>
+<th>概念</th>
+<th>是什麼</th>
+<th>類比</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Agent</strong></td>
+<td>模型 + system prompt + 工具 + MCP servers</td>
+<td>職位說明書</td>
+</tr>
+<tr>
+<td><strong>Environment</strong></td>
+<td>容器設定（套件、網路規則、檔案掛載）</td>
+<td>辦公室環境</td>
+</tr>
+<tr>
+<td><strong>Session</strong></td>
+<td>一個正在跑的 agent 實例</td>
+<td>一次工作任務</td>
+</tr>
+<tr>
+<td><strong>Events</strong></td>
+<td>你跟 agent 之間的訊息交換</td>
+<td>對話和指令</td>
+</tr>
+</tbody></table>
+<p>Agent 定義一次，可以跨多個 Session 重複使用。Environment 也是——配好一個環境，所有 Session 都能引用。Session 是實際跑任務的地方，每個 Session 有獨立的檔案系統和對話歷史。</p>
+<h2 id="跟-Messages-API-有什麼不同"><a href="#跟-Messages-API-有什麼不同" class="headerlink" title="跟 Messages API 有什麼不同"></a>跟 Messages API 有什麼不同</h2><p>如果你已經在用 Claude API 的 Messages endpoint 搭配自己的 agent loop，可能會問：Managed Agents 跟我自己做的有什麼差？</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Messages API</th>
+<th>Managed Agents</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>定位</td>
+<td>直接存取模型</td>
+<td>預建的 agent 執行環境</td>
+</tr>
+<tr>
+<td>適合</td>
+<td>需要細緻控制 agent loop</td>
+<td>長時間執行、非同步任務</td>
+</tr>
+<tr>
+<td>基礎設施</td>
+<td>自己搭</td>
+<td>Anthropic 代管</td>
+</tr>
+<tr>
+<td>工具執行</td>
+<td>自己實作</td>
+<td>雲端沙箱自動執行</td>
+</tr>
+<tr>
+<td>狀態管理</td>
+<td>自己處理</td>
+<td>內建 checkpointing</td>
+</tr>
+</tbody></table>
+<p>簡單說：Messages API 給你最大的自由度，Managed Agents 給你最快的上線速度。如果你的 agent 需要跑幾分鐘到幾小時、需要安全的容器環境、而且不想自己管基礎設施——Managed Agents 就是為你設計的。</p>
+<h2 id="前置準備"><a href="#前置準備" class="headerlink" title="前置準備"></a>前置準備</h2><p>需要三樣東西：</p>
+<ol>
+<li>Anthropic Console 帳號</li>
+<li>API key</li>
+<li>安裝 ant CLI 或 SDK</li>
+</ol>
+<h3 id="安裝-ant-CLI"><a href="#安裝-ant-CLI" class="headerlink" title="安裝 ant CLI"></a>安裝 ant CLI</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># macOS</span></span><br><span class="line">brew install anthropics/tap/ant</span><br><span class="line">xattr -d com.apple.quarantine <span class="string">&quot;<span class="subst">$(brew --prefix)</span>/bin/ant&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Linux</span></span><br><span class="line">VERSION=1.0.0</span><br><span class="line">OS=$(<span class="built_in">uname</span> -s | <span class="built_in">tr</span> <span class="string">&#x27;[:upper:]&#x27;</span> <span class="string">&#x27;[:lower:]&#x27;</span>)</span><br><span class="line">ARCH=$(<span class="built_in">uname</span> -m | sed -e <span class="string">&#x27;s/x86_64/amd64/&#x27;</span> -e <span class="string">&#x27;s/aarch64/arm64/&#x27;</span>)</span><br><span class="line">curl -fsSL <span class="string">&quot;https://github.com/anthropics/anthropic-cli/releases/download/v<span class="variable">$&#123;VERSION&#125;</span>/ant_<span class="variable">$&#123;VERSION&#125;</span>_<span class="variable">$&#123;OS&#125;</span>_<span class="variable">$&#123;ARCH&#125;</span>.tar.gz&quot;</span> \</span><br><span class="line">  | sudo tar -xz -C /usr/local/bin ant</span><br><span class="line"></span><br><span class="line"><span class="comment"># 或用 Go 安裝</span></span><br><span class="line">go install github.com/anthropics/anthropic-cli/cmd/ant@latest</span><br></pre></td></tr></table></figure>
+
+<h3 id="安裝-SDK"><a href="#安裝-SDK" class="headerlink" title="安裝 SDK"></a>安裝 SDK</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Python</span></span><br><span class="line">pip install anthropic</span><br><span class="line"></span><br><span class="line"><span class="comment"># TypeScript</span></span><br><span class="line">npm install @anthropic-ai/sdk</span><br></pre></td></tr></table></figure>
+
+<p>設定 API key：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">export</span> ANTHROPIC_API_KEY=<span class="string">&quot;your-api-key-here&quot;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="Step-1：建立-Agent"><a href="#Step-1：建立-Agent" class="headerlink" title="Step 1：建立 Agent"></a>Step 1：建立 Agent</h2><p>Agent 就是一份「職位說明書」——定義用哪個模型、system prompt 寫什麼、可以用哪些工具。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> anthropic <span class="keyword">import</span> Anthropic</span><br><span class="line"></span><br><span class="line">client = Anthropic()</span><br><span class="line"></span><br><span class="line">agent = client.beta.agents.create(</span><br><span class="line">    name=<span class="string">&quot;Coding Assistant&quot;</span>,</span><br><span class="line">    model=<span class="string">&quot;claude-sonnet-4-6&quot;</span>,</span><br><span class="line">    system=<span class="string">&quot;你是一個專業的程式碼助手。寫乾淨、有文件註解的程式碼。&quot;</span>,</span><br><span class="line">    tools=[</span><br><span class="line">        &#123;<span class="string">&quot;type&quot;</span>: <span class="string">&quot;agent_toolset_20260401&quot;</span>&#125;,</span><br><span class="line">    ],</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;Agent ID: <span class="subst">&#123;agent.<span class="built_in">id</span>&#125;</span>, version: <span class="subst">&#123;agent.version&#125;</span>&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<p><code>agent_toolset_20260401</code> 是全套內建工具——bash、檔案操作、網頁搜尋等等。建立完會拿到一個 <code>agent.id</code>，後面每個 Session 都要用到。</p>
+<p>用 ant CLI 也能做同樣的事：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">ant beta:agents create \</span><br><span class="line">  --name <span class="string">&quot;Coding Assistant&quot;</span> \</span><br><span class="line">  --model <span class="string">&#x27;&#123;id: claude-sonnet-4-6&#125;&#x27;</span> \</span><br><span class="line">  --system <span class="string">&quot;你是一個專業的程式碼助手。寫乾淨、有文件註解的程式碼。&quot;</span> \</span><br><span class="line">  --tool <span class="string">&#x27;&#123;type: agent_toolset_20260401&#125;&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="Step-2：建立-Environment"><a href="#Step-2：建立-Environment" class="headerlink" title="Step 2：建立 Environment"></a>Step 2：建立 Environment</h2><p>Environment 定義容器的設定——裝什麼套件、網路怎麼開、要不要掛載檔案。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">environment = client.beta.environments.create(</span><br><span class="line">    name=<span class="string">&quot;dev-env&quot;</span>,</span><br><span class="line">    config=&#123;</span><br><span class="line">        <span class="string">&quot;type&quot;</span>: <span class="string">&quot;cloud&quot;</span>,</span><br><span class="line">        <span class="string">&quot;networking&quot;</span>: &#123;<span class="string">&quot;type&quot;</span>: <span class="string">&quot;unrestricted&quot;</span>&#125;,</span><br><span class="line">    &#125;,</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;Environment ID: <span class="subst">&#123;environment.<span class="built_in">id</span>&#125;</span>&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<p><code>unrestricted</code> 代表容器可以存取外部網路。如果你的 agent 不需要上網，可以設定限制來提高安全性。</p>
+<h2 id="Step-3：啟動-Session"><a href="#Step-3：啟動-Session" class="headerlink" title="Step 3：啟動 Session"></a>Step 3：啟動 Session</h2><p>有了 Agent 和 Environment，就能啟動 Session 了：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">session = client.beta.sessions.create(</span><br><span class="line">    agent=agent.<span class="built_in">id</span>,</span><br><span class="line">    environment_id=environment.<span class="built_in">id</span>,</span><br><span class="line">    title=<span class="string">&quot;第一個 Managed Agent&quot;</span>,</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;Session ID: <span class="subst">&#123;session.<span class="built_in">id</span>&#125;</span>&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<p>Session 建立後，Anthropic 會在背景 provision 一個容器。</p>
+<h2 id="Step-4：互動-送訊息、收串流"><a href="#Step-4：互動-送訊息、收串流" class="headerlink" title="Step 4：互動 - 送訊息、收串流"></a>Step 4：互動 - 送訊息、收串流</h2><p>重頭戲來了。開啟 SSE 串流，送出使用者訊息，然後即時收到 agent 的回應：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">with</span> client.beta.sessions.events.stream(session.<span class="built_in">id</span>) <span class="keyword">as</span> stream:</span><br><span class="line">    <span class="comment"># 開串流後送出訊息</span></span><br><span class="line">    client.beta.sessions.events.send(</span><br><span class="line">        session.<span class="built_in">id</span>,</span><br><span class="line">        events=[</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="string">&quot;type&quot;</span>: <span class="string">&quot;user.message&quot;</span>,</span><br><span class="line">                <span class="string">&quot;content&quot;</span>: [</span><br><span class="line">                    &#123;</span><br><span class="line">                        <span class="string">&quot;type&quot;</span>: <span class="string">&quot;text&quot;</span>,</span><br><span class="line">                        <span class="string">&quot;text&quot;</span>: <span class="string">&quot;寫一個 Python 腳本計算前 20 個費波那契數，存到 fibonacci.txt&quot;</span>,</span><br><span class="line">                    &#125;,</span><br><span class="line">                ],</span><br><span class="line">            &#125;,</span><br><span class="line">        ],</span><br><span class="line">    )</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 處理串流事件</span></span><br><span class="line">    <span class="keyword">for</span> event <span class="keyword">in</span> stream:</span><br><span class="line">        <span class="keyword">match</span> event.<span class="built_in">type</span>:</span><br><span class="line">            <span class="keyword">case</span> <span class="string">&quot;agent.message&quot;</span>:</span><br><span class="line">                <span class="keyword">for</span> block <span class="keyword">in</span> event.content:</span><br><span class="line">                    <span class="built_in">print</span>(block.text, end=<span class="string">&quot;&quot;</span>)</span><br><span class="line">            <span class="keyword">case</span> <span class="string">&quot;agent.tool_use&quot;</span>:</span><br><span class="line">                <span class="built_in">print</span>(<span class="string">f&quot;\n[使用工具: <span class="subst">&#123;event.name&#125;</span>]&quot;</span>)</span><br><span class="line">            <span class="keyword">case</span> <span class="string">&quot;session.status_idle&quot;</span>:</span><br><span class="line">                <span class="built_in">print</span>(<span class="string">&quot;\n\nAgent 完成。&quot;</span>)</span><br><span class="line">                <span class="keyword">break</span></span><br></pre></td></tr></table></figure>
+
+<p>跑起來大概長這樣：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">我來寫一個 Python 腳本計算費波那契數列。</span><br><span class="line">[使用工具: write]</span><br><span class="line">[使用工具: bash]</span><br><span class="line">腳本執行成功，讓我確認輸出檔案。</span><br><span class="line">[使用工具: bash]</span><br><span class="line">fibonacci.txt 已包含前 20 個費波那契數（0 到 4181）。</span><br><span class="line"></span><br><span class="line">Agent 完成。</span><br></pre></td></tr></table></figure>
+
+<p>整個過程中，Claude 自己決定要用什麼工具、自己寫程式碼、自己執行、自己驗證結果。你只要送訊息和收串流。</p>
+<h2 id="背後發生了什麼"><a href="#背後發生了什麼" class="headerlink" title="背後發生了什麼"></a>背後發生了什麼</h2><p>當你送出 user event，Managed Agents 依序做了這些事：</p>
+<ol>
+<li><strong>Provision 容器</strong> — 根據 Environment 設定建置執行環境</li>
+<li><strong>跑 agent loop</strong> — Claude 根據你的訊息決定用哪些工具</li>
+<li><strong>執行工具</strong> — 檔案寫入、bash 指令等全在容器內執行</li>
+<li><strong>串流事件</strong> — 即時推送更新到你的應用</li>
+<li><strong>進入 idle</strong> — 沒事做了就發 <code>session.status_idle</code></li>
+</ol>
+<p>你也可以在 agent 執行途中送新的 user event 來引導方向，或者中斷它改做別的事。</p>
+<h2 id="內建工具清單"><a href="#內建工具清單" class="headerlink" title="內建工具清單"></a>內建工具清單</h2><p><code>agent_toolset_20260401</code> 包含的工具：</p>
+<ul>
+<li><strong>Bash</strong> — 在容器內執行 shell 指令</li>
+<li><strong>檔案操作</strong> — 讀取、寫入、編輯、glob、grep</li>
+<li><strong>網頁搜尋與抓取</strong> — 搜尋網路、讀取網頁內容</li>
+<li><strong>MCP servers</strong> — 連接外部工具提供者</li>
+</ul>
+<p>如果不想給全套工具，也可以只啟用特定工具。</p>
+<h2 id="跟其他-AI-Agent-平台比一下"><a href="#跟其他-AI-Agent-平台比一下" class="headerlink" title="跟其他 AI Agent 平台比一下"></a>跟其他 AI Agent 平台比一下</h2><p>市面上做類似事情的不只 Anthropic。OpenAI 的 Codex 有自己的 sandbox 環境，但走的是 ChatGPT 整合路線而不是獨立 API。Google 的 Gemini API 支援 function calling 但沒有代管的 agent 執行環境。Kiro 和 Cursor 則專注在 IDE 端的 agent 體驗。</p>
+<p>Managed Agents 的差異化在於：它是純 API 服務，不綁任何 UI。你可以用它建 Slack bot、內部工具、CI&#x2F;CD pipeline、自動化工作流——任何需要 AI agent 跑在雲端的場景都行。</p>
+<h2 id="定價"><a href="#定價" class="headerlink" title="定價"></a>定價</h2><p>標準 Claude token 費 + <strong>$0.08&#x2F;session-hour</strong>。</p>
+<p>session-hour 只算 active runtime。如果 agent 跑了 15 分鐘就完成，你付 $0.02 的基礎設施費加上 token 用量。跟自己維護一台 sandbox 伺服器的成本比，對大多數使用量來說便宜太多。</p>
+<h2 id="注意事項"><a href="#注意事項" class="headerlink" title="注意事項"></a>注意事項</h2><p>幾個要留意的地方：</p>
+<ul>
+<li><strong>Beta 狀態</strong> — 所有 request 都需要加 <code>managed-agents-2026-04-01</code> beta header（SDK 會自動加）</li>
+<li><strong>Rate limit</strong> — 建立類 endpoint 60 req&#x2F;min，讀取類 600 req&#x2F;min</li>
+<li><strong>進階功能需申請</strong> — outcomes、multiagent、memory 目前是 research preview，要另外申請</li>
+<li><strong>品牌規範</strong> — 如果你要在產品裡整合，不能用「Claude Code Agent」或「Claude Cowork Agent」的名稱，要用自己的品牌</li>
+</ul>
+<h2 id="實際使用情境"><a href="#實際使用情境" class="headerlink" title="實際使用情境"></a>實際使用情境</h2><p><strong>自動化程式碼審查</strong>：建一個 agent 接 GitHub webhook，每次有 PR 就自動跑 review，把結果寫回 PR comment。Managed Agents 的沙箱環境讓它能安全地 clone repo 和跑測試。</p>
+<p><strong>資料處理 pipeline</strong>：讓 agent 定期抓取外部資料、做清洗和轉換、產出報告。長時間執行正是 Managed Agents 的強項。</p>
+<p><strong>內部工具 bot</strong>：在 Slack 或 Teams 裡接一個 agent，讓團隊用自然語言操作內部系統。Managed Agents 處理 session 管理和工具執行，你只需要寫 Slack 整合的部分。</p>
+<hr>
+<p>從自己搭 agent loop 到用 Managed Agents，開發時間可以從幾週壓縮到幾天。$0.08&#x2F;hr 的代價換來的是不用管沙箱、不用管狀態、不用管重試邏輯。對大多數企業級 AI agent 的場景來說，這個取捨很划算。</p>
+<blockquote>
+<p>原文來源：<a target="_blank" rel="noopener" href="https://platform.claude.com/docs/en/managed-agents/overview">Claude Managed Agents overview</a><br>原文來源：<a target="_blank" rel="noopener" href="https://platform.claude.com/docs/en/managed-agents/quickstart">Get started with Claude Managed Agents</a><br>參考來源：<a target="_blank" rel="noopener" href="https://anthropic.skilljar.com/">Claude Code in Action - Anthropic Academy</a></p>
+</blockquote>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://mark22013333.github.io">Cheng®</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章連結: </span><span class="post-copyright-info"><a href="https://mark22013333.github.io/2026/04/10/Claude-Managed-Agents-%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8-%E5%BE%9E%E9%9B%B6%E6%89%93%E9%80%A0%E9%9B%B2%E7%AB%AF-AI-Agent/">https://mark22013333.github.io/2026/04/10/Claude-Managed-Agents-完整教學-從零打造雲端-AI-Agent/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版權聲明: </span><span class="post-copyright-info">本部落格所有文章除特別聲明外，均採用<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 授權協議。轉載請註明來源 <a href="https://mark22013333.github.io" target="_blank">Cheng's Tech & Life</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/AI-Agent/">AI Agent</a><a class="post-meta__tags" href="/tags/Anthropic/">Anthropic</a><a class="post-meta__tags" href="/tags/%E9%96%8B%E7%99%BC%E5%B7%A5%E5%85%B7/">開發工具</a></div><div class="post-share"><div class="social-share" data-image="/img/20260410-03.webp" data-sites="facebook,x"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><div class="post-reward"><div class="reward-badges"><a class="sponsor-glow-btn" href="https://www.buymeacoffee.com/mark22013333" target="_blank" rel="noopener noreferrer" title="Buy Me A Coffee"><img src="https://img.shields.io/badge/Buy_Me_A_Coffee-FFDD00?style=for-the-badge&amp;logo=buy-me-a-coffee&amp;logoColor=black" alt="Buy Me A Coffee"/></a><a class="sponsor-glow-btn" href="https://p.ecpay.com.tw/EFC3F8F" target="_blank" rel="noopener noreferrer" title="綠界贊助"><img src="https://img.shields.io/badge/☕_%E8%AB%8B%E6%88%91%E5%96%9D%E6%9D%AF%E5%92%96%E5%95%A1-Donate-11998e?style=for-the-badge&amp;logo=coffee&amp;logoColor=white" alt="綠界贊助"/></a><a class="sponsor-glow-btn" href="https://calendly.com/markcheng00806-intumit/15min" target="_blank" rel="noopener noreferrer" title="預約時間"><img src="https://img.shields.io/badge/📅_%E9%A0%90%E7%B4%84_15_%E5%88%86%E9%90%98-Book_Time-0072ff?style=for-the-badge" alt="預約時間"/></a><p class="reward-badges-note">你的鼓勵將被轉換為我明天繼續加班的動力（真的）。 ❤️</p></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2026/04/10/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260410/" title="AI 與科技新聞摘要 - 2026/04/10"><img class="cover" src="/img/20260410-02.webp" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">AI 與科技新聞摘要 - 2026/04/10</div></div><div class="info-2"><div class="info-item-1">Anthropic 把 AI agent 的基礎設施直接打包成代管服務、OpenAI 推出 $100 中間價位搶 Claude 的客群、GitHub Copilot 在 VS Code 加入全自主 Autopilot 模式、又一個 AI 框架被打穿 CVSS 9.9，然後 Cowork 終於從 research preview 畢業了。 Claude Managed Agents：Anthropic 幫你跑 AI Agent 的代管服務4&#x2F;8 Anthropic 推出 Claude Managed Agents 公開測試版。核心概念：你定義 agent 要做什麼（system prompt、工具、模型），Anthropic 負責跑起來——沙箱執行、狀態管理、agent loop、工具呼叫全部代管。 用法分四步：建立 Agent 定義 → 設定 Environment（預裝套件、網路規則、掛載檔案）→ 啟動 Session → 透過 SSE 串流互動。內建工具包含 bash、檔案操作、網頁搜尋、程式碼執行。整個流程可以用 Claude Console 操作，也可以用新推出...</div></div></div></a><a class="pagination-related" href="/2026/04/10/MarkItDown-%E5%BE%AE%E8%BB%9F%E5%87%BA%E5%93%81%E7%9A%84%E4%BB%BB%E4%BD%95%E6%AA%94%E6%A1%88%E8%BD%89-Markdown-%E5%B7%A5%E5%85%B7/" title="MarkItDown - 微軟出品的「任何檔案轉 Markdown」工具"><img class="cover" src="/img/20260410-01.webp" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">MarkItDown - 微軟出品的「任何檔案轉 Markdown」工具</div></div><div class="info-2"><div class="info-item-1">PDF 丟進 LLM 前要先做什麼？轉文字。Word 呢？也是轉文字。PowerPoint？一樣。問題來了：轉成純文字會丟掉所有結構——標題層級沒了、表格扁平化了、清單變成一坨散文。LLM 拿到這種東西，理解力直接打折。 微軟的 MarkItDown 就是為了解決這個前處理痛點而生的。一行指令，把幾乎任何格式的檔案轉成 Markdown，保留標題、表格、清單的結構。97K+ stars，MIT 授權，三行 code 就能用。 為什麼是 Markdown 而不是純文字主流 LLM 的訓練資料裡大量包含 Markdown。對模型來說，收到一份有 ## 標題和 | 表格的 Markdown，比收到一坨沒結構的純文字好懂太多，token 數也不會明顯增加。 MarkItDown 的定位很明確：不做高保真的文件格式互轉（那是 Pandoc 的事），專門為 LLM 管線設計的前處理工具。犧牲排版的視覺還原度，換取語意結構的完整保留。 支援哪些格式覆蓋面有夠廣：  文件類：PDF、Word（.docx）、PowerPoint（.pptx）、Excel（.xlsx &#x2F; .xls） 網頁...</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相關推薦</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2026/04/22/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260422/" title="AI 與科技新聞摘要 - 2026&#x2F;04&#x2F;22"><img class="cover" src="/img/20260422-02.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-04-22</div><div class="info-item-2">AI 與科技新聞摘要 - 2026&#x2F;04&#x2F;22</div></div><div class="info-2"><div class="info-item-1">77%。 去年這個數字是 20%。這不是某個廠商的行銷數字，是 Stanford AI Index 2026 剛剛公布的 Terminal-Bench 基準——測試 AI agent 處理真實世界任務的成功率。一年之間，從五題答一題，到十題答八題。 同一份報告裡還有一個數字：280%。這是「Agentic AI」技能需求在職缺描述中的年增幅，從 0.06% 到 0.23%，絕對數字是美國約 9 萬個職缺。兩個數字放在一起看，AI agent 的進步曲線和市場需求曲線，幾乎是同步加速的。 這週的幾條新聞，放在這個背景下讀會有不同的感受。  Stanford AI Index 2026 — AI agent 成功率翻了將近四倍Stanford HAI 今年的 AI Index 報告裡，數字最驚人的一塊是 agent 能力的進步速度。 OSWorld benchmark 測試 AI agent 在真實作業系統上執行任務的能力。一年前，成功率是 12%；現在是 66%。Terminal-Bench 的數字更極端，從 20% 跳到 77.3%。網路安全方面，AI agent 解決 CTF ...</div></div></div></a><a class="pagination-related" href="/2026/04/11/Hermes-HUD-Web-UI-AI-Agent-%E7%9A%84%E5%8D%B3%E6%99%82%E6%84%8F%E8%AD%98%E7%9B%A3%E6%8E%A7%E9%9D%A2%E6%9D%BF/" title="Hermes HUD Web UI - AI Agent 的即時意識監控面板"><img class="cover" src="/img/20260411-01.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-04-11</div><div class="info-item-2">Hermes HUD Web UI - AI Agent 的即時意識監控面板</div></div><div class="info-2"><div class="info-item-1">你有沒有想過，你的 AI Agent 在幹什麼？它現在在想什麼？記得了哪些東西？花了多少錢？ Hermes Agent 跑在背景裡，靜靜地執行各種工作。但它的大腦到底存了什麼資料、記憶怎麼組織、成本怎麼算，這些都藏在 ~/.hermes/ 這個資料夾的各種檔案裡——SQLite、Markdown、YAML、JSON 一堆。要看懂這些原始資料，真香的辦法就是一個視覺化的監控面板。這就是 Hermes HUD Web UI 登場的時刻。 瀏覽器裡的 Agent 意識監控Hermes HUD Web UI 是 Hermes HUD 的網頁版本。TUI 版本給你命令列的純粹感，Web 版本就更直覺、更適合長期監看。它用圖表、卡片、即時更新，把 Agent 的內部世界呈現出來。 這個面板不是簡單的可視化工具。設計上採用了 讀寫分離 的思路——你只能看，不能改。這聽起來像是限制，其實是保護。Agent 執行中如果面板能隨意修改狀態，那踩坑的機會太多了。只讀設計確保你的監控動作絕不會搞亂 Agent 的運作。 10 個監控面板包括：Dashboard（總覽）、Memory（記憶體系）、Skil...</div></div></div></a><a class="pagination-related" href="/2026/04/04/Agent-Broker-%E7%94%A8-Discord-%E6%93%8D%E6%8E%A7-AI-Coding-Agent-%E7%9A%84-Rust-%E6%A9%8B%E6%8E%A5%E6%9C%8D%E5%8B%99/" title="Agent Broker - 用 Discord 操控 AI Coding Agent 的 Rust 橋接服務"><img class="cover" src="/img/20260404-01.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-04-04</div><div class="info-item-2">Agent Broker - 用 Discord 操控 AI Coding Agent 的 Rust 橋接服務</div></div><div class="info-2"><div class="info-item-1">Discord 頻道裡 @mention 一個 bot，它就能幫你寫程式、code review、分析架構。背後串接的是 Claude Code、Kiro CLI、Codex 這些 AI coding agent。Agent Broker 就是那個站在中間的翻譯官——用 Rust 寫的橋接服務，把 Discord 和任何支援 ACP 協定的 coding CLI 串在一起。 這東西解決什麼問題團隊裡不是每個人都習慣開終端機跟 AI 互動。有些人就是活在 Discord 裡面，開會在 Discord、討論在 Discord、連摸魚都在 Discord。Agent Broker 的邏輯很直接：既然人在 Discord，那 AI 也該在 Discord。 核心架構長這樣：使用者在 Discord 打字 → Agent Broker 收到後轉成 ACP 協定的 JSON-RPC → 丟給後端 CLI（Claude Code、Kiro、Codex 都行）→ AI 回應串流回 Discord 即時顯示。每個 Discord thread 會 spawn 一個獨立的 CLI process，多...</div></div></div></a><a class="pagination-related" href="/2026/03/28/gstack-%E7%94%A8-Claude-Code-%E6%89%93%E9%80%A0%E8%99%9B%E6%93%AC-20-%E4%BA%BA%E5%B7%A5%E7%A8%8B%E5%9C%98%E9%9A%8A/" title="gstack — 用 Claude Code 打造虛擬 20 人工程團隊"><img class="cover" src="/img/20260328-01.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-03-28</div><div class="info-item-2">gstack — 用 Claude Code 打造虛擬 20 人工程團隊</div></div><div class="info-2"><div class="info-item-1">一個人寫一萬行生產級程式碼，聽起來像在吹牛。但 Y Combinator CEO Garry Tan 把他的工作流打包成開源工具，名字叫 gstack，MIT 授權，30 秒裝完。  它到底是什麼gstack 把 Claude Code 變成一支虛擬工程團隊。不是那種「幫你補全一行 code」的等級——是從構想、規劃、實作、Code Review、QA、安全審計、部署到監控，整條 Sprint 流程都有對應的 Skill 角色。 技術棧是 TypeScript + Bun + Playwright。核心是一個持久化的 Chromium daemon，首次啟動約三秒，之後每個指令 100-200ms。不是每次冷開瀏覽器那種等到天荒地老的體驗。 GitHub 在這：github.com&#x2F;garrytan&#x2F;gstack  安裝：真的 30 秒12git clone --single-branch --depth 1 https://github.com/garrytan/gstack.git ~/.claude/skills/gstackcd ~/.claude/s...</div></div></div></a><a class="pagination-related" href="/2026/04/16/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260416/" title="AI 與科技新聞摘要 - 2026&#x2F;04&#x2F;16"><img class="cover" src="/img/20260416-02.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-04-16</div><div class="info-item-2">AI 與科技新聞摘要 - 2026&#x2F;04&#x2F;16</div></div><div class="info-2"><div class="info-item-1">1,300 個 PR。一週。零行人手寫的程式碼。 這是 Stripe 內部 AI Agent「Minions」的實際產出數字。同一個禮拜，Anthropic 把 Claude Code Desktop 從底層翻掉重寫，Microsoft 砸出 163 個 CVE 補丁，GitHub 對 Copilot CLI 四天內連推四版，OpenAI 則悄悄上了新的 GPT-5.3 Instant Mini。AI coding 工具的軍備競賽，這週進入了白熱化。 Stripe Minions — AI Agent 進生產線長什麼樣先講 Stripe 那個數字，因為它代表的不是 demo，是真正跑在生產環境裡的東西。 Minions 的運作方式像極了工廠的自動化產線：工程師在 Slack 丟個 emoji，Agent 就自動拉起一台隔離的雲端機器（devbox），讀文件、寫程式、跑 linter、推上 CI——全程沒人碰鍵盤。底層是基於 Block 開源的 Goose agent 改造的版本。 但真正恐怖的是它背後接了什麼。Stripe 內部有個工具系統叫 Toolshed，本質上是一台巨型 ...</div></div></div></a><a class="pagination-related" href="/2026/04/14/Oh-My-OpenAgent-%E5%A4%9A%E6%A8%A1%E5%9E%8B-AI-Agent-%E7%B7%A8%E6%8E%92%E5%B7%A5%E5%85%B7-%E8%AE%93-Claude-GPT-Gemini-%E7%B5%84%E6%88%90%E9%96%8B%E7%99%BC%E5%9C%98%E9%9A%8A/" title="Oh My OpenAgent - 多模型 AI Agent 編排工具，讓 Claude&#x2F;GPT&#x2F;Gemini 組成開發團隊"><img class="cover" src="/img/20260414-01.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-04-14</div><div class="info-item-2">Oh My OpenAgent - 多模型 AI Agent 編排工具，讓 Claude&#x2F;GPT&#x2F;Gemini 組成開發團隊</div></div><div class="info-2"><div class="info-item-1">50,816 顆星，建立不到五個月，99% 的程式碼是 AI 自己寫的。 Oh My OpenAgent（簡稱 OmO）做了一件其他 AI coding 工具不太敢做的事：把 Claude、GPT、Gemini、Grok 這些互為競爭對手的模型，硬是塞進同一個工作流裡協作。它的出發點很實際 - Claude 擅長遵循指令、GPT 擅長深度推理、Gemini 擅長視覺前端。沒有哪一個模型在所有任務都最強，那幹嘛只用一個？ 不是框架，是已經調好的團隊跟 LangChain 或 CrewAI 不同，OmO 不是讓你「建構 Agent」的框架。它是一個跑在 OpenCode 上的 Plugin，開箱即用就有一整支 AI 開發團隊：    Agent 角色 綁定模型    Sisyphus 專案經理，接需求、拆任務、分配 Claude Opus 4.6   Prometheus 架構師，會「面試」你來釐清需求 Claude Opus 4.6   Hephaestus 資深工程師，啃最難的邏輯問題 GPT-5.4   Explore Junior，快速翻 codebase 找東西 Grok ...</div></div></div></a></div></div><hr class="custom-hr"/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 評論</span></div></div><div class="comment-wrap"><div><div id="giscus-wrap"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="https://lh3.googleusercontent.com/pw/ABLVV87_po8nBc6F_tXcoYDmtzMGWxHuhhrbguYILCjmjWKLOS8DTpubm0YoQLKgjyjRIZyV5TjYe7XVEz_YU4squfr37GTZqPZP1hlMVZ_MIgXpTxWu73M=w1200" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">Cheng®</div><div class="author-info-description">Backend Developer / 技術筆記 & AI 新聞分享</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">161</div></a><a href="/tags/"><div class="headline">標籤</div><div class="length-num">142</div></a><a href="/categories/"><div class="headline">分類</div><div class="length-num">12</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/mark22013333"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons"><a class="social-icon" href="https://github.com/mark22013333" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:mark22013333@gmail.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a></div><div class="card-info-sponsor"><a class="sponsor-glow-btn" href="https://www.buymeacoffee.com/mark22013333" target="_blank" rel="noopener noreferrer" title="Buy Me A Coffee"><img src="https://img.shields.io/badge/Buy_Me_A_Coffee-FFDD00?style=for-the-badge&amp;logo=buy-me-a-coffee&amp;logoColor=black" alt="Buy Me A Coffee"/></a><a class="sponsor-glow-btn" href="https://p.ecpay.com.tw/EFC3F8F" target="_blank" rel="noopener noreferrer" title="綠界贊助"><img src="https://img.shields.io/badge/☕_%E8%AB%8B%E6%88%91%E5%96%9D%E6%9D%AF%E5%92%96%E5%95%A1-Donate-11998e?style=for-the-badge&amp;logo=coffee&amp;logoColor=white" alt="綠界贊助"/></a><a class="sponsor-glow-btn" href="https://calendly.com/markcheng00806-intumit/15min" target="_blank" rel="noopener noreferrer" title="預約時間"><img src="https://img.shields.io/badge/📅_%E9%A0%90%E7%B4%84_15_%E5%88%86%E9%90%98-Book_Time-0072ff?style=for-the-badge" alt="預約時間"/></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">這裡記錄我在後端開發路上踩過的坑、學到的東西，也會分享每日 AI 與科技新聞觀點。歡迎一起交流！</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目錄</span><span class="toc-percentage"></span></div><div class="toc-content is-expand"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B%E5%80%8B%E6%A0%B8%E5%BF%83%E6%A6%82%E5%BF%B5"><span class="toc-number">1.</span> <span class="toc-text">四個核心概念</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%B7%9F-Messages-API-%E6%9C%89%E4%BB%80%E9%BA%BC%E4%B8%8D%E5%90%8C"><span class="toc-number">2.</span> <span class="toc-text">跟 Messages API 有什麼不同</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E7%BD%AE%E6%BA%96%E5%82%99"><span class="toc-number">3.</span> <span class="toc-text">前置準備</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%89%E8%A3%9D-ant-CLI"><span class="toc-number">3.1.</span> <span class="toc-text">安裝 ant CLI</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%89%E8%A3%9D-SDK"><span class="toc-number">3.2.</span> <span class="toc-text">安裝 SDK</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Step-1%EF%BC%9A%E5%BB%BA%E7%AB%8B-Agent"><span class="toc-number">4.</span> <span class="toc-text">Step 1：建立 Agent</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Step-2%EF%BC%9A%E5%BB%BA%E7%AB%8B-Environment"><span class="toc-number">5.</span> <span class="toc-text">Step 2：建立 Environment</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Step-3%EF%BC%9A%E5%95%9F%E5%8B%95-Session"><span class="toc-number">6.</span> <span class="toc-text">Step 3：啟動 Session</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Step-4%EF%BC%9A%E4%BA%92%E5%8B%95-%E9%80%81%E8%A8%8A%E6%81%AF%E3%80%81%E6%94%B6%E4%B8%B2%E6%B5%81"><span class="toc-number">7.</span> <span class="toc-text">Step 4：互動 - 送訊息、收串流</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%83%8C%E5%BE%8C%E7%99%BC%E7%94%9F%E4%BA%86%E4%BB%80%E9%BA%BC"><span class="toc-number">8.</span> <span class="toc-text">背後發生了什麼</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%A7%E5%BB%BA%E5%B7%A5%E5%85%B7%E6%B8%85%E5%96%AE"><span class="toc-number">9.</span> <span class="toc-text">內建工具清單</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%B7%9F%E5%85%B6%E4%BB%96-AI-Agent-%E5%B9%B3%E5%8F%B0%E6%AF%94%E4%B8%80%E4%B8%8B"><span class="toc-number">10.</span> <span class="toc-text">跟其他 AI Agent 平台比一下</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%9A%E5%83%B9"><span class="toc-number">11.</span> <span class="toc-text">定價</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A0%85"><span class="toc-number">12.</span> <span class="toc-text">注意事項</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AF%A6%E9%9A%9B%E4%BD%BF%E7%94%A8%E6%83%85%E5%A2%83"><span class="toc-number">13.</span> <span class="toc-text">實際使用情境</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2026/04/23/Claude-Code-Ultraplan-%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8-%E6%8A%8A%E8%A6%8F%E5%8A%83%E4%BA%A4%E7%B5%A6%E9%9B%B2%E7%AB%AF/" title="Claude Code Ultraplan 完整教學 — 把規劃交給雲端，讓 Claude 替你想 30 分鐘"><img src="/img/20260423-03.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Claude Code Ultraplan 完整教學 — 把規劃交給雲端，讓 Claude 替你想 30 分鐘"/></a><div class="content"><a class="title" href="/2026/04/23/Claude-Code-Ultraplan-%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8-%E6%8A%8A%E8%A6%8F%E5%8A%83%E4%BA%A4%E7%B5%A6%E9%9B%B2%E7%AB%AF/" title="Claude Code Ultraplan 完整教學 — 把規劃交給雲端，讓 Claude 替你想 30 分鐘">Claude Code Ultraplan 完整教學 — 把規劃交給雲端，讓 Claude 替你想 30 分鐘</a><time datetime="2026-04-23T09:00:00.000Z" title="發表於 2026-04-23 09:00:00">2026-04-23</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/04/23/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260423/" title="AI 與科技新聞摘要 - 2026/04/23"><img src="/img/20260423-02.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="AI 與科技新聞摘要 - 2026/04/23"/></a><div class="content"><a class="title" href="/2026/04/23/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260423/" title="AI 與科技新聞摘要 - 2026/04/23">AI 與科技新聞摘要 - 2026/04/23</a><time datetime="2026-04-23T08:30:00.000Z" title="發表於 2026-04-23 08:30:00">2026-04-23</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/04/23/Agent-Skills-%E7%B5%A6-AI-%E7%B7%A8%E7%A2%BC%E5%8A%A9%E6%89%8B%E7%9A%84%E5%B7%A5%E7%A8%8B%E7%B4%80%E5%BE%8B%E6%8C%87%E4%BB%A4%E9%9B%86/" title="Agent Skills — 給 AI 編碼助手的工程紀律指令集"><img src="/img/20260423-01.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Agent Skills — 給 AI 編碼助手的工程紀律指令集"/></a><div class="content"><a class="title" href="/2026/04/23/Agent-Skills-%E7%B5%A6-AI-%E7%B7%A8%E7%A2%BC%E5%8A%A9%E6%89%8B%E7%9A%84%E5%B7%A5%E7%A8%8B%E7%B4%80%E5%BE%8B%E6%8C%87%E4%BB%A4%E9%9B%86/" title="Agent Skills — 給 AI 編碼助手的工程紀律指令集">Agent Skills — 給 AI 編碼助手的工程紀律指令集</a><time datetime="2026-04-23T08:00:00.000Z" title="發表於 2026-04-23 08:00:00">2026-04-23</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/04/22/GitHub-Copilot-%E5%81%9C%E6%AD%A2%E6%96%B0%E7%94%A8%E6%88%B6%E8%A8%BB%E5%86%8A%E5%BE%8C%E5%B7%A5%E7%A8%8B%E5%B8%AB%E6%80%8E%E9%BA%BC%E5%B9%B3%E7%A7%BB%E5%88%B0-Claude-Code/" title="GitHub Copilot 停止新用戶註冊後，工程師怎麼平移到 Claude Code"><img src="/img/20260422-03.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="GitHub Copilot 停止新用戶註冊後，工程師怎麼平移到 Claude Code"/></a><div class="content"><a class="title" href="/2026/04/22/GitHub-Copilot-%E5%81%9C%E6%AD%A2%E6%96%B0%E7%94%A8%E6%88%B6%E8%A8%BB%E5%86%8A%E5%BE%8C%E5%B7%A5%E7%A8%8B%E5%B8%AB%E6%80%8E%E9%BA%BC%E5%B9%B3%E7%A7%BB%E5%88%B0-Claude-Code/" title="GitHub Copilot 停止新用戶註冊後，工程師怎麼平移到 Claude Code">GitHub Copilot 停止新用戶註冊後，工程師怎麼平移到 Claude Code</a><time datetime="2026-04-22T09:00:00.000Z" title="發表於 2026-04-22 09:00:00">2026-04-22</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/04/22/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260422/" title="AI 與科技新聞摘要 - 2026/04/22"><img src="/img/20260422-02.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="AI 與科技新聞摘要 - 2026/04/22"/></a><div class="content"><a class="title" href="/2026/04/22/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260422/" title="AI 與科技新聞摘要 - 2026/04/22">AI 與科技新聞摘要 - 2026/04/22</a><time datetime="2026-04-22T08:30:00.000Z" title="發表於 2026-04-22 08:30:00">2026-04-22</time></div></div></div></div></div></div></main><footer id="footer" style="background-image: url(/img/20260410-03.webp);"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2024 - 2026 By Cheng®</span></div><div class="footer_custom_text">Written by Cheng® — 自律，從當下的一念開始。</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="閱讀模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日夜模式切換"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="單欄和雙欄切換"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="設定"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目錄"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="前往評論"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到頂端"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.umd.min.js"></script><script src="https://cdn.jsdelivr.net/npm/instant.page/instantpage.min.js" type="module"></script><script src="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.js"></script><div class="js-pjax"><script>(() => {
+  const isShuoshuo = GLOBAL_CONFIG_SITE.pageType === 'shuoshuo'
+  const option = {"mapping":"pathname","strict":0,"reactionsEnabled":1,"emitMetadata":0,"inputPosition":"bottom","lang":"zh-TW"}
+
+  const getGiscusTheme = theme => theme === 'dark' ? 'dark' : 'light'
+
+  const createScriptElement = config => {
+    const ele = document.createElement('script')
+    Object.entries(config).forEach(([key, value]) => {
+      ele.setAttribute(key, value)
+    })
+    return ele
+  }
+
+  const loadGiscus = (el = document, key) => {
+    const mappingConfig = isShuoshuo
+      ? { 'data-mapping': 'specific', 'data-term': key }
+      : { 'data-mapping': (option && option['data-mapping']) || 'pathname' }
+
+    const giscusConfig = {
+      src: 'https://giscus.app/client.js',
+      'data-repo': 'mark22013333/mark22013333.github.io',
+      'data-repo-id': 'R_kgDOLAxa6A',
+      'data-category-id': 'DIC_kwDOLAxa6M4C5eO9',
+      'data-theme': getGiscusTheme(document.documentElement.getAttribute('data-theme')),
+      'data-reactions-enabled': '1',
+      crossorigin: 'anonymous',
+      async: true,
+      ...option,
+      ...mappingConfig
+    }
+
+    const scriptElement = createScriptElement(giscusConfig)
+
+    el.querySelector('#giscus-wrap').appendChild(scriptElement)
+
+    if (isShuoshuo) {
+      window.shuoshuoComment.destroyGiscus = () => {
+        if (el.children.length) {
+          el.innerHTML = ''
+          el.classList.add('no-comment')
+        }
+      }
+    }
+  }
+
+  const changeGiscusTheme = theme => {
+    const iframe = document.querySelector('#giscus-wrap iframe')
+    if (iframe) {
+      const message = {
+        giscus: {
+          setConfig: {
+            theme: getGiscusTheme(theme)
+          }
+        }
+      }
+      iframe.contentWindow.postMessage(message, 'https://giscus.app')
+    }
+  }
+
+  btf.addGlobalFn('themeChange', changeGiscusTheme, 'giscus')
+
+  if (isShuoshuo) {
+    'Giscus' === 'Giscus'
+      ? window.shuoshuoComment = { loadComment: loadGiscus }
+      : window.loadOtherComment = loadGiscus
+    return
+  }
+
+  if ('Giscus' === 'Giscus' || !true) {
+    if (true) btf.loadComment(document.getElementById('giscus-wrap'), loadGiscus)
+    else loadGiscus()
+  } else {
+    window.loadOtherComment = loadGiscus
+  }
+})()</script></div><script src="/js/kkbox-player.js"></script><script src="/js/archives-pagination.js"></script><script src="/js/font-resize.js"></script><script src="/js/dark-palette.js"></script><script defer="defer" id="fluttering_ribbon" mobile="false" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/canvas-fluttering-ribbon.min.js"></script><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/activate-power-mode.min.js"></script><script>POWERMODE.colorful = true;
+POWERMODE.shake = true;
+POWERMODE.mobile = true;
+document.body.addEventListener('input', POWERMODE);
+</script><script src="https://cdn.jsdelivr.net/npm/pjax/pjax.min.js" defer="defer"></script><script>document.addEventListener('DOMContentLoaded', () => {
+  const pjaxSelectors = ["meta[property=\"og:image\"]","meta[property=\"og:title\"]","meta[property=\"og:url\"]","meta[property=\"og:description\"]","link[rel=\"canonical\"]","head > title","#config-diff","#body-wrap","#rightside-config-hide","#rightside-config-show",".js-pjax"]
+
+  window.pjax = new Pjax({
+    elements: 'a:not([target="_blank"])',
+    selectors: pjaxSelectors,
+    cacheBust: false,
+    analytics: true,
+    scrollRestoration: false
+  })
+
+  const triggerPjaxFn = (val) => {
+    if (!val) return
+    Object.values(val).forEach(fn => {
+      try {
+        fn()
+      } catch (err) {
+        console.debug('Pjax callback failed:', err)
+      }
+    })
+  }
+
+  document.addEventListener('pjax:send', () => {
+    // removeEventListener
+    btf.removeGlobalFnEvent('pjaxSendOnce')
+    btf.removeGlobalFnEvent('themeChange')
+
+    // reset readmode
+    const $bodyClassList = document.body.classList
+    if ($bodyClassList.contains('read-mode')) $bodyClassList.remove('read-mode')
+
+    triggerPjaxFn(window.globalFn.pjaxSend)
+  })
+
+  document.addEventListener('pjax:complete', () => {
+    btf.removeGlobalFnEvent('pjaxCompleteOnce')
+    document.querySelectorAll('script[data-pjax]').forEach(item => {
+      const newScript = document.createElement('script')
+      const content = item.text || item.textContent || item.innerHTML || ""
+      Array.from(item.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value))
+      newScript.appendChild(document.createTextNode(content))
+      item.parentNode.replaceChild(newScript, item)
+    })
+
+    triggerPjaxFn(window.globalFn.pjaxComplete)
+  })
+
+  document.addEventListener('pjax:error', e => {
+    if (e.request.status === 404) {
+      true
+        ? pjax.loadUrl('/404.html')
+        : window.location.href = e.request.responseURL
+    }
+  })
+})</script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜尋</span><i class="fas fa-spinner fa-pulse" id="loading-status" hidden="hidden"></i><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="text-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  資料載入中</span></div><div class="local-search-input"><input placeholder="搜尋文章" type="text"/></div><hr/><div id="local-search-results"></div><div class="ais-Pagination" id="local-search-pagination" style="display:none;"><ul class="ais-Pagination-list"></ul></div><div id="local-search-stats"></div></div><div id="search-mask"></div><script src="/js/search/local-search.js"></script></div></div></body></html>

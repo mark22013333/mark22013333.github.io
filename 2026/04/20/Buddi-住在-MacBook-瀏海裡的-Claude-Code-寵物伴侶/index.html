@@ -1,0 +1,471 @@
+<!DOCTYPE html><html lang="zh-TW" data-theme="dark"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>Buddi — 住在 MacBook 瀏海裡的 Claude Code 寵物伴侶 | Cheng's Tech &amp; Life</title><meta name="author" content="Cheng®"><meta name="copyright" content="Cheng®"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#0d0d0d"><meta name="description" content="Claude Code 的 &#x2F;buddy 被官方移除後，有人在三天內用 Swift 寫了一個 macOS notch app 把它復活，順便把權限审批、session 監控、用量追蹤全塞進瀏海那塊原本「沒有用」的黑色區域。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Buddi — 住在 MacBook 瀏海裡的 Claude Code 寵物伴侶">
+<meta property="og:url" content="https://mark22013333.github.io/2026/04/20/Buddi-%E4%BD%8F%E5%9C%A8-MacBook-%E7%80%8F%E6%B5%B7%E8%A3%A1%E7%9A%84-Claude-Code-%E5%AF%B5%E7%89%A9%E4%BC%B4%E4%BE%B6/index.html">
+<meta property="og:site_name" content="Cheng&#39;s Tech &amp; Life">
+<meta property="og:description" content="Claude Code 的 &#x2F;buddy 被官方移除後，有人在三天內用 Swift 寫了一個 macOS notch app 把它復活，順便把權限审批、session 監控、用量追蹤全塞進瀏海那塊原本「沒有用」的黑色區域。">
+<meta property="og:locale" content="zh_TW">
+<meta property="og:image" content="https://mark22013333.github.io/img/20260420-01.webp">
+<meta property="article:published_time" content="2026-04-20T00:30:00.000Z">
+<meta property="article:modified_time" content="2026-04-20T13:08:09.357Z">
+<meta property="article:author" content="Cheng®">
+<meta property="article:tag" content="Claude Code">
+<meta property="article:tag" content="macOS">
+<meta property="article:tag" content="Hooks">
+<meta property="article:tag" content="Buddi">
+<meta property="article:tag" content="notch">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://mark22013333.github.io/img/20260420-01.webp"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Buddi — 住在 MacBook 瀏海裡的 Claude Code 寵物伴侶",
+  "url": "https://mark22013333.github.io/2026/04/20/Buddi-%E4%BD%8F%E5%9C%A8-MacBook-%E7%80%8F%E6%B5%B7%E8%A3%A1%E7%9A%84-Claude-Code-%E5%AF%B5%E7%89%A9%E4%BC%B4%E4%BE%B6/",
+  "image": "https://mark22013333.github.io/img/20260420-01.webp",
+  "datePublished": "2026-04-20T00:30:00.000Z",
+  "dateModified": "2026-04-20T13:08:09.357Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "Cheng®",
+      "url": "https://mark22013333.github.io"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://mark22013333.github.io/2026/04/20/Buddi-%E4%BD%8F%E5%9C%A8-MacBook-%E7%80%8F%E6%B5%B7%E8%A3%A1%E7%9A%84-Claude-Code-%E5%AF%B5%E7%89%A9%E4%BC%B4%E4%BE%B6/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//www.google-analytics.com" crossorigin=""/><link rel="preconnect" href="//fonts.googleapis.com" crossorigin=""/><link rel="preconnect" href="//busuanzi.ibruce.info"/><meta name="google-site-verification" content="6ywUr8k2n_CT1PFYJzlSvI3CZ-JmJ55RYbA39VrFBDs"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!true && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          const hour = new Date().getHours()
+          const isNight = hour <= 9 || hour >= 18
+          if (theme === undefined) isNight ? activateDarkMode() : activateLightMode()
+          else theme === 'light' ? activateLightMode() : activateDarkMode()
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script async="async" src="https://www.googletagmanager.com/gtag/js?id=G-JBV14NRDH3"></script><script>window.dataLayer = window.dataLayer || []
+function gtag(){dataLayer.push(arguments)}
+gtag('js', new Date())
+gtag('config', 'G-JBV14NRDH3')
+btf.addGlobalFn('pjaxComplete', () => {
+  gtag('config', 'G-JBV14NRDH3', {'page_path': window.location.pathname})
+}, 'google_analytics')
+</script><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Titillium+Web&amp;display=swap" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"pagination":{"enable":false,"hitsPerPage":8},"languages":{"hits_empty":"找不到符合您查詢的內容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '複製成功',
+    error: '複製失敗',
+    noSupport: '瀏覽器不支援'
+  },
+  relativeDate: {
+    homepage: false,
+    post: true
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '剛剛',
+    min: '分鐘前',
+    hour: '小時前',
+    day: '天前',
+    month: '個月前'
+  },
+  copyright: {"limitCount":1,"languages":{"author":"作者: Cheng®","link":"連結: ","source":"來源: Cheng's Tech & Life","info":"著作權歸作者所有。如需商業轉載，請聯絡作者獲得授權，非商業轉載請註明出處😁。"}},
+  lightbox: 'fancybox',
+  Snackbar: {"chs_to_cht":"已切換為繁體中文","cht_to_chs":"已切換為簡體中文","day_to_night":"已切換為深色模式","night_to_day":"已切換為淺色模式","bgLight":"#49b1f5","bgDark":"#1f1f1f","position":"top-center"},
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid/dist/infinitegrid.min.js',
+    buttonText: '載入更多'
+  },
+  isPhotoFigcaption: true,
+  islazyloadPlugin: false,
+  isAnchor: true,
+  percent: {
+    toc: true,
+    rightside: true,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Buddi — 住在 MacBook 瀏海裡的 Claude Code 寵物伴侶',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><link rel="stylesheet" href="/css/kkbox-player.css"><link rel="stylesheet" href="/css/tag-cloud-fancy.css"><link rel="stylesheet" href="/css/font-resize.css"><link rel="stylesheet" href="/css/dark-palette.css"><link rel="stylesheet" href="/css/loading-override.css"><link rel="alternate" href="/atom.xml" title="Cheng's Tech & Life" type="application/atom+xml">
+</head><body><div id="loading-box"><div class="loading-glass-overlay"></div><div class="loading-indicator"><div class="loading-dot"></div><div class="loading-dot"></div><div class="loading-dot"></div></div></div><script>(()=>{
+  const $loadingBox = document.getElementById('loading-box')
+  const $body = document.body
+  const preloader = {
+    endLoading: () => {
+      if ($loadingBox.classList.contains('loaded')) return
+      $body.style.overflow = ''
+      $loadingBox.classList.add('loaded')
+    },
+    initLoading: () => {
+      $body.style.overflow = 'hidden'
+      $loadingBox.classList.remove('loaded')
+    }
+  }
+
+  preloader.initLoading()
+
+  if (document.readyState === 'complete') {
+    preloader.endLoading()
+  } else {
+    window.addEventListener('load', preloader.endLoading)
+    document.addEventListener('DOMContentLoaded', preloader.endLoading)
+    setTimeout(preloader.endLoading, 7000)
+  }
+
+  if (true) {
+    btf.addGlobalFn('pjaxSend', preloader.initLoading, 'preloader_init')
+    btf.addGlobalFn('pjaxComplete', preloader.endLoading, 'preloader_end')
+  }
+})()</script><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="https://lh3.googleusercontent.com/pw/ABLVV87_po8nBc6F_tXcoYDmtzMGWxHuhhrbguYILCjmjWKLOS8DTpubm0YoQLKgjyjRIZyV5TjYe7XVEz_YU4squfr37GTZqPZP1hlMVZ_MIgXpTxWu73M=w1200" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">161</div></a><a href="/tags/"><div class="headline">標籤</div><div class="length-num">142</div></a><a href="/categories/"><div class="headline">分類</div><div class="length-num">12</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首頁-Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 時間軸-archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 標籤-tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分類-Categories</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-list"></i><span> 其他列表</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音樂-Music</span></a></li><li><a class="site-page child" href="/gallery/"><i class="fa-fw fas fa-images"></i><span> 畫館-Gallery</span></a></li></ul></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg fixed" id="page-header" style="background-image: url(/img/20260420-01.webp);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><img class="site-icon" src="https://lh3.googleusercontent.com/pw/ABLVV87_po8nBc6F_tXcoYDmtzMGWxHuhhrbguYILCjmjWKLOS8DTpubm0YoQLKgjyjRIZyV5TjYe7XVEz_YU4squfr37GTZqPZP1hlMVZ_MIgXpTxWu73M=w1200" alt="Logo"><span class="site-name">Cheng's Tech &amp; Life</span></a><a class="nav-page-title" href="/"><span class="site-name">Buddi — 住在 MacBook 瀏海裡的 Claude Code 寵物伴侶</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首頁</span></span></a></span><div id="menus"><div id="search-button" title="Ctrl+K / Cmd+K"><span class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜尋</span></span></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首頁-Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 時間軸-archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 標籤-tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分類-Categories</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-list"></i><span> 其他列表</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音樂-Music</span></a></li><li><a class="site-page child" href="/gallery/"><i class="fa-fw fas fa-images"></i><span> 畫館-Gallery</span></a></li></ul></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">Buddi — 住在 MacBook 瀏海裡的 Claude Code 寵物伴侶</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">發表於</span><time class="post-meta-date-created" datetime="2026-04-20T00:30:00.000Z" title="發表於 2026-04-20 00:30:00">2026-04-20</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新於</span><time class="post-meta-date-updated" datetime="2026-04-20T13:08:09.357Z" title="更新於 2026-04-20 13:08:09">2026-04-20</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Claude-Code/">Claude Code</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">總字數:</span><span class="word-count">2.5k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">閱讀時間:</span><span>8分鐘</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">瀏覽量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><p>Claude Code 的 <code>/buddy</code> 被官方刪掉那一週，GitHub 上有一則 issue 滾到 #45596——<strong>社群請願把寵物帶回來</strong>。三天後 <code>talkvalue</code> 這個人丟出 Swift 寫的 <code>Buddi</code>，比官方版還多了權限审批、session 監控、API 配額追蹤，順便把它塞進 MacBook 瀏海那塊一般人覺得「設計缺陷」的黑色區域。</p>
+<p>反直覺的地方不是寵物被救回來，是<strong>瀏海原來可以當控制台</strong>。</p>
+<p>那塊 130 像素高、橫過螢幕正中央的黑色區域，自從 2021 年 iPhone 把瀏海搬到 Mac 之後，就是工業設計上的爭論焦點。大部分 app 把它當成要躲開的障礙物——選單列往兩邊擠、全螢幕時硬切掉那段。Buddi 走相反方向：既然這塊黑色永遠都在，乾脆拿它做 Claude Code 的儀表板。ASCII 寵物在裡面走來走去，狀態切換就切換動畫，Claude 要權限就從瀏海裡展開 Allow&#x2F;Deny 按鈕。</p>
+<p>先把角色定位講清楚：它不是 Anthropic 出的官方工具。Anthropic 把 <code>/buddy</code> 當成愚人節彩蛋做了一版，社群上頭之後被砍掉，然後就有人自己用 Swift 把它放大重寫。Buddi 目前還在 v0.1.0，macOS 15+ 專屬，GPLv3 授權。</p>
+<h2 id="它到底在做什麼"><a href="#它到底在做什麼" class="headerlink" title="它到底在做什麼"></a>它到底在做什麼</h2><p>ASCII 寵物看起來像玩具，但資料流其實很嚴肅。Claude Code 的 hooks 系統每觸發一個事件——<code>UserPromptSubmit</code>、<code>PreToolUse</code>、<code>PostToolUse</code>、<code>PermissionRequest</code>、<code>SessionStart</code> 這些——都會執行一個 Python hook 腳本，把事件資料透過 Unix Socket（<code>/tmp/buddi.sock</code>）傳給 Buddi app，Buddi 再用 SwiftUI 更新 UI。</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">Claude Code</span><br><span class="line">    │  Hook Events (UserPromptSubmit / PreToolUse / ...)</span><br><span class="line">    ▼</span><br><span class="line">buddi-hook.py     ← Python 腳本</span><br><span class="line">    │  JSON payload</span><br><span class="line">    ▼</span><br><span class="line">Unix Socket       ← /tmp/buddi.sock，permission 0600</span><br><span class="line">    │</span><br><span class="line">    ▼</span><br><span class="line">HookSocketServer  ← Swift actor，常駐 app 內</span><br><span class="line">    │</span><br><span class="line">    ▼</span><br><span class="line">SessionStore      ← 中央狀態機（Swift Actor，thread-safe）</span><br><span class="line">    │</span><br><span class="line">    ▼</span><br><span class="line">SwiftUI Notch UI  ← 你看到的 ASCII 寵物與按鈕</span><br></pre></td></tr></table></figure>
+
+<p>比較聰明的設計在權限审批這段。一般 hook 跑完就結束，但 Buddi 的權限 hook 會把 socket 連線保持住，等使用者在 UI 上點 Allow 或 Deny，結果回傳給 hook，hook 再 stdout 給 Claude Code——整段流程你沒離開 IDE 也沒切到 terminal。</p>
+<p>類比一下：這很像電話總機。Claude Code 是打電話進來的客戶，hook 是總機小姐，Buddi 是董事長。總機不會直接掛客戶電話，而是 hold 住線路等董事長決定，董事長回答後總機再轉回去。Unix Socket 就是那條不會掉的電話線。</p>
+<h2 id="安裝走一次"><a href="#安裝走一次" class="headerlink" title="安裝走一次"></a>安裝走一次</h2><p>Homebrew 最快：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">brew install --cask talkvalue/buddi/buddi</span><br></pre></td></tr></table></figure>
+
+<p>不用 Homebrew 就去 <a target="_blank" rel="noopener" href="https://github.com/talkvalue/Buddi/releases/latest">Releases</a> 下載 DMG。</p>
+<p>首次啟動會跑一段 onboarding，授權輔助使用（偵測視窗焦點）和通知（session 狀態提醒），選一個音樂控制器（Apple Music &#x2F; Spotify &#x2F; YouTube Music），完成後瀏海就會長出一隻 ASCII 生物。</p>
+<p>這段過程它會自動幫你安裝 Claude Code 的 hooks。驗證兩條指令：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">ls</span> -la ~/.claude/hooks/buddi-hook.py</span><br><span class="line">grep -c <span class="string">&quot;buddi-hook&quot;</span> ~/.claude/settings.json</span><br></pre></td></tr></table></figure>
+
+<p>兩個都有輸出就搞定了。如果你已經有其他 hooks，Buddi 是 append 不是 overwrite——不會覆蓋你的設定，但會在既有 hooks 後面追加。這個行為值得注意，因為如果你手動維護過 <code>settings.json</code>，要去看一下它加了什麼進去。</p>
+<h2 id="瀏海能幹嘛"><a href="#瀏海能幹嘛" class="headerlink" title="瀏海能幹嘛"></a>瀏海能幹嘛</h2><p>用起來最有感的是<strong>權限审批不用離開 IDE</strong>。以前 Claude Code 要跑 bash 指令，你得切到 terminal 按 y；現在瀏海直接展開 Allow &#x2F; Deny，點一下就好。工作流沒中斷是關鍵——每多一次 context switch，你腦袋的 L1 cache 就被 evict 一輪。</p>
+<p>寫 code 時瞄一眼瀏海看 Claude 狀態是第二個實用點。Buddy 有六個狀態動畫：</p>
+<table>
+<thead>
+<tr>
+<th>狀態</th>
+<th>情境</th>
+<th>動畫效果</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>idle</td>
+<td>閒置</td>
+<td>偶爾眨眼</td>
+</tr>
+<tr>
+<td>working</td>
+<td>Claude 處理中</td>
+<td>游標閃爍 &#96;</td>
+</tr>
+<tr>
+<td>reading</td>
+<td>讀取檔案</td>
+<td>眼睛左右移動</td>
+</tr>
+<tr>
+<td>waiting</td>
+<td>等待权限审批</td>
+<td>漸進圓點 <code>...</code></td>
+</tr>
+<tr>
+<td>compacting</td>
+<td>Context 壓縮中</td>
+<td>波浪 <code>~</code> <code>~~</code></td>
+</tr>
+<tr>
+<td>sleeping</td>
+<td>睡眠狀態</td>
+<td><code>zzz</code> 閉眼</td>
+</tr>
+</tbody></table>
+<p>這個設計有點像老式機械停車場的標示燈。你不用知道停車場裡發生什麼事，看燈號就知道「有位」「沒位」「快滿」。同樣的，你不用切到 terminal 看日誌，看瀏海的動畫就知道 Claude 現在在幹嘛。</p>
+<p>同時跑多個 Claude Code session 的人會喜歡 <code>ClaudeSessionMonitor</code>。它從 <code>~/.claude/projects/*/conversations/*.jsonl</code> 解析每個 session 的完整聊天歷史、工具呼叫狀態、當前階段，然後在同一個面板裡排序——processing 和 approval 排最上面，idle 排最下面。需要你注意的永遠浮到頂端。</p>
+<h2 id="物種系統其實藏著確定性雜湊"><a href="#物種系統其實藏著確定性雜湊" class="headerlink" title="物種系統其實藏著確定性雜湊"></a>物種系統其實藏著確定性雜湊</h2><p>跟原版 <code>/buddy</code> 一樣，Buddi 讀 <code>~/.claude.json</code> 裡的 <code>userId</code>，用 Wyhash + Mulberry32 PRNG roll 出你的 buddy——<strong>同一個帳號永遠得到同一隻</strong>。18 種物種、5 個稀有度，機率是這樣：</p>
+<table>
+<thead>
+<tr>
+<th>稀有度</th>
+<th>機率權重</th>
+<th>屬性下限</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Common ★</td>
+<td>60</td>
+<td>5</td>
+</tr>
+<tr>
+<td>Uncommon ★★</td>
+<td>25</td>
+<td>15</td>
+</tr>
+<tr>
+<td>Rare ★★★</td>
+<td>10</td>
+<td>25</td>
+</tr>
+<tr>
+<td>Epic ★★★★</td>
+<td>4</td>
+<td>35</td>
+</tr>
+<tr>
+<td>Legendary ★★★★★</td>
+<td>1</td>
+<td>50</td>
+</tr>
+</tbody></table>
+<p>原版 <code>/buddy</code> 想刷 Legendary 要繞開 accountUuid 優先權、改環境變數、重設 userId，社群甚至寫了暴力搜尋 salt 的工具。Buddi 把這套全部省掉——直接在 Settings 裡手動覆寫 species、eye、hat、rarity 就好，不動 userId，不破壞原始 roll 結果。</p>
+<p>這個設計細節很 Paul Graham 風格：原版把 <code>userId</code> 當成 roll 的隨機源是為了「每個人有自己獨一無二的寵物」，聽起來很浪漫。但實際結果是人人都想要 Legendary Shiny，所以寫了一堆繞圈子的工具。Buddi 的解法是<strong>承認需求本身</strong>——你就是想要自己挑——然後提供一個不破壞系統的出口。</p>
+<h2 id="API-用量追蹤這塊有個條件"><a href="#API-用量追蹤這塊有個條件" class="headerlink" title="API 用量追蹤這塊有個條件"></a>API 用量追蹤這塊有個條件</h2><p><code>UsageService</code> 用 Anthropic OAuth API 輪詢配額，顯示 5 小時和 7 天的使用率，輪詢間隔 5 分鐘，遇到 rate limit 指數退避到 30 分鐘。本地快取在 <code>~/Library/Application Support/Buddi/usage-cache.json</code>，token 從 macOS Keychain 讀。</p>
+<p>但這個功能<strong>需要 OAuth 登入</strong>。如果你用 API key 而不是 OAuth 登入 Claude Code，這段直接不會生效——因為 <code>https://api.anthropic.com/api/oauth/usage</code> 這個 endpoint 只吃 OAuth token。這是個容易踩的坑：你看不到配額數字的時候，先檢查自己是哪種登入方式，不是 Buddi 壞了。</p>
+<h2 id="背後的設計選擇"><a href="#背後的設計選擇" class="headerlink" title="背後的設計選擇"></a>背後的設計選擇</h2><p>Buddi 不是從零開始寫的。它組合了兩個開源專案：</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://github.com/TheBoredTeam/boring.notch"><strong>boring.notch</strong></a> 提供 notch UI 框架（音樂控制、行事曆、電池、音量 HUD、檔案暫存架）</li>
+<li><a target="_blank" rel="noopener" href="https://github.com/farouqaldori/claude-island"><strong>Claude Island</strong></a> 提供 Claude Code session 監控和 buddy 角色系統</li>
+</ul>
+<p>這個組合方式有意思。如果你看過 SICP，會覺得這很像 Scheme 的 composition——兩個獨立的抽象用簡單的介面接起來，變出一個新東西。boring.notch 負責「怎麼把東西顯示在瀏海上」，Claude Island 負責「Claude Code 在幹嘛」，Buddi 把前者當畫布、後者當顏料，不自己重造輪子。</p>
+<p>程式碼核心是 4 個 Singleton：</p>
+<ul>
+<li><code>BuddyManager.shared</code> — buddy 身份與動畫</li>
+<li><code>HookSocketServer.shared</code> — Unix Socket 伺服器</li>
+<li><code>SessionStore.shared</code> — 狀態中心，用 Swift Actor 保證 thread-safe</li>
+<li><code>UsageService.shared</code> — 用量追蹤</li>
+</ul>
+<p>Swift Actor 是這段程式碼的點睛之筆。多個 hook event 可能同時進來，多個 SwiftUI view 可能同時讀狀態，用 Actor 包起來就不用手寫 lock。寫 Objective-C 的人看到這個會嫉妒。</p>
+<h2 id="幾個要留意的限制"><a href="#幾個要留意的限制" class="headerlink" title="幾個要留意的限制"></a>幾個要留意的限制</h2><p>專案才 2026 年 4 月 8 日建立，目前只有 v0.1.0 一個 release。穩定性還沒有大樣本驗證，功能完整但不要在關鍵開發日程裡才第一次裝它。</p>
+<p>macOS 15 Sequoia 以上才能用。Windows 和 Linux 使用者暫時沒戲——畢竟 Windows 筆電沒瀏海這個概念。</p>
+<p>Socket 路徑硬編碼在 <code>/tmp/buddi.sock</code>，權限 0600，跟其他類似工具不會衝突但也沒辦法改。這個設計在單人 Mac 沒問題，多使用者系統（理論上 macOS 也支援）要小心同名衝突。</p>
+<p>cmux 使用者要在 cmux 設定中打開 “Automation mode”，不然 Tmux&#x2F;cmux 按鍵模擬的權限审批會失效。這個設定跟 Buddi 沒關係，是 cmux 自己的 autopilot 開關。</p>
+<p>GPLv3 授權。你可以 fork 改 code，但改完分發出去必須以相同授權公開原始碼。商用團隊要注意這條。</p>
+<h2 id="這個專案真正有趣的地方"><a href="#這個專案真正有趣的地方" class="headerlink" title="這個專案真正有趣的地方"></a>這個專案真正有趣的地方</h2><p>回到開頭那個反直覺——<strong>瀏海可以當控制台</strong>。</p>
+<p>Buddi 背後的命題其實不是「給 Claude Code 加個寵物」，是「<strong>工具應該塞進使用者本來就盯著的地方，而不是讓使用者切換到工具的地方</strong>」。寫 code 的時候你本來就盯著 IDE 和螢幕正中央，瀏海就在你的視野正中心偏上，不用轉頭不用開新視窗。這比把功能塞進 menu bar icon、dock badge、或彈出式通知都更符合你的實際視線。</p>
+<p>這件事真正的問題其實不是瀏海該不該用，是<strong>你願意讓多少「環境細節」被你的 AI 工具用來溝通</strong>。過去十年的開發工具一直在把訊號往外推——桌面通知、Dock 跳動、menu bar 閃爍、聲音提示——但都是「中斷你」的模式。Buddi 試的是另一條路：<strong>把資訊融進你本來就不會看的地方</strong>，有狀態變化時才抓你眼角餘光。</p>
+<p>背後就兩條線——工具該在你視線裡當背景常駐，還是在你注意力外當通知彈出？選前者，你就會開始研究瀏海能做什麼、menu bar 能做什麼、狀態列能做什麼。選後者，你會繼續被 desktop notification 轟炸。Buddi 選了前者，而且做得不只是裝飾。</p>
+<p>如果你用 Claude Code 又剛好有一台 MacBook，花 5 分鐘裝它跑一下。你會發現<strong>瀏海不是設計缺陷，是一塊沒人認真用的螢幕不動產</strong>。</p>
+<hr>
+<h2 id="相關連結"><a href="#相關連結" class="headerlink" title="相關連結"></a>相關連結</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://github.com/talkvalue/Buddi">Buddi GitHub Repo</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/TheBoredTeam/boring.notch">boring.notch — 原始 notch UI 框架</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/farouqaldori/claude-island">Claude Island — Claude Code session manager</a></li>
+<li><a target="_blank" rel="noopener" href="https://docs.anthropic.com/en/docs/claude-code/hooks">Claude Code Hooks 文件</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/anthropics/claude-code/issues/45596">Issue #45596 — Bring Back Buddy 社群請願</a></li>
+</ul>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://mark22013333.github.io">Cheng®</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章連結: </span><span class="post-copyright-info"><a href="https://mark22013333.github.io/2026/04/20/Buddi-%E4%BD%8F%E5%9C%A8-MacBook-%E7%80%8F%E6%B5%B7%E8%A3%A1%E7%9A%84-Claude-Code-%E5%AF%B5%E7%89%A9%E4%BC%B4%E4%BE%B6/">https://mark22013333.github.io/2026/04/20/Buddi-住在-MacBook-瀏海裡的-Claude-Code-寵物伴侶/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版權聲明: </span><span class="post-copyright-info">本部落格所有文章除特別聲明外，均採用<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 授權協議。轉載請註明來源 <a href="https://mark22013333.github.io" target="_blank">Cheng's Tech & Life</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Claude-Code/">Claude Code</a><a class="post-meta__tags" href="/tags/macOS/">macOS</a><a class="post-meta__tags" href="/tags/Hooks/">Hooks</a><a class="post-meta__tags" href="/tags/Buddi/">Buddi</a><a class="post-meta__tags" href="/tags/notch/">notch</a></div><div class="post-share"><div class="social-share" data-image="/img/20260420-01.webp" data-sites="facebook,x"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><div class="post-reward"><div class="reward-badges"><a class="sponsor-glow-btn" href="https://www.buymeacoffee.com/mark22013333" target="_blank" rel="noopener noreferrer" title="Buy Me A Coffee"><img src="https://img.shields.io/badge/Buy_Me_A_Coffee-FFDD00?style=for-the-badge&amp;logo=buy-me-a-coffee&amp;logoColor=black" alt="Buy Me A Coffee"/></a><a class="sponsor-glow-btn" href="https://p.ecpay.com.tw/EFC3F8F" target="_blank" rel="noopener noreferrer" title="綠界贊助"><img src="https://img.shields.io/badge/☕_%E8%AB%8B%E6%88%91%E5%96%9D%E6%9D%AF%E5%92%96%E5%95%A1-Donate-11998e?style=for-the-badge&amp;logo=coffee&amp;logoColor=white" alt="綠界贊助"/></a><a class="sponsor-glow-btn" href="https://calendly.com/markcheng00806-intumit/15min" target="_blank" rel="noopener noreferrer" title="預約時間"><img src="https://img.shields.io/badge/📅_%E9%A0%90%E7%B4%84_15_%E5%88%86%E9%90%98-Book_Time-0072ff?style=for-the-badge" alt="預約時間"/></a><p class="reward-badges-note">你的鼓勵將被轉換為我明天繼續加班的動力（真的）。 ❤️</p></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2026/04/19/%E5%8F%B0%E7%81%A3-AI-%E8%B3%87%E6%96%99%E4%B8%AD%E5%BF%83%E7%9A%84%E9%9B%BB%E5%8A%9B%E5%9B%B0%E5%A2%83-%E6%A1%83%E5%9C%92%E4%BB%A5%E5%8C%97%E7%82%BA%E4%BB%80%E9%BA%BC%E6%93%8B%E4%B8%8B%E4%BA%86%E4%B8%8B%E4%B8%80%E8%BC%AA%E5%9F%BA%E5%BB%BA/" title="台灣 AI 資料中心的電力困境：桃園以北為什麼擋下了下一輪基建"><img class="cover" src="/img/20260419-03.webp" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">台灣 AI 資料中心的電力困境：桃園以北為什麼擋下了下一輪基建</div></div><div class="info-2"><div class="info-item-1">1000 TWh。這是 2026 年全球資料中心估計的年用電量——約等於德國一整年的總電力消耗。而在同一個數字底下，台電剛下了一個決定：桃園以北，5MW 以上的大型資料中心電力申請，暫停核准。 這句話如果是三年前講出來，沒有人會在意。但 2026 年——全世界的國家都在搶著蓋 AI 算力底座，Microsoft 這週才宣布 100 億美金投資日本——台電說「北部沒電了」，等於是在 AI 軍備賽跑上主動讓出一步。 這事沒被講成大新聞。但它的系統性意義，比這週所有 AI 模型發布加起來都重要。 看似是電力問題，其實是國力問題工程師圈的話題這週繞著 Composer 2、Cursor 3、Claude Design 轉。但有一句話在 PTT 上被丟出來、沒被接住：「台灣連 5MW 資料中心都塞不下了，還想當 AI 強國？」 這不是酸。這是事實。 經濟部先前的估算——AI 用電五年內會增加 8 倍。台電這次出的新規則，把「新建或擴建 5MW 以上的資料中心」納入能源使用說明書審查範疇，搭配「桃園以北暫停核供電」的實質動作。官方說法是「引導產業往中南部走」，實際意思是北部已經沒有餘裕給這種...</div></div></div></a><a class="pagination-related" href="/2026/04/20/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260420/" title="AI 與科技新聞摘要 - 2026/04/20"><img class="cover" src="/img/20260420-02.webp" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">AI 與科技新聞摘要 - 2026/04/20</div></div><div class="info-2"><div class="info-item-1">658 倍。這是一個惡意 MCP 伺服器可以把你的 LLM 帳單灌到幾倍——而且標準防禦的偵測率不到 3%。這不是假設性攻擊，是本週剛被學界證實的攻擊技術。同一週，OpenAI 寫了一份內部備忘錄批 Anthropic 的收入造假、Windsurf 在被 Google 挖角後以 2.5 億被 Cognition 救援式收購、Claude Code Game Studios 把 49 個 agent 組成一家虛擬遊戲公司。 這幾條新聞放在一起看，你會看到一個共同模式：AI 的基礎設施跑得比風險管控快。 商業結構、攻擊面、agent 編排這三塊都在同一個時間軸上加速，但「怎麼守住」的答案集體還沒跟上。過去兩年大家在談「AI 怎麼改變我的工作」，今年開始變成「AI 怎麼攻破我的系統」。 Claude Code Game Studios — 49 個 agent 組一家虛擬遊戲公司4 月 19 日，GitHub 開發者 Donchitos 開源了 Claude Code Game Studios，一個把 Claude Code 單一 session 變成完整遊戲開發工作室的專案。不是把幾...</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相關推薦</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2026/04/20/Claude-Code-Monitor-Tool-%E8%AE%93-AI-%E5%83%8F%E8%A3%9D%E4%BA%86%E9%9B%B7%E9%81%94%E4%B8%80%E6%A8%A3%E7%9B%AF%E8%91%97%E8%83%8C%E6%99%AF%E7%A8%8B%E5%BA%8F/" title="Claude Code Monitor Tool — 讓 AI 像裝了雷達一樣盯著背景程序"><img class="cover" src="/img/20260420-03.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-04-20</div><div class="info-item-2">Claude Code Monitor Tool — 讓 AI 像裝了雷達一樣盯著背景程序</div></div><div class="info-2"><div class="info-item-1">一個 /loop 每兩分鐘跑一次 pytest 的任務，在 10 分鐘裡會燒掉 5 個 API call——其中 4 個完全沒拿到有用資訊。 每次 Claude 醒來、載入 context、發 prompt、收 response，然後看到「測試還在跑，下次再來」，就這樣重複四次。token 照算、時間照花、noise 照寫進 transcript。 Claude Code v2.1.98 新增的 Monitor Tool，把這個模式整個翻過來。 想像一下你家的煙霧偵測器。它不是每 30 秒跳出來問你「廚房起火了嗎？」，而是靜靜地掛在天花板上，真的有煙才會叫。Monitor Tool 就是給 Claude 裝煙霧偵測器：背景跑一個程序，每一行 stdout 都是一個事件，事件真的來了才會叫醒 Claude。沒事件的時候，Claude 在做別的事，不花 token 也不佔 context。 這個差異在帳單上很具體。以前你要求「幫我盯著 server.log，出現 5xx 就通知」，只能用 /loop 或 watch，每次輪詢都要付出一次 Claude 的 thinking round...</div></div></div></a><a class="pagination-related" href="/2026/04/01/%E9%80%8F%E9%81%8E-iMessage-%E8%88%87-Claude-Code-%E5%B0%8D%E8%A9%B1-%E5%AE%8C%E6%95%B4%E8%A8%AD%E5%AE%9A%E6%95%99%E5%AD%B8/" title="透過 iMessage 與 Claude Code 對話 — 完整設定教學"><img class="cover" src="/img/20260401-04.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-04-01</div><div class="info-item-2">透過 iMessage 與 Claude Code 對話 — 完整設定教學</div></div><div class="info-2"><div class="info-item-1">人不在電腦前，但 Claude Code session 正在跑。手機震了一下——不是 LINE，不是 Slack，是 iMessage。你直接在訊息 App 裡打「幫我跑一下測試」，幾秒後 Claude 回你結果。整個過程你連筆電都沒打開。 上次介紹了 Channels 的整體架構，Telegram、Discord、iMessage 三個平台都帶過一輪。但 iMessage 這條路線有太多眉角沒講到——self-chat 的 echo 迴圈、is_from_me 的詭異行為、號碼格式踩坑。這篇專門把 iMessage Channel 從頭到尾拆開來講，包括那些官方文件沒寫清楚的 troubleshooting。  前置需求——四個條件缺一不可開始之前先確認： macOS 電腦。iMessage Channel 的原理是直接讀你 Mac 上的 ~/Library/Messages/chat.db，這是 macOS 獨有的 SQLite 資料庫。Windows 和 Linux 沒有這個東西，所以 iMessage Channel 是 macOS 限定。 Claude Code CL...</div></div></div></a><a class="pagination-related" href="/2026/03/29/Ralph-Loop-%E8%AE%93-Claude-Code-%E8%87%AA%E5%B7%B1%E8%B7%91%E5%88%B0%E5%AE%8C%E7%82%BA%E6%AD%A2/" title="Ralph Loop — 讓 Claude Code 自己跑到完為止"><img class="cover" src="/img/20260329-01.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-03-29</div><div class="info-item-2">Ralph Loop — 讓 Claude Code 自己跑到完為止</div></div><div class="info-2"><div class="info-item-1">你有沒有遇過這種情境：跑測試，紅了三個，修好一個又冒出兩個，來回切 terminal 切到懷疑人生？ Ralph Loop 解決的就是這件事。它是 Claude Code 的自動迭代套件，概念很直接——讓 Claude 在同一個 session 裡反覆執行同一個 prompt，每一輪看到前一輪改過的檔案繼續修，直到條件滿足或者跑到你設定的上限為止。 Stop Hook 攔截機制背後的原理不複雜。Ralph Loop 用的是 Claude Code 的 Stop Hook——Claude 每次想結束的時候，Hook 會攔截這個動作，檢查輸出裡有沒有出現你預設的完成標記 &lt;promise&gt;TAG&lt;/promise&gt;。沒看到？同一個 prompt 再餵一次。看到了或者跑到最大次數？放行，結束。 等效的概念大概是這樣： 123while :; do  cat PROMPT.md | claude-code --continuedone  但它不是真的 bash 迴圈。狀態會寫在 .claude/ralph-loop.local.md 裡面，用 YAML front...</div></div></div></a><a class="pagination-related" href="/2026/04/15/Claude-Code-team-onboarding-%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8-%E8%AE%93%E6%96%B0%E5%90%8C%E4%BA%8B%E4%B8%80%E5%A4%A9%E5%85%A7%E6%90%9E%E6%87%82%E4%BD%A0%E7%9A%84-AI-%E9%96%8B%E7%99%BC%E5%B7%A5%E4%BD%9C%E6%B5%81/" title="Claude Code &#x2F;team-onboarding 完整教學 - 讓新同事一天內搞懂你的 AI 開發工作流"><img class="cover" src="/img/20260415-03.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-04-15</div><div class="info-item-2">Claude Code &#x2F;team-onboarding 完整教學 - 讓新同事一天內搞懂你的 AI 開發工作流</div></div><div class="info-2"><div class="info-item-1">新人到職第一天，你遞了一份 README 過去。三小時後他來問你：「這個 /compact 是什麼？」「為什麼你的 CLAUDE.md 裡面有一段看不懂的 hook 設定？」「sub-agent 跟直接問 Claude 差在哪？」 README 沒有錯，是它沒辦法反映你實際的工作方式。而 /team-onboarding 做的事情就是掃描你過去 30 天的 Claude Code 使用紀錄，把你的真實工作流整理成一份結構化的新人指南。 這個指令在幹嘛/team-onboarding 是 Claude Code v2.1.101（2026 年 4 月 10 日）加入的 slash command。執行之後，它會分析你最近 30 天的 Claude Code 使用歷史，然後產出一份包含以下內容的 onboarding 文件： 你實際用過的 commands 和 workflows、你的 CLAUDE.md 設定邏輯、常用的 MCP server 和工具、sub-agent 的使用模式、還有你團隊特有的慣例（像是 commit message 格式、code review 流程）。 重...</div></div></div></a><a class="pagination-related" href="/2026/04/02/Claude-Code-Context-%E7%AE%A1%E7%90%86%E6%94%BB%E7%95%A5-%E7%82%BA%E4%BB%80%E9%BA%BC%E4%BD%A0%E7%9A%84-AI-%E8%B6%8A%E7%94%A8%E8%B6%8A%E7%AC%A8%E4%BB%A5%E5%8F%8A%E6%80%8E%E9%BA%BC%E4%BF%AE/" title="Claude Code Context 管理攻略 — 為什麼你的 AI 越用越笨，以及怎麼修"><img class="cover" src="/img/20260402-03.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-04-02</div><div class="info-item-2">Claude Code Context 管理攻略 — 為什麼你的 AI 越用越笨，以及怎麼修</div></div><div class="info-2"><div class="info-item-1">你有沒有遇過這種狀況：用 Claude Code 寫到一半，突然發現它開始忘東忘西，code 質量明顯下降，甚至會重複做已經做過的事情？ 那不是 Claude 變笨了，是你的 context window 快爆炸了。 這篇要聊的就是 Claude Code 最重要但最容易被忽視的東西：context 管理。不懂這個，你再聰明的 AI 助手也會被你用到逐漸失能。 Context Window 是你最寶貴的資源先講白一點：Claude 的 context window（你可以理解成 AI 能夠「記住」的東西）是有限的。每一次對話、每個你讀的檔案、每個指令的輸出，全部都會佔用 context。 當 context 開始滿的時候，Claude 的表現就會下降。它會開始「健忘」，做錯事情的頻率變高。這不是 bug，這是物理限制。 想像一下你的大腦 RAM，用滿了就會 lag。Claude 也是一樣。 所以context 管理就是你在用 Claude Code 時最重要的事。你可以寫得很完美，但如果 context 一直堆積垃圾，再完美的 code 也救不了。 給 Claude 驗證的方式這...</div></div></div></a><a class="pagination-related" href="/2026/04/16/Multica-%E6%8A%8A-AI-Coding-Agent-%E7%95%B6%E9%9A%8A%E5%8F%8B%E7%AE%A1%E7%90%86%E7%9A%84%E9%96%8B%E6%BA%90%E5%B9%B3%E5%8F%B0/" title="Multica - 把 AI Coding Agent 當隊友管理的開源平台"><img class="cover" src="/img/20260416-01.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-04-16</div><div class="info-item-2">Multica - 把 AI Coding Agent 當隊友管理的開源平台</div></div><div class="info-2"><div class="info-item-1">你有沒有想過，招聘真的那麼難嗎？最近看到一句話：「Your next 10 hires won’t be human.」當時笑了一下，覺得有點誇張，直到我試玩了 Multica。 不是框架，是人力資源管理軟體網路上 AI 框架有夠多，但 Multica 走的是另一條路。它不是讓你寫複雜的 prompt 或組建管道線的工具，而是一個真實的 專案管理層 — 你可以把 Claude Code、Codex、OpenClaw 這些 coding agent 當成正式隊友，在看板上指派任務、追蹤進度、看他們的進展。 這很重要，因為現在的痛點不是「怎樣讓 AI 聽懂我」，而是「怎樣管理好這群虛擬員工」。 想像一下：上午 standup 會議，你把 bug fix 指派給 Claude Code agent、文檔更新給 OpenClaw、技術債清理給 Codex，他們各自在 kanban board 上移動卡片，實時更新進度。這不是科幻，Multica 已經做到了。 核心特色一次說清楚首先，Agent 檔案系統。每個 agent 可以設定名字、大頭貼、專業技能標籤，就像真的員工檔案。這聽起來小，...</div></div></div></a></div></div><hr class="custom-hr"/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 評論</span></div></div><div class="comment-wrap"><div><div id="giscus-wrap"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="https://lh3.googleusercontent.com/pw/ABLVV87_po8nBc6F_tXcoYDmtzMGWxHuhhrbguYILCjmjWKLOS8DTpubm0YoQLKgjyjRIZyV5TjYe7XVEz_YU4squfr37GTZqPZP1hlMVZ_MIgXpTxWu73M=w1200" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">Cheng®</div><div class="author-info-description">Backend Developer / 技術筆記 & AI 新聞分享</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">161</div></a><a href="/tags/"><div class="headline">標籤</div><div class="length-num">142</div></a><a href="/categories/"><div class="headline">分類</div><div class="length-num">12</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/mark22013333"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons"><a class="social-icon" href="https://github.com/mark22013333" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:mark22013333@gmail.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a></div><div class="card-info-sponsor"><a class="sponsor-glow-btn" href="https://www.buymeacoffee.com/mark22013333" target="_blank" rel="noopener noreferrer" title="Buy Me A Coffee"><img src="https://img.shields.io/badge/Buy_Me_A_Coffee-FFDD00?style=for-the-badge&amp;logo=buy-me-a-coffee&amp;logoColor=black" alt="Buy Me A Coffee"/></a><a class="sponsor-glow-btn" href="https://p.ecpay.com.tw/EFC3F8F" target="_blank" rel="noopener noreferrer" title="綠界贊助"><img src="https://img.shields.io/badge/☕_%E8%AB%8B%E6%88%91%E5%96%9D%E6%9D%AF%E5%92%96%E5%95%A1-Donate-11998e?style=for-the-badge&amp;logo=coffee&amp;logoColor=white" alt="綠界贊助"/></a><a class="sponsor-glow-btn" href="https://calendly.com/markcheng00806-intumit/15min" target="_blank" rel="noopener noreferrer" title="預約時間"><img src="https://img.shields.io/badge/📅_%E9%A0%90%E7%B4%84_15_%E5%88%86%E9%90%98-Book_Time-0072ff?style=for-the-badge" alt="預約時間"/></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">這裡記錄我在後端開發路上踩過的坑、學到的東西，也會分享每日 AI 與科技新聞觀點。歡迎一起交流！</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目錄</span><span class="toc-percentage"></span></div><div class="toc-content is-expand"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%83%E5%88%B0%E5%BA%95%E5%9C%A8%E5%81%9A%E4%BB%80%E9%BA%BC"><span class="toc-number">1.</span> <span class="toc-text">它到底在做什麼</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%89%E8%A3%9D%E8%B5%B0%E4%B8%80%E6%AC%A1"><span class="toc-number">2.</span> <span class="toc-text">安裝走一次</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%80%8F%E6%B5%B7%E8%83%BD%E5%B9%B9%E5%98%9B"><span class="toc-number">3.</span> <span class="toc-text">瀏海能幹嘛</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%89%A9%E7%A8%AE%E7%B3%BB%E7%B5%B1%E5%85%B6%E5%AF%A6%E8%97%8F%E8%91%97%E7%A2%BA%E5%AE%9A%E6%80%A7%E9%9B%9C%E6%B9%8A"><span class="toc-number">4.</span> <span class="toc-text">物種系統其實藏著確定性雜湊</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#API-%E7%94%A8%E9%87%8F%E8%BF%BD%E8%B9%A4%E9%80%99%E5%A1%8A%E6%9C%89%E5%80%8B%E6%A2%9D%E4%BB%B6"><span class="toc-number">5.</span> <span class="toc-text">API 用量追蹤這塊有個條件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%83%8C%E5%BE%8C%E7%9A%84%E8%A8%AD%E8%A8%88%E9%81%B8%E6%93%87"><span class="toc-number">6.</span> <span class="toc-text">背後的設計選擇</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B9%BE%E5%80%8B%E8%A6%81%E7%95%99%E6%84%8F%E7%9A%84%E9%99%90%E5%88%B6"><span class="toc-number">7.</span> <span class="toc-text">幾個要留意的限制</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%80%99%E5%80%8B%E5%B0%88%E6%A1%88%E7%9C%9F%E6%AD%A3%E6%9C%89%E8%B6%A3%E7%9A%84%E5%9C%B0%E6%96%B9"><span class="toc-number">8.</span> <span class="toc-text">這個專案真正有趣的地方</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%9B%B8%E9%97%9C%E9%80%A3%E7%B5%90"><span class="toc-number">9.</span> <span class="toc-text">相關連結</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2026/04/23/Claude-Code-Ultraplan-%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8-%E6%8A%8A%E8%A6%8F%E5%8A%83%E4%BA%A4%E7%B5%A6%E9%9B%B2%E7%AB%AF/" title="Claude Code Ultraplan 完整教學 — 把規劃交給雲端，讓 Claude 替你想 30 分鐘"><img src="/img/20260423-03.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Claude Code Ultraplan 完整教學 — 把規劃交給雲端，讓 Claude 替你想 30 分鐘"/></a><div class="content"><a class="title" href="/2026/04/23/Claude-Code-Ultraplan-%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8-%E6%8A%8A%E8%A6%8F%E5%8A%83%E4%BA%A4%E7%B5%A6%E9%9B%B2%E7%AB%AF/" title="Claude Code Ultraplan 完整教學 — 把規劃交給雲端，讓 Claude 替你想 30 分鐘">Claude Code Ultraplan 完整教學 — 把規劃交給雲端，讓 Claude 替你想 30 分鐘</a><time datetime="2026-04-23T09:00:00.000Z" title="發表於 2026-04-23 09:00:00">2026-04-23</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/04/23/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260423/" title="AI 與科技新聞摘要 - 2026/04/23"><img src="/img/20260423-02.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="AI 與科技新聞摘要 - 2026/04/23"/></a><div class="content"><a class="title" href="/2026/04/23/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260423/" title="AI 與科技新聞摘要 - 2026/04/23">AI 與科技新聞摘要 - 2026/04/23</a><time datetime="2026-04-23T08:30:00.000Z" title="發表於 2026-04-23 08:30:00">2026-04-23</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/04/23/Agent-Skills-%E7%B5%A6-AI-%E7%B7%A8%E7%A2%BC%E5%8A%A9%E6%89%8B%E7%9A%84%E5%B7%A5%E7%A8%8B%E7%B4%80%E5%BE%8B%E6%8C%87%E4%BB%A4%E9%9B%86/" title="Agent Skills — 給 AI 編碼助手的工程紀律指令集"><img src="/img/20260423-01.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Agent Skills — 給 AI 編碼助手的工程紀律指令集"/></a><div class="content"><a class="title" href="/2026/04/23/Agent-Skills-%E7%B5%A6-AI-%E7%B7%A8%E7%A2%BC%E5%8A%A9%E6%89%8B%E7%9A%84%E5%B7%A5%E7%A8%8B%E7%B4%80%E5%BE%8B%E6%8C%87%E4%BB%A4%E9%9B%86/" title="Agent Skills — 給 AI 編碼助手的工程紀律指令集">Agent Skills — 給 AI 編碼助手的工程紀律指令集</a><time datetime="2026-04-23T08:00:00.000Z" title="發表於 2026-04-23 08:00:00">2026-04-23</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/04/22/GitHub-Copilot-%E5%81%9C%E6%AD%A2%E6%96%B0%E7%94%A8%E6%88%B6%E8%A8%BB%E5%86%8A%E5%BE%8C%E5%B7%A5%E7%A8%8B%E5%B8%AB%E6%80%8E%E9%BA%BC%E5%B9%B3%E7%A7%BB%E5%88%B0-Claude-Code/" title="GitHub Copilot 停止新用戶註冊後，工程師怎麼平移到 Claude Code"><img src="/img/20260422-03.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="GitHub Copilot 停止新用戶註冊後，工程師怎麼平移到 Claude Code"/></a><div class="content"><a class="title" href="/2026/04/22/GitHub-Copilot-%E5%81%9C%E6%AD%A2%E6%96%B0%E7%94%A8%E6%88%B6%E8%A8%BB%E5%86%8A%E5%BE%8C%E5%B7%A5%E7%A8%8B%E5%B8%AB%E6%80%8E%E9%BA%BC%E5%B9%B3%E7%A7%BB%E5%88%B0-Claude-Code/" title="GitHub Copilot 停止新用戶註冊後，工程師怎麼平移到 Claude Code">GitHub Copilot 停止新用戶註冊後，工程師怎麼平移到 Claude Code</a><time datetime="2026-04-22T09:00:00.000Z" title="發表於 2026-04-22 09:00:00">2026-04-22</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/04/22/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260422/" title="AI 與科技新聞摘要 - 2026/04/22"><img src="/img/20260422-02.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="AI 與科技新聞摘要 - 2026/04/22"/></a><div class="content"><a class="title" href="/2026/04/22/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260422/" title="AI 與科技新聞摘要 - 2026/04/22">AI 與科技新聞摘要 - 2026/04/22</a><time datetime="2026-04-22T08:30:00.000Z" title="發表於 2026-04-22 08:30:00">2026-04-22</time></div></div></div></div></div></div></main><footer id="footer" style="background-image: url(/img/20260420-01.webp);"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2024 - 2026 By Cheng®</span></div><div class="footer_custom_text">Written by Cheng® — 自律，從當下的一念開始。</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="閱讀模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日夜模式切換"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="單欄和雙欄切換"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="設定"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目錄"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="前往評論"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到頂端"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.umd.min.js"></script><script src="https://cdn.jsdelivr.net/npm/instant.page/instantpage.min.js" type="module"></script><script src="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.js"></script><div class="js-pjax"><script>(() => {
+  const isShuoshuo = GLOBAL_CONFIG_SITE.pageType === 'shuoshuo'
+  const option = {"mapping":"pathname","strict":0,"reactionsEnabled":1,"emitMetadata":0,"inputPosition":"bottom","lang":"zh-TW"}
+
+  const getGiscusTheme = theme => theme === 'dark' ? 'dark' : 'light'
+
+  const createScriptElement = config => {
+    const ele = document.createElement('script')
+    Object.entries(config).forEach(([key, value]) => {
+      ele.setAttribute(key, value)
+    })
+    return ele
+  }
+
+  const loadGiscus = (el = document, key) => {
+    const mappingConfig = isShuoshuo
+      ? { 'data-mapping': 'specific', 'data-term': key }
+      : { 'data-mapping': (option && option['data-mapping']) || 'pathname' }
+
+    const giscusConfig = {
+      src: 'https://giscus.app/client.js',
+      'data-repo': 'mark22013333/mark22013333.github.io',
+      'data-repo-id': 'R_kgDOLAxa6A',
+      'data-category-id': 'DIC_kwDOLAxa6M4C5eO9',
+      'data-theme': getGiscusTheme(document.documentElement.getAttribute('data-theme')),
+      'data-reactions-enabled': '1',
+      crossorigin: 'anonymous',
+      async: true,
+      ...option,
+      ...mappingConfig
+    }
+
+    const scriptElement = createScriptElement(giscusConfig)
+
+    el.querySelector('#giscus-wrap').appendChild(scriptElement)
+
+    if (isShuoshuo) {
+      window.shuoshuoComment.destroyGiscus = () => {
+        if (el.children.length) {
+          el.innerHTML = ''
+          el.classList.add('no-comment')
+        }
+      }
+    }
+  }
+
+  const changeGiscusTheme = theme => {
+    const iframe = document.querySelector('#giscus-wrap iframe')
+    if (iframe) {
+      const message = {
+        giscus: {
+          setConfig: {
+            theme: getGiscusTheme(theme)
+          }
+        }
+      }
+      iframe.contentWindow.postMessage(message, 'https://giscus.app')
+    }
+  }
+
+  btf.addGlobalFn('themeChange', changeGiscusTheme, 'giscus')
+
+  if (isShuoshuo) {
+    'Giscus' === 'Giscus'
+      ? window.shuoshuoComment = { loadComment: loadGiscus }
+      : window.loadOtherComment = loadGiscus
+    return
+  }
+
+  if ('Giscus' === 'Giscus' || !true) {
+    if (true) btf.loadComment(document.getElementById('giscus-wrap'), loadGiscus)
+    else loadGiscus()
+  } else {
+    window.loadOtherComment = loadGiscus
+  }
+})()</script></div><script src="/js/kkbox-player.js"></script><script src="/js/archives-pagination.js"></script><script src="/js/font-resize.js"></script><script src="/js/dark-palette.js"></script><script defer="defer" id="fluttering_ribbon" mobile="false" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/canvas-fluttering-ribbon.min.js"></script><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/activate-power-mode.min.js"></script><script>POWERMODE.colorful = true;
+POWERMODE.shake = true;
+POWERMODE.mobile = true;
+document.body.addEventListener('input', POWERMODE);
+</script><script src="https://cdn.jsdelivr.net/npm/pjax/pjax.min.js" defer="defer"></script><script>document.addEventListener('DOMContentLoaded', () => {
+  const pjaxSelectors = ["meta[property=\"og:image\"]","meta[property=\"og:title\"]","meta[property=\"og:url\"]","meta[property=\"og:description\"]","link[rel=\"canonical\"]","head > title","#config-diff","#body-wrap","#rightside-config-hide","#rightside-config-show",".js-pjax"]
+
+  window.pjax = new Pjax({
+    elements: 'a:not([target="_blank"])',
+    selectors: pjaxSelectors,
+    cacheBust: false,
+    analytics: true,
+    scrollRestoration: false
+  })
+
+  const triggerPjaxFn = (val) => {
+    if (!val) return
+    Object.values(val).forEach(fn => {
+      try {
+        fn()
+      } catch (err) {
+        console.debug('Pjax callback failed:', err)
+      }
+    })
+  }
+
+  document.addEventListener('pjax:send', () => {
+    // removeEventListener
+    btf.removeGlobalFnEvent('pjaxSendOnce')
+    btf.removeGlobalFnEvent('themeChange')
+
+    // reset readmode
+    const $bodyClassList = document.body.classList
+    if ($bodyClassList.contains('read-mode')) $bodyClassList.remove('read-mode')
+
+    triggerPjaxFn(window.globalFn.pjaxSend)
+  })
+
+  document.addEventListener('pjax:complete', () => {
+    btf.removeGlobalFnEvent('pjaxCompleteOnce')
+    document.querySelectorAll('script[data-pjax]').forEach(item => {
+      const newScript = document.createElement('script')
+      const content = item.text || item.textContent || item.innerHTML || ""
+      Array.from(item.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value))
+      newScript.appendChild(document.createTextNode(content))
+      item.parentNode.replaceChild(newScript, item)
+    })
+
+    triggerPjaxFn(window.globalFn.pjaxComplete)
+  })
+
+  document.addEventListener('pjax:error', e => {
+    if (e.request.status === 404) {
+      true
+        ? pjax.loadUrl('/404.html')
+        : window.location.href = e.request.responseURL
+    }
+  })
+})</script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜尋</span><i class="fas fa-spinner fa-pulse" id="loading-status" hidden="hidden"></i><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="text-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  資料載入中</span></div><div class="local-search-input"><input placeholder="搜尋文章" type="text"/></div><hr/><div id="local-search-results"></div><div class="ais-Pagination" id="local-search-pagination" style="display:none;"><ul class="ais-Pagination-list"></ul></div><div id="local-search-stats"></div></div><div id="search-mask"></div><script src="/js/search/local-search.js"></script></div></div></body></html>

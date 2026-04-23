@@ -1,0 +1,607 @@
+<!DOCTYPE html><html lang="zh-TW" data-theme="dark"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>GH-300 GitHub Copilot 認證 - 第五天課程筆記 | Cheng's Tech &amp; Life</title><meta name="author" content="Cheng®"><meta name="copyright" content="Cheng®"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#0d0d0d"><meta name="description" content="課程最後一天，把前四天零散的技術點壓成一句話：人負責、流程優先、上下文工程、版本選擇。AI 不是工程師的替代品，是放大器——放大的是你既有的流程品質與判斷力。流程爛，AI 會把錯誤放大得更快。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="GH-300 GitHub Copilot 認證 - 第五天課程筆記">
+<meta property="og:url" content="https://mark22013333.github.io/2026/04/20/GH-300-GitHub-Copilot-%E8%AA%8D%E8%AD%89-%E7%AC%AC%E4%BA%94%E5%A4%A9%E8%AA%B2%E7%A8%8B%E7%AD%86%E8%A8%98/index.html">
+<meta property="og:site_name" content="Cheng&#39;s Tech &amp; Life">
+<meta property="og:description" content="課程最後一天，把前四天零散的技術點壓成一句話：人負責、流程優先、上下文工程、版本選擇。AI 不是工程師的替代品，是放大器——放大的是你既有的流程品質與判斷力。流程爛，AI 會把錯誤放大得更快。">
+<meta property="og:locale" content="zh_TW">
+<meta property="og:image" content="https://mark22013333.github.io/img/20260420-gh300.webp">
+<meta property="article:published_time" content="2026-04-20T13:30:00.000Z">
+<meta property="article:modified_time" content="2026-04-20T13:18:29.436Z">
+<meta property="article:author" content="Cheng®">
+<meta property="article:tag" content="Copilot">
+<meta property="article:tag" content="GitHub">
+<meta property="article:tag" content="TDD">
+<meta property="article:tag" content="SDD">
+<meta property="article:tag" content="GH-300">
+<meta property="article:tag" content="Responsible AI">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://mark22013333.github.io/img/20260420-gh300.webp"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "GH-300 GitHub Copilot 認證 - 第五天課程筆記",
+  "url": "https://mark22013333.github.io/2026/04/20/GH-300-GitHub-Copilot-%E8%AA%8D%E8%AD%89-%E7%AC%AC%E4%BA%94%E5%A4%A9%E8%AA%B2%E7%A8%8B%E7%AD%86%E8%A8%98/",
+  "image": "https://mark22013333.github.io/img/20260420-gh300.webp",
+  "datePublished": "2026-04-20T13:30:00.000Z",
+  "dateModified": "2026-04-20T13:18:29.436Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "Cheng®",
+      "url": "https://mark22013333.github.io"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://mark22013333.github.io/2026/04/20/GH-300-GitHub-Copilot-%E8%AA%8D%E8%AD%89-%E7%AC%AC%E4%BA%94%E5%A4%A9%E8%AA%B2%E7%A8%8B%E7%AD%86%E8%A8%98/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//www.google-analytics.com" crossorigin=""/><link rel="preconnect" href="//fonts.googleapis.com" crossorigin=""/><link rel="preconnect" href="//busuanzi.ibruce.info"/><meta name="google-site-verification" content="6ywUr8k2n_CT1PFYJzlSvI3CZ-JmJ55RYbA39VrFBDs"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!true && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          const hour = new Date().getHours()
+          const isNight = hour <= 9 || hour >= 18
+          if (theme === undefined) isNight ? activateDarkMode() : activateLightMode()
+          else theme === 'light' ? activateLightMode() : activateDarkMode()
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script async="async" src="https://www.googletagmanager.com/gtag/js?id=G-JBV14NRDH3"></script><script>window.dataLayer = window.dataLayer || []
+function gtag(){dataLayer.push(arguments)}
+gtag('js', new Date())
+gtag('config', 'G-JBV14NRDH3')
+btf.addGlobalFn('pjaxComplete', () => {
+  gtag('config', 'G-JBV14NRDH3', {'page_path': window.location.pathname})
+}, 'google_analytics')
+</script><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Titillium+Web&amp;display=swap" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"pagination":{"enable":false,"hitsPerPage":8},"languages":{"hits_empty":"找不到符合您查詢的內容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '複製成功',
+    error: '複製失敗',
+    noSupport: '瀏覽器不支援'
+  },
+  relativeDate: {
+    homepage: false,
+    post: true
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '剛剛',
+    min: '分鐘前',
+    hour: '小時前',
+    day: '天前',
+    month: '個月前'
+  },
+  copyright: {"limitCount":1,"languages":{"author":"作者: Cheng®","link":"連結: ","source":"來源: Cheng's Tech & Life","info":"著作權歸作者所有。如需商業轉載，請聯絡作者獲得授權，非商業轉載請註明出處😁。"}},
+  lightbox: 'fancybox',
+  Snackbar: {"chs_to_cht":"已切換為繁體中文","cht_to_chs":"已切換為簡體中文","day_to_night":"已切換為深色模式","night_to_day":"已切換為淺色模式","bgLight":"#49b1f5","bgDark":"#1f1f1f","position":"top-center"},
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid/dist/infinitegrid.min.js',
+    buttonText: '載入更多'
+  },
+  isPhotoFigcaption: true,
+  islazyloadPlugin: false,
+  isAnchor: true,
+  percent: {
+    toc: true,
+    rightside: true,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'GH-300 GitHub Copilot 認證 - 第五天課程筆記',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><link rel="stylesheet" href="/css/kkbox-player.css"><link rel="stylesheet" href="/css/tag-cloud-fancy.css"><link rel="stylesheet" href="/css/font-resize.css"><link rel="stylesheet" href="/css/dark-palette.css"><link rel="stylesheet" href="/css/loading-override.css"><link rel="alternate" href="/atom.xml" title="Cheng's Tech & Life" type="application/atom+xml">
+</head><body><div id="loading-box"><div class="loading-glass-overlay"></div><div class="loading-indicator"><div class="loading-dot"></div><div class="loading-dot"></div><div class="loading-dot"></div></div></div><script>(()=>{
+  const $loadingBox = document.getElementById('loading-box')
+  const $body = document.body
+  const preloader = {
+    endLoading: () => {
+      if ($loadingBox.classList.contains('loaded')) return
+      $body.style.overflow = ''
+      $loadingBox.classList.add('loaded')
+    },
+    initLoading: () => {
+      $body.style.overflow = 'hidden'
+      $loadingBox.classList.remove('loaded')
+    }
+  }
+
+  preloader.initLoading()
+
+  if (document.readyState === 'complete') {
+    preloader.endLoading()
+  } else {
+    window.addEventListener('load', preloader.endLoading)
+    document.addEventListener('DOMContentLoaded', preloader.endLoading)
+    setTimeout(preloader.endLoading, 7000)
+  }
+
+  if (true) {
+    btf.addGlobalFn('pjaxSend', preloader.initLoading, 'preloader_init')
+    btf.addGlobalFn('pjaxComplete', preloader.endLoading, 'preloader_end')
+  }
+})()</script><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="https://lh3.googleusercontent.com/pw/ABLVV87_po8nBc6F_tXcoYDmtzMGWxHuhhrbguYILCjmjWKLOS8DTpubm0YoQLKgjyjRIZyV5TjYe7XVEz_YU4squfr37GTZqPZP1hlMVZ_MIgXpTxWu73M=w1200" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">161</div></a><a href="/tags/"><div class="headline">標籤</div><div class="length-num">142</div></a><a href="/categories/"><div class="headline">分類</div><div class="length-num">12</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首頁-Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 時間軸-archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 標籤-tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分類-Categories</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-list"></i><span> 其他列表</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音樂-Music</span></a></li><li><a class="site-page child" href="/gallery/"><i class="fa-fw fas fa-images"></i><span> 畫館-Gallery</span></a></li></ul></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg fixed" id="page-header" style="background-image: url(/img/20260420-gh300.webp);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><img class="site-icon" src="https://lh3.googleusercontent.com/pw/ABLVV87_po8nBc6F_tXcoYDmtzMGWxHuhhrbguYILCjmjWKLOS8DTpubm0YoQLKgjyjRIZyV5TjYe7XVEz_YU4squfr37GTZqPZP1hlMVZ_MIgXpTxWu73M=w1200" alt="Logo"><span class="site-name">Cheng's Tech &amp; Life</span></a><a class="nav-page-title" href="/"><span class="site-name">GH-300 GitHub Copilot 認證 - 第五天課程筆記</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首頁</span></span></a></span><div id="menus"><div id="search-button" title="Ctrl+K / Cmd+K"><span class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜尋</span></span></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首頁-Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 時間軸-archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 標籤-tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分類-Categories</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-list"></i><span> 其他列表</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音樂-Music</span></a></li><li><a class="site-page child" href="/gallery/"><i class="fa-fw fas fa-images"></i><span> 畫館-Gallery</span></a></li></ul></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">GH-300 GitHub Copilot 認證 - 第五天課程筆記</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">發表於</span><time class="post-meta-date-created" datetime="2026-04-20T13:30:00.000Z" title="發表於 2026-04-20 13:30:00">2026-04-20</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新於</span><time class="post-meta-date-updated" datetime="2026-04-20T13:18:29.436Z" title="更新於 2026-04-20 13:18:29">2026-04-20</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E5%BE%AE%E8%BB%9F%E8%AA%B2%E7%A8%8B/">微軟課程</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">總字數:</span><span class="word-count">4.1k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">閱讀時間:</span><span>13分鐘</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">瀏覽量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><p>課程走到最後一天，講師把前四天技術細節全部擺到一邊，丟出四個詞：<strong>人負責、流程優先、上下文工程、版本選擇</strong>。然後說：「記這四個就好。」</p>
+<p>一開始以為是虛招。但把 GH-300 整份考綱攤開後會發現——<strong>這四個詞是骨架</strong>，前四天的所有 Copilot 功能、Coding Agent、SpecKit、TDD 三 Agent、自訂指令、企業治理，全部都是這四個骨頭上長出的肉。</p>
+<p>這就是費曼式的學習：能把整門課壓成一句話的人，才真的學會了。</p>
+<p>這篇是 GH-300 的課堂筆記，不是原創深度解析，重點是把第五天上到的東西整理清楚，對應到實務上可以拿去用的行動。</p>
+<hr>
+<h2 id="責任制的-AI：六大原則不是投影片上的裝飾"><a href="#責任制的-AI：六大原則不是投影片上的裝飾" class="headerlink" title="責任制的 AI：六大原則不是投影片上的裝飾"></a>責任制的 AI：六大原則不是投影片上的裝飾</h2><p>微軟 Responsible AI 框架有六個原則，在 GH-300 的考試跟企業導入場合反覆出現。一開始看會以為是 PR 用的官腔，但仔細讀會發現每一條都扣著工程師日常會踩到的坑。</p>
+<p>把六條濃縮成一個類比：<strong>AI 就像實習生</strong>。很聰明、學得快，但沒有責任能力。六個原則都是為了回答同一個問題——這個實習生搞砸了，誰要負責？</p>
+<p><strong>公平性（Fairness）</strong>。模型對不同族群、不同程式風格、不同語言的反應要一致。Copilot 底層 LLM 在訓練時供應商已經多輪去偏，但工程師寫 prompt 時還是會不小心帶進歧視字眼。這一條在企業導入時會變成「提示詞稽核」的依據。</p>
+<p><strong>包容性（Inclusiveness）</strong>。跨 IDE、跨語言、跨技能水平都要能用。Copilot 支援 VS Code、Visual Studio、JetBrains、Eclipse、Xcode，中文提示詞能用、英文也能用——這不只是產品策略，是合規性考量。</p>
+<p><strong>可靠性與安全性（Reliability &amp; Safety）</strong>。穩定、可預期、異常時有 fallback。工程師看到這條會想到單元測試——但在 AI 情境下它講的是「模型給出的建議不應該讓專案陷入風險」。</p>
+<p><strong>隱私與安全（Privacy &amp; Security）</strong>。這條最實用：</p>
+<ul>
+<li>設定裡把「允許用程式碼做訓練」關掉，私有程式碼不會流進 fine-tune</li>
+<li>Block suggestions matching public code 打開，超過 150 字元跟公共程式碼相似的建議會被擋下（避免授權地雷）</li>
+<li>企業版用 Proxy、IP 白名單、Data Residency 鎖資料流向</li>
+</ul>
+<p><strong>問責制（Accountability、Human-in-the-loop）</strong>。這一條最重要。每一次 AI 輸出最後都是人負責。Draft PR 的設計就是為了這個——Coding Agent 寫完程式碼不會自己 merge，一律先開 Draft，人工 review 後才能 Ready。</p>
+<p><strong>透明性（Transparency）</strong>。提供引用來源、顯示匹配到的公開程式碼與授權、企業版有 Audit Log。讀者能追溯「為什麼 AI 給這個答案」，不是黑盒子。</p>
+<p>把這六條串起來其實就是一句話：<strong>AI 可以寫 code，但不能承擔後果。承擔後果的永遠是人</strong>。</p>
+<hr>
+<h2 id="三層治理：個人-→-組織-→-企業"><a href="#三層治理：個人-→-組織-→-企業" class="headerlink" title="三層治理：個人 → 組織 → 企業"></a>三層治理：個人 → 組織 → 企業</h2><p>Copilot 的設定有三層：個人、組織、企業。<strong>企業覆蓋組織，組織覆蓋個人</strong>。導入順序跟這個相反——先讓 Enterprise Admin 把強制規則定好（公共程式碼阻擋、資料蒐集、模型存取），再讓個人按偏好微調。</p>
+<p>企業層的五個關鍵設定值得背：</p>
+<p><strong>Allow GitHub to use my code snippets for product improvements</strong>：預設關，企業版幾乎都強制保持關。關掉 &#x3D; 你的程式碼不會流進 GitHub 做產品改進。</p>
+<p><strong>Block suggestions matching public code</strong>：建議開。觸發門檻是 150 字元 + 相似度。合規風險的第一道防線。</p>
+<p><strong>Suggestions matching public code with references</strong>：顯示引用來源與授權。開了之後你會知道這段類似 GPL-3 的程式碼，貼進公司 codebase 之前要想一下。</p>
+<p><strong>Allowed models</strong>：企業可限定只能用特定模型（例如只允許 GPT-4.1 + Claude Sonnet 4.5）。這條看起來小，實際上是資料主權的防線。</p>
+<p><strong>Content exclusions</strong>：針對特定 Repo 或檔案 glob 排除 Copilot。密鑰檔、合約範本、法務文件都應該列進去。</p>
+<p>加上 Audit Log（Business &#x2F; Enterprise 才有），稽核鏈就完整了：誰、什麼時候、用哪個模型、問了什麼、改了哪個檔。這條鏈不只是合規，也是效益評估的數據來源。</p>
+<hr>
+<h2 id="Coding-Agent-三個位置，選錯會受傷"><a href="#Coding-Agent-三個位置，選錯會受傷" class="headerlink" title="Coding Agent 三個位置，選錯會受傷"></a>Coding Agent 三個位置，選錯會受傷</h2><p>第五天最容易混淆的考點在這裡：<strong>Copilot Chat、Coding Agent（雲端）、Codex &#x2F; Claude Code（本機）</strong>，三個概念都叫「AI 代理」，但設計目的完全不一樣。</p>
+<p>類比一下辦公室：Copilot Chat 是你隔壁桌的資深同事，隨時可以轉頭問一句；雲端 Coding Agent 是你外派給遠端 contractor 的工作；本機 Codex &#x2F; Claude Code 是你自己僱的助理，在你家裡直接開抽屜拿東西。</p>
+<table>
+<thead>
+<tr>
+<th>類型</th>
+<th>執行位置</th>
+<th>工具能力</th>
+<th>適合場景</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Copilot Chat</td>
+<td>IDE 內對話</td>
+<td>讀檔、寫檔、跨檔建議</td>
+<td>解釋、逐步 refactor、Code Review 草稿</td>
+</tr>
+<tr>
+<td>雲端 Coding Agent</td>
+<td>GitHub 雲端</td>
+<td>Clone repo、開分支、寫 Draft PR</td>
+<td>大型重構、批次升級、文件翻譯、批次單測</td>
+</tr>
+<tr>
+<td>本機 Codex &#x2F; Claude Code</td>
+<td>使用者本機</td>
+<td>Shell、瀏覽器、檔案系統、MCP</td>
+<td>長流程、多步驟、需要本機權限的任務</td>
+</tr>
+</tbody></table>
+<p>雲端 vs 本機的決策很單純：<strong>任務需要瀏覽網頁、跨 repo 查找、大量外部 API 互動 → 雲端</strong>。<strong>需要操作本機環境（terminal、Docker、IDE 外掛）→ 本機</strong>。</p>
+<p>這條規則倒過來看更清楚——你會把什麼任務交給<strong>真的</strong>遠端 contractor？同理。你會把什麼任務交給<strong>真的</strong>住你家的助理？同理。</p>
+<p>雲端 Coding Agent 還有一個容易被忽視的細節：<strong>它一次只處理一個 Issue</strong>，但你可以同時丟多個 Issue 讓多個 Agent 並行跑。想像成你同時發 email 給五個不同的 contractor，每個人負責一件事，全部都以 Draft PR 回來等你 review。這就是為什麼 SDD 的 task 顆粒度要拆小——<strong>顆粒度適合 Issue，才適合 Coding Agent</strong>。</p>
+<hr>
+<h2 id="Slash-這三個符號決定了對話品質"><a href="#Slash-這三個符號決定了對話品質" class="headerlink" title="Slash &#x2F; @ &#x2F; # 這三個符號決定了對話品質"></a>Slash &#x2F; @ &#x2F; # 這三個符號決定了對話品質</h2><p>Copilot Chat 的上下文不是魔法，是三個符號的組合：</p>
+<p>**&#x2F;**（Slash Command）把常用提示詞封裝成指令。<code>/explain</code>、<code>/fix</code>、<code>/tests</code>、<code>/docs</code>、<code>/new</code>。當同一個問題你連問三次同樣的 prompt，就該把它變成一個 slash command。</p>
+<p>**@**（Participants）決定對話的上下文範圍：</p>
+<ul>
+<li><code>@workspace</code> &#x3D; 整個工作區</li>
+<li><code>@terminal</code> &#x3D; 當前終端機</li>
+<li><code>@vscode</code> &#x3D; VS Code 本身</li>
+<li><code>@github</code> &#x3D; Repo &#x2F; Issues &#x2F; PR</li>
+</ul>
+<p>這四個裡最有用的是 <code>@github</code>——搭配雲端 Agent 時，它可以直接把 Issue 內容當成上下文，你不用手動貼過去。</p>
+<p>**#**（Context Providers）細粒度指定檔案或狀態：</p>
+<ul>
+<li><code>#file:path/to/file</code> 指定單一檔案</li>
+<li><code>#selection</code> 當前選取範圍</li>
+<li><code>#codebase</code> 整個專案索引</li>
+<li><code>#editor</code> &#x2F; <code>#terminalLastCommand</code> 編輯器或終端機狀態</li>
+</ul>
+<p>上下文管理是 Copilot Chat 最大的隱性成本。長對話超過 Context Window 時用 <code>/compact</code> 把歷史摘要掉再繼續（Claude 用 <code>/clear</code>、Codex 用 <code>/compress</code>）。不處理的話，Chat 到後期會開始回答牛頭不對馬嘴——Context 被舊訊息擠爆了。</p>
+<p>還有兩個提示技巧：<strong>Few-shot</strong>（在 prompt 裡附「輸入→輸出」樣本）和 <strong>Chain of Thought</strong>（要求模型先列推理再回答）。兩個都能直接在 Copilot Chat 用，對輸出品質的提升是立即可見的。</p>
+<hr>
+<h2 id="SDD-SpecKit：讓-AI-走在軌道上"><a href="#SDD-SpecKit：讓-AI-走在軌道上" class="headerlink" title="SDD &#x2F; SpecKit：讓 AI 走在軌道上"></a>SDD &#x2F; SpecKit：讓 AI 走在軌道上</h2><p>Spec Kit 是 GitHub 推的 Spec-Driven Development 方法論。把「寫 code」拆成四段：<strong>規格 → 計畫 → 任務 → 實作</strong>。每一段一條 Slash Command 串起來。</p>
+<p>整個流程的起點是 <code>/constitution</code>——產出一份 <code>memory/constitution.md</code>，是這個專案的「憲法」。後續每個階段都會反過來檢查是否符合憲法。這個設計跟寫程式的 assertion 很像：<strong>重要的原則先寫下來，後面每一步都檢查一次</strong>。</p>
+<p>主要指令：</p>
+<table>
+<thead>
+<tr>
+<th>指令</th>
+<th>做什麼</th>
+<th>產出</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>/constitution</code></td>
+<td>定義專案高階準則</td>
+<td><code>memory/constitution.md</code></td>
+</tr>
+<tr>
+<td><code>/specify</code></td>
+<td>從需求草擬 Business&#x2F;User Story</td>
+<td><code>specification.md</code>（feature branch）</td>
+</tr>
+<tr>
+<td><code>/plan</code></td>
+<td>把 specification 拆成高階計畫</td>
+<td><code>plan.md</code></td>
+</tr>
+<tr>
+<td><code>/tasks</code></td>
+<td>把 plan 展開成可驗證的細粒度任務</td>
+<td><code>tasks.md</code></td>
+</tr>
+<tr>
+<td><code>/analyze</code></td>
+<td>反向檢查 task&#x2F;plan&#x2F;spec&#x2F;constitution 一致性</td>
+<td>差異報告</td>
+</tr>
+<tr>
+<td><code>/implement</code></td>
+<td>進入實作（local 或 cloud Agent）</td>
+<td>Code + PR</td>
+</tr>
+</tbody></table>
+<p>兩個官方沒寫但課程推薦的擴充：</p>
+<ul>
+<li><code>architecture.md</code>：比 constitution 更具體，定義資料流、錯誤補償、跨服務通訊</li>
+<li><code>lessons.md</code>：專案中學到的經驗獨立記錄，變成後續專案的 institutional memory</li>
+</ul>
+<p>雲端 <code>/implement</code> 有個隱藏陷阱：預設會另開一條分支。如果你已經在 feature branch 上工作，要在提示詞加「<strong>stick to current branch</strong>」並指定任務編號，不然 Coding Agent 會建立平行分支造成混亂。</p>
+<p>SDD 能維持一致性的核心機制是 <strong><code>/analyze</code> 反覆跑</strong>。每完成一批任務就回頭跑一次，確保實作結果還符合 plan、spec、constitution。沒有這一步的 SDD 只是另一種 waterfall。</p>
+<hr>
+<h2 id="TDD-三-Agent：Red、Green、Refactor-各司其職"><a href="#TDD-三-Agent：Red、Green、Refactor-各司其職" class="headerlink" title="TDD 三 Agent：Red、Green、Refactor 各司其職"></a>TDD 三 Agent：Red、Green、Refactor 各司其職</h2><p>除了 SDD，課程還介紹另一套：<strong>TDD Three-Agent Pattern</strong>。把 TDD 的 Red-Green-Refactor 切成三個獨立 Agent。</p>
+<p><strong>Red Agent</strong>：讀需求，寫一個會失敗的測試。<strong>只寫測試，不寫實作</strong>。任務結束前會確認測試真的 fail，並把 fail 原因留在終端機記錄。</p>
+<p><strong>Green Agent</strong>：以 Red Agent 留下的失敗測試為目標，寫出最小化實作讓測試通過。這個 agent 以「通過測試」為唯一目的，可能不會完全對應原始需求。</p>
+<p><strong>Refactor Agent</strong>：測試綠燈後進行重構。提升可讀性、效能、結構，但<strong>不可改動測試行為</strong>。</p>
+<p>這個設計最聰明的地方在於：<strong>同一個對話視窗，換 Agent 就換 system prompt</strong>。你不用手動改提示詞，切 Agent 下拉選單就好。Agent 的角色定位在 <code>.github/agents/</code> 底下的檔案裡。</p>
+<p>注意事項：使用者必須清楚<strong>目前在哪個階段</strong>。Agent 本身沒有狀態機，它只在自己的階段做自己該做的事。跳錯階段（在 Green Agent 階段要它改測試）會拿到奇怪的輸出。</p>
+<hr>
+<h2 id="github-目錄：專案級自訂指令的公寓"><a href="#github-目錄：專案級自訂指令的公寓" class="headerlink" title=".github&#x2F; 目錄：專案級自訂指令的公寓"></a>.github&#x2F; 目錄：專案級自訂指令的公寓</h2><p>所有 Copilot 的「專案級自訂」都住在 <code>.github/</code> 底下。這塊是 GH-300 會考的四個子目錄：</p>
+<p>**<code>.github/copilot-instructions.md</code>**：全專案的總則。每次 Copilot Chat &#x2F; Coding Agent 啟動時自動載入。語言、框架、命名規範、Commit 風格都放這裡。</p>
+<p><strong><code>.github/instructions/</code><strong>：多個 instructions 檔案，每個 frontmatter 設定 <code>applyTo</code> glob（例如 <code>applyTo: &quot;src/backend/**&quot;</code>）。只有目標檔案被觸及時才載入——</strong>避免 Context 爆量</strong>。後端 Java、前端 React、資料庫 migration 各自一份，互不干擾。</p>
+<p>**<code>.github/agents/</code>**：自訂 Agent（Persona）的定義檔。每個檔案描述一個 Agent 的 system prompt、工具權限、適用情境。TDD Three-Agent Pattern 的 red&#x2F;green&#x2F;refactor 就是以這種方式實作。</p>
+<p>**<code>.github/prompts/</code>**：集中管理 Slash Command 對應的提示詞模板。每個檔案代表一條可在 Copilot Chat 用 <code>/</code> 呼叫的 Prompt（例如 <code>/review-pr</code>、<code>/generate-migration</code>）。</p>
+<p>GitHub 官方有個 <code>awesome-copilot</code> 倉庫，收錄社群貢獻的 copilot-instructions、agents、prompts 範本。直接 fork 或拷貝到專案裡，不用自己從零寫。</p>
+<hr>
+<h2 id="分支保護：給-AI-戴上安全帶"><a href="#分支保護：給-AI-戴上安全帶" class="headerlink" title="分支保護：給 AI 戴上安全帶"></a>分支保護：給 AI 戴上安全帶</h2><p>雲端 Coding Agent 有個行為要特別知道：<strong>它會自動開新分支</strong>，預設命名 <code>copilot/&lt;task-name&gt;</code>。任務完成後以 Draft PR 呈現。</p>
+<p>這個設計配合 GitHub 的保護機制才完整：</p>
+<ul>
+<li><strong>保護 main 和 release 分支</strong>，禁止直接推送</li>
+<li><strong>Required Reviews + CI 檢查</strong>才能合併</li>
+<li><strong>CODEOWNERS</strong> 指定 Copilot 產出必須由哪些人審查</li>
+<li><strong>對 Draft PR 套用相同規則</strong>，AI 不能直接寫入主線</li>
+</ul>
+<p>這一層的設計有點像駕駛輔助系統。車自己開沒問題，但方向盤你一定要握著——出事了，坐在駕駛座的人還是要負責。</p>
+<hr>
+<h2 id="授權版本：選錯會綁錯手腳"><a href="#授權版本：選錯會綁錯手腳" class="headerlink" title="授權版本：選錯會綁錯手腳"></a>授權版本：選錯會綁錯手腳</h2><table>
+<thead>
+<tr>
+<th>版本</th>
+<th>適用對象</th>
+<th>核心能力</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Copilot Free</td>
+<td>開源貢獻者、學生</td>
+<td>額度有限，體驗用</td>
+</tr>
+<tr>
+<td>Copilot Pro</td>
+<td>個人開發者</td>
+<td>完整 Chat、Edits、模型切換</td>
+</tr>
+<tr>
+<td>Copilot Pro+</td>
+<td>Pro 進階</td>
+<td>擴充模型配額、前沿功能存取</td>
+</tr>
+<tr>
+<td>Copilot Business</td>
+<td>組織</td>
+<td>政策、稽核、SSO、公共程式碼排除</td>
+</tr>
+<tr>
+<td>Copilot Enterprise</td>
+<td>企業</td>
+<td>+ Knowledge Base、微調、資料駐留</td>
+</tr>
+</tbody></table>
+<p><strong>Knowledge Base</strong> 是 Enterprise 獨有的殺手鐧：把內部文件、Wiki、Spec、ADR 納入，Copilot Chat 回答時優先引用組織內部資訊。企業有大量內部標準時值得用。</p>
+<p><strong>Fine-tuning</strong> 也只有 Enterprise 有，可以對自家程式碼做 fine-tune 產出組織專屬模型。但要評估成本——光是資料準備就會吃掉一兩個資深工程師。</p>
+<p><strong>Audit Log</strong> 是 Business 與 Enterprise 才有。合規部門會很在意這一條。</p>
+<p>企業常見搭配：<strong>Codespaces + devcontainer.json</strong>，讓 Copilot 跑在標準化的雲端環境。避免本機環境差異、避免資安風險。這個組合是企業導入時的最佳實踐。</p>
+<hr>
+<h2 id="考試準備流程：從報名到通過"><a href="#考試準備流程：從報名到通過" class="headerlink" title="考試準備流程：從報名到通過"></a>考試準備流程：從報名到通過</h2><p>GH-300 是 GitHub 跟 Microsoft Learn 共同營運的認證，考試透過 Microsoft Learn 報名。</p>
+<p><strong>報名</strong>：搜尋「GH-300 GitHub Copilot」即可找到。英文姓名要跟護照或身份證一致——這是最常見的退件原因。先準備好證件再報名。</p>
+<p><strong>考試方式有兩種</strong>：</p>
+<ul>
+<li><strong>OnVUE 線上應考</strong>：自家或辦公室用視訊監考。前置要拍 360 度環景、桌面清空、單機單螢幕。重點是<strong>網路穩定度</strong>而不是頻寬——家中 100M&#x2F;300M 光世代都夠。但公司網路要注意 VPN、Proxy、防火牆會不會擋 OnVUE 的連線</li>
+<li><strong>Pearson VUE 實體考場</strong>：設備跟網路考場提供，不用自己張羅</li>
+</ul>
+<p><strong>題型混合</strong>：</p>
+<ul>
+<li>單選題（四選一或五選一）</li>
+<li>複選題（題幹會明示「Choose 2 &#x2F; 3」，少選多選皆錯，無部分分數）</li>
+<li>排序題（步驟拖放，整題對才得分）</li>
+<li>情境題（案例研究，2-3 題，測試「選哪個版本 &#x2F; 工作流」）</li>
+</ul>
+<p><strong>計分規則</strong>：答錯不倒扣。遇到不會的題目<strong>先猜再 Flag</strong>，不要留空。</p>
+<p><strong>題數與通過分數</strong>：</p>
+<ul>
+<li>40-50 題</li>
+<li>90 分鐘</li>
+<li>700&#x2F;1000 通過</li>
+<li>加權計分（題目難易度不同分值不同）</li>
+</ul>
+<p><strong>通過後</strong>：</p>
+<ul>
+<li>MS Learn 顯示數位徽章，可分享至 LinkedIn</li>
+<li>證書有效期 1 年</li>
+<li>到期前 6 個月可免費 Renew（25 題線上測驗）</li>
+<li>Renew 不用再到考場、不用再付費</li>
+</ul>
+<hr>
+<h2 id="備考推薦資源"><a href="#備考推薦資源" class="headerlink" title="備考推薦資源"></a>備考推薦資源</h2><table>
+<thead>
+<tr>
+<th>資源</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Microsoft Learn 學習路徑</td>
+<td>官方 Learn Module，免費，對應 GH-300 考綱</td>
+</tr>
+<tr>
+<td>GitHub Docs</td>
+<td>Copilot 官方文件，重點在 Responsible AI、Privacy、Enterprise Admin</td>
+</tr>
+<tr>
+<td>GitHub Skills 互動課程</td>
+<td>從 Copilot 基礎到 Agent Mode 邊做邊學</td>
+</tr>
+<tr>
+<td>第三方題庫（PASS4SURE、MeasureUp、Whizlabs）</td>
+<td>熟悉題型，內容僅供參考</td>
+</tr>
+<tr>
+<td><strong>實戰演練</strong></td>
+<td><strong>在真實專案中用 Copilot，特別是 Coding Agent、Spec Kit、自訂指令三個功能</strong></td>
+</tr>
+</tbody></table>
+<p>最後這條最關鍵。考試知識點不難，難的是把課程裡的觀念落實到日常開發流程。</p>
+<hr>
+<h2 id="學完之後，帶走的不是技術，是判斷力"><a href="#學完之後，帶走的不是技術，是判斷力" class="headerlink" title="學完之後，帶走的不是技術，是判斷力"></a>學完之後，帶走的不是技術，是判斷力</h2><p>回到開頭那四個詞——<strong>人負責、流程優先、上下文工程、版本選擇</strong>。</p>
+<p>人負責：不管 AI 多聰明，PR 最後的 merge 按鈕還是人按的。</p>
+<p>流程優先：AI 只是放大器。放大的是你既有的流程品質。流程不好，AI 只會把錯誤放得更大更快。</p>
+<p>上下文工程：Copilot 的 <code>/</code>、<code>@</code>、<code>#</code> 都是上下文工程的工具。提示詞寫得好不如上下文帶得準。</p>
+<p>版本選擇：個人 Pro 跟 Enterprise Knowledge Base 不是同一個東西。選錯版本會把手腳綁住。</p>
+<p>背後的認知框架更短：<strong>AI 的上限不是模型多強，是你把 AI 放進什麼流程</strong>。同一個 Claude Sonnet 4.5，在一個有 <code>.github/copilot-instructions.md</code>、有分支保護、有 SDD 流程的專案裡，產出品質會遠超過在一個 <code>main</code> 分支直推、沒有任何上下文設定的專案。</p>
+<p>課程會結束，考試會通過，但流程設計的能力是你接下來每一個專案都在用的東西。</p>
+<p>學完這個可以接著學什麼？兩個方向：</p>
+<p>往深的走 —— 讀 <code>awesome-copilot</code> 裡的範本，挑一兩個借鑑後改寫成你公司的版本。先有共用規則，再談團隊導入。</p>
+<p>往廣的走 —— GH-300 考完後，接著可以看 AZ-400（DevOps Expert）或 AI-102（Azure AI Engineer）。這三張加起來才是完整的「AI 時代工程師」技能棧。</p>
+<p>願每個工程師都能把重複工作交給 Copilot，把判斷力、品味、架構力留給自己。</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://mark22013333.github.io">Cheng®</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章連結: </span><span class="post-copyright-info"><a href="https://mark22013333.github.io/2026/04/20/GH-300-GitHub-Copilot-%E8%AA%8D%E8%AD%89-%E7%AC%AC%E4%BA%94%E5%A4%A9%E8%AA%B2%E7%A8%8B%E7%AD%86%E8%A8%98/">https://mark22013333.github.io/2026/04/20/GH-300-GitHub-Copilot-認證-第五天課程筆記/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版權聲明: </span><span class="post-copyright-info">本部落格所有文章除特別聲明外，均採用<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 授權協議。轉載請註明來源 <a href="https://mark22013333.github.io" target="_blank">Cheng's Tech & Life</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Copilot/">Copilot</a><a class="post-meta__tags" href="/tags/GitHub/">GitHub</a><a class="post-meta__tags" href="/tags/TDD/">TDD</a><a class="post-meta__tags" href="/tags/SDD/">SDD</a><a class="post-meta__tags" href="/tags/GH-300/">GH-300</a><a class="post-meta__tags" href="/tags/Responsible-AI/">Responsible AI</a></div><div class="post-share"><div class="social-share" data-image="/img/20260420-gh300.webp" data-sites="facebook,x"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><div class="post-reward"><div class="reward-badges"><a class="sponsor-glow-btn" href="https://www.buymeacoffee.com/mark22013333" target="_blank" rel="noopener noreferrer" title="Buy Me A Coffee"><img src="https://img.shields.io/badge/Buy_Me_A_Coffee-FFDD00?style=for-the-badge&amp;logo=buy-me-a-coffee&amp;logoColor=black" alt="Buy Me A Coffee"/></a><a class="sponsor-glow-btn" href="https://p.ecpay.com.tw/EFC3F8F" target="_blank" rel="noopener noreferrer" title="綠界贊助"><img src="https://img.shields.io/badge/☕_%E8%AB%8B%E6%88%91%E5%96%9D%E6%9D%AF%E5%92%96%E5%95%A1-Donate-11998e?style=for-the-badge&amp;logo=coffee&amp;logoColor=white" alt="綠界贊助"/></a><a class="sponsor-glow-btn" href="https://calendly.com/markcheng00806-intumit/15min" target="_blank" rel="noopener noreferrer" title="預約時間"><img src="https://img.shields.io/badge/📅_%E9%A0%90%E7%B4%84_15_%E5%88%86%E9%90%98-Book_Time-0072ff?style=for-the-badge" alt="預約時間"/></a><p class="reward-badges-note">你的鼓勵將被轉換為我明天繼續加班的動力（真的）。 ❤️</p></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2026/04/20/AZ-305-Azure-%E6%9E%B6%E6%A7%8B%E5%B8%AB%E8%AA%8D%E8%AD%89-%E7%AC%AC%E4%BA%94%E5%A4%A9%E8%AA%B2%E7%A8%8B%E7%AD%86%E8%A8%98/" title="AZ-305 Azure 架構師認證 - 第五天課程筆記"><img class="cover" src="/img/20260420-az305.webp" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">AZ-305 Azure 架構師認證 - 第五天課程筆記</div></div><div class="info-2"><div class="info-item-1">**20%**。這是英語版 AZ-305 題庫在 2026-04-17 更新的變動比例。新題範疇集中在監控、備份、遷移——也就是第四天才剛上完的東西。繁中、簡中、港版會在兩到三週內陸續同步，6 月底前完成。 想像你準備某科期末考準備到一半，突然老師改了五分之一的題目——這大概是大部分考生最怕聽到的消息。第五天講師開場就先打這劑強心針：怎麼把這個變動納進備考時程。 這篇是 AZ-305 第五天的課堂筆記。前四天講技術，這一天全部講「怎麼考過」——從報名、考場選擇、費用優惠、到六題範例解析，整個考試流程被壓在最後一天過完。  考試定位：兩張考才拿得到專家級AZ-305 是 Azure Solutions Architect Expert 三星專家級認證。這個級別的設計是：必須同時通過 AZ-305 跟 AZ-104（Azure Administrator Associate），微軟才會核發專家證書。 順序不限。可以先考 AZ-305 再補 AZ-104，也可以反過來。但只有一張的話，只會拿到對應的單一認證，不會有專家級徽章。 這個設計的邏輯很清楚：架構師不能只會畫架構圖，還得懂基礎操...</div></div></div></a><a class="pagination-related" href="/2026/04/21/Model-Thinking-%E6%8A%8A-253-%E5%80%8B%E6%80%9D%E7%B6%AD%E6%A8%A1%E5%9E%8B%E5%A1%9E%E9%80%B2-Claude-Code-%E7%9A%84-Skill/" title="Model Thinking — 把 253 個思維模型塞進 Claude Code 的 Skill"><img class="cover" src="/img/20260421-01.webp" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">Model Thinking — 把 253 個思維模型塞進 Claude Code 的 Skill</div></div><div class="info-2"><div class="info-item-1">大部分人覺得決策困難是因為資訊不夠。其實不是。 你已經有夠多資訊了——Google、Perplexity、你自己的工作記憶。問題是你用同一個角度看來看去，不管資訊再多，最後還是用你最熟悉的那個框架下結論。 model-thinking 是台灣工程師 kcchien 做的 Claude Code Skill，把 253 個跨學科思維模型打包成一個 AI 可以動態調用的工具箱。它讓 Claude Code 幫你挑框架——不是挑一個，是挑三個：一個做主分析，一個補你看不到的面向，一個故意反駁前兩個。 這個設計本身就值得拆開來看。  先搞清楚「思維模型」是什麼修一個一直在 crash 的服務，大部分工程師的第一反應是看 log、加 breakpoint、問 ChatGPT。這是一個框架——叫「找最近的變化」或「用症狀反推原因」。 思維模型（Mental Models）就是這類可以重複套用的推理骨架。工程師有除錯框架，物理學家有第一性原理，投資人有機率思考。問題不是某個框架對不對，是你有幾個框架。 只有一個框架的人，所有問題看起來都像是那個框架能解的問題。有一百個框架的人，看到問題的第一步...</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相關推薦</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2026/04/15/GH-300-GitHub-Copilot-%E8%AA%8D%E8%AD%89-%E7%AC%AC%E4%B8%89%E5%A4%A9%E8%AA%B2%E7%A8%8B%E7%AD%86%E8%A8%98/" title="GH-300 GitHub Copilot 認證 - 第三天課程筆記"><img class="cover" src="/img/20260415-gh300.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-04-15</div><div class="info-item-2">GH-300 GitHub Copilot 認證 - 第三天課程筆記</div></div><div class="info-2"><div class="info-item-1">「從寫程式碼轉向定義規範讓 AI 寫程式碼。」 第三天課程開場，講師丟了這句話。聽起來像口號，但整天下來把 TDD 和 SDD 跟 Copilot 結合的實作流程走了一遍之後，這句話的份量就不一樣了。 前兩天快速回顧前兩天的核心是上下文工程（Context Engineering）。Copilot 的輸出品質直接取決於你給它的上下文品質。三種機制要記住： Instructions（.github/instructions/*.md）是全域或目錄層級的編碼規範，透過 applyTo 自動匹配。Prompts（.github/prompts/*.md）是封裝好的提示詞，用 /slash 指令調用。Agents（.github/agents/*.md）定義推理環境和思考方式，切換整個對話模式。 一個重要觀念：結構化提示詞不直接用在對話裡，而是放進 Instructions &#x2F; Prompts 這些檔案。你跟 Copilot 的日常對話就用自然語言，結構化的東西讓檔案系統處理。 Instructions 的上下文管理也有意思——它不是略讀，而是完整讀取。反覆被匹配到的內容會保留...</div></div></div></a><a class="pagination-related" href="/2026/04/16/GH-300-GitHub-Copilot-%E8%AA%8D%E8%AD%89-%E7%AC%AC%E5%9B%9B%E5%A4%A9%E8%AA%B2%E7%A8%8B%E7%AD%86%E8%A8%98/" title="GH-300 GitHub Copilot 認證 - 第四天課程筆記"><img class="cover" src="/img/20260416-gh300.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-04-16</div><div class="info-item-2">GH-300 GitHub Copilot 認證 - 第四天課程筆記</div></div><div class="info-2"><div class="info-item-1">50 個 Task。50 個 GitHub Issue。50 個 Coding Agent 各自開 Branch、各自寫 Draft PR。人類只負責最後的 Code Review。 這不是簡報上的願景圖，是 SpecKit 框架在第四天課堂上實際示範的流程。當然，現實中你可能不會真的開 50 個 Agent 同時跑，但這個架構的設計意圖很明確：開發者的角色正在從「寫程式的人」變成「定義規則讓 AI 寫程式的人」。 Coding Agent：像指派工程師一樣指派 AIGitHub 的 Coding Agent 做了一件很聰明的事——它把 AI 塞進了開發者本來就在用的工作流程裡。 你在 Issue 頁面指派 Agent（可以選 Copilot、Codex 或 Claude），它自動建立一個新的 Branch，在上面寫程式碼，完成後產出 Draft PR。整個過程跟你指派一個新進工程師做事的流程一模一樣：分配任務、獨立開發、提交 PR、等 Code Review。 有趣的是競爭模式。同一個 Issue 可以同時指派多個 Agent，各自產出方案，最後挑最好的那個 Merge。這就像...</div></div></div></a><a class="pagination-related" href="/2026/04/14/GH-300-GitHub-Copilot-%E8%AA%8D%E8%AD%89-%E7%AC%AC%E4%BA%8C%E5%A4%A9%E8%AA%B2%E7%A8%8B%E7%AD%86%E8%A8%98/" title="GH-300 GitHub Copilot 認證 — 第二天課程筆記（進階工程化實踐）"><img class="cover" src="/img/20260414-gh300d2.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-04-14</div><div class="info-item-2">GH-300 GitHub Copilot 認證 — 第二天課程筆記（進階工程化實踐）</div></div><div class="info-2"><div class="info-item-1">Day 1 講的是上下文工程的觀念，Day 2 就進入實戰了——怎麼把上下文管理、結構化提示詞、自定義指令這些東西落地到團隊的日常開發裡。 上下文管理的三個核心符號第一天介紹了 @ 跟 #，第二天把它們的底層機制講得更清楚：    符號 名稱 作用 底層機制    # Scope 精確定位到特定檔案、函式、變數 直接注入指定程式碼片段到上下文   @workspace Workspace 整個工作區的檔案搜尋 檔案名稱與路徑搜尋，比較淺層   @codebase Codebase 語意級別的程式碼理解 語意索引 + 檔案間關聯分析   使用建議很直白：精確操作用 #，找檔案用 @workspace，要理解跨檔案依賴關係用 @codebase。 要注意 @codebase 需要事先建好索引，大型專案第一次用可能要等一下。 自定義 Slash Commands系統內建的 /fix、/explain、/tests、/doc 很方便，但更有價值的是自定義指令。 做法很簡單：在 .github/prompts/ 底下放 .md 檔案，檔名就是指令名稱。 12345.github/└── p...</div></div></div></a><a class="pagination-related" href="/2026/04/13/GH-300-GitHub-Copilot-%E8%AA%8D%E8%AD%89-%E7%AC%AC%E4%B8%80%E5%A4%A9%E8%AA%B2%E7%A8%8B%E7%AD%86%E8%A8%98/" title="GH-300 GitHub Copilot 認證 — 第一天課程筆記"><img class="cover" src="/img/20260413-gh300.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-04-13</div><div class="info-item-2">GH-300 GitHub Copilot 認證 — 第一天課程筆記</div></div><div class="info-2"><div class="info-item-1">課程一開始就打破了一個常見誤解：Copilot 的輸出品質不是取決於你 prompt 寫得多好，而是你給的上下文夠不夠精準。Day 1 整天的核心只有一件事——上下文工程（Context Engineering）。 自然語言描述就好，不需要寫什麼 role&#x2F;workflow&#x2F;markdown 結構化 prompt。關鍵在你有沒有把對的東西餵進去。 AI &#x2F; LLM 的基本概念先快速帶過幾個底層概念： Token 是 LLM 處理的最小單位。中文大約 1 字 &#x3D; 1-2 tokens。Tokenization 就是把你的輸入拆成 token 序列的過程。 Embedding 是把 token 映射成高維向量，語意接近的詞在向量空間裡距離也近。這是模型理解語意的基礎。 上下文窗口是模型單次能處理的 token 上限。超過之後品質會下降，所以管理上下文的用量很重要。建議使用量到 70-80% 就該主動處理——合併提示詞、回退 checkpoint，不要等系統自動壓縮。 Copilot 支援多模型切換GitHub Copilot 不只用一個模型。目...</div></div></div></a><a class="pagination-related" href="/2026/04/13/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260413/" title="AI 與科技新聞摘要 - 2026&#x2F;04&#x2F;13"><img class="cover" src="/img/20260413-02.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-04-13</div><div class="info-item-2">AI 與科技新聞摘要 - 2026&#x2F;04&#x2F;13</div></div><div class="info-2"><div class="info-item-1">75% 的 AI 經濟收益被 20% 的公司拿走、Visa 讓 AI Agent 自己結帳買東西、OpenAI 花了幾億美金買一個科技脫口秀、GitHub Copilot 一邊砍模型一邊暫停免費試用、Apple 智慧眼鏡的設計細節流出來了。週一早上的新聞密度有點高。 PwC 報告：AI 經濟紅利集中在兩成企業手上PwC 今天（4&#x2F;13）發布的 AI Performance 研究報告丟了一個蠻驚人的數字：AI 帶來的經濟收益，有 75% 被前 20% 的企業吃掉了。這份報告調查了 25 個產業、1,217 位總監級以上的高管。 關鍵發現不是「AI 有沒有用」——這已經不是問題了——而是「誰真的從 AI 賺到錢」。跑在前面的企業不只是拿 AI 來提升效率，而是用它重塑商業模式。報告說這些領先者「用 AI 改造商業模式的可能性」是同業的 2.6 倍。換句話說，只把 AI 當省成本工具的公司，正在被當它是成長引擎的公司甩開。 產業邊界模糊化（industry convergence）帶來的成長機會，是影響 AI 財務表現最強的因素，比單純的效率提升還重要。這對還在觀望的企業來說...</div></div></div></a><a class="pagination-related" href="/2026/04/17/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260417/" title="AI 與科技新聞摘要 - 2026&#x2F;04&#x2F;17"><img class="cover" src="/img/20260417-02.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-04-17</div><div class="info-item-2">AI 與科技新聞摘要 - 2026&#x2F;04&#x2F;17</div></div><div class="info-2"><div class="info-item-1">Figma 股價一天跌了 7%。原因不是財報，是 Anthropic 發了一個新產品。 4 月 17 日，Anthropic 同時丟出 Claude Design（視覺設計工具）和 Claude Opus 4.7 GA（新旗艦模型），前一天 Project Glasswing 的 Mythos 資安模型才剛炸出數千個零日漏洞。同一時間 OpenAI 也推了自己的資安模型 GPT-5.4-Cyber，GitHub CLI 則把 Agent Skills 管理做進了命令列。AI 公司們不只在搶模型排名，還在搶「誰能吃掉更多工作流」。 Claude Design — Anthropic 跨進視覺設計領域Anthropic 發布了 Claude Design，一個讓你用對話產出視覺作品的新產品。簡報、Wireframe、行銷素材、互動式 Prototype——講一句話，Claude 生一版，你再改。 表面上看像是另一個 AI 設計工具，但幾個細節讓它跟 Canva AI 或 Figma AI 不太一樣。第一，它能讀你的 codebase 和設計檔，自動套用團隊的 design syste...</div></div></div></a></div></div><hr class="custom-hr"/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 評論</span></div></div><div class="comment-wrap"><div><div id="giscus-wrap"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="https://lh3.googleusercontent.com/pw/ABLVV87_po8nBc6F_tXcoYDmtzMGWxHuhhrbguYILCjmjWKLOS8DTpubm0YoQLKgjyjRIZyV5TjYe7XVEz_YU4squfr37GTZqPZP1hlMVZ_MIgXpTxWu73M=w1200" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">Cheng®</div><div class="author-info-description">Backend Developer / 技術筆記 & AI 新聞分享</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">161</div></a><a href="/tags/"><div class="headline">標籤</div><div class="length-num">142</div></a><a href="/categories/"><div class="headline">分類</div><div class="length-num">12</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/mark22013333"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons"><a class="social-icon" href="https://github.com/mark22013333" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:mark22013333@gmail.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a></div><div class="card-info-sponsor"><a class="sponsor-glow-btn" href="https://www.buymeacoffee.com/mark22013333" target="_blank" rel="noopener noreferrer" title="Buy Me A Coffee"><img src="https://img.shields.io/badge/Buy_Me_A_Coffee-FFDD00?style=for-the-badge&amp;logo=buy-me-a-coffee&amp;logoColor=black" alt="Buy Me A Coffee"/></a><a class="sponsor-glow-btn" href="https://p.ecpay.com.tw/EFC3F8F" target="_blank" rel="noopener noreferrer" title="綠界贊助"><img src="https://img.shields.io/badge/☕_%E8%AB%8B%E6%88%91%E5%96%9D%E6%9D%AF%E5%92%96%E5%95%A1-Donate-11998e?style=for-the-badge&amp;logo=coffee&amp;logoColor=white" alt="綠界贊助"/></a><a class="sponsor-glow-btn" href="https://calendly.com/markcheng00806-intumit/15min" target="_blank" rel="noopener noreferrer" title="預約時間"><img src="https://img.shields.io/badge/📅_%E9%A0%90%E7%B4%84_15_%E5%88%86%E9%90%98-Book_Time-0072ff?style=for-the-badge" alt="預約時間"/></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">這裡記錄我在後端開發路上踩過的坑、學到的東西，也會分享每日 AI 與科技新聞觀點。歡迎一起交流！</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目錄</span><span class="toc-percentage"></span></div><div class="toc-content is-expand"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%B2%AC%E4%BB%BB%E5%88%B6%E7%9A%84-AI%EF%BC%9A%E5%85%AD%E5%A4%A7%E5%8E%9F%E5%89%87%E4%B8%8D%E6%98%AF%E6%8A%95%E5%BD%B1%E7%89%87%E4%B8%8A%E7%9A%84%E8%A3%9D%E9%A3%BE"><span class="toc-number">1.</span> <span class="toc-text">責任制的 AI：六大原則不是投影片上的裝飾</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89%E5%B1%A4%E6%B2%BB%E7%90%86%EF%BC%9A%E5%80%8B%E4%BA%BA-%E2%86%92-%E7%B5%84%E7%B9%94-%E2%86%92-%E4%BC%81%E6%A5%AD"><span class="toc-number">2.</span> <span class="toc-text">三層治理：個人 → 組織 → 企業</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Coding-Agent-%E4%B8%89%E5%80%8B%E4%BD%8D%E7%BD%AE%EF%BC%8C%E9%81%B8%E9%8C%AF%E6%9C%83%E5%8F%97%E5%82%B7"><span class="toc-number">3.</span> <span class="toc-text">Coding Agent 三個位置，選錯會受傷</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Slash-%E9%80%99%E4%B8%89%E5%80%8B%E7%AC%A6%E8%99%9F%E6%B1%BA%E5%AE%9A%E4%BA%86%E5%B0%8D%E8%A9%B1%E5%93%81%E8%B3%AA"><span class="toc-number">4.</span> <span class="toc-text">Slash &#x2F; @ &#x2F; # 這三個符號決定了對話品質</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#SDD-SpecKit%EF%BC%9A%E8%AE%93-AI-%E8%B5%B0%E5%9C%A8%E8%BB%8C%E9%81%93%E4%B8%8A"><span class="toc-number">5.</span> <span class="toc-text">SDD &#x2F; SpecKit：讓 AI 走在軌道上</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#TDD-%E4%B8%89-Agent%EF%BC%9ARed%E3%80%81Green%E3%80%81Refactor-%E5%90%84%E5%8F%B8%E5%85%B6%E8%81%B7"><span class="toc-number">6.</span> <span class="toc-text">TDD 三 Agent：Red、Green、Refactor 各司其職</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#github-%E7%9B%AE%E9%8C%84%EF%BC%9A%E5%B0%88%E6%A1%88%E7%B4%9A%E8%87%AA%E8%A8%82%E6%8C%87%E4%BB%A4%E7%9A%84%E5%85%AC%E5%AF%93"><span class="toc-number">7.</span> <span class="toc-text">.github&#x2F; 目錄：專案級自訂指令的公寓</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%86%E6%94%AF%E4%BF%9D%E8%AD%B7%EF%BC%9A%E7%B5%A6-AI-%E6%88%B4%E4%B8%8A%E5%AE%89%E5%85%A8%E5%B8%B6"><span class="toc-number">8.</span> <span class="toc-text">分支保護：給 AI 戴上安全帶</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%8E%88%E6%AC%8A%E7%89%88%E6%9C%AC%EF%BC%9A%E9%81%B8%E9%8C%AF%E6%9C%83%E7%B6%81%E9%8C%AF%E6%89%8B%E8%85%B3"><span class="toc-number">9.</span> <span class="toc-text">授權版本：選錯會綁錯手腳</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%80%83%E8%A9%A6%E6%BA%96%E5%82%99%E6%B5%81%E7%A8%8B%EF%BC%9A%E5%BE%9E%E5%A0%B1%E5%90%8D%E5%88%B0%E9%80%9A%E9%81%8E"><span class="toc-number">10.</span> <span class="toc-text">考試準備流程：從報名到通過</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%82%99%E8%80%83%E6%8E%A8%E8%96%A6%E8%B3%87%E6%BA%90"><span class="toc-number">11.</span> <span class="toc-text">備考推薦資源</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AD%B8%E5%AE%8C%E4%B9%8B%E5%BE%8C%EF%BC%8C%E5%B8%B6%E8%B5%B0%E7%9A%84%E4%B8%8D%E6%98%AF%E6%8A%80%E8%A1%93%EF%BC%8C%E6%98%AF%E5%88%A4%E6%96%B7%E5%8A%9B"><span class="toc-number">12.</span> <span class="toc-text">學完之後，帶走的不是技術，是判斷力</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2026/04/23/Claude-Code-Ultraplan-%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8-%E6%8A%8A%E8%A6%8F%E5%8A%83%E4%BA%A4%E7%B5%A6%E9%9B%B2%E7%AB%AF/" title="Claude Code Ultraplan 完整教學 — 把規劃交給雲端，讓 Claude 替你想 30 分鐘"><img src="/img/20260423-03.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Claude Code Ultraplan 完整教學 — 把規劃交給雲端，讓 Claude 替你想 30 分鐘"/></a><div class="content"><a class="title" href="/2026/04/23/Claude-Code-Ultraplan-%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8-%E6%8A%8A%E8%A6%8F%E5%8A%83%E4%BA%A4%E7%B5%A6%E9%9B%B2%E7%AB%AF/" title="Claude Code Ultraplan 完整教學 — 把規劃交給雲端，讓 Claude 替你想 30 分鐘">Claude Code Ultraplan 完整教學 — 把規劃交給雲端，讓 Claude 替你想 30 分鐘</a><time datetime="2026-04-23T09:00:00.000Z" title="發表於 2026-04-23 09:00:00">2026-04-23</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/04/23/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260423/" title="AI 與科技新聞摘要 - 2026/04/23"><img src="/img/20260423-02.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="AI 與科技新聞摘要 - 2026/04/23"/></a><div class="content"><a class="title" href="/2026/04/23/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260423/" title="AI 與科技新聞摘要 - 2026/04/23">AI 與科技新聞摘要 - 2026/04/23</a><time datetime="2026-04-23T08:30:00.000Z" title="發表於 2026-04-23 08:30:00">2026-04-23</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/04/23/Agent-Skills-%E7%B5%A6-AI-%E7%B7%A8%E7%A2%BC%E5%8A%A9%E6%89%8B%E7%9A%84%E5%B7%A5%E7%A8%8B%E7%B4%80%E5%BE%8B%E6%8C%87%E4%BB%A4%E9%9B%86/" title="Agent Skills — 給 AI 編碼助手的工程紀律指令集"><img src="/img/20260423-01.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Agent Skills — 給 AI 編碼助手的工程紀律指令集"/></a><div class="content"><a class="title" href="/2026/04/23/Agent-Skills-%E7%B5%A6-AI-%E7%B7%A8%E7%A2%BC%E5%8A%A9%E6%89%8B%E7%9A%84%E5%B7%A5%E7%A8%8B%E7%B4%80%E5%BE%8B%E6%8C%87%E4%BB%A4%E9%9B%86/" title="Agent Skills — 給 AI 編碼助手的工程紀律指令集">Agent Skills — 給 AI 編碼助手的工程紀律指令集</a><time datetime="2026-04-23T08:00:00.000Z" title="發表於 2026-04-23 08:00:00">2026-04-23</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/04/22/GitHub-Copilot-%E5%81%9C%E6%AD%A2%E6%96%B0%E7%94%A8%E6%88%B6%E8%A8%BB%E5%86%8A%E5%BE%8C%E5%B7%A5%E7%A8%8B%E5%B8%AB%E6%80%8E%E9%BA%BC%E5%B9%B3%E7%A7%BB%E5%88%B0-Claude-Code/" title="GitHub Copilot 停止新用戶註冊後，工程師怎麼平移到 Claude Code"><img src="/img/20260422-03.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="GitHub Copilot 停止新用戶註冊後，工程師怎麼平移到 Claude Code"/></a><div class="content"><a class="title" href="/2026/04/22/GitHub-Copilot-%E5%81%9C%E6%AD%A2%E6%96%B0%E7%94%A8%E6%88%B6%E8%A8%BB%E5%86%8A%E5%BE%8C%E5%B7%A5%E7%A8%8B%E5%B8%AB%E6%80%8E%E9%BA%BC%E5%B9%B3%E7%A7%BB%E5%88%B0-Claude-Code/" title="GitHub Copilot 停止新用戶註冊後，工程師怎麼平移到 Claude Code">GitHub Copilot 停止新用戶註冊後，工程師怎麼平移到 Claude Code</a><time datetime="2026-04-22T09:00:00.000Z" title="發表於 2026-04-22 09:00:00">2026-04-22</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/04/22/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260422/" title="AI 與科技新聞摘要 - 2026/04/22"><img src="/img/20260422-02.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="AI 與科技新聞摘要 - 2026/04/22"/></a><div class="content"><a class="title" href="/2026/04/22/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260422/" title="AI 與科技新聞摘要 - 2026/04/22">AI 與科技新聞摘要 - 2026/04/22</a><time datetime="2026-04-22T08:30:00.000Z" title="發表於 2026-04-22 08:30:00">2026-04-22</time></div></div></div></div></div></div></main><footer id="footer" style="background-image: url(/img/20260420-gh300.webp);"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2024 - 2026 By Cheng®</span></div><div class="footer_custom_text">Written by Cheng® — 自律，從當下的一念開始。</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="閱讀模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日夜模式切換"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="單欄和雙欄切換"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="設定"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目錄"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="前往評論"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到頂端"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.umd.min.js"></script><script src="https://cdn.jsdelivr.net/npm/instant.page/instantpage.min.js" type="module"></script><script src="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.js"></script><div class="js-pjax"><script>(() => {
+  const isShuoshuo = GLOBAL_CONFIG_SITE.pageType === 'shuoshuo'
+  const option = {"mapping":"pathname","strict":0,"reactionsEnabled":1,"emitMetadata":0,"inputPosition":"bottom","lang":"zh-TW"}
+
+  const getGiscusTheme = theme => theme === 'dark' ? 'dark' : 'light'
+
+  const createScriptElement = config => {
+    const ele = document.createElement('script')
+    Object.entries(config).forEach(([key, value]) => {
+      ele.setAttribute(key, value)
+    })
+    return ele
+  }
+
+  const loadGiscus = (el = document, key) => {
+    const mappingConfig = isShuoshuo
+      ? { 'data-mapping': 'specific', 'data-term': key }
+      : { 'data-mapping': (option && option['data-mapping']) || 'pathname' }
+
+    const giscusConfig = {
+      src: 'https://giscus.app/client.js',
+      'data-repo': 'mark22013333/mark22013333.github.io',
+      'data-repo-id': 'R_kgDOLAxa6A',
+      'data-category-id': 'DIC_kwDOLAxa6M4C5eO9',
+      'data-theme': getGiscusTheme(document.documentElement.getAttribute('data-theme')),
+      'data-reactions-enabled': '1',
+      crossorigin: 'anonymous',
+      async: true,
+      ...option,
+      ...mappingConfig
+    }
+
+    const scriptElement = createScriptElement(giscusConfig)
+
+    el.querySelector('#giscus-wrap').appendChild(scriptElement)
+
+    if (isShuoshuo) {
+      window.shuoshuoComment.destroyGiscus = () => {
+        if (el.children.length) {
+          el.innerHTML = ''
+          el.classList.add('no-comment')
+        }
+      }
+    }
+  }
+
+  const changeGiscusTheme = theme => {
+    const iframe = document.querySelector('#giscus-wrap iframe')
+    if (iframe) {
+      const message = {
+        giscus: {
+          setConfig: {
+            theme: getGiscusTheme(theme)
+          }
+        }
+      }
+      iframe.contentWindow.postMessage(message, 'https://giscus.app')
+    }
+  }
+
+  btf.addGlobalFn('themeChange', changeGiscusTheme, 'giscus')
+
+  if (isShuoshuo) {
+    'Giscus' === 'Giscus'
+      ? window.shuoshuoComment = { loadComment: loadGiscus }
+      : window.loadOtherComment = loadGiscus
+    return
+  }
+
+  if ('Giscus' === 'Giscus' || !true) {
+    if (true) btf.loadComment(document.getElementById('giscus-wrap'), loadGiscus)
+    else loadGiscus()
+  } else {
+    window.loadOtherComment = loadGiscus
+  }
+})()</script></div><script src="/js/kkbox-player.js"></script><script src="/js/archives-pagination.js"></script><script src="/js/font-resize.js"></script><script src="/js/dark-palette.js"></script><script defer="defer" id="fluttering_ribbon" mobile="false" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/canvas-fluttering-ribbon.min.js"></script><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/activate-power-mode.min.js"></script><script>POWERMODE.colorful = true;
+POWERMODE.shake = true;
+POWERMODE.mobile = true;
+document.body.addEventListener('input', POWERMODE);
+</script><script src="https://cdn.jsdelivr.net/npm/pjax/pjax.min.js" defer="defer"></script><script>document.addEventListener('DOMContentLoaded', () => {
+  const pjaxSelectors = ["meta[property=\"og:image\"]","meta[property=\"og:title\"]","meta[property=\"og:url\"]","meta[property=\"og:description\"]","link[rel=\"canonical\"]","head > title","#config-diff","#body-wrap","#rightside-config-hide","#rightside-config-show",".js-pjax"]
+
+  window.pjax = new Pjax({
+    elements: 'a:not([target="_blank"])',
+    selectors: pjaxSelectors,
+    cacheBust: false,
+    analytics: true,
+    scrollRestoration: false
+  })
+
+  const triggerPjaxFn = (val) => {
+    if (!val) return
+    Object.values(val).forEach(fn => {
+      try {
+        fn()
+      } catch (err) {
+        console.debug('Pjax callback failed:', err)
+      }
+    })
+  }
+
+  document.addEventListener('pjax:send', () => {
+    // removeEventListener
+    btf.removeGlobalFnEvent('pjaxSendOnce')
+    btf.removeGlobalFnEvent('themeChange')
+
+    // reset readmode
+    const $bodyClassList = document.body.classList
+    if ($bodyClassList.contains('read-mode')) $bodyClassList.remove('read-mode')
+
+    triggerPjaxFn(window.globalFn.pjaxSend)
+  })
+
+  document.addEventListener('pjax:complete', () => {
+    btf.removeGlobalFnEvent('pjaxCompleteOnce')
+    document.querySelectorAll('script[data-pjax]').forEach(item => {
+      const newScript = document.createElement('script')
+      const content = item.text || item.textContent || item.innerHTML || ""
+      Array.from(item.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value))
+      newScript.appendChild(document.createTextNode(content))
+      item.parentNode.replaceChild(newScript, item)
+    })
+
+    triggerPjaxFn(window.globalFn.pjaxComplete)
+  })
+
+  document.addEventListener('pjax:error', e => {
+    if (e.request.status === 404) {
+      true
+        ? pjax.loadUrl('/404.html')
+        : window.location.href = e.request.responseURL
+    }
+  })
+})</script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜尋</span><i class="fas fa-spinner fa-pulse" id="loading-status" hidden="hidden"></i><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="text-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  資料載入中</span></div><div class="local-search-input"><input placeholder="搜尋文章" type="text"/></div><hr/><div id="local-search-results"></div><div class="ais-Pagination" id="local-search-pagination" style="display:none;"><ul class="ais-Pagination-list"></ul></div><div id="local-search-stats"></div></div><div id="search-mask"></div><script src="/js/search/local-search.js"></script></div></div></body></html>

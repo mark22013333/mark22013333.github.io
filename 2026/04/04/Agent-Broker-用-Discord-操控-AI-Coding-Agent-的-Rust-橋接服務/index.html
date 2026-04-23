@@ -1,0 +1,442 @@
+<!DOCTYPE html><html lang="zh-TW" data-theme="dark"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>Agent Broker - 用 Discord 操控 AI Coding Agent 的 Rust 橋接服務 | Cheng's Tech &amp; Life</title><meta name="author" content="Cheng®"><meta name="copyright" content="Cheng®"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#0d0d0d"><meta name="description" content="Discord 頻道裡 @mention 一個 bot，它就能幫你寫程式、code review、分析架構。背後串接的是 Claude Code、Kiro CLI、Codex 這些 AI coding agent。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Agent Broker - 用 Discord 操控 AI Coding Agent 的 Rust 橋接服務">
+<meta property="og:url" content="https://mark22013333.github.io/2026/04/04/Agent-Broker-%E7%94%A8-Discord-%E6%93%8D%E6%8E%A7-AI-Coding-Agent-%E7%9A%84-Rust-%E6%A9%8B%E6%8E%A5%E6%9C%8D%E5%8B%99/index.html">
+<meta property="og:site_name" content="Cheng&#39;s Tech &amp; Life">
+<meta property="og:description" content="Discord 頻道裡 @mention 一個 bot，它就能幫你寫程式、code review、分析架構。背後串接的是 Claude Code、Kiro CLI、Codex 這些 AI coding agent。">
+<meta property="og:locale" content="zh_TW">
+<meta property="og:image" content="https://mark22013333.github.io/img/20260404-01.webp">
+<meta property="article:published_time" content="2026-04-04T00:30:00.000Z">
+<meta property="article:modified_time" content="2026-04-13T02:00:09.726Z">
+<meta property="article:author" content="Cheng®">
+<meta property="article:tag" content="AI Agent">
+<meta property="article:tag" content="MCP">
+<meta property="article:tag" content="Claude Code">
+<meta property="article:tag" content="Rust">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://mark22013333.github.io/img/20260404-01.webp"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Agent Broker - 用 Discord 操控 AI Coding Agent 的 Rust 橋接服務",
+  "url": "https://mark22013333.github.io/2026/04/04/Agent-Broker-%E7%94%A8-Discord-%E6%93%8D%E6%8E%A7-AI-Coding-Agent-%E7%9A%84-Rust-%E6%A9%8B%E6%8E%A5%E6%9C%8D%E5%8B%99/",
+  "image": "https://mark22013333.github.io/img/20260404-01.webp",
+  "datePublished": "2026-04-04T00:30:00.000Z",
+  "dateModified": "2026-04-13T02:00:09.726Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "Cheng®",
+      "url": "https://mark22013333.github.io"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://mark22013333.github.io/2026/04/04/Agent-Broker-%E7%94%A8-Discord-%E6%93%8D%E6%8E%A7-AI-Coding-Agent-%E7%9A%84-Rust-%E6%A9%8B%E6%8E%A5%E6%9C%8D%E5%8B%99/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//www.google-analytics.com" crossorigin=""/><link rel="preconnect" href="//fonts.googleapis.com" crossorigin=""/><link rel="preconnect" href="//busuanzi.ibruce.info"/><meta name="google-site-verification" content="6ywUr8k2n_CT1PFYJzlSvI3CZ-JmJ55RYbA39VrFBDs"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!true && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          const hour = new Date().getHours()
+          const isNight = hour <= 9 || hour >= 18
+          if (theme === undefined) isNight ? activateDarkMode() : activateLightMode()
+          else theme === 'light' ? activateLightMode() : activateDarkMode()
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script async="async" src="https://www.googletagmanager.com/gtag/js?id=G-JBV14NRDH3"></script><script>window.dataLayer = window.dataLayer || []
+function gtag(){dataLayer.push(arguments)}
+gtag('js', new Date())
+gtag('config', 'G-JBV14NRDH3')
+btf.addGlobalFn('pjaxComplete', () => {
+  gtag('config', 'G-JBV14NRDH3', {'page_path': window.location.pathname})
+}, 'google_analytics')
+</script><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Titillium+Web&amp;display=swap" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"pagination":{"enable":false,"hitsPerPage":8},"languages":{"hits_empty":"找不到符合您查詢的內容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '複製成功',
+    error: '複製失敗',
+    noSupport: '瀏覽器不支援'
+  },
+  relativeDate: {
+    homepage: false,
+    post: true
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '剛剛',
+    min: '分鐘前',
+    hour: '小時前',
+    day: '天前',
+    month: '個月前'
+  },
+  copyright: {"limitCount":1,"languages":{"author":"作者: Cheng®","link":"連結: ","source":"來源: Cheng's Tech & Life","info":"著作權歸作者所有。如需商業轉載，請聯絡作者獲得授權，非商業轉載請註明出處😁。"}},
+  lightbox: 'fancybox',
+  Snackbar: {"chs_to_cht":"已切換為繁體中文","cht_to_chs":"已切換為簡體中文","day_to_night":"已切換為深色模式","night_to_day":"已切換為淺色模式","bgLight":"#49b1f5","bgDark":"#1f1f1f","position":"top-center"},
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid/dist/infinitegrid.min.js',
+    buttonText: '載入更多'
+  },
+  isPhotoFigcaption: true,
+  islazyloadPlugin: false,
+  isAnchor: true,
+  percent: {
+    toc: true,
+    rightside: true,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Agent Broker - 用 Discord 操控 AI Coding Agent 的 Rust 橋接服務',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><link rel="stylesheet" href="/css/kkbox-player.css"><link rel="stylesheet" href="/css/tag-cloud-fancy.css"><link rel="stylesheet" href="/css/font-resize.css"><link rel="stylesheet" href="/css/dark-palette.css"><link rel="stylesheet" href="/css/loading-override.css"><link rel="alternate" href="/atom.xml" title="Cheng's Tech & Life" type="application/atom+xml">
+</head><body><div id="loading-box"><div class="loading-glass-overlay"></div><div class="loading-indicator"><div class="loading-dot"></div><div class="loading-dot"></div><div class="loading-dot"></div></div></div><script>(()=>{
+  const $loadingBox = document.getElementById('loading-box')
+  const $body = document.body
+  const preloader = {
+    endLoading: () => {
+      if ($loadingBox.classList.contains('loaded')) return
+      $body.style.overflow = ''
+      $loadingBox.classList.add('loaded')
+    },
+    initLoading: () => {
+      $body.style.overflow = 'hidden'
+      $loadingBox.classList.remove('loaded')
+    }
+  }
+
+  preloader.initLoading()
+
+  if (document.readyState === 'complete') {
+    preloader.endLoading()
+  } else {
+    window.addEventListener('load', preloader.endLoading)
+    document.addEventListener('DOMContentLoaded', preloader.endLoading)
+    setTimeout(preloader.endLoading, 7000)
+  }
+
+  if (true) {
+    btf.addGlobalFn('pjaxSend', preloader.initLoading, 'preloader_init')
+    btf.addGlobalFn('pjaxComplete', preloader.endLoading, 'preloader_end')
+  }
+})()</script><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="https://lh3.googleusercontent.com/pw/ABLVV87_po8nBc6F_tXcoYDmtzMGWxHuhhrbguYILCjmjWKLOS8DTpubm0YoQLKgjyjRIZyV5TjYe7XVEz_YU4squfr37GTZqPZP1hlMVZ_MIgXpTxWu73M=w1200" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">161</div></a><a href="/tags/"><div class="headline">標籤</div><div class="length-num">142</div></a><a href="/categories/"><div class="headline">分類</div><div class="length-num">12</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首頁-Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 時間軸-archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 標籤-tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分類-Categories</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-list"></i><span> 其他列表</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音樂-Music</span></a></li><li><a class="site-page child" href="/gallery/"><i class="fa-fw fas fa-images"></i><span> 畫館-Gallery</span></a></li></ul></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg fixed" id="page-header" style="background-image: url(/img/20260404-01.webp);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><img class="site-icon" src="https://lh3.googleusercontent.com/pw/ABLVV87_po8nBc6F_tXcoYDmtzMGWxHuhhrbguYILCjmjWKLOS8DTpubm0YoQLKgjyjRIZyV5TjYe7XVEz_YU4squfr37GTZqPZP1hlMVZ_MIgXpTxWu73M=w1200" alt="Logo"><span class="site-name">Cheng's Tech &amp; Life</span></a><a class="nav-page-title" href="/"><span class="site-name">Agent Broker - 用 Discord 操控 AI Coding Agent 的 Rust 橋接服務</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首頁</span></span></a></span><div id="menus"><div id="search-button" title="Ctrl+K / Cmd+K"><span class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜尋</span></span></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首頁-Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 時間軸-archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 標籤-tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分類-Categories</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-list"></i><span> 其他列表</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音樂-Music</span></a></li><li><a class="site-page child" href="/gallery/"><i class="fa-fw fas fa-images"></i><span> 畫館-Gallery</span></a></li></ul></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">Agent Broker - 用 Discord 操控 AI Coding Agent 的 Rust 橋接服務</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">發表於</span><time class="post-meta-date-created" datetime="2026-04-04T00:30:00.000Z" title="發表於 2026-04-04 00:30:00">2026-04-04</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新於</span><time class="post-meta-date-updated" datetime="2026-04-13T02:00:09.726Z" title="更新於 2026-04-13 02:00:09">2026-04-13</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Claude-Code/">Claude Code</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">總字數:</span><span class="word-count">1.7k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">閱讀時間:</span><span>6分鐘</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">瀏覽量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><p>Discord 頻道裡 @mention 一個 bot，它就能幫你寫程式、code review、分析架構。背後串接的是 Claude Code、Kiro CLI、Codex 這些 AI coding agent。Agent Broker 就是那個站在中間的翻譯官——用 Rust 寫的橋接服務，把 Discord 和任何支援 ACP 協定的 coding CLI 串在一起。</p>
+<h2 id="這東西解決什麼問題"><a href="#這東西解決什麼問題" class="headerlink" title="這東西解決什麼問題"></a>這東西解決什麼問題</h2><p>團隊裡不是每個人都習慣開終端機跟 AI 互動。有些人就是活在 Discord 裡面，開會在 Discord、討論在 Discord、連摸魚都在 Discord。Agent Broker 的邏輯很直接：既然人在 Discord，那 AI 也該在 Discord。</p>
+<p>核心架構長這樣：使用者在 Discord 打字 → Agent Broker 收到後轉成 ACP 協定的 JSON-RPC → 丟給後端 CLI（Claude Code、Kiro、Codex 都行）→ AI 回應串流回 Discord 即時顯示。每個 Discord thread 會 spawn 一個獨立的 CLI process，多輪對話的上下文靠 CLI 自己管理。</p>
+<p>關鍵在 <strong>ACP（Agent Client Protocol）</strong>——Anthropic 主導的開放標準，基於 stdio 的 JSON-RPC 2.0。只要 CLI 支援 ACP，Agent Broker 就能接，不綁死特定廠商。</p>
+<h2 id="裝起來跑"><a href="#裝起來跑" class="headerlink" title="裝起來跑"></a>裝起來跑</h2><p>系統需求：Rust toolchain、Discord Bot Token（要開 Message Content Intent 權限）、至少一個 ACP 相容 CLI。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">git <span class="built_in">clone</span> https://github.com/thepagent/agent-broker.git</span><br><span class="line"><span class="built_in">cd</span> agent-broker</span><br><span class="line">cargo build --release</span><br><span class="line">./target/release/agent-broker config.toml</span><br></pre></td></tr></table></figure>
+
+<p>最小配置檔：</p>
+<figure class="highlight toml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="section">[discord]</span></span><br><span class="line"><span class="attr">bot_token</span> = <span class="string">&quot;$&#123;DISCORD_BOT_TOKEN&#125;&quot;</span></span><br><span class="line"><span class="attr">allowed_channels</span> = [<span class="string">&quot;你的頻道ID&quot;</span>]</span><br><span class="line"></span><br><span class="line"><span class="section">[agent]</span></span><br><span class="line"><span class="attr">command</span> = <span class="string">&quot;kiro-cli&quot;</span></span><br><span class="line"><span class="attr">args</span> = [<span class="string">&quot;acp&quot;</span>, <span class="string">&quot;--trust-all-tools&quot;</span>]</span><br><span class="line"><span class="attr">working_dir</span> = <span class="string">&quot;/tmp&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>Docker 和 Kubernetes Helm Chart 也有，大型團隊可以直接丟到 K8s 叢集裡跑。</p>
+<p>想換 AI 後端？改 config 就好：</p>
+<figure class="highlight toml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 換成 Claude Code</span></span><br><span class="line"><span class="section">[agent]</span></span><br><span class="line"><span class="attr">command</span> = <span class="string">&quot;claude&quot;</span></span><br><span class="line"><span class="attr">args</span> = [<span class="string">&quot;acp&quot;</span>]</span><br><span class="line"></span><br><span class="line"><span class="comment"># 或者 Codex</span></span><br><span class="line"><span class="section">[agent]</span></span><br><span class="line"><span class="attr">command</span> = <span class="string">&quot;codex&quot;</span></span><br><span class="line"><span class="attr">args</span> = [<span class="string">&quot;acp&quot;</span>]</span><br></pre></td></tr></table></figure>
+
+<h2 id="幾個有意思的設計"><a href="#幾個有意思的設計" class="headerlink" title="幾個有意思的設計"></a>幾個有意思的設計</h2><p><strong>即時串流編輯</strong>——AI 回應不是等全部生成完才顯示，每 1.5 秒更新一次 Discord 訊息。這個體驗差很多，不用乾等一大坨文字突然冒出來。</p>
+<p><strong>Emoji 狀態回報</strong>——bot 會用 emoji reaction 告訴你 AI 目前在幹嘛：🤔 思考中、🔥 呼叫工具、👌 完成、😱 30 秒沒動靜。中間狀態有 700ms debounce，避免快速切換撞到 Discord API rate limit。這個小細節設計得蠻巧的。</p>
+<p><strong>自動訊息分割</strong>——Discord 有 2000 字元限制，Agent Broker 會按行邊界切割，不會把程式碼切到一半。</p>
+<p>Rust 實作上也有幾個值得學的地方：用 <code>tokio::sync::watch</code> 做串流（只關心最新值，比 channel 更適合）、<code>RwLock</code> 保護 Session Pool 最大化並發、<code>kill_on_drop(true)</code> 確保 child process 跟著 parent 走不留孤兒。</p>
+<h2 id="適合什麼場景"><a href="#適合什麼場景" class="headerlink" title="適合什麼場景"></a>適合什麼場景</h2><p><strong>團隊共享 AI 助手</strong>是最直覺的用法。部署一個 bot，所有人 @mention 就能用，不需要每個人各自裝 CLI。降低使用門檻這件事，對推廣 AI 工具到非工程角色很有幫助。</p>
+<p><strong>Code Review 機器人</strong>——在 review 頻道貼 PR 連結，AI 直接分析。GitHub URL 會被自動縮短成 <code>owner/repo#123</code> 格式當 thread 名稱。</p>
+<p><strong>On-call 即時除錯</strong>——值班工程師貼 stack trace，AI 馬上分析。Thread 自動歸檔，事後也能回顧。</p>
+<p><strong>教學和 Onboarding</strong>——新人在 Discord 問 codebase 相關問題，thread 自動保留變成可搜尋的知識庫。比起 Slack 的對話消失在洪流裡，這個歸檔效果好很多。</p>
+<h2 id="要注意的坑"><a href="#要注意的坑" class="headerlink" title="要注意的坑"></a>要注意的坑</h2><p>版本 0.1.0，非常早期。README 說只有 Kiro CLI 實際測過，Claude Code 和 Codex 理論可用但未驗證。</p>
+<p>比較大的風險是<strong>權限全自動批准</strong>——收到 CLI 的權限請求時一律回 <code>allow_always</code>。生產環境用的話，AI agent 可能執行你不預期的操作。這邊建議搭配 Claude Code 的 Hooks 機制做攔截，至少把危險指令（<code>rm -rf</code>、<code>git push --force</code>）擋下來。</p>
+<p>其他限制：沒有使用者級別的權限控制（只有 channel allowlist）、單一 replica 無法水平擴展、stderr 直接丟 <code>/dev/null</code> 出問題不好除錯、不支援圖片和檔案附件。</p>
+<h2 id="跟-Claude-Code-官方-Discord-Plugin-比一下"><a href="#跟-Claude-Code-官方-Discord-Plugin-比一下" class="headerlink" title="跟 Claude Code 官方 Discord Plugin 比一下"></a>跟 Claude Code 官方 Discord Plugin 比一下</h2><p>Anthropic 自家其實有出一個 <strong>claude-plugins-official&#x2F;discord</strong> plugin，也能把 Discord 接到 Claude。兩條路乍看解決同一個問題，但定位完全不同。</p>
+<p>一句話講清楚：<strong>Discord Plugin 是「Claude 用 Discord 當 UI」，Agent Broker 是「Discord 用 CLI agent 當後端」。</strong></p>
+<p>前者的 Claude 是主角，Discord 只是它的 I&#x2F;O 通道之一（跟 iMessage、terminal 對等）。後者的 Discord 是主角，底下可以接任何 ACP 相容的 CLI，Agent Broker 只負責翻譯。</p>
+<h3 id="架構面"><a href="#架構面" class="headerlink" title="架構面"></a>架構面</h3><table>
+<thead>
+<tr>
+<th>面向</th>
+<th>Claude Code Discord Plugin</th>
+<th>Agent Broker</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>語言</strong></td>
+<td>Bun（TypeScript）</td>
+<td>Rust（單一 binary）</td>
+</tr>
+<tr>
+<td><strong>角色</strong></td>
+<td>Claude Code 內建的通道擴充</td>
+<td>獨立的橋接服務</td>
+</tr>
+<tr>
+<td><strong>協定</strong></td>
+<td>MCP（Model Context Protocol）</td>
+<td>ACP（Agent Client Protocol）</td>
+</tr>
+<tr>
+<td><strong>Session 模型</strong></td>
+<td>所有 thread 共享同一個 Claude session</td>
+<td>每個 thread 各自 spawn 獨立 CLI process</td>
+</tr>
+<tr>
+<td><strong>生命週期</strong></td>
+<td>綁 Claude Code session，session 結束 bot 就下線</td>
+<td>常駐服務，Docker &#x2F; K8s 長期運行</td>
+</tr>
+</tbody></table>
+<h3 id="使用體驗面"><a href="#使用體驗面" class="headerlink" title="使用體驗面"></a>使用體驗面</h3><table>
+<thead>
+<tr>
+<th>面向</th>
+<th>Discord Plugin</th>
+<th>Agent Broker</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>啟動</strong></td>
+<td><code>claude --channels plugin:discord@...</code>（每次手動）</td>
+<td><code>./agent-broker config.toml</code> 或 Helm 一次部署</td>
+</tr>
+<tr>
+<td><strong>換 AI 後端</strong></td>
+<td>只能是 Claude（綁死）</td>
+<td>改 config 就能換（Claude &#x2F; Codex &#x2F; Kiro）</td>
+</tr>
+<tr>
+<td><strong>Emoji 狀態</strong></td>
+<td>Claude 自己決定何時呼叫 <code>react</code> 工具</td>
+<td>硬編碼在 Rust 裡，自動切換</td>
+</tr>
+<tr>
+<td><strong>串流更新</strong></td>
+<td>Claude 自己決定何時 <code>edit_message</code></td>
+<td>內建 1.5s debounce 即時編輯</td>
+</tr>
+<tr>
+<td><strong>Stall detection</strong></td>
+<td>沒有，靠 prompt 規則</td>
+<td>內建（10s 🥱 → 30s 😱）</td>
+</tr>
+</tbody></table>
+<h3 id="怎麼選"><a href="#怎麼選" class="headerlink" title="怎麼選"></a>怎麼選</h3><p>Discord Plugin 適合<strong>個人遠端遙控</strong>——你主要在 terminal 操作 Claude Code，Discord 只是手機不在電腦旁邊時的備用遙控器。不想多維護一套服務、不需要 24&#x2F;7 在線、單人用的話，Plugin 綽綽有餘。</p>
+<p>Agent Broker 適合<strong>團隊共享場景</strong>——多人 Discord server 共用一個 AI bot、需要 always-on、想比較不同 AI CLI 的回應品質（A&#x2F;B test）、有 K8s 基礎設施。每個 thread 獨立 context 也避免了不同任務互相污染。</p>
+<p>兩者不互斥。你可以同時跑：Plugin 當個人通道，Agent Broker 當團隊服務。</p>
+<p>有個有意思的觀察：Agent Broker 把串流節奏、emoji 狀態、stall detection 這些行為硬編碼在 Rust 裡，而 Plugin 把決策權留給 Claude 自己。所以你其實可以把 Agent Broker 的 UX 巧思寫進 Claude 的 memory 規則，用 prompt 模擬硬編碼行為——某種意義上是用軟體設計填補 AI 的不確定性。</p>
+<h2 id="延伸思考"><a href="#延伸思考" class="headerlink" title="延伸思考"></a>延伸思考</h2><p>ACP 協定如果真的成為標準，Agent Broker 這類「協定橋接」的中間層會越來越多。Discord 只是第一站，Slack、Teams、LINE 都是潛在的前端。把 AI coding agent 從終端機搬到團隊日常溝通的地方，某種程度上是在降低 AI 的使用摩擦力——不用切換工具，不用學新介面，在你本來就待的地方就能用。</p>
+<blockquote>
+<p>相關連結：<a target="_blank" rel="noopener" href="https://github.com/thepagent/agent-broker">Agent Broker GitHub</a> | <a target="_blank" rel="noopener" href="https://github.com/anthropics/agent-protocol">Agent Client Protocol (ACP)</a> | <a target="_blank" rel="noopener" href="https://github.com/anthropics/claude-plugins-official">claude-plugins-official&#x2F;discord</a></p>
+</blockquote>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://mark22013333.github.io">Cheng®</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章連結: </span><span class="post-copyright-info"><a href="https://mark22013333.github.io/2026/04/04/Agent-Broker-%E7%94%A8-Discord-%E6%93%8D%E6%8E%A7-AI-Coding-Agent-%E7%9A%84-Rust-%E6%A9%8B%E6%8E%A5%E6%9C%8D%E5%8B%99/">https://mark22013333.github.io/2026/04/04/Agent-Broker-用-Discord-操控-AI-Coding-Agent-的-Rust-橋接服務/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版權聲明: </span><span class="post-copyright-info">本部落格所有文章除特別聲明外，均採用<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 授權協議。轉載請註明來源 <a href="https://mark22013333.github.io" target="_blank">Cheng's Tech & Life</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/AI-Agent/">AI Agent</a><a class="post-meta__tags" href="/tags/MCP/">MCP</a><a class="post-meta__tags" href="/tags/Claude-Code/">Claude Code</a><a class="post-meta__tags" href="/tags/Rust/">Rust</a></div><div class="post-share"><div class="social-share" data-image="/img/20260404-01.webp" data-sites="facebook,x"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><div class="post-reward"><div class="reward-badges"><a class="sponsor-glow-btn" href="https://www.buymeacoffee.com/mark22013333" target="_blank" rel="noopener noreferrer" title="Buy Me A Coffee"><img src="https://img.shields.io/badge/Buy_Me_A_Coffee-FFDD00?style=for-the-badge&amp;logo=buy-me-a-coffee&amp;logoColor=black" alt="Buy Me A Coffee"/></a><a class="sponsor-glow-btn" href="https://p.ecpay.com.tw/EFC3F8F" target="_blank" rel="noopener noreferrer" title="綠界贊助"><img src="https://img.shields.io/badge/☕_%E8%AB%8B%E6%88%91%E5%96%9D%E6%9D%AF%E5%92%96%E5%95%A1-Donate-11998e?style=for-the-badge&amp;logo=coffee&amp;logoColor=white" alt="綠界贊助"/></a><a class="sponsor-glow-btn" href="https://calendly.com/markcheng00806-intumit/15min" target="_blank" rel="noopener noreferrer" title="預約時間"><img src="https://img.shields.io/badge/📅_%E9%A0%90%E7%B4%84_15_%E5%88%86%E9%90%98-Book_Time-0072ff?style=for-the-badge" alt="預約時間"/></a><p class="reward-badges-note">你的鼓勵將被轉換為我明天繼續加班的動力（真的）。 ❤️</p></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2026/04/04/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260404/" title="AI 與科技新聞摘要 — 2026/04/04"><img class="cover" src="/img/20260404-02.webp" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">AI 與科技新聞摘要 — 2026/04/04</div></div><div class="info-2"><div class="info-item-1">Anthropic 今天直接砍掉 Claude 訂閱對第三方工具的支援、Google 放出 Apache 2.0 的 Gemma 4 開源模型打了一手好牌、微軟發報告說 AI 正在幫駭客加速整個攻擊鏈、RSAC 2026 的專家們開始討論「用 AI 打 AI」的 agentic defense，然後 Anthropic 順手把 API 的 max_tokens 上限拉到 300K。 Anthropic 砍掉 Claude 訂閱對 OpenClaw 等第三方工具的支援4 月 4 日中午 12 點（PT）開始，Claude Pro 和 Max 訂閱戶沒辦法再用現有額度跑 OpenClaw 這類第三方自動化工具了。OpenClaw 是目前最受歡迎的開源 AI agent 框架，很多人拿它做 email 管理、網頁瀏覽、智慧家庭自動化。 Claude Code 負責人 Boris Cherny 的說法是「訂閱方案本來就不是設計給這些第三方工具的使用模式」，系統負荷太大。以後要用 Claude 跑外部 agent，得改走 pay-as-you-go 或 API。Anthropic 給了一次...</div></div></div></a><a class="pagination-related" href="/2026/04/04/%E5%B7%A5%E7%A8%8B%E5%B8%AB%E7%A7%9F%E5%B1%8B%E7%94%9F%E5%AD%98%E6%8C%87%E5%8D%97-2026-%E5%8F%B0%E5%8C%97-vs-%E7%AB%B9%E5%8C%97-%E9%81%A0%E7%AB%AF%E5%B7%A5%E4%BD%9C%E6%94%B9%E8%AE%8A%E4%BA%86%E4%BB%80%E9%BA%BC/" title="工程師租屋生存指南 2026 - 台北 vs 竹北，遠端工作改變了什麼"><img class="cover" src="/img/20260404-03.webp" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">工程師租屋生存指南 2026 - 台北 vs 竹北，遠端工作改變了什麼</div></div><div class="info-2"><div class="info-item-1">大安區月租中位數 4.2 萬。這不是什麼豪宅的價格，是一間普通兩房的行情。如果你是剛入行的工程師，看到這個數字大概會開始思考人生選擇。 台北租屋現況：中山區最多、大安區最貴591 和各家租屋平台的數據攤開來看，中山區是全台北出租物件最多的行政區，五年累計租出超過 6 萬間，中山國小站附近就佔了 1.6 萬間。捷運方便、生活機能好、小坪數套房密度高，吸引了大量北漂族群。 大安區則穩坐最貴寶座。文山區相對親民，月租中位數約 2.8 萬，但通勤時間就得拿來換了。內湖因為科技業聚集有一批穩定的租屋需求，南港展覽館站附近這兩年新建案多，租屋選擇比以前豐富。 PTT 和 Dcard 租屋版上反覆出現的建議：先確定捷運站走路五分鐘內、有獨立洗衣機和曬衣空間、獨立衛浴、有電梯或三樓內。聽起來很基本，但在預算有限的情況下，這些條件經常是互斥的。 竹北的吸引力：不只是因為便宜竹科工程師的平均所得在全台名列前茅，竹北房市因此被推得有夠高。但租屋市場和買房市場不太一樣——竹北的租金跟台北比還是有明顯落差，同樣的預算能租到的空間差一倍。 更關鍵的是通勤。如果公司在竹科園區，住竹北開車十五分鐘到。住台北的話...</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相關推薦</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2026/04/09/OpenSoul-%E4%BB%A5%E5%A4%A7%E8%85%A6%E7%A5%9E%E7%B6%93%E7%B5%90%E6%A7%8B%E7%82%BA%E9%9D%88%E6%84%9F%E7%9A%84%E8%AA%8D%E7%9F%A5-AI-%E6%A1%86%E6%9E%B6/" title="OpenSoul - 以大腦神經結構為靈感的認知 AI 框架"><img class="cover" src="/img/20260409-01.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-04-09</div><div class="info-item-2">OpenSoul - 以大腦神經結構為靈感的認知 AI 框架</div></div><div class="info-2"><div class="info-item-1">每次開新的 ChatGPT 對話，它都不記得你昨天講了什麼。用 Claude Code 開新 session，前一輪的 debug 心得全部歸零。LLM 的記憶，基本上跟金魚差不多。 OpenSoul 試圖改變這件事。它在 LLM 之上疊了一層認知架構，靈感來自人腦的神經結構——海馬迴管情節記憶、新皮質管語意記憶、基底核管程序記憶，甚至還有多巴胺和血清素的虛擬版本來調控 AI 的「情緒」。聽起來很科幻？確實，但它的設計文件讀起來比大多數「AI 認知」專案都嚴謹得多。 三層記憶圖譜OpenSoul 把記憶存在 FalkorDB（基於 Redis 的圖資料庫）裡，分成三層： 情節記憶（Episodic Memory）對應海馬迴，記錄具體的對話片段。「你上次說你喜歡喝咖啡」——就是這一層在運作。 語意記憶（Semantic Memory）對應新皮質，儲存從對話中提煉出來的通用知識。「Python 是程式語言」這種事實性資訊住在這裡。 程序記憶（Procedural Memory）對應基底核，記住「這個使用者常犯的錯」之類的行為模式。 每次對話時，系統用 EcphoryRAG 做聯想檢索...</div></div></div></a><a class="pagination-related" href="/2026/04/06/Self-Evolving-Agents-%E8%AE%93-AI-Agent-%E8%87%AA%E5%B7%B1%E9%80%B2%E5%8C%96%E7%9A%84%E5%AE%8C%E6%95%B4%E6%8A%80%E8%A1%93%E5%9C%B0%E5%9C%96/" title="Self-Evolving Agents - 讓 AI Agent 自己進化的完整技術地圖"><img class="cover" src="/img/20260406-01.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-04-06</div><div class="info-item-2">Self-Evolving Agents - 讓 AI Agent 自己進化的完整技術地圖</div></div><div class="info-2"><div class="info-item-1">前陣子在看 University of Glasgow 的研究，發現一個有夠猛的方向：AI Agent 能夠自己進化，不用人類干預就越來越強。以前我們都以為模型 deploy 下去就固定了，沒想到還有這麼多角度可以自我優化。 Agent 自己進化，到底在進化什麼？Self-Evolving Agent 的核心概念其實很簡單：讓系統在運作過程中自動改善自己。但「改善」這個詞太寬泛了。這波操作跨越 4 個維度： 第一個維度是 LLM 本身的行為。透過 Reinforcement Learning 和 self-play 這類技巧，模型能從自己的嘗試裡學習。STaR（Self-Taught Reasoner）就是代表作，它讓模型從推理過程中的成功案例自動學習。Absolute Zero 是今年新出的，直接從零資料開始自我對弈，效果炸了。 第二個維度是 Prompt 優化。有人用進化演算法，有人用梯度下降，用 TextGrad 或 OPRO 這樣的框架，系統能自動調整提示詞。不用人類手工調整，程式自己試出更有效的 prompt。 第三個維度是記憶機制。A-MEM 和 Mem0 專注在怎麼...</div></div></div></a><a class="pagination-related" href="/2026/04/21/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260421/" title="AI 與科技新聞摘要 - 2026&#x2F;04&#x2F;21"><img class="cover" src="/img/20260421-02.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-04-21</div><div class="info-item-2">AI 與科技新聞摘要 - 2026&#x2F;04&#x2F;21</div></div><div class="info-2"><div class="info-item-1">一行指令，五個工具，同一個技能包。 4 月 16 日 GitHub 推出 gh skill 命令，讓 GitHub Copilot、Claude Code、Cursor、Codex、Gemini CLI 共用同一套技能安裝標準。這不是一個小更新。這是整個 AI coding 工具生態系第一次在「如何安裝技能」這件事上達成共識——而且是用 Claude Code 那邊流出去的 SKILL.md 格式當基礎。 把這件事和同一週的其他幾條新聞擺在一起看，你會看到一個還沒被廣泛討論的系統性趨勢：AI 工具市場正在跑一場「誰的基礎設施先成為業界標準」的賽局——不是誰的模型最強，是誰的規格先被其他人採用。先成為標準的那個，接下來的每一個新工具都得跟它相容。  Claude Code v2.1.116 — resume 快了 67%，MCP 工具結果可以不被截斷4 月 20 日釋出的 v2.1.116，有兩個更新值得注意。 第一個：/resume 在大型 session（40MB+）上快了 67%。這個改善針對的是長期使用者——session 積累愈久、dead-fork 愈多，之前 resu...</div></div></div></a><a class="pagination-related" href="/2026/03/23/DBHub-%E8%B3%87%E6%96%99%E5%BA%AB-MCP-Server-%E5%AE%89%E8%A3%9D%E8%88%87%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97/" title="DBHub — 讓 AI 直接查資料庫的 MCP Server 安裝與使用指南"><img class="cover" src="/img/20260324-02.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-03-23</div><div class="info-item-2">DBHub — 讓 AI 直接查資料庫的 MCP Server 安裝與使用指南</div></div><div class="info-2"><div class="info-item-1">寫 SQL、跑查詢、複製結果、貼給 AI、等回覆、發現少撈了一個欄位、再跑一次。這個迴圈跑過三輪以上的人，大概都會冒出同一個念頭：讓 AI 自己去查不就好了？ DBHub 就是幹這件事的。Bytebase 團隊開源的資料庫 MCP Server，裝上去之後 AI 直接透過 MCP 協定存取資料庫——查結構、跑 SQL 都行，你不用再當中間人搬運資料。 支援的資料庫MSSQL、MySQL、PostgreSQL、MariaDB、SQLite、Oracle，涵蓋範圍比預期廣。安裝走 npx 或 Docker 都行。 安裝方式專案級安裝連線資訊只在當前專案目錄下生效，不會跨專案污染。 MSSQL： 1claude mcp add dbhub --scope project -- npx @bytebase/dbhub --transport stdio --dsn &quot;sqlserver://user:password@host:port/database&quot;  MySQL： 1claude mcp add dbhub --scope project -- npx @by...</div></div></div></a><a class="pagination-related" href="/2026/03/28/gstack-%E7%94%A8-Claude-Code-%E6%89%93%E9%80%A0%E8%99%9B%E6%93%AC-20-%E4%BA%BA%E5%B7%A5%E7%A8%8B%E5%9C%98%E9%9A%8A/" title="gstack — 用 Claude Code 打造虛擬 20 人工程團隊"><img class="cover" src="/img/20260328-01.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-03-28</div><div class="info-item-2">gstack — 用 Claude Code 打造虛擬 20 人工程團隊</div></div><div class="info-2"><div class="info-item-1">一個人寫一萬行生產級程式碼，聽起來像在吹牛。但 Y Combinator CEO Garry Tan 把他的工作流打包成開源工具，名字叫 gstack，MIT 授權，30 秒裝完。  它到底是什麼gstack 把 Claude Code 變成一支虛擬工程團隊。不是那種「幫你補全一行 code」的等級——是從構想、規劃、實作、Code Review、QA、安全審計、部署到監控，整條 Sprint 流程都有對應的 Skill 角色。 技術棧是 TypeScript + Bun + Playwright。核心是一個持久化的 Chromium daemon，首次啟動約三秒，之後每個指令 100-200ms。不是每次冷開瀏覽器那種等到天荒地老的體驗。 GitHub 在這：github.com&#x2F;garrytan&#x2F;gstack  安裝：真的 30 秒12git clone --single-branch --depth 1 https://github.com/garrytan/gstack.git ~/.claude/skills/gstackcd ~/.claude/s...</div></div></div></a><a class="pagination-related" href="/2026/04/01/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260401/" title="AI 與科技新聞摘要 — 2026&#x2F;04&#x2F;01"><img class="cover" src="/img/20260401-02.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-04-01</div><div class="info-item-2">AI 與科技新聞摘要 — 2026&#x2F;04&#x2F;01</div></div><div class="info-2"><div class="info-item-1">512,000 行 TypeScript 原始碼，一個 .npmignore 沒設好就全部公開了。Anthropic 五天內第二次洩漏，這次是 Claude Code 的完整 codebase。同一週，MCP 的第一屆開發者峰會在紐約登場，Linux Foundation 正式成立 Agentic AI Foundation。Citrix 爆了一個 CVSS 9.3 的漏洞，NVIDIA 在 GTC 發布了 Rubin 世代的六款新晶片。  1. Claude Code 原始碼洩漏 — 59.8MB 的 source map 讓 1,900 個檔案全部曝光3 月 31 日凌晨，Anthropic 推送 @anthropic-ai/claude-code v2.1.88 到 npm 時，包裹裡多了一個不該存在的東西：一個 59.8MB 的 JavaScript source map 檔案。這個 .map 能完整還原壓縮前的原始碼——512,000 行 TypeScript，橫跨 1,900 個檔案。 研究者 Chaofan Shou 在凌晨 4:23 把下載連結貼到 X 上，16 ...</div></div></div></a></div></div><hr class="custom-hr"/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 評論</span></div></div><div class="comment-wrap"><div><div id="giscus-wrap"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="https://lh3.googleusercontent.com/pw/ABLVV87_po8nBc6F_tXcoYDmtzMGWxHuhhrbguYILCjmjWKLOS8DTpubm0YoQLKgjyjRIZyV5TjYe7XVEz_YU4squfr37GTZqPZP1hlMVZ_MIgXpTxWu73M=w1200" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">Cheng®</div><div class="author-info-description">Backend Developer / 技術筆記 & AI 新聞分享</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">161</div></a><a href="/tags/"><div class="headline">標籤</div><div class="length-num">142</div></a><a href="/categories/"><div class="headline">分類</div><div class="length-num">12</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/mark22013333"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons"><a class="social-icon" href="https://github.com/mark22013333" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:mark22013333@gmail.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a></div><div class="card-info-sponsor"><a class="sponsor-glow-btn" href="https://www.buymeacoffee.com/mark22013333" target="_blank" rel="noopener noreferrer" title="Buy Me A Coffee"><img src="https://img.shields.io/badge/Buy_Me_A_Coffee-FFDD00?style=for-the-badge&amp;logo=buy-me-a-coffee&amp;logoColor=black" alt="Buy Me A Coffee"/></a><a class="sponsor-glow-btn" href="https://p.ecpay.com.tw/EFC3F8F" target="_blank" rel="noopener noreferrer" title="綠界贊助"><img src="https://img.shields.io/badge/☕_%E8%AB%8B%E6%88%91%E5%96%9D%E6%9D%AF%E5%92%96%E5%95%A1-Donate-11998e?style=for-the-badge&amp;logo=coffee&amp;logoColor=white" alt="綠界贊助"/></a><a class="sponsor-glow-btn" href="https://calendly.com/markcheng00806-intumit/15min" target="_blank" rel="noopener noreferrer" title="預約時間"><img src="https://img.shields.io/badge/📅_%E9%A0%90%E7%B4%84_15_%E5%88%86%E9%90%98-Book_Time-0072ff?style=for-the-badge" alt="預約時間"/></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">這裡記錄我在後端開發路上踩過的坑、學到的東西，也會分享每日 AI 與科技新聞觀點。歡迎一起交流！</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目錄</span><span class="toc-percentage"></span></div><div class="toc-content is-expand"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%80%99%E6%9D%B1%E8%A5%BF%E8%A7%A3%E6%B1%BA%E4%BB%80%E9%BA%BC%E5%95%8F%E9%A1%8C"><span class="toc-number">1.</span> <span class="toc-text">這東西解決什麼問題</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%A3%9D%E8%B5%B7%E4%BE%86%E8%B7%91"><span class="toc-number">2.</span> <span class="toc-text">裝起來跑</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B9%BE%E5%80%8B%E6%9C%89%E6%84%8F%E6%80%9D%E7%9A%84%E8%A8%AD%E8%A8%88"><span class="toc-number">3.</span> <span class="toc-text">幾個有意思的設計</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%81%A9%E5%90%88%E4%BB%80%E9%BA%BC%E5%A0%B4%E6%99%AF"><span class="toc-number">4.</span> <span class="toc-text">適合什麼場景</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%A6%81%E6%B3%A8%E6%84%8F%E7%9A%84%E5%9D%91"><span class="toc-number">5.</span> <span class="toc-text">要注意的坑</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%B7%9F-Claude-Code-%E5%AE%98%E6%96%B9-Discord-Plugin-%E6%AF%94%E4%B8%80%E4%B8%8B"><span class="toc-number">6.</span> <span class="toc-text">跟 Claude Code 官方 Discord Plugin 比一下</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9E%B6%E6%A7%8B%E9%9D%A2"><span class="toc-number">6.1.</span> <span class="toc-text">架構面</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8%E9%AB%94%E9%A9%97%E9%9D%A2"><span class="toc-number">6.2.</span> <span class="toc-text">使用體驗面</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%80%8E%E9%BA%BC%E9%81%B8"><span class="toc-number">6.3.</span> <span class="toc-text">怎麼選</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%BB%B6%E4%BC%B8%E6%80%9D%E8%80%83"><span class="toc-number">7.</span> <span class="toc-text">延伸思考</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2026/04/23/Claude-Code-Ultraplan-%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8-%E6%8A%8A%E8%A6%8F%E5%8A%83%E4%BA%A4%E7%B5%A6%E9%9B%B2%E7%AB%AF/" title="Claude Code Ultraplan 完整教學 — 把規劃交給雲端，讓 Claude 替你想 30 分鐘"><img src="/img/20260423-03.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Claude Code Ultraplan 完整教學 — 把規劃交給雲端，讓 Claude 替你想 30 分鐘"/></a><div class="content"><a class="title" href="/2026/04/23/Claude-Code-Ultraplan-%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8-%E6%8A%8A%E8%A6%8F%E5%8A%83%E4%BA%A4%E7%B5%A6%E9%9B%B2%E7%AB%AF/" title="Claude Code Ultraplan 完整教學 — 把規劃交給雲端，讓 Claude 替你想 30 分鐘">Claude Code Ultraplan 完整教學 — 把規劃交給雲端，讓 Claude 替你想 30 分鐘</a><time datetime="2026-04-23T09:00:00.000Z" title="發表於 2026-04-23 09:00:00">2026-04-23</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/04/23/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260423/" title="AI 與科技新聞摘要 - 2026/04/23"><img src="/img/20260423-02.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="AI 與科技新聞摘要 - 2026/04/23"/></a><div class="content"><a class="title" href="/2026/04/23/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260423/" title="AI 與科技新聞摘要 - 2026/04/23">AI 與科技新聞摘要 - 2026/04/23</a><time datetime="2026-04-23T08:30:00.000Z" title="發表於 2026-04-23 08:30:00">2026-04-23</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/04/23/Agent-Skills-%E7%B5%A6-AI-%E7%B7%A8%E7%A2%BC%E5%8A%A9%E6%89%8B%E7%9A%84%E5%B7%A5%E7%A8%8B%E7%B4%80%E5%BE%8B%E6%8C%87%E4%BB%A4%E9%9B%86/" title="Agent Skills — 給 AI 編碼助手的工程紀律指令集"><img src="/img/20260423-01.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Agent Skills — 給 AI 編碼助手的工程紀律指令集"/></a><div class="content"><a class="title" href="/2026/04/23/Agent-Skills-%E7%B5%A6-AI-%E7%B7%A8%E7%A2%BC%E5%8A%A9%E6%89%8B%E7%9A%84%E5%B7%A5%E7%A8%8B%E7%B4%80%E5%BE%8B%E6%8C%87%E4%BB%A4%E9%9B%86/" title="Agent Skills — 給 AI 編碼助手的工程紀律指令集">Agent Skills — 給 AI 編碼助手的工程紀律指令集</a><time datetime="2026-04-23T08:00:00.000Z" title="發表於 2026-04-23 08:00:00">2026-04-23</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/04/22/GitHub-Copilot-%E5%81%9C%E6%AD%A2%E6%96%B0%E7%94%A8%E6%88%B6%E8%A8%BB%E5%86%8A%E5%BE%8C%E5%B7%A5%E7%A8%8B%E5%B8%AB%E6%80%8E%E9%BA%BC%E5%B9%B3%E7%A7%BB%E5%88%B0-Claude-Code/" title="GitHub Copilot 停止新用戶註冊後，工程師怎麼平移到 Claude Code"><img src="/img/20260422-03.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="GitHub Copilot 停止新用戶註冊後，工程師怎麼平移到 Claude Code"/></a><div class="content"><a class="title" href="/2026/04/22/GitHub-Copilot-%E5%81%9C%E6%AD%A2%E6%96%B0%E7%94%A8%E6%88%B6%E8%A8%BB%E5%86%8A%E5%BE%8C%E5%B7%A5%E7%A8%8B%E5%B8%AB%E6%80%8E%E9%BA%BC%E5%B9%B3%E7%A7%BB%E5%88%B0-Claude-Code/" title="GitHub Copilot 停止新用戶註冊後，工程師怎麼平移到 Claude Code">GitHub Copilot 停止新用戶註冊後，工程師怎麼平移到 Claude Code</a><time datetime="2026-04-22T09:00:00.000Z" title="發表於 2026-04-22 09:00:00">2026-04-22</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/04/22/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260422/" title="AI 與科技新聞摘要 - 2026/04/22"><img src="/img/20260422-02.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="AI 與科技新聞摘要 - 2026/04/22"/></a><div class="content"><a class="title" href="/2026/04/22/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260422/" title="AI 與科技新聞摘要 - 2026/04/22">AI 與科技新聞摘要 - 2026/04/22</a><time datetime="2026-04-22T08:30:00.000Z" title="發表於 2026-04-22 08:30:00">2026-04-22</time></div></div></div></div></div></div></main><footer id="footer" style="background-image: url(/img/20260404-01.webp);"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2024 - 2026 By Cheng®</span></div><div class="footer_custom_text">Written by Cheng® — 自律，從當下的一念開始。</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="閱讀模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日夜模式切換"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="單欄和雙欄切換"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="設定"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目錄"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="前往評論"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到頂端"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.umd.min.js"></script><script src="https://cdn.jsdelivr.net/npm/instant.page/instantpage.min.js" type="module"></script><script src="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.js"></script><div class="js-pjax"><script>(() => {
+  const isShuoshuo = GLOBAL_CONFIG_SITE.pageType === 'shuoshuo'
+  const option = {"mapping":"pathname","strict":0,"reactionsEnabled":1,"emitMetadata":0,"inputPosition":"bottom","lang":"zh-TW"}
+
+  const getGiscusTheme = theme => theme === 'dark' ? 'dark' : 'light'
+
+  const createScriptElement = config => {
+    const ele = document.createElement('script')
+    Object.entries(config).forEach(([key, value]) => {
+      ele.setAttribute(key, value)
+    })
+    return ele
+  }
+
+  const loadGiscus = (el = document, key) => {
+    const mappingConfig = isShuoshuo
+      ? { 'data-mapping': 'specific', 'data-term': key }
+      : { 'data-mapping': (option && option['data-mapping']) || 'pathname' }
+
+    const giscusConfig = {
+      src: 'https://giscus.app/client.js',
+      'data-repo': 'mark22013333/mark22013333.github.io',
+      'data-repo-id': 'R_kgDOLAxa6A',
+      'data-category-id': 'DIC_kwDOLAxa6M4C5eO9',
+      'data-theme': getGiscusTheme(document.documentElement.getAttribute('data-theme')),
+      'data-reactions-enabled': '1',
+      crossorigin: 'anonymous',
+      async: true,
+      ...option,
+      ...mappingConfig
+    }
+
+    const scriptElement = createScriptElement(giscusConfig)
+
+    el.querySelector('#giscus-wrap').appendChild(scriptElement)
+
+    if (isShuoshuo) {
+      window.shuoshuoComment.destroyGiscus = () => {
+        if (el.children.length) {
+          el.innerHTML = ''
+          el.classList.add('no-comment')
+        }
+      }
+    }
+  }
+
+  const changeGiscusTheme = theme => {
+    const iframe = document.querySelector('#giscus-wrap iframe')
+    if (iframe) {
+      const message = {
+        giscus: {
+          setConfig: {
+            theme: getGiscusTheme(theme)
+          }
+        }
+      }
+      iframe.contentWindow.postMessage(message, 'https://giscus.app')
+    }
+  }
+
+  btf.addGlobalFn('themeChange', changeGiscusTheme, 'giscus')
+
+  if (isShuoshuo) {
+    'Giscus' === 'Giscus'
+      ? window.shuoshuoComment = { loadComment: loadGiscus }
+      : window.loadOtherComment = loadGiscus
+    return
+  }
+
+  if ('Giscus' === 'Giscus' || !true) {
+    if (true) btf.loadComment(document.getElementById('giscus-wrap'), loadGiscus)
+    else loadGiscus()
+  } else {
+    window.loadOtherComment = loadGiscus
+  }
+})()</script></div><script src="/js/kkbox-player.js"></script><script src="/js/archives-pagination.js"></script><script src="/js/font-resize.js"></script><script src="/js/dark-palette.js"></script><script defer="defer" id="fluttering_ribbon" mobile="false" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/canvas-fluttering-ribbon.min.js"></script><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/activate-power-mode.min.js"></script><script>POWERMODE.colorful = true;
+POWERMODE.shake = true;
+POWERMODE.mobile = true;
+document.body.addEventListener('input', POWERMODE);
+</script><script src="https://cdn.jsdelivr.net/npm/pjax/pjax.min.js" defer="defer"></script><script>document.addEventListener('DOMContentLoaded', () => {
+  const pjaxSelectors = ["meta[property=\"og:image\"]","meta[property=\"og:title\"]","meta[property=\"og:url\"]","meta[property=\"og:description\"]","link[rel=\"canonical\"]","head > title","#config-diff","#body-wrap","#rightside-config-hide","#rightside-config-show",".js-pjax"]
+
+  window.pjax = new Pjax({
+    elements: 'a:not([target="_blank"])',
+    selectors: pjaxSelectors,
+    cacheBust: false,
+    analytics: true,
+    scrollRestoration: false
+  })
+
+  const triggerPjaxFn = (val) => {
+    if (!val) return
+    Object.values(val).forEach(fn => {
+      try {
+        fn()
+      } catch (err) {
+        console.debug('Pjax callback failed:', err)
+      }
+    })
+  }
+
+  document.addEventListener('pjax:send', () => {
+    // removeEventListener
+    btf.removeGlobalFnEvent('pjaxSendOnce')
+    btf.removeGlobalFnEvent('themeChange')
+
+    // reset readmode
+    const $bodyClassList = document.body.classList
+    if ($bodyClassList.contains('read-mode')) $bodyClassList.remove('read-mode')
+
+    triggerPjaxFn(window.globalFn.pjaxSend)
+  })
+
+  document.addEventListener('pjax:complete', () => {
+    btf.removeGlobalFnEvent('pjaxCompleteOnce')
+    document.querySelectorAll('script[data-pjax]').forEach(item => {
+      const newScript = document.createElement('script')
+      const content = item.text || item.textContent || item.innerHTML || ""
+      Array.from(item.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value))
+      newScript.appendChild(document.createTextNode(content))
+      item.parentNode.replaceChild(newScript, item)
+    })
+
+    triggerPjaxFn(window.globalFn.pjaxComplete)
+  })
+
+  document.addEventListener('pjax:error', e => {
+    if (e.request.status === 404) {
+      true
+        ? pjax.loadUrl('/404.html')
+        : window.location.href = e.request.responseURL
+    }
+  })
+})</script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜尋</span><i class="fas fa-spinner fa-pulse" id="loading-status" hidden="hidden"></i><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="text-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  資料載入中</span></div><div class="local-search-input"><input placeholder="搜尋文章" type="text"/></div><hr/><div id="local-search-results"></div><div class="ais-Pagination" id="local-search-pagination" style="display:none;"><ul class="ais-Pagination-list"></ul></div><div id="local-search-stats"></div></div><div id="search-mask"></div><script src="/js/search/local-search.js"></script></div></div></body></html>

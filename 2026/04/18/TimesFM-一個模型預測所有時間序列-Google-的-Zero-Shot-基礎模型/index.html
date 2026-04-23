@@ -1,0 +1,425 @@
+<!DOCTYPE html><html lang="zh-TW" data-theme="dark"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>TimesFM — 一個模型預測所有時間序列，Google 的 Zero-Shot 基礎模型 | Cheng's Tech &amp; Life</title><meta name="author" content="Cheng®"><meta name="copyright" content="Cheng®"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#0d0d0d"><meta name="description" content="你手上有 500 條商品的銷量歷史要預測未來三個月。傳統機器學習的做法是訓練 500 個模型。Google 的 TimesFM 把這個數字直接改成 1——一個預訓練模型，不管你手上是銷量、氣溫、伺服器流量還是股價，丟進去就能出預測。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="TimesFM — 一個模型預測所有時間序列，Google 的 Zero-Shot 基礎模型">
+<meta property="og:url" content="https://mark22013333.github.io/2026/04/18/TimesFM-%E4%B8%80%E5%80%8B%E6%A8%A1%E5%9E%8B%E9%A0%90%E6%B8%AC%E6%89%80%E6%9C%89%E6%99%82%E9%96%93%E5%BA%8F%E5%88%97-Google-%E7%9A%84-Zero-Shot-%E5%9F%BA%E7%A4%8E%E6%A8%A1%E5%9E%8B/index.html">
+<meta property="og:site_name" content="Cheng&#39;s Tech &amp; Life">
+<meta property="og:description" content="你手上有 500 條商品的銷量歷史要預測未來三個月。傳統機器學習的做法是訓練 500 個模型。Google 的 TimesFM 把這個數字直接改成 1——一個預訓練模型，不管你手上是銷量、氣溫、伺服器流量還是股價，丟進去就能出預測。">
+<meta property="og:locale" content="zh_TW">
+<meta property="og:image" content="https://mark22013333.github.io/img/20260418-timesfm.webp">
+<meta property="article:published_time" content="2026-04-18T13:00:00.000Z">
+<meta property="article:modified_time" content="2026-04-18T14:12:18.819Z">
+<meta property="article:author" content="Cheng®">
+<meta property="article:tag" content="Google">
+<meta property="article:tag" content="TimesFM">
+<meta property="article:tag" content="時間序列">
+<meta property="article:tag" content="基礎模型">
+<meta property="article:tag" content="ML">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://mark22013333.github.io/img/20260418-timesfm.webp"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "TimesFM — 一個模型預測所有時間序列，Google 的 Zero-Shot 基礎模型",
+  "url": "https://mark22013333.github.io/2026/04/18/TimesFM-%E4%B8%80%E5%80%8B%E6%A8%A1%E5%9E%8B%E9%A0%90%E6%B8%AC%E6%89%80%E6%9C%89%E6%99%82%E9%96%93%E5%BA%8F%E5%88%97-Google-%E7%9A%84-Zero-Shot-%E5%9F%BA%E7%A4%8E%E6%A8%A1%E5%9E%8B/",
+  "image": "https://mark22013333.github.io/img/20260418-timesfm.webp",
+  "datePublished": "2026-04-18T13:00:00.000Z",
+  "dateModified": "2026-04-18T14:12:18.819Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "Cheng®",
+      "url": "https://mark22013333.github.io"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://mark22013333.github.io/2026/04/18/TimesFM-%E4%B8%80%E5%80%8B%E6%A8%A1%E5%9E%8B%E9%A0%90%E6%B8%AC%E6%89%80%E6%9C%89%E6%99%82%E9%96%93%E5%BA%8F%E5%88%97-Google-%E7%9A%84-Zero-Shot-%E5%9F%BA%E7%A4%8E%E6%A8%A1%E5%9E%8B/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//www.google-analytics.com" crossorigin=""/><link rel="preconnect" href="//fonts.googleapis.com" crossorigin=""/><link rel="preconnect" href="//busuanzi.ibruce.info"/><meta name="google-site-verification" content="6ywUr8k2n_CT1PFYJzlSvI3CZ-JmJ55RYbA39VrFBDs"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!true && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          const hour = new Date().getHours()
+          const isNight = hour <= 9 || hour >= 18
+          if (theme === undefined) isNight ? activateDarkMode() : activateLightMode()
+          else theme === 'light' ? activateLightMode() : activateDarkMode()
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script async="async" src="https://www.googletagmanager.com/gtag/js?id=G-JBV14NRDH3"></script><script>window.dataLayer = window.dataLayer || []
+function gtag(){dataLayer.push(arguments)}
+gtag('js', new Date())
+gtag('config', 'G-JBV14NRDH3')
+btf.addGlobalFn('pjaxComplete', () => {
+  gtag('config', 'G-JBV14NRDH3', {'page_path': window.location.pathname})
+}, 'google_analytics')
+</script><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Titillium+Web&amp;display=swap" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"pagination":{"enable":false,"hitsPerPage":8},"languages":{"hits_empty":"找不到符合您查詢的內容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '複製成功',
+    error: '複製失敗',
+    noSupport: '瀏覽器不支援'
+  },
+  relativeDate: {
+    homepage: false,
+    post: true
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '剛剛',
+    min: '分鐘前',
+    hour: '小時前',
+    day: '天前',
+    month: '個月前'
+  },
+  copyright: {"limitCount":1,"languages":{"author":"作者: Cheng®","link":"連結: ","source":"來源: Cheng's Tech & Life","info":"著作權歸作者所有。如需商業轉載，請聯絡作者獲得授權，非商業轉載請註明出處😁。"}},
+  lightbox: 'fancybox',
+  Snackbar: {"chs_to_cht":"已切換為繁體中文","cht_to_chs":"已切換為簡體中文","day_to_night":"已切換為深色模式","night_to_day":"已切換為淺色模式","bgLight":"#49b1f5","bgDark":"#1f1f1f","position":"top-center"},
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid/dist/infinitegrid.min.js',
+    buttonText: '載入更多'
+  },
+  isPhotoFigcaption: true,
+  islazyloadPlugin: false,
+  isAnchor: true,
+  percent: {
+    toc: true,
+    rightside: true,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'TimesFM — 一個模型預測所有時間序列，Google 的 Zero-Shot 基礎模型',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><link rel="stylesheet" href="/css/kkbox-player.css"><link rel="stylesheet" href="/css/tag-cloud-fancy.css"><link rel="stylesheet" href="/css/font-resize.css"><link rel="stylesheet" href="/css/dark-palette.css"><link rel="stylesheet" href="/css/loading-override.css"><link rel="alternate" href="/atom.xml" title="Cheng's Tech & Life" type="application/atom+xml">
+</head><body><div id="loading-box"><div class="loading-glass-overlay"></div><div class="loading-indicator"><div class="loading-dot"></div><div class="loading-dot"></div><div class="loading-dot"></div></div></div><script>(()=>{
+  const $loadingBox = document.getElementById('loading-box')
+  const $body = document.body
+  const preloader = {
+    endLoading: () => {
+      if ($loadingBox.classList.contains('loaded')) return
+      $body.style.overflow = ''
+      $loadingBox.classList.add('loaded')
+    },
+    initLoading: () => {
+      $body.style.overflow = 'hidden'
+      $loadingBox.classList.remove('loaded')
+    }
+  }
+
+  preloader.initLoading()
+
+  if (document.readyState === 'complete') {
+    preloader.endLoading()
+  } else {
+    window.addEventListener('load', preloader.endLoading)
+    document.addEventListener('DOMContentLoaded', preloader.endLoading)
+    setTimeout(preloader.endLoading, 7000)
+  }
+
+  if (true) {
+    btf.addGlobalFn('pjaxSend', preloader.initLoading, 'preloader_init')
+    btf.addGlobalFn('pjaxComplete', preloader.endLoading, 'preloader_end')
+  }
+})()</script><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="https://lh3.googleusercontent.com/pw/ABLVV87_po8nBc6F_tXcoYDmtzMGWxHuhhrbguYILCjmjWKLOS8DTpubm0YoQLKgjyjRIZyV5TjYe7XVEz_YU4squfr37GTZqPZP1hlMVZ_MIgXpTxWu73M=w1200" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">161</div></a><a href="/tags/"><div class="headline">標籤</div><div class="length-num">142</div></a><a href="/categories/"><div class="headline">分類</div><div class="length-num">12</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首頁-Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 時間軸-archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 標籤-tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分類-Categories</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-list"></i><span> 其他列表</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音樂-Music</span></a></li><li><a class="site-page child" href="/gallery/"><i class="fa-fw fas fa-images"></i><span> 畫館-Gallery</span></a></li></ul></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg fixed" id="page-header" style="background-image: url(/img/20260418-timesfm.webp);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><img class="site-icon" src="https://lh3.googleusercontent.com/pw/ABLVV87_po8nBc6F_tXcoYDmtzMGWxHuhhrbguYILCjmjWKLOS8DTpubm0YoQLKgjyjRIZyV5TjYe7XVEz_YU4squfr37GTZqPZP1hlMVZ_MIgXpTxWu73M=w1200" alt="Logo"><span class="site-name">Cheng's Tech &amp; Life</span></a><a class="nav-page-title" href="/"><span class="site-name">TimesFM — 一個模型預測所有時間序列，Google 的 Zero-Shot 基礎模型</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首頁</span></span></a></span><div id="menus"><div id="search-button" title="Ctrl+K / Cmd+K"><span class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜尋</span></span></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首頁-Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 時間軸-archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 標籤-tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分類-Categories</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-list"></i><span> 其他列表</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音樂-Music</span></a></li><li><a class="site-page child" href="/gallery/"><i class="fa-fw fas fa-images"></i><span> 畫館-Gallery</span></a></li></ul></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">TimesFM — 一個模型預測所有時間序列，Google 的 Zero-Shot 基礎模型</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">發表於</span><time class="post-meta-date-created" datetime="2026-04-18T13:00:00.000Z" title="發表於 2026-04-18 13:00:00">2026-04-18</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新於</span><time class="post-meta-date-updated" datetime="2026-04-18T14:12:18.819Z" title="更新於 2026-04-18 14:12:18">2026-04-18</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/AI-ML/">AI / ML</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">總字數:</span><span class="word-count">2.3k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">閱讀時間:</span><span>7分鐘</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">瀏覽量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><p>你手上有 500 條商品的銷量歷史要預測未來三個月。依照傳統機器學習的思路，你得訓練 500 個模型——每個商品一個。資料清理 500 次、調參 500 次、上線部署 500 次。</p>
+<p>Google Research 的 TimesFM 把這個數字劃掉，改寫成一個。</p>
+<p>不管你有幾條時間序列，一個預訓練模型打遍天下。2024 年在 ICML 發表，論文出來一年多 GitHub 破了 12,000 顆星，Apache 2.0 授權。名字叫 <strong>Time Series Foundation Model</strong>——時間序列界的 GPT。</p>
+<h2 id="為什麼「預訓練-zero-shot」在時間序列能成立"><a href="#為什麼「預訓練-zero-shot」在時間序列能成立" class="headerlink" title="為什麼「預訓練 + zero-shot」在時間序列能成立"></a>為什麼「預訓練 + zero-shot」在時間序列能成立</h2><p>聽起來有點不合理。商品銷量的波動跟伺服器流量的波動看起來完全不一樣，怎麼可能一個模型通吃？</p>
+<p>這也是論文出來時最被質疑的地方。但答案其實在「層級」這件事上。你看的是表面資料的不同，模型學到的是更底層的東西——<strong>上升、下降、週期、震盪、突變</strong>這些模式原型，跨領域都長一樣。把時間序列看成一種語言，那商品、氣溫、流量只是不同的「方言」，通用文法是共通的。</p>
+<p>GPT 就是這個邏輯的先例。GPT 不是為每個問題重新訓練，它是在海量語料上學會「語言長什麼樣子」，然後面對新問題時套通用規律推答案。TimesFM 把同一招搬到時間序列——在大量序列資料上預訓練完，看到新資料直接推未來，中間不用你動任何 fine-tuning 的手。</p>
+<h2 id="架構：GPT-同源，細節不同"><a href="#架構：GPT-同源，細節不同" class="headerlink" title="架構：GPT 同源，細節不同"></a>架構：GPT 同源，細節不同</h2><p>TimesFM 是 <strong>Decoder-only Transformer</strong>，核心跟 GPT 一樣。但為了吃時間序列的資料，改了幾個地方。</p>
+<p><strong>Patch-based 輸入</strong>。它不像 LSTM 一個時間點一個時間點吃，而是把時間序列切成長度 32 的 patch，一段一段餵。這招是從 Vision Transformer 學來的——ViT 把圖片切成 16×16 的小方塊，TimesFM 把序列切成 32 格的小段落。理由一樣：壓縮輸入長度、加快訓練。</p>
+<p><strong>Rotary Position Embeddings（RoPE）</strong>。處理序列位置資訊用。原版 Transformer 用絕對位置編碼，RoPE 的好處是能處理比訓練時更長的序列——這件事很重要，後面會看到為什麼。</p>
+<p><strong>RMS Normalization + Swish 激活函數</strong>。這兩個是訓練穩定性的標配。不用太放心上，知道就好。</p>
+<h2 id="版本演進：參數更少，效能更好"><a href="#版本演進：參數更少，效能更好" class="headerlink" title="版本演進：參數更少，效能更好"></a>版本演進：參數更少，效能更好</h2><p>TimesFM 已經出到 v2.5，三代下來有個很反直覺的現象。</p>
+<table>
+<thead>
+<tr>
+<th>版本</th>
+<th>參數量</th>
+<th>Context 長度</th>
+<th>亮點</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1.0</td>
+<td>200M</td>
+<td>512</td>
+<td>初版，只有點預測</td>
+</tr>
+<tr>
+<td>2.0</td>
+<td>500M</td>
+<td>2,048</td>
+<td>效能提升 25%</td>
+</tr>
+<tr>
+<td><strong>2.5（最新）</strong></td>
+<td><strong>200M</strong></td>
+<td><strong>16,384</strong></td>
+<td>更輕、context 擴 8 倍、連續分位數</td>
+</tr>
+</tbody></table>
+<p>看出哪裡怪了嗎？v2.5 的參數量反而比 v2.0 少了一半多，但效能更好、context 還拉到 16K。</p>
+<p>這在 LLM 圈會被叫做「模型效率的第二曲線」——當你發現規模不是萬能解，開始回頭搞架構優化和資料品質。GPT-3 到 GPT-4 是堆規模，再往後很多改進靠的是架構細節、資料選擇、訓練技巧。TimesFM 2.5 就走了這條路。Context 從 2K 拉到 16K 意味著：<strong>你可以餵進更長的歷史</strong>——兩年每日資料 730 個點，現在綽綽有餘。</p>
+<h2 id="用起來長這樣"><a href="#用起來長這樣" class="headerlink" title="用起來長這樣"></a>用起來長這樣</h2><p>裝起來一般流程：clone repo、建虛擬環境、選 PyTorch 或 JAX&#x2F;Flax backend。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">git <span class="built_in">clone</span> https://github.com/google-research/timesfm.git</span><br><span class="line"><span class="built_in">cd</span> timesfm</span><br><span class="line">uv venv &amp;&amp; <span class="built_in">source</span> .venv/bin/activate</span><br><span class="line">uv pip install -e .[torch]     <span class="comment"># 或 .[flax]</span></span><br></pre></td></tr></table></figure>
+
+<p>然後一段範例就跑起來：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">import</span> timesfm</span><br><span class="line"></span><br><span class="line">torch.set_float32_matmul_precision(<span class="string">&quot;high&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 從 HuggingFace 載入預訓練模型</span></span><br><span class="line">model = timesfm.TimesFM_2p5_200M_torch.from_pretrained(</span><br><span class="line">    <span class="string">&quot;google/timesfm-2.5-200m-pytorch&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 編譯預測配置</span></span><br><span class="line">model.<span class="built_in">compile</span>(</span><br><span class="line">    timesfm.ForecastConfig(</span><br><span class="line">        max_context=<span class="number">1024</span>,                    <span class="comment"># 最多吃多長歷史</span></span><br><span class="line">        max_horizon=<span class="number">256</span>,                     <span class="comment"># 最多預測多遠</span></span><br><span class="line">        normalize_inputs=<span class="literal">True</span>,               <span class="comment"># 自動正規化</span></span><br><span class="line">        use_continuous_quantile_head=<span class="literal">True</span>,   <span class="comment"># 啟用分位數預測</span></span><br><span class="line">        force_flip_invariance=<span class="literal">True</span>,</span><br><span class="line">    )</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 丟兩條序列進去，各預測未來 12 步</span></span><br><span class="line">point_forecast, quantile_forecast = model.forecast(</span><br><span class="line">    horizon=<span class="number">12</span>,</span><br><span class="line">    inputs=[</span><br><span class="line">        np.linspace(<span class="number">0</span>, <span class="number">1</span>, <span class="number">100</span>),              <span class="comment"># 第一條：線性上升</span></span><br><span class="line">        np.sin(np.linspace(<span class="number">0</span>, <span class="number">20</span>, <span class="number">67</span>)),      <span class="comment"># 第二條：正弦波</span></span><br><span class="line">    ],</span><br><span class="line">)</span><br><span class="line"><span class="comment"># point_forecast.shape    → (2, 12)      兩條序列各 12 步預測</span></span><br><span class="line"><span class="comment"># quantile_forecast.shape → (2, 12, 10)  含 9 個分位數的不確定性</span></span><br></pre></td></tr></table></figure>
+
+<p>注意三件事。</p>
+<p><strong>第一，沒有訓練這件事</strong>。整段 code 找不到 <code>model.fit()</code> 或 <code>loss.backward()</code>。載入、配置、預測——結束。</p>
+<p><strong>第二，<code>max_context</code> 跟 <code>max_horizon</code> 有對齊限制</strong>。分別要是 32 跟 128 的倍數。違反會直接炸。</p>
+<p><strong>第三，<code>use_continuous_quantile_head=True</code> 打開了這篇後面要講的重點功能</strong>。沒有這一行你只會拿到點預測。</p>
+<h2 id="分位數預測：不告訴你答案是多少，告訴你範圍"><a href="#分位數預測：不告訴你答案是多少，告訴你範圍" class="headerlink" title="分位數預測：不告訴你答案是多少，告訴你範圍"></a>分位數預測：不告訴你答案是多少，告訴你範圍</h2><p>傳統模型跟你說「下週銷量會是 100」。TimesFM 跟你說「中位數是 100，但 80% 機率落在 60 到 140 之間」。</p>
+<p>後者多了一個東西：<strong>不確定性的範圍</strong>。這不是花俏的裝飾，是真正值錢的資訊。</p>
+<p>想像你在做庫存決策。模型說「預測銷量 100」，你備 100 貨。結果實際 140——缺貨了。你備 120 好了？結果實際 60——積壓。問題不在模型預測得準不準，問題在<strong>你沒有風險預算</strong>。</p>
+<p>分位數預測把這件事變可操作。看到 80% 信心區間是 60-140，你就知道：如果要確保不缺貨（保守做法），備到 140（90th 分位數）；如果要壓庫存成本，備到中位數 100 然後接受可能缺貨。<strong>決策從猜答案變成選立場</strong>。</p>
+<p>同樣的邏輯搬到異常偵測。實際值超出 10th-90th 分位數範圍，就觸發告警——不用手動設閾值，模型自己告訴你「這個範圍內算正常」。伺服器回應時間、交易流量、溫度感測器，都能這樣監控。</p>
+<h2 id="XReg：把外部因素塞進去"><a href="#XReg：把外部因素塞進去" class="headerlink" title="XReg：把外部因素塞進去"></a>XReg：把外部因素塞進去</h2><p>光看歷史不夠。雙十一銷量不只跟上週銷量有關，也跟「今天是不是雙十一」有關。TimesFM 2.5 支援兩種共變量。</p>
+<p><strong>靜態共變量</strong>：不隨時間變的。商品類別、門市地點、是否為連鎖品牌。</p>
+<p><strong>動態共變量</strong>：隨時間變的。溫度、降雨、是否假日、促銷力度。</p>
+<p>用 <code>forecast_with_covariates()</code> 把這些資訊帶進去，預測準度會再上一階。實務上能打到多精準，取決於你的共變量有沒有真的跟目標相關——放進去一堆但沒訊號的特徵只會搞亂模型。</p>
+<h2 id="什麼時候該用-TimesFM、什麼時候不要"><a href="#什麼時候該用-TimesFM、什麼時候不要" class="headerlink" title="什麼時候該用 TimesFM、什麼時候不要"></a>什麼時候該用 TimesFM、什麼時候不要</h2><p>這裡是最多人踩坑的地方。基礎模型不是銀彈。</p>
+<p><strong>該用</strong>：</p>
+<ul>
+<li>你有大量（幾十到上萬條）時間序列，每條專屬歷史資料都不多</li>
+<li>需要快速上線，沒時間為每個序列單獨調參</li>
+<li>需要不確定性區間做風控或異常偵測</li>
+<li>想用共變量但不想從零設計 feature engineering pipeline</li>
+</ul>
+<p><strong>不該用</strong>：</p>
+<ul>
+<li>你只有<strong>一條</strong>時間序列，而且累積了很多年的專屬資料。這時候傳統 ARIMA 或專用 LSTM 往往還是贏——基礎模型的優勢在「通用 + zero-shot」，你不需要通用時就沒優勢</li>
+<li>你的序列極度不規則（密度變化大、缺值多、非平穩），TimesFM 的 patch-based 假設會失靈</li>
+<li>你的預測週期需求超過 v2.5 的 connective quantile head 限制（horizon &gt; 1,024）</li>
+<li>你的 infra 連 32GB RAM 都生不出來</li>
+</ul>
+<h2 id="要注意的限制"><a href="#要注意的限制" class="headerlink" title="要注意的限制"></a>要注意的限制</h2><p>這不是 Google 官方產品。開源版不走 Google Cloud 的 SLA，Google 官方整合在 BigQuery ML 裡——想吃原廠支援用那邊。</p>
+<p>記憶體需求高。載入 200M 參數模型、做推論，建議至少 32GB RAM。GPU 不是必要但強烈建議，CPU 推論的速度只能算勉強可用。</p>
+<p>核心是單變量模型。它一次預測一條時間序列，要多變量就靠 XReg 共變量那一套，不是 native 的多變量預測。</p>
+<p>v2.5 API 跟 v1 不相容。如果你本來用 v1.3.0 的 pip 版本，升級要改 code。</p>
+<h2 id="這件事背後更大的變化"><a href="#這件事背後更大的變化" class="headerlink" title="這件事背後更大的變化"></a>這件事背後更大的變化</h2><p>TimesFM 值得注意的不只是它本身，是它代表的方向。</p>
+<p>預訓練基礎模型這條路，原本只在語言（LLM）跟圖像（ViT）成立。大家一直假設時間序列太「特殊」——每個領域規律不同、資料量不夠、訊號太雜——不能走這條。TimesFM 加上差不多時期的 Lag-Llama、Moirai、Chronos，證明了這個假設錯了。</p>
+<p>實務上的意義是：<strong>預測這件事的起點改變了</strong>。以前的起點是「蒐集序列歷史 → 訓練專用模型」。現在的起點是「載入基礎模型 → 看它有沒有幫我解決 80% 的問題 → 剩下 20% 再做客製化」。對大部分場景，80% 就夠了。</p>
+<p>這跟當年 ResNet 預訓練權重改變電腦視覺、ImageNet 預訓練改變下游任務，是同一個故事的下一集。如果你的工作跟時間序列預測有關——零售、能源、監控、金融——現在開始學 TimesFM 不是超前部署，是補課。</p>
+<blockquote>
+<p>原文來源：<a target="_blank" rel="noopener" href="https://github.com/google-research/timesfm">google-research&#x2F;timesfm · GitHub</a><br>論文：<a target="_blank" rel="noopener" href="https://arxiv.org/abs/2310.10688">A decoder-only foundation model for time-series forecasting (arXiv:2310.10688)</a><br>HuggingFace：<a target="_blank" rel="noopener" href="https://huggingface.co/google/timesfm-2.5-200m-pytorch">google&#x2F;timesfm-2.5-200m-pytorch</a></p>
+</blockquote>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://mark22013333.github.io">Cheng®</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章連結: </span><span class="post-copyright-info"><a href="https://mark22013333.github.io/2026/04/18/TimesFM-%E4%B8%80%E5%80%8B%E6%A8%A1%E5%9E%8B%E9%A0%90%E6%B8%AC%E6%89%80%E6%9C%89%E6%99%82%E9%96%93%E5%BA%8F%E5%88%97-Google-%E7%9A%84-Zero-Shot-%E5%9F%BA%E7%A4%8E%E6%A8%A1%E5%9E%8B/">https://mark22013333.github.io/2026/04/18/TimesFM-一個模型預測所有時間序列-Google-的-Zero-Shot-基礎模型/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版權聲明: </span><span class="post-copyright-info">本部落格所有文章除特別聲明外，均採用<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 授權協議。轉載請註明來源 <a href="https://mark22013333.github.io" target="_blank">Cheng's Tech & Life</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Google/">Google</a><a class="post-meta__tags" href="/tags/TimesFM/">TimesFM</a><a class="post-meta__tags" href="/tags/%E6%99%82%E9%96%93%E5%BA%8F%E5%88%97/">時間序列</a><a class="post-meta__tags" href="/tags/%E5%9F%BA%E7%A4%8E%E6%A8%A1%E5%9E%8B/">基礎模型</a><a class="post-meta__tags" href="/tags/ML/">ML</a></div><div class="post-share"><div class="social-share" data-image="/img/20260418-timesfm.webp" data-sites="facebook,x"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><div class="post-reward"><div class="reward-badges"><a class="sponsor-glow-btn" href="https://www.buymeacoffee.com/mark22013333" target="_blank" rel="noopener noreferrer" title="Buy Me A Coffee"><img src="https://img.shields.io/badge/Buy_Me_A_Coffee-FFDD00?style=for-the-badge&amp;logo=buy-me-a-coffee&amp;logoColor=black" alt="Buy Me A Coffee"/></a><a class="sponsor-glow-btn" href="https://p.ecpay.com.tw/EFC3F8F" target="_blank" rel="noopener noreferrer" title="綠界贊助"><img src="https://img.shields.io/badge/☕_%E8%AB%8B%E6%88%91%E5%96%9D%E6%9D%AF%E5%92%96%E5%95%A1-Donate-11998e?style=for-the-badge&amp;logo=coffee&amp;logoColor=white" alt="綠界贊助"/></a><a class="sponsor-glow-btn" href="https://calendly.com/markcheng00806-intumit/15min" target="_blank" rel="noopener noreferrer" title="預約時間"><img src="https://img.shields.io/badge/📅_%E9%A0%90%E7%B4%84_15_%E5%88%86%E9%90%98-Book_Time-0072ff?style=for-the-badge" alt="預約時間"/></a><p class="reward-badges-note">你的鼓勵將被轉換為我明天繼續加班的動力（真的）。 ❤️</p></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2026/04/18/%E9%81%A0%E7%AB%AF%E5%B7%A5%E7%A8%8B%E5%B8%AB%E7%9A%84%E5%B1%85%E5%AE%B6%E8%BE%A6%E5%85%AC%E5%8D%87%E7%B4%9A%E6%B8%85%E5%96%AE-2026-%E5%BE%9E%E6%A1%8C%E5%AD%90%E5%88%B0%E6%A4%85%E5%AD%90%E7%9A%84%E7%9C%9F%E5%AF%A6%E8%B8%A9%E5%9D%91%E7%B4%80%E9%8C%84/" title="遠端工程師的居家辦公升級清單 2026 — 從桌子到椅子的真實踩坑紀錄"><img class="cover" src="/img/20260418-03.webp" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">遠端工程師的居家辦公升級清單 2026 — 從桌子到椅子的真實踩坑紀錄</div></div><div class="info-2"><div class="info-item-1">打字的時候螢幕在微微抖動。你以為是眼睛累，休息一下就好——結果幾個月後你發現是升降桌的問題。二節式、薄桌板、腳柱只有兩節，重手打鍵盤的時候整張桌子共振，螢幕跟著晃 0.5 公厘。眼睛每 0.2 秒重新對焦一次，一整天下來頭暈想吐。 這是真的會發生的事。而且發生的頻率比你想像中高。 遠端工作兩年多，我換過三張桌子、兩張椅子、四組螢幕支架、一堆鍵盤，還有兩台螢幕（一台因為放錯高度看肩頸報廢了）。這篇是一份花了大概 15 萬新台幣才整理出來的清單——不是推薦文，是「你應該先知道的坑」。 桌子：穩定度比你想的還重要大部分人買升降桌第一個看的是高度範圍和馬達瓦數。真正該先看的是桌子的晃動幅度。 一個簡單的現場測試：桌子調到最高的時候，用拳頭重敲一下桌面，看螢幕抖幾秒才停下。正常好桌子是一秒內止住、抖幅看不出來；爛桌子會晃三秒以上，螢幕跟著有可見的位移。 影響晃動的變數按重要性排：  腳柱節數：三節式 &gt;&gt;&gt; 二節式。三節式下半部更粗，力學結構更穩。同價位選二節的省不到多少，但穩定度差一個檔次 腳柱設計：倒置式（上粗下細）比正立式穩定，因為承重點更靠近重心 桌板厚度：至少 ...</div></div></div></a><a class="pagination-related" href="/2026/04/19/Cinematic-UI-%E8%AE%93-AI-%E5%83%8F%E9%9B%BB%E5%BD%B1%E5%B0%8E%E6%BC%94%E4%B8%80%E6%A8%A3%E5%81%9A%E7%B6%B2%E9%A0%81%E8%A8%AD%E8%A8%88%E7%9A%84%E6%8E%A8%E7%90%86%E6%A1%86%E6%9E%B6/" title="Cinematic UI — 讓 AI 像電影導演一樣做網頁設計的推理框架"><img class="cover" src="/img/20260419-01.webp" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">Cinematic UI — 讓 AI 像電影導演一樣做網頁設計的推理框架</div></div><div class="info-2"><div class="info-item-1">200 位導演、80 種構圖、1,486 個網站 DNA、2.9MB 的設計資料庫——這是一個 npm 套件會塞的東西嗎？不是，它根本不是套件。 大部分 AI 設計工具的問題，不是 AI 不夠聰明，是我們讓它做錯的事。你給它一個色板、一組元件、一套排版模板，叫它「挑一個」。結果就是你看到的 AI 首頁千篇一律——Hero 配大標題、三欄 Features、CTA 按鈕、footer 放社群 icon。Cinematic UI 這個專案的切入角度很反直覺：問題不在素材不夠多，是 AI 根本不該在「挑選」這一層做事。 你以為的 AI 設計 vs 它想做的事想像一下這個對比。一個設計師接到「幫我做一個有電影感的網站」，他會怎麼開始？如果他是個懂設計的人，大概會先問你——「你說的電影感是王家衛那種、還是 Fincher 那種？」然後打開 Mubi 看半天，把某部片的色調、節奏、構圖邏輯拆解出來，再開始畫 wireframe。 換成 AI 呢？它直接打開元件庫，挑一個叫做「cinematic」的預設主題，套上去給你。成品當然有模有樣，但不會有靈魂——因為它根本沒做過「拆解一位導演的視覺語言...</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相關推薦</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2026/04/18/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260418/" title="AI 與科技新聞摘要 - 2026&#x2F;04&#x2F;18"><img class="cover" src="/img/20260418-02.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-04-18</div><div class="info-item-2">AI 與科技新聞摘要 - 2026&#x2F;04&#x2F;18</div></div><div class="info-2"><div class="info-item-1">50 種生物研究工作流。這是 OpenAI 訓練新模型 GPT-Rosalind 時直接塞進去的先備知識量——不是做 prompt 調教，是把整個藥物研發、基因體學、蛋白質結構的流程內化成模型自己的能力。合作夥伴名單打出來更嚇人：Amgen、Moderna、Thermo Fisher、UCSF 藥學院。AI 不是在學怎麼寫 code 了，它在學怎麼設計新藥。 同一週，Google 把 Gemini、Google Photos、Nano Banana 2 串成一個新的「個人智能」功能，讓你用自己的臉做 claymation。MiniMax 扔出一顆 229B 參數、能自己改自己訓練 scaffold 的開源模型。歐盟拍板 €180M 的主權雲端招標，四家歐洲供應商分食市場。Adobe Reader 的零日漏洞剛被證實正在實戰利用。AI 跟資訊主權，這兩條線正在同一個時間軸上加速。 GPT-Rosalind — OpenAI 正式進軍生技研究4 月 17 日，OpenAI 發布了第一個垂直領域專用模型 GPT-Rosalind，致敬對 DNA 結構發現有貢獻的 Rosalind Fr...</div></div></div></a><a class="pagination-related" href="/2026/04/14/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260414/" title="AI 與科技新聞摘要 - 2026&#x2F;04&#x2F;14"><img class="cover" src="/img/20260414-02.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-04-14</div><div class="info-item-2">AI 與科技新聞摘要 - 2026&#x2F;04&#x2F;14</div></div><div class="info-2"><div class="info-item-1">Anthropic 做了一個太強所以不敢公開的模型、MCP 從實驗協定變成基礎建設、AWS 用「寫規格」取代「寫 prompt」重新定義 AI IDE、GitHub Copilot 終於讓你自帶金鑰、Google 在 ICLR 發了一篇可能改變大模型部署成本的論文。週二早上的資訊量不小。 Anthropic Claude Mythos Preview - 太會找漏洞所以不公開CVSS 9.8 的 FreeBSD 遠端程式碼執行漏洞，藏了 17 年沒人發現。Claude Mythos Preview 花幾週就挖出來了。 Mythos Preview 是 Anthropic 最新的前沿模型，通用能力本來就強，但讓資安圈炸鍋的是它的副產品：在幾週的測試期間，這個模型自主發現了上千個零日漏洞，涵蓋每一個主流作業系統和主流瀏覽器。Anthropic 強調這些能力不是刻意訓練的，而是程式碼理解、推理和自主性全面提升後自然浮現的結果。 問題在於，能找漏洞的能力跟能利用漏洞的能力是一體兩面。Anthropic 的選擇是不公開發布 Mythos Preview，改走「Project Glasswi...</div></div></div></a><a class="pagination-related" href="/2026/03/29/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260329/" title="AI 與科技新聞摘要 — 2026&#x2F;03&#x2F;29"><img class="cover" src="/img/20260329-02.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-03-29</div><div class="info-item-2">AI 與科技新聞摘要 — 2026&#x2F;03&#x2F;29</div></div><div class="info-2"><div class="info-item-1">NVIDIA 組了一個聯盟要做開源 frontier model、Google 把 Gemini Code Assist 直接免費送、MCP 生態冒出防詐騙和治理控制兩個新玩家、AI 安全治理落地的比例只有 7%。  1. NVIDIA Nemotron 3 Super 開源 + Nemotron Coalition 成軍NVIDIA 三月中連丟兩顆炸彈。先是開源 Nemotron 3 Super——120B 參數的混合架構模型（Mamba-Transformer MoE），實際啟用 12B 參數，專門為 multi-agent reasoning 設計。軟體開發、資安分析、自動化工作流這些場景是它的主戰場。 模型已經上了 Perplexity、OpenRouter、Hugging Face、build.nvidia.com，CodeRabbit、Factory、Greptile 這些 AI coding agent 也在整合中。 更值得注意的是 3 月 16 日成立的 Nemotron Coalition——Black Forest Labs、Cursor、LangChain、...</div></div></div></a><a class="pagination-related" href="/2026/03/30/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260330/" title="AI 與科技新聞摘要 — 2026&#x2F;03&#x2F;30"><img class="cover" src="/img/20260330-02.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-03-30</div><div class="info-item-2">AI 與科技新聞摘要 — 2026&#x2F;03&#x2F;30</div></div><div class="info-2"><div class="info-item-1">Anthropic 的下一代模型叫 Mythos，因為 CMS 設定錯誤被全世界看光了。同一週，Anthropic 和 OpenAI 都在準備 IPO。Google 放出了 Gemini 3 系列最便宜的模型。ChatGPT 開始賣廣告，六週就賺了一億美金。  1. Anthropic Mythos 模型外洩 — CMS 設定錯誤，下一代 Claude 提前曝光3 月 26 日，LayerX Security 的 Roy Paz 和劍橋大學的 Alexandre Pauwels 發現 Anthropic 的內容管理系統有將近 3,000 筆未發佈的資產可以公開存取。其中一篇草稿詳細描述了代號 Capybara 的新模型，正式名稱叫 Mythos。 Capybara 不是 Opus 的小改版。它是一個全新的模型層級——比 Opus 更大、更強。跟 Claude Opus 4.6 相比，在軟體開發、學術推理、資安能力的測試分數上「dramatically higher」。Anthropic 自己在草稿裡用了「step change」這個詞。 爭議點在資安。外洩文件警告這個模型「能快速...</div></div></div></a><a class="pagination-related" href="/2026/03/28/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260328/" title="AI 與科技新聞摘要 — 2026&#x2F;03&#x2F;28"><img class="cover" src="/img/20260328-02.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-03-28</div><div class="info-item-2">AI 與科技新聞摘要 — 2026&#x2F;03&#x2F;28</div></div><div class="info-2"><div class="info-item-1">三月還沒過完，AI 生成的程式碼已經製造了 35 個 CVE。LiteLLM 套件被植入竊取 SSH 金鑰的惡意程式。Google 要讓 AI Agent 幫你結帳買東西。Anthropic 的年化營收衝到 190 億美金但服務一直斷線。六則，都蠻重的。  1. AI 生成程式碼的 CVE 三月暴增到 35 個 — 其中 27 個來自 Claude CodeGeorgia Tech 的 SSLab 團隊追蹤了一個叫「Vibe Security Radar」的專案，專門統計 AI 程式碼工具直接造成的公開漏洞。數據很刺眼：一月 6 個、二月 15 個、三月已經 35 個。 拆開來看更有意思：27 個來自 Claude Code、4 個來自 GitHub Copilot、2 個 Devin、Aether 和 Cursor 各 1 個。研究團隊說實際數字「幾乎可以確定更高」，因為很多 CVE 沒有標注是 AI 生成的。 CrowdStrike 也在同一週發佈了報告，指出 AI 編碼軟體中隱藏的漏洞問題正在擴大。The Register 直接下了標題：「用 AI 寫程式不代表你的程式比較...</div></div></div></a></div></div><hr class="custom-hr"/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 評論</span></div></div><div class="comment-wrap"><div><div id="giscus-wrap"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="https://lh3.googleusercontent.com/pw/ABLVV87_po8nBc6F_tXcoYDmtzMGWxHuhhrbguYILCjmjWKLOS8DTpubm0YoQLKgjyjRIZyV5TjYe7XVEz_YU4squfr37GTZqPZP1hlMVZ_MIgXpTxWu73M=w1200" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">Cheng®</div><div class="author-info-description">Backend Developer / 技術筆記 & AI 新聞分享</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">161</div></a><a href="/tags/"><div class="headline">標籤</div><div class="length-num">142</div></a><a href="/categories/"><div class="headline">分類</div><div class="length-num">12</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/mark22013333"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons"><a class="social-icon" href="https://github.com/mark22013333" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:mark22013333@gmail.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a></div><div class="card-info-sponsor"><a class="sponsor-glow-btn" href="https://www.buymeacoffee.com/mark22013333" target="_blank" rel="noopener noreferrer" title="Buy Me A Coffee"><img src="https://img.shields.io/badge/Buy_Me_A_Coffee-FFDD00?style=for-the-badge&amp;logo=buy-me-a-coffee&amp;logoColor=black" alt="Buy Me A Coffee"/></a><a class="sponsor-glow-btn" href="https://p.ecpay.com.tw/EFC3F8F" target="_blank" rel="noopener noreferrer" title="綠界贊助"><img src="https://img.shields.io/badge/☕_%E8%AB%8B%E6%88%91%E5%96%9D%E6%9D%AF%E5%92%96%E5%95%A1-Donate-11998e?style=for-the-badge&amp;logo=coffee&amp;logoColor=white" alt="綠界贊助"/></a><a class="sponsor-glow-btn" href="https://calendly.com/markcheng00806-intumit/15min" target="_blank" rel="noopener noreferrer" title="預約時間"><img src="https://img.shields.io/badge/📅_%E9%A0%90%E7%B4%84_15_%E5%88%86%E9%90%98-Book_Time-0072ff?style=for-the-badge" alt="預約時間"/></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">這裡記錄我在後端開發路上踩過的坑、學到的東西，也會分享每日 AI 與科技新聞觀點。歡迎一起交流！</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目錄</span><span class="toc-percentage"></span></div><div class="toc-content is-expand"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%82%BA%E4%BB%80%E9%BA%BC%E3%80%8C%E9%A0%90%E8%A8%93%E7%B7%B4-zero-shot%E3%80%8D%E5%9C%A8%E6%99%82%E9%96%93%E5%BA%8F%E5%88%97%E8%83%BD%E6%88%90%E7%AB%8B"><span class="toc-number">1.</span> <span class="toc-text">為什麼「預訓練 + zero-shot」在時間序列能成立</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9E%B6%E6%A7%8B%EF%BC%9AGPT-%E5%90%8C%E6%BA%90%EF%BC%8C%E7%B4%B0%E7%AF%80%E4%B8%8D%E5%90%8C"><span class="toc-number">2.</span> <span class="toc-text">架構：GPT 同源，細節不同</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%89%88%E6%9C%AC%E6%BC%94%E9%80%B2%EF%BC%9A%E5%8F%83%E6%95%B8%E6%9B%B4%E5%B0%91%EF%BC%8C%E6%95%88%E8%83%BD%E6%9B%B4%E5%A5%BD"><span class="toc-number">3.</span> <span class="toc-text">版本演進：參數更少，效能更好</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%94%A8%E8%B5%B7%E4%BE%86%E9%95%B7%E9%80%99%E6%A8%A3"><span class="toc-number">4.</span> <span class="toc-text">用起來長這樣</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%86%E4%BD%8D%E6%95%B8%E9%A0%90%E6%B8%AC%EF%BC%9A%E4%B8%8D%E5%91%8A%E8%A8%B4%E4%BD%A0%E7%AD%94%E6%A1%88%E6%98%AF%E5%A4%9A%E5%B0%91%EF%BC%8C%E5%91%8A%E8%A8%B4%E4%BD%A0%E7%AF%84%E5%9C%8D"><span class="toc-number">5.</span> <span class="toc-text">分位數預測：不告訴你答案是多少，告訴你範圍</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#XReg%EF%BC%9A%E6%8A%8A%E5%A4%96%E9%83%A8%E5%9B%A0%E7%B4%A0%E5%A1%9E%E9%80%B2%E5%8E%BB"><span class="toc-number">6.</span> <span class="toc-text">XReg：把外部因素塞進去</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%80%E9%BA%BC%E6%99%82%E5%80%99%E8%A9%B2%E7%94%A8-TimesFM%E3%80%81%E4%BB%80%E9%BA%BC%E6%99%82%E5%80%99%E4%B8%8D%E8%A6%81"><span class="toc-number">7.</span> <span class="toc-text">什麼時候該用 TimesFM、什麼時候不要</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%A6%81%E6%B3%A8%E6%84%8F%E7%9A%84%E9%99%90%E5%88%B6"><span class="toc-number">8.</span> <span class="toc-text">要注意的限制</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%80%99%E4%BB%B6%E4%BA%8B%E8%83%8C%E5%BE%8C%E6%9B%B4%E5%A4%A7%E7%9A%84%E8%AE%8A%E5%8C%96"><span class="toc-number">9.</span> <span class="toc-text">這件事背後更大的變化</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2026/04/23/Claude-Code-Ultraplan-%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8-%E6%8A%8A%E8%A6%8F%E5%8A%83%E4%BA%A4%E7%B5%A6%E9%9B%B2%E7%AB%AF/" title="Claude Code Ultraplan 完整教學 — 把規劃交給雲端，讓 Claude 替你想 30 分鐘"><img src="/img/20260423-03.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Claude Code Ultraplan 完整教學 — 把規劃交給雲端，讓 Claude 替你想 30 分鐘"/></a><div class="content"><a class="title" href="/2026/04/23/Claude-Code-Ultraplan-%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8-%E6%8A%8A%E8%A6%8F%E5%8A%83%E4%BA%A4%E7%B5%A6%E9%9B%B2%E7%AB%AF/" title="Claude Code Ultraplan 完整教學 — 把規劃交給雲端，讓 Claude 替你想 30 分鐘">Claude Code Ultraplan 完整教學 — 把規劃交給雲端，讓 Claude 替你想 30 分鐘</a><time datetime="2026-04-23T09:00:00.000Z" title="發表於 2026-04-23 09:00:00">2026-04-23</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/04/23/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260423/" title="AI 與科技新聞摘要 - 2026/04/23"><img src="/img/20260423-02.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="AI 與科技新聞摘要 - 2026/04/23"/></a><div class="content"><a class="title" href="/2026/04/23/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260423/" title="AI 與科技新聞摘要 - 2026/04/23">AI 與科技新聞摘要 - 2026/04/23</a><time datetime="2026-04-23T08:30:00.000Z" title="發表於 2026-04-23 08:30:00">2026-04-23</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/04/23/Agent-Skills-%E7%B5%A6-AI-%E7%B7%A8%E7%A2%BC%E5%8A%A9%E6%89%8B%E7%9A%84%E5%B7%A5%E7%A8%8B%E7%B4%80%E5%BE%8B%E6%8C%87%E4%BB%A4%E9%9B%86/" title="Agent Skills — 給 AI 編碼助手的工程紀律指令集"><img src="/img/20260423-01.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Agent Skills — 給 AI 編碼助手的工程紀律指令集"/></a><div class="content"><a class="title" href="/2026/04/23/Agent-Skills-%E7%B5%A6-AI-%E7%B7%A8%E7%A2%BC%E5%8A%A9%E6%89%8B%E7%9A%84%E5%B7%A5%E7%A8%8B%E7%B4%80%E5%BE%8B%E6%8C%87%E4%BB%A4%E9%9B%86/" title="Agent Skills — 給 AI 編碼助手的工程紀律指令集">Agent Skills — 給 AI 編碼助手的工程紀律指令集</a><time datetime="2026-04-23T08:00:00.000Z" title="發表於 2026-04-23 08:00:00">2026-04-23</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/04/22/GitHub-Copilot-%E5%81%9C%E6%AD%A2%E6%96%B0%E7%94%A8%E6%88%B6%E8%A8%BB%E5%86%8A%E5%BE%8C%E5%B7%A5%E7%A8%8B%E5%B8%AB%E6%80%8E%E9%BA%BC%E5%B9%B3%E7%A7%BB%E5%88%B0-Claude-Code/" title="GitHub Copilot 停止新用戶註冊後，工程師怎麼平移到 Claude Code"><img src="/img/20260422-03.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="GitHub Copilot 停止新用戶註冊後，工程師怎麼平移到 Claude Code"/></a><div class="content"><a class="title" href="/2026/04/22/GitHub-Copilot-%E5%81%9C%E6%AD%A2%E6%96%B0%E7%94%A8%E6%88%B6%E8%A8%BB%E5%86%8A%E5%BE%8C%E5%B7%A5%E7%A8%8B%E5%B8%AB%E6%80%8E%E9%BA%BC%E5%B9%B3%E7%A7%BB%E5%88%B0-Claude-Code/" title="GitHub Copilot 停止新用戶註冊後，工程師怎麼平移到 Claude Code">GitHub Copilot 停止新用戶註冊後，工程師怎麼平移到 Claude Code</a><time datetime="2026-04-22T09:00:00.000Z" title="發表於 2026-04-22 09:00:00">2026-04-22</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/04/22/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260422/" title="AI 與科技新聞摘要 - 2026/04/22"><img src="/img/20260422-02.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="AI 與科技新聞摘要 - 2026/04/22"/></a><div class="content"><a class="title" href="/2026/04/22/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260422/" title="AI 與科技新聞摘要 - 2026/04/22">AI 與科技新聞摘要 - 2026/04/22</a><time datetime="2026-04-22T08:30:00.000Z" title="發表於 2026-04-22 08:30:00">2026-04-22</time></div></div></div></div></div></div></main><footer id="footer" style="background-image: url(/img/20260418-timesfm.webp);"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2024 - 2026 By Cheng®</span></div><div class="footer_custom_text">Written by Cheng® — 自律，從當下的一念開始。</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="閱讀模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日夜模式切換"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="單欄和雙欄切換"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="設定"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目錄"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="前往評論"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到頂端"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.umd.min.js"></script><script src="https://cdn.jsdelivr.net/npm/instant.page/instantpage.min.js" type="module"></script><script src="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.js"></script><div class="js-pjax"><script>(() => {
+  const isShuoshuo = GLOBAL_CONFIG_SITE.pageType === 'shuoshuo'
+  const option = {"mapping":"pathname","strict":0,"reactionsEnabled":1,"emitMetadata":0,"inputPosition":"bottom","lang":"zh-TW"}
+
+  const getGiscusTheme = theme => theme === 'dark' ? 'dark' : 'light'
+
+  const createScriptElement = config => {
+    const ele = document.createElement('script')
+    Object.entries(config).forEach(([key, value]) => {
+      ele.setAttribute(key, value)
+    })
+    return ele
+  }
+
+  const loadGiscus = (el = document, key) => {
+    const mappingConfig = isShuoshuo
+      ? { 'data-mapping': 'specific', 'data-term': key }
+      : { 'data-mapping': (option && option['data-mapping']) || 'pathname' }
+
+    const giscusConfig = {
+      src: 'https://giscus.app/client.js',
+      'data-repo': 'mark22013333/mark22013333.github.io',
+      'data-repo-id': 'R_kgDOLAxa6A',
+      'data-category-id': 'DIC_kwDOLAxa6M4C5eO9',
+      'data-theme': getGiscusTheme(document.documentElement.getAttribute('data-theme')),
+      'data-reactions-enabled': '1',
+      crossorigin: 'anonymous',
+      async: true,
+      ...option,
+      ...mappingConfig
+    }
+
+    const scriptElement = createScriptElement(giscusConfig)
+
+    el.querySelector('#giscus-wrap').appendChild(scriptElement)
+
+    if (isShuoshuo) {
+      window.shuoshuoComment.destroyGiscus = () => {
+        if (el.children.length) {
+          el.innerHTML = ''
+          el.classList.add('no-comment')
+        }
+      }
+    }
+  }
+
+  const changeGiscusTheme = theme => {
+    const iframe = document.querySelector('#giscus-wrap iframe')
+    if (iframe) {
+      const message = {
+        giscus: {
+          setConfig: {
+            theme: getGiscusTheme(theme)
+          }
+        }
+      }
+      iframe.contentWindow.postMessage(message, 'https://giscus.app')
+    }
+  }
+
+  btf.addGlobalFn('themeChange', changeGiscusTheme, 'giscus')
+
+  if (isShuoshuo) {
+    'Giscus' === 'Giscus'
+      ? window.shuoshuoComment = { loadComment: loadGiscus }
+      : window.loadOtherComment = loadGiscus
+    return
+  }
+
+  if ('Giscus' === 'Giscus' || !true) {
+    if (true) btf.loadComment(document.getElementById('giscus-wrap'), loadGiscus)
+    else loadGiscus()
+  } else {
+    window.loadOtherComment = loadGiscus
+  }
+})()</script></div><script src="/js/kkbox-player.js"></script><script src="/js/archives-pagination.js"></script><script src="/js/font-resize.js"></script><script src="/js/dark-palette.js"></script><script defer="defer" id="fluttering_ribbon" mobile="false" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/canvas-fluttering-ribbon.min.js"></script><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/activate-power-mode.min.js"></script><script>POWERMODE.colorful = true;
+POWERMODE.shake = true;
+POWERMODE.mobile = true;
+document.body.addEventListener('input', POWERMODE);
+</script><script src="https://cdn.jsdelivr.net/npm/pjax/pjax.min.js" defer="defer"></script><script>document.addEventListener('DOMContentLoaded', () => {
+  const pjaxSelectors = ["meta[property=\"og:image\"]","meta[property=\"og:title\"]","meta[property=\"og:url\"]","meta[property=\"og:description\"]","link[rel=\"canonical\"]","head > title","#config-diff","#body-wrap","#rightside-config-hide","#rightside-config-show",".js-pjax"]
+
+  window.pjax = new Pjax({
+    elements: 'a:not([target="_blank"])',
+    selectors: pjaxSelectors,
+    cacheBust: false,
+    analytics: true,
+    scrollRestoration: false
+  })
+
+  const triggerPjaxFn = (val) => {
+    if (!val) return
+    Object.values(val).forEach(fn => {
+      try {
+        fn()
+      } catch (err) {
+        console.debug('Pjax callback failed:', err)
+      }
+    })
+  }
+
+  document.addEventListener('pjax:send', () => {
+    // removeEventListener
+    btf.removeGlobalFnEvent('pjaxSendOnce')
+    btf.removeGlobalFnEvent('themeChange')
+
+    // reset readmode
+    const $bodyClassList = document.body.classList
+    if ($bodyClassList.contains('read-mode')) $bodyClassList.remove('read-mode')
+
+    triggerPjaxFn(window.globalFn.pjaxSend)
+  })
+
+  document.addEventListener('pjax:complete', () => {
+    btf.removeGlobalFnEvent('pjaxCompleteOnce')
+    document.querySelectorAll('script[data-pjax]').forEach(item => {
+      const newScript = document.createElement('script')
+      const content = item.text || item.textContent || item.innerHTML || ""
+      Array.from(item.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value))
+      newScript.appendChild(document.createTextNode(content))
+      item.parentNode.replaceChild(newScript, item)
+    })
+
+    triggerPjaxFn(window.globalFn.pjaxComplete)
+  })
+
+  document.addEventListener('pjax:error', e => {
+    if (e.request.status === 404) {
+      true
+        ? pjax.loadUrl('/404.html')
+        : window.location.href = e.request.responseURL
+    }
+  })
+})</script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜尋</span><i class="fas fa-spinner fa-pulse" id="loading-status" hidden="hidden"></i><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="text-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  資料載入中</span></div><div class="local-search-input"><input placeholder="搜尋文章" type="text"/></div><hr/><div id="local-search-results"></div><div class="ais-Pagination" id="local-search-pagination" style="display:none;"><ul class="ais-Pagination-list"></ul></div><div id="local-search-stats"></div></div><div id="search-mask"></div><script src="/js/search/local-search.js"></script></div></div></body></html>
