@@ -1,0 +1,382 @@
+<!DOCTYPE html><html lang="zh-TW" data-theme="dark"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>168 斷食工程師實戰 — 為什麼寫 Code 的人特別適合間歇性斷食 | Cheng's Tech &amp; Life</title><meta name="author" content="Cheng®"><meta name="copyright" content="Cheng®"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#0d0d0d"><meta name="description" content="不是減肥文。是一個工程師發現斷食讓 debug 時的專注力變好之後，去挖背後機制的紀錄。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="168 斷食工程師實戰 — 為什麼寫 Code 的人特別適合間歇性斷食">
+<meta property="og:url" content="https://mark22013333.github.io/2026/04/27/168-%E6%96%B7%E9%A3%9F%E5%B7%A5%E7%A8%8B%E5%B8%AB%E5%AF%A6%E6%88%B0-%E7%82%BA%E4%BB%80%E9%BA%BC%E5%AF%AB-Code-%E7%9A%84%E4%BA%BA%E7%89%B9%E5%88%A5%E9%81%A9%E5%90%88%E9%96%93%E6%AD%87%E6%80%A7%E6%96%B7%E9%A3%9F/index.html">
+<meta property="og:site_name" content="Cheng&#39;s Tech &amp; Life">
+<meta property="og:description" content="不是減肥文。是一個工程師發現斷食讓 debug 時的專注力變好之後，去挖背後機制的紀錄。">
+<meta property="og:locale" content="zh_TW">
+<meta property="og:image" content="https://mark22013333.github.io/img/20260427-04.webp">
+<meta property="article:published_time" content="2026-04-27T06:00:00.000Z">
+<meta property="article:modified_time" content="2026-04-27T14:34:40.078Z">
+<meta property="article:author" content="Cheng®">
+<meta property="article:tag" content="168斷食">
+<meta property="article:tag" content="間歇性斷食">
+<meta property="article:tag" content="工程師健康">
+<meta property="article:tag" content="生產力">
+<meta property="article:tag" content="專注力">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://mark22013333.github.io/img/20260427-04.webp"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "168 斷食工程師實戰 — 為什麼寫 Code 的人特別適合間歇性斷食",
+  "url": "https://mark22013333.github.io/2026/04/27/168-%E6%96%B7%E9%A3%9F%E5%B7%A5%E7%A8%8B%E5%B8%AB%E5%AF%A6%E6%88%B0-%E7%82%BA%E4%BB%80%E9%BA%BC%E5%AF%AB-Code-%E7%9A%84%E4%BA%BA%E7%89%B9%E5%88%A5%E9%81%A9%E5%90%88%E9%96%93%E6%AD%87%E6%80%A7%E6%96%B7%E9%A3%9F/",
+  "image": "https://mark22013333.github.io/img/20260427-04.webp",
+  "datePublished": "2026-04-27T06:00:00.000Z",
+  "dateModified": "2026-04-27T14:34:40.078Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "Cheng®",
+      "url": "https://mark22013333.github.io"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://mark22013333.github.io/2026/04/27/168-%E6%96%B7%E9%A3%9F%E5%B7%A5%E7%A8%8B%E5%B8%AB%E5%AF%A6%E6%88%B0-%E7%82%BA%E4%BB%80%E9%BA%BC%E5%AF%AB-Code-%E7%9A%84%E4%BA%BA%E7%89%B9%E5%88%A5%E9%81%A9%E5%90%88%E9%96%93%E6%AD%87%E6%80%A7%E6%96%B7%E9%A3%9F/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//www.google-analytics.com" crossorigin=""/><link rel="preconnect" href="//fonts.googleapis.com" crossorigin=""/><link rel="preconnect" href="//busuanzi.ibruce.info"/><meta name="google-site-verification" content="6ywUr8k2n_CT1PFYJzlSvI3CZ-JmJ55RYbA39VrFBDs"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!true && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          const hour = new Date().getHours()
+          const isNight = hour <= 9 || hour >= 18
+          if (theme === undefined) isNight ? activateDarkMode() : activateLightMode()
+          else theme === 'light' ? activateLightMode() : activateDarkMode()
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script async="async" src="https://www.googletagmanager.com/gtag/js?id=G-JBV14NRDH3"></script><script>window.dataLayer = window.dataLayer || []
+function gtag(){dataLayer.push(arguments)}
+gtag('js', new Date())
+gtag('config', 'G-JBV14NRDH3')
+btf.addGlobalFn('pjaxComplete', () => {
+  gtag('config', 'G-JBV14NRDH3', {'page_path': window.location.pathname})
+}, 'google_analytics')
+</script><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Titillium+Web&amp;display=swap" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"pagination":{"enable":false,"hitsPerPage":8},"languages":{"hits_empty":"找不到符合您查詢的內容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '複製成功',
+    error: '複製失敗',
+    noSupport: '瀏覽器不支援'
+  },
+  relativeDate: {
+    homepage: false,
+    post: true
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '剛剛',
+    min: '分鐘前',
+    hour: '小時前',
+    day: '天前',
+    month: '個月前'
+  },
+  copyright: {"limitCount":1,"languages":{"author":"作者: Cheng®","link":"連結: ","source":"來源: Cheng's Tech & Life","info":"著作權歸作者所有。如需商業轉載，請聯絡作者獲得授權，非商業轉載請註明出處😁。"}},
+  lightbox: 'fancybox',
+  Snackbar: {"chs_to_cht":"已切換為繁體中文","cht_to_chs":"已切換為簡體中文","day_to_night":"已切換為深色模式","night_to_day":"已切換為淺色模式","bgLight":"#49b1f5","bgDark":"#1f1f1f","position":"top-center"},
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid/dist/infinitegrid.min.js',
+    buttonText: '載入更多'
+  },
+  isPhotoFigcaption: true,
+  islazyloadPlugin: false,
+  isAnchor: true,
+  percent: {
+    toc: true,
+    rightside: true,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '168 斷食工程師實戰 — 為什麼寫 Code 的人特別適合間歇性斷食',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><link rel="stylesheet" href="/css/kkbox-player.css"><link rel="stylesheet" href="/css/tag-cloud-fancy.css"><link rel="stylesheet" href="/css/font-resize.css"><link rel="stylesheet" href="/css/dark-palette.css"><link rel="stylesheet" href="/css/loading-override.css"><link rel="alternate" href="/atom.xml" title="Cheng's Tech & Life" type="application/atom+xml">
+</head><body><div id="loading-box"><div class="loading-glass-overlay"></div><div class="loading-indicator"><div class="loading-dot"></div><div class="loading-dot"></div><div class="loading-dot"></div></div></div><script>(()=>{
+  const $loadingBox = document.getElementById('loading-box')
+  const $body = document.body
+  const preloader = {
+    endLoading: () => {
+      if ($loadingBox.classList.contains('loaded')) return
+      $body.style.overflow = ''
+      $loadingBox.classList.add('loaded')
+    },
+    initLoading: () => {
+      $body.style.overflow = 'hidden'
+      $loadingBox.classList.remove('loaded')
+    }
+  }
+
+  preloader.initLoading()
+
+  if (document.readyState === 'complete') {
+    preloader.endLoading()
+  } else {
+    window.addEventListener('load', preloader.endLoading)
+    document.addEventListener('DOMContentLoaded', preloader.endLoading)
+    setTimeout(preloader.endLoading, 7000)
+  }
+
+  if (true) {
+    btf.addGlobalFn('pjaxSend', preloader.initLoading, 'preloader_init')
+    btf.addGlobalFn('pjaxComplete', preloader.endLoading, 'preloader_end')
+  }
+})()</script><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="https://lh3.googleusercontent.com/pw/ABLVV87_po8nBc6F_tXcoYDmtzMGWxHuhhrbguYILCjmjWKLOS8DTpubm0YoQLKgjyjRIZyV5TjYe7XVEz_YU4squfr37GTZqPZP1hlMVZ_MIgXpTxWu73M=w1200" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">176</div></a><a href="/tags/"><div class="headline">標籤</div><div class="length-num">191</div></a><a href="/categories/"><div class="headline">分類</div><div class="length-num">13</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首頁-Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 時間軸-archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 標籤-tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分類-Categories</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-list"></i><span> 其他列表</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音樂-Music</span></a></li><li><a class="site-page child" href="/gallery/"><i class="fa-fw fas fa-images"></i><span> 畫館-Gallery</span></a></li></ul></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg fixed" id="page-header" style="background-image: url(/img/20260427-04.webp);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><img class="site-icon" src="https://lh3.googleusercontent.com/pw/ABLVV87_po8nBc6F_tXcoYDmtzMGWxHuhhrbguYILCjmjWKLOS8DTpubm0YoQLKgjyjRIZyV5TjYe7XVEz_YU4squfr37GTZqPZP1hlMVZ_MIgXpTxWu73M=w1200" alt="Logo"><span class="site-name">Cheng's Tech &amp; Life</span></a><a class="nav-page-title" href="/"><span class="site-name">168 斷食工程師實戰 — 為什麼寫 Code 的人特別適合間歇性斷食</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首頁</span></span></a></span><div id="menus"><div id="search-button" title="Ctrl+K / Cmd+K"><span class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜尋</span></span></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首頁-Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 時間軸-archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 標籤-tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分類-Categories</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-list"></i><span> 其他列表</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音樂-Music</span></a></li><li><a class="site-page child" href="/gallery/"><i class="fa-fw fas fa-images"></i><span> 畫館-Gallery</span></a></li></ul></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">168 斷食工程師實戰 — 為什麼寫 Code 的人特別適合間歇性斷食</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">發表於</span><time class="post-meta-date-created" datetime="2026-04-27T06:00:00.000Z" title="發表於 2026-04-27 14:00:00">2026-04-27</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新於</span><time class="post-meta-date-updated" datetime="2026-04-27T14:34:40.078Z" title="更新於 2026-04-27 22:34:40">2026-04-27</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E7%94%9F%E6%B4%BB%E6%9C%AD%E8%A8%98/">生活札記</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">總字數:</span><span class="word-count">1.7k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">閱讀時間:</span><span>5分鐘</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">瀏覽量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><p>下午兩點，午餐後的血糖高峰。你盯著螢幕上的 stack trace，同一行看了三遍，腦袋像灌了水泥。</p>
+<p>這個場景每天都在上演。不是你不夠努力，是你的身體正在拿所有的能量去消化那碗滷肉飯。</p>
+<p>Reddit 的 r&#x2F;Biohackers 最近有一串討論特別有意思：有人問「斷食最大的好處是什麼？」，底下的回覆不是講減肥，是講<strong>專注力</strong>。一個軟體工程師在 Dev.to 上寫了一篇長文，說他開始 168 斷食之後，上午的 coding session 從平均專注 45 分鐘拉長到 2 小時不中斷。</p>
+<p>這引起了我的好奇：為什麼「不吃東西」反而讓大腦跑得更快？</p>
+<hr>
+<h2 id="先講機制，不然聽起來像邪教"><a href="#先講機制，不然聽起來像邪教" class="headerlink" title="先講機制，不然聽起來像邪教"></a>先講機制，不然聽起來像邪教</h2><p>168 斷食就是一天 24 小時裡，16 小時不吃東西，8 小時內把三餐吃完。</p>
+<p>聽起來很極端，但其實大部分人本來就在做 12 小時的斷食——晚餐到隔天早餐的時間。168 只是把早餐往後推到中午而已。</p>
+<p>身體在斷食狀態下會發生幾件事。第一，血糖穩定下來。吃東西會讓血糖飆高然後掉下來（那個掉下來的時段就是你想睡覺的時候）。不吃東西，血糖就像一條平的線，沒有雲霄飛車。</p>
+<p>第二，大約斷食 12-14 小時後，身體開始燒脂肪當燃料。脂肪代謝產生的酮體（ketones）剛好是大腦很喜歡的燃料——比葡萄糖更穩定、不會忽高忽低。Fortune 報導引用的研究顯示，這個狀態下焦慮感降低、學習和記憶能力改善。</p>
+<p>白話講：你的大腦從燒 92 無鉛換成燒航空燃油。輸出更穩定，但你得先讓油箱裡的 92 燒完。</p>
+<hr>
+<h2 id="工程師的一天長什麼樣"><a href="#工程師的一天長什麼樣" class="headerlink" title="工程師的一天長什麼樣"></a>工程師的一天長什麼樣</h2><p>PTT FITNESS 版上有個經典問題：「168 斷早餐還是晚餐？」</p>
+<p>對工程師來說，答案幾乎都是<strong>斷早餐</strong>。原因很實際：</p>
+<p>早上 9 點到中午 12 點是大部分開發者生產力最高的時段。你剛起床，inbox 還沒被塞滿，Slack 還沒開始轟炸。這三個小時如果是空腹狀態，血糖穩定、酮體供能——專注力是一天裡的巔峰。</p>
+<p>中午 12 點吃第一餐。下午做 code review、開會、回覆訊息這些不需要深度專注的事。晚上 8 點前吃完最後一餐。然後 16 小時的斷食自動開始跑。</p>
+<p>一個 PTT 上分享半年心得的網友說，他最驚訝的不是體重掉了，是「下午三點不會想睡了」。</p>
+<hr>
+<h2 id="那些你會擔心的事"><a href="#那些你會擔心的事" class="headerlink" title="那些你會擔心的事"></a>那些你會擔心的事</h2><p>「不吃早餐不是會低血糖嗎？」</p>
+<p>健康的人不會。你的肝臟存了大約 400-500 大卡的肝醣，足夠撐 12-16 小時。真正的低血糖是糖尿病患者的問題，不是跳過一餐早餐會發生的事。Reddit r&#x2F;diabetes_t1 最近有一串討論就在講這個——第一型糖尿病患者做斷食需要醫師指導，但健康人不需要。</p>
+<p>「會不會肌肉流失？」</p>
+<p>在 8 小時的進食窗口吃夠蛋白質就不會。一個 X 上的健身帳號分享她的 16:8 routine，每天攝取 150g 蛋白質，搭配清晨有氧訓練。重點是<strong>進食窗口裡吃什麼</strong>，不是吃幾餐。</p>
+<p>「工作到一半很餓怎麼辦？」</p>
+<p>前三到五天會餓。之後身體適應了，飢餓感會在固定時間出現然後自己消退。PTT 上那個半年心得的分享者說「第一週超痛苦，第二週開始就忘記早餐這件事了」。黑咖啡和水在斷食期間可以喝，不會打破斷食狀態。</p>
+<hr>
+<h2 id="什麼人不該試"><a href="#什麼人不該試" class="headerlink" title="什麼人不該試"></a>什麼人不該試</h2><p>講清楚邊界比推銷重要。</p>
+<p>有以下狀況的人不適合 168 斷食：孕婦或哺乳中的人、有飲食障礙史的人、第一型糖尿病患者（除非有醫師監督）、BMI 過低的人、正在服用需要隨餐吃的藥物的人。</p>
+<p>另外，如果你的工作需要大量體力勞動（不是坐在電腦前的那種），斷食對你的影響會不一樣。工程師適合 168 的原因之一就是我們的工作是腦力密集、體力消耗低——剛好是斷食最有利的組合。</p>
+<hr>
+<h2 id="我從社群裡挖到的三個反直覺發現"><a href="#我從社群裡挖到的三個反直覺發現" class="headerlink" title="我從社群裡挖到的三個反直覺發現"></a>我從社群裡挖到的三個反直覺發現</h2><p>翻了 Reddit、PTT、YouTube 的討論後，有三個觀察跟我原本想的不一樣。</p>
+<p><strong>第一，最大的好處不是減重，是睡眠品質。</strong> 好幾個人提到，晚餐提早到 6-7 點吃完之後，睡眠品質明顯改善。原因是消化在睡前就完成了，身體不用一邊睡覺一邊處理食物。對工程師來說，睡眠品質直接影響隔天的認知能力。</p>
+<p><strong>第二，168 不是唯一的窗口。</strong> YouTube 上 Sadhguru 的影片（5,700 萬次觀看）提到，重點不在於精確的 16:8，而在於給消化系統足夠的休息時間。有些人用 14:10 也有同樣效果。PTT 上的討論也是——「12:12 到 16:8 之間找一個你能持續的就好」。</p>
+<p><strong>第三，最難的不是餓，是社交壓力。</strong> 同事問「要不要一起吃早餐？」、家人說「不吃早餐會傷胃」、聚餐時間超出進食窗口。好幾個討論串的重點都不是在討論飢餓感，是在討論怎麼跟周圍的人解釋。</p>
+<hr>
+<h2 id="如果你想試"><a href="#如果你想試" class="headerlink" title="如果你想試"></a>如果你想試</h2><p>不需要一步到位。</p>
+<p><strong>第一週：</strong> 把早餐延後一小時。本來 8 點吃，改成 9 點。感受一下空腹工作的狀態。</p>
+<p><strong>第二週：</strong> 再延後到 10 點。這時候你已經有了 14 小時的斷食窗口（如果前一天 8 點吃完晚餐的話）。</p>
+<p><strong>第三週：</strong> 延後到中午。恭喜，你已經在做 16:8 了。</p>
+<p>整個過程中，黑咖啡是你的好朋友。不加糖、不加奶——加了就不算斷食了。</p>
+<p>一個可以量化的指標：記錄你每天下午 2-4 點的專注力狀態（1-10 分）。跑兩週之後跟之前比較。如果沒有明顯改善，這個方法可能不適合你，放棄也沒什麼。</p>
+<p>重點從來不是「堅持某個飲食法」，而是「找到讓你的大腦長時間高效運作的方法」。168 只是其中一種選項。</p>
+<blockquote>
+<p>來源：<a target="_blank" rel="noopener" href="https://www.reddit.com/r/diabetes_t1/comments/1srq6g0/intermittent_fasting_and_mental_health/">Intermittent fasting and mental health 討論</a>（Reddit r&#x2F;diabetes_t1）<br>來源：<a target="_blank" rel="noopener" href="https://www.reddit.com/r/Biohackers/comments/1s7sydb/what_was_the_biggest_health_benefit_you_got_from/">What was the biggest health benefit from IF?</a>（Reddit r&#x2F;Biohackers）<br>來源：<a target="_blank" rel="noopener" href="https://dev.to/rjrobinson/how-intermittent-fasting-improved-my-productivity-and-other-helpful-tips-ne7">How Intermittent Fasting Improved My Productivity</a>（DEV Community）<br>來源：<a target="_blank" rel="noopener" href="https://fortune.com/well/article/intermittent-fasting-improve-work-performance/">Intermittent fasting improves sleep, focus, and memory</a>（Fortune Well）<br>來源：<a target="_blank" rel="noopener" href="https://www.ptt.cc/bbs/FITNESS/M.1670548239.A.4E1.html">168斷食半年心得</a>（PTT FITNESS）<br>來源：<a target="_blank" rel="noopener" href="https://www.ptt.cc/bbs/FITNESS/M.1664076447.A.ECE.html">168 斷早餐還是晚餐？</a>（PTT FITNESS）</p>
+</blockquote>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://mark22013333.github.io">Cheng®</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章連結: </span><span class="post-copyright-info"><a href="https://mark22013333.github.io/2026/04/27/168-%E6%96%B7%E9%A3%9F%E5%B7%A5%E7%A8%8B%E5%B8%AB%E5%AF%A6%E6%88%B0-%E7%82%BA%E4%BB%80%E9%BA%BC%E5%AF%AB-Code-%E7%9A%84%E4%BA%BA%E7%89%B9%E5%88%A5%E9%81%A9%E5%90%88%E9%96%93%E6%AD%87%E6%80%A7%E6%96%B7%E9%A3%9F/">https://mark22013333.github.io/2026/04/27/168-斷食工程師實戰-為什麼寫-Code-的人特別適合間歇性斷食/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版權聲明: </span><span class="post-copyright-info">本部落格所有文章除特別聲明外，均採用<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 授權協議。轉載請註明來源 <a href="https://mark22013333.github.io" target="_blank">Cheng's Tech & Life</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/168%E6%96%B7%E9%A3%9F/">168斷食</a><a class="post-meta__tags" href="/tags/%E9%96%93%E6%AD%87%E6%80%A7%E6%96%B7%E9%A3%9F/">間歇性斷食</a><a class="post-meta__tags" href="/tags/%E5%B7%A5%E7%A8%8B%E5%B8%AB%E5%81%A5%E5%BA%B7/">工程師健康</a><a class="post-meta__tags" href="/tags/%E7%94%9F%E7%94%A2%E5%8A%9B/">生產力</a><a class="post-meta__tags" href="/tags/%E5%B0%88%E6%B3%A8%E5%8A%9B/">專注力</a></div><div class="post-share"><div class="social-share" data-image="/img/20260427-04.webp" data-sites="facebook,x"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><div class="post-reward"><div class="reward-badges"><a class="sponsor-glow-btn" href="https://www.buymeacoffee.com/mark22013333" target="_blank" rel="noopener noreferrer" title="Buy Me A Coffee"><img src="https://img.shields.io/badge/Buy_Me_A_Coffee-FFDD00?style=for-the-badge&amp;logo=buy-me-a-coffee&amp;logoColor=black" alt="Buy Me A Coffee"/></a><a class="sponsor-glow-btn" href="https://p.ecpay.com.tw/EFC3F8F" target="_blank" rel="noopener noreferrer" title="綠界贊助"><img src="https://img.shields.io/badge/☕_%E8%AB%8B%E6%88%91%E5%96%9D%E6%9D%AF%E5%92%96%E5%95%A1-Donate-11998e?style=for-the-badge&amp;logo=coffee&amp;logoColor=white" alt="綠界贊助"/></a><a class="sponsor-glow-btn" href="https://calendly.com/markcheng00806-intumit/15min" target="_blank" rel="noopener noreferrer" title="預約時間"><img src="https://img.shields.io/badge/📅_%E9%A0%90%E7%B4%84_15_%E5%88%86%E9%90%98-Book_Time-0072ff?style=for-the-badge" alt="預約時間"/></a><p class="reward-badges-note">你的鼓勵將被轉換為我明天繼續加班的動力（真的）。 ❤️</p></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related full-width" href="/2026/04/27/Claude-Code-Multi-Model-%E6%B7%B7%E7%94%A8%E7%AD%96%E7%95%A5-Haiku-Sonnet-Opus-%E6%80%8E%E9%BA%BC%E6%90%AD%E6%89%8D%E7%9C%81%E9%8C%A2%E5%8F%88%E6%9C%89%E6%95%88/" title="Claude Code Multi-Model 混用策略 — Haiku / Sonnet / Opus 怎麼搭才省錢又有效"><img class="cover" src="/img/20260427-03.webp" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">Claude Code Multi-Model 混用策略 — Haiku / Sonnet / Opus 怎麼搭才省錢又有效</div></div><div class="info-2"><div class="info-item-1">你的 Claude Code session 裡，每一次工具呼叫都用 Opus。讀一個 5 行的 config 檔？Opus。跑一個 ls 指令？Opus。改一個 typo？還是 Opus。 這就像叫一個年薪千萬的 CTO 去影印文件。他當然做得到，但你的預算會先陣亡。 Claude Code 其實內建了三種模型可以切換——Haiku、Sonnet、Opus。差異不只是「聰明程度」，是整個成本結構不同。Haiku 的 token 價格大概是 Opus 的十分之一，但處理日常任務的能力有 Sonnet 九成水準。 關鍵不是「哪個模型最好」，而是「哪個任務配哪個模型最划算」。  三種模型像三種員工先用一個類比把基本概念打通。 想像你開了一間軟體公司，有三種角色可以指派任務： Haiku 是剛畢業的工程師。 速度快、成本低、日常任務處理得不錯。寫個腳本、跑個指令、讀個檔案回報內容——這些事交給他完全沒問題。但你不會讓他做架構決策。 Sonnet 是資深工程師。 寫 code 品質穩定，能處理中等複雜度的 bug，理解上下文的能力強。大部分日常開發工作交給他就對了。 Opus 是技術長。...</div></div></div></a></nav><hr class="custom-hr"/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 評論</span></div></div><div class="comment-wrap"><div><div id="giscus-wrap"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="https://lh3.googleusercontent.com/pw/ABLVV87_po8nBc6F_tXcoYDmtzMGWxHuhhrbguYILCjmjWKLOS8DTpubm0YoQLKgjyjRIZyV5TjYe7XVEz_YU4squfr37GTZqPZP1hlMVZ_MIgXpTxWu73M=w1200" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">Cheng®</div><div class="author-info-description">Backend Developer / 技術筆記 & AI 新聞分享</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">176</div></a><a href="/tags/"><div class="headline">標籤</div><div class="length-num">191</div></a><a href="/categories/"><div class="headline">分類</div><div class="length-num">13</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/mark22013333"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons"><a class="social-icon" href="https://github.com/mark22013333" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:mark22013333@gmail.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a></div><div class="card-info-sponsor"><a class="sponsor-glow-btn" href="https://www.buymeacoffee.com/mark22013333" target="_blank" rel="noopener noreferrer" title="Buy Me A Coffee"><img src="https://img.shields.io/badge/Buy_Me_A_Coffee-FFDD00?style=for-the-badge&amp;logo=buy-me-a-coffee&amp;logoColor=black" alt="Buy Me A Coffee"/></a><a class="sponsor-glow-btn" href="https://p.ecpay.com.tw/EFC3F8F" target="_blank" rel="noopener noreferrer" title="綠界贊助"><img src="https://img.shields.io/badge/☕_%E8%AB%8B%E6%88%91%E5%96%9D%E6%9D%AF%E5%92%96%E5%95%A1-Donate-11998e?style=for-the-badge&amp;logo=coffee&amp;logoColor=white" alt="綠界贊助"/></a><a class="sponsor-glow-btn" href="https://calendly.com/markcheng00806-intumit/15min" target="_blank" rel="noopener noreferrer" title="預約時間"><img src="https://img.shields.io/badge/📅_%E9%A0%90%E7%B4%84_15_%E5%88%86%E9%90%98-Book_Time-0072ff?style=for-the-badge" alt="預約時間"/></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">這裡記錄我在後端開發路上踩過的坑、學到的東西，也會分享每日 AI 與科技新聞觀點。歡迎一起交流！</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目錄</span><span class="toc-percentage"></span></div><div class="toc-content is-expand"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%88%E8%AC%9B%E6%A9%9F%E5%88%B6%EF%BC%8C%E4%B8%8D%E7%84%B6%E8%81%BD%E8%B5%B7%E4%BE%86%E5%83%8F%E9%82%AA%E6%95%99"><span class="toc-number">1.</span> <span class="toc-text">先講機制，不然聽起來像邪教</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B7%A5%E7%A8%8B%E5%B8%AB%E7%9A%84%E4%B8%80%E5%A4%A9%E9%95%B7%E4%BB%80%E9%BA%BC%E6%A8%A3"><span class="toc-number">2.</span> <span class="toc-text">工程師的一天長什麼樣</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%82%A3%E4%BA%9B%E4%BD%A0%E6%9C%83%E6%93%94%E5%BF%83%E7%9A%84%E4%BA%8B"><span class="toc-number">3.</span> <span class="toc-text">那些你會擔心的事</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%80%E9%BA%BC%E4%BA%BA%E4%B8%8D%E8%A9%B2%E8%A9%A6"><span class="toc-number">4.</span> <span class="toc-text">什麼人不該試</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%88%91%E5%BE%9E%E7%A4%BE%E7%BE%A4%E8%A3%A1%E6%8C%96%E5%88%B0%E7%9A%84%E4%B8%89%E5%80%8B%E5%8F%8D%E7%9B%B4%E8%A6%BA%E7%99%BC%E7%8F%BE"><span class="toc-number">5.</span> <span class="toc-text">我從社群裡挖到的三個反直覺發現</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A6%82%E6%9E%9C%E4%BD%A0%E6%83%B3%E8%A9%A6"><span class="toc-number">6.</span> <span class="toc-text">如果你想試</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2026/04/27/168-%E6%96%B7%E9%A3%9F%E5%B7%A5%E7%A8%8B%E5%B8%AB%E5%AF%A6%E6%88%B0-%E7%82%BA%E4%BB%80%E9%BA%BC%E5%AF%AB-Code-%E7%9A%84%E4%BA%BA%E7%89%B9%E5%88%A5%E9%81%A9%E5%90%88%E9%96%93%E6%AD%87%E6%80%A7%E6%96%B7%E9%A3%9F/" title="168 斷食工程師實戰 — 為什麼寫 Code 的人特別適合間歇性斷食"><img src="/img/20260427-04.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="168 斷食工程師實戰 — 為什麼寫 Code 的人特別適合間歇性斷食"/></a><div class="content"><a class="title" href="/2026/04/27/168-%E6%96%B7%E9%A3%9F%E5%B7%A5%E7%A8%8B%E5%B8%AB%E5%AF%A6%E6%88%B0-%E7%82%BA%E4%BB%80%E9%BA%BC%E5%AF%AB-Code-%E7%9A%84%E4%BA%BA%E7%89%B9%E5%88%A5%E9%81%A9%E5%90%88%E9%96%93%E6%AD%87%E6%80%A7%E6%96%B7%E9%A3%9F/" title="168 斷食工程師實戰 — 為什麼寫 Code 的人特別適合間歇性斷食">168 斷食工程師實戰 — 為什麼寫 Code 的人特別適合間歇性斷食</a><time datetime="2026-04-27T06:00:00.000Z" title="發表於 2026-04-27 14:00:00">2026-04-27</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/04/27/Claude-Code-Multi-Model-%E6%B7%B7%E7%94%A8%E7%AD%96%E7%95%A5-Haiku-Sonnet-Opus-%E6%80%8E%E9%BA%BC%E6%90%AD%E6%89%8D%E7%9C%81%E9%8C%A2%E5%8F%88%E6%9C%89%E6%95%88/" title="Claude Code Multi-Model 混用策略 — Haiku / Sonnet / Opus 怎麼搭才省錢又有效"><img src="/img/20260427-03.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Claude Code Multi-Model 混用策略 — Haiku / Sonnet / Opus 怎麼搭才省錢又有效"/></a><div class="content"><a class="title" href="/2026/04/27/Claude-Code-Multi-Model-%E6%B7%B7%E7%94%A8%E7%AD%96%E7%95%A5-Haiku-Sonnet-Opus-%E6%80%8E%E9%BA%BC%E6%90%AD%E6%89%8D%E7%9C%81%E9%8C%A2%E5%8F%88%E6%9C%89%E6%95%88/" title="Claude Code Multi-Model 混用策略 — Haiku / Sonnet / Opus 怎麼搭才省錢又有效">Claude Code Multi-Model 混用策略 — Haiku / Sonnet / Opus 怎麼搭才省錢又有效</a><time datetime="2026-04-27T04:00:00.000Z" title="發表於 2026-04-27 12:00:00">2026-04-27</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/04/27/Lightpanda-%E5%B0%88%E7%82%BA-AI-Agent-%E6%89%93%E9%80%A0%E7%9A%84%E8%BC%95%E9%87%8F%E7%B4%9A-Headless-Browser/" title="Lightpanda — 專為 AI Agent 打造的輕量級 Headless Browser"><img src="/img/20260427-01.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Lightpanda — 專為 AI Agent 打造的輕量級 Headless Browser"/></a><div class="content"><a class="title" href="/2026/04/27/Lightpanda-%E5%B0%88%E7%82%BA-AI-Agent-%E6%89%93%E9%80%A0%E7%9A%84%E8%BC%95%E9%87%8F%E7%B4%9A-Headless-Browser/" title="Lightpanda — 專為 AI Agent 打造的輕量級 Headless Browser">Lightpanda — 專為 AI Agent 打造的輕量級 Headless Browser</a><time datetime="2026-04-27T02:00:00.000Z" title="發表於 2026-04-27 10:00:00">2026-04-27</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/04/27/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260427/" title="AI 與科技新聞摘要 - 2026/04/27"><img src="/img/20260427-02.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="AI 與科技新聞摘要 - 2026/04/27"/></a><div class="content"><a class="title" href="/2026/04/27/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260427/" title="AI 與科技新聞摘要 - 2026/04/27">AI 與科技新聞摘要 - 2026/04/27</a><time datetime="2026-04-27T00:30:00.000Z" title="發表於 2026-04-27 08:30:00">2026-04-27</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/04/27/Claude-Design-%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8-%E7%94%A8%E5%B0%8D%E8%A9%B1%E5%81%9A%E8%A8%AD%E8%A8%88%E5%BE%9E-Prototype-%E5%88%B0-Claude-Code-%E4%BA%A4%E6%8E%A5/" title="Claude Design 完整教學 - 用對話做設計從 Prototype 到 Claude Code 交接"><img src="/img/20260427-03.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Claude Design 完整教學 - 用對話做設計從 Prototype 到 Claude Code 交接"/></a><div class="content"><a class="title" href="/2026/04/27/Claude-Design-%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8-%E7%94%A8%E5%B0%8D%E8%A9%B1%E5%81%9A%E8%A8%AD%E8%A8%88%E5%BE%9E-Prototype-%E5%88%B0-Claude-Code-%E4%BA%A4%E6%8E%A5/" title="Claude Design 完整教學 - 用對話做設計從 Prototype 到 Claude Code 交接">Claude Design 完整教學 - 用對話做設計從 Prototype 到 Claude Code 交接</a><time datetime="2026-04-27T00:30:00.000Z" title="發表於 2026-04-27 08:30:00">2026-04-27</time></div></div></div></div></div></div></main><footer id="footer" style="background-image: url(/img/20260427-04.webp);"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2024 - 2026 By Cheng®</span></div><div class="footer_custom_text">Written by Cheng® — 自律，從當下的一念開始。</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="閱讀模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日夜模式切換"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="單欄和雙欄切換"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="設定"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目錄"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="前往評論"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到頂端"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.umd.min.js"></script><script src="https://cdn.jsdelivr.net/npm/instant.page/instantpage.min.js" type="module"></script><script src="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.js"></script><div class="js-pjax"><script>(() => {
+  const isShuoshuo = GLOBAL_CONFIG_SITE.pageType === 'shuoshuo'
+  const option = {"mapping":"pathname","strict":0,"reactionsEnabled":1,"emitMetadata":0,"inputPosition":"bottom","lang":"zh-TW"}
+
+  const getGiscusTheme = theme => theme === 'dark' ? 'dark' : 'light'
+
+  const createScriptElement = config => {
+    const ele = document.createElement('script')
+    Object.entries(config).forEach(([key, value]) => {
+      ele.setAttribute(key, value)
+    })
+    return ele
+  }
+
+  const loadGiscus = (el = document, key) => {
+    const mappingConfig = isShuoshuo
+      ? { 'data-mapping': 'specific', 'data-term': key }
+      : { 'data-mapping': (option && option['data-mapping']) || 'pathname' }
+
+    const giscusConfig = {
+      src: 'https://giscus.app/client.js',
+      'data-repo': 'mark22013333/mark22013333.github.io',
+      'data-repo-id': 'R_kgDOLAxa6A',
+      'data-category-id': 'DIC_kwDOLAxa6M4C5eO9',
+      'data-theme': getGiscusTheme(document.documentElement.getAttribute('data-theme')),
+      'data-reactions-enabled': '1',
+      crossorigin: 'anonymous',
+      async: true,
+      ...option,
+      ...mappingConfig
+    }
+
+    const scriptElement = createScriptElement(giscusConfig)
+
+    el.querySelector('#giscus-wrap').appendChild(scriptElement)
+
+    if (isShuoshuo) {
+      window.shuoshuoComment.destroyGiscus = () => {
+        if (el.children.length) {
+          el.innerHTML = ''
+          el.classList.add('no-comment')
+        }
+      }
+    }
+  }
+
+  const changeGiscusTheme = theme => {
+    const iframe = document.querySelector('#giscus-wrap iframe')
+    if (iframe) {
+      const message = {
+        giscus: {
+          setConfig: {
+            theme: getGiscusTheme(theme)
+          }
+        }
+      }
+      iframe.contentWindow.postMessage(message, 'https://giscus.app')
+    }
+  }
+
+  btf.addGlobalFn('themeChange', changeGiscusTheme, 'giscus')
+
+  if (isShuoshuo) {
+    'Giscus' === 'Giscus'
+      ? window.shuoshuoComment = { loadComment: loadGiscus }
+      : window.loadOtherComment = loadGiscus
+    return
+  }
+
+  if ('Giscus' === 'Giscus' || !true) {
+    if (true) btf.loadComment(document.getElementById('giscus-wrap'), loadGiscus)
+    else loadGiscus()
+  } else {
+    window.loadOtherComment = loadGiscus
+  }
+})()</script></div><script src="/js/kkbox-player.js"></script><script src="/js/archives-pagination.js"></script><script src="/js/font-resize.js"></script><script src="/js/dark-palette.js"></script><script defer="defer" id="fluttering_ribbon" mobile="false" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/canvas-fluttering-ribbon.min.js"></script><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/activate-power-mode.min.js"></script><script>POWERMODE.colorful = true;
+POWERMODE.shake = true;
+POWERMODE.mobile = true;
+document.body.addEventListener('input', POWERMODE);
+</script><script src="https://cdn.jsdelivr.net/npm/pjax/pjax.min.js" defer="defer"></script><script>document.addEventListener('DOMContentLoaded', () => {
+  const pjaxSelectors = ["meta[property=\"og:image\"]","meta[property=\"og:title\"]","meta[property=\"og:url\"]","meta[property=\"og:description\"]","link[rel=\"canonical\"]","head > title","#config-diff","#body-wrap","#rightside-config-hide","#rightside-config-show",".js-pjax"]
+
+  window.pjax = new Pjax({
+    elements: 'a:not([target="_blank"])',
+    selectors: pjaxSelectors,
+    cacheBust: false,
+    analytics: true,
+    scrollRestoration: false
+  })
+
+  const triggerPjaxFn = (val) => {
+    if (!val) return
+    Object.values(val).forEach(fn => {
+      try {
+        fn()
+      } catch (err) {
+        console.debug('Pjax callback failed:', err)
+      }
+    })
+  }
+
+  document.addEventListener('pjax:send', () => {
+    // removeEventListener
+    btf.removeGlobalFnEvent('pjaxSendOnce')
+    btf.removeGlobalFnEvent('themeChange')
+
+    // reset readmode
+    const $bodyClassList = document.body.classList
+    if ($bodyClassList.contains('read-mode')) $bodyClassList.remove('read-mode')
+
+    triggerPjaxFn(window.globalFn.pjaxSend)
+  })
+
+  document.addEventListener('pjax:complete', () => {
+    btf.removeGlobalFnEvent('pjaxCompleteOnce')
+    document.querySelectorAll('script[data-pjax]').forEach(item => {
+      const newScript = document.createElement('script')
+      const content = item.text || item.textContent || item.innerHTML || ""
+      Array.from(item.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value))
+      newScript.appendChild(document.createTextNode(content))
+      item.parentNode.replaceChild(newScript, item)
+    })
+
+    triggerPjaxFn(window.globalFn.pjaxComplete)
+  })
+
+  document.addEventListener('pjax:error', e => {
+    if (e.request.status === 404) {
+      true
+        ? pjax.loadUrl('/404.html')
+        : window.location.href = e.request.responseURL
+    }
+  })
+})</script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜尋</span><i class="fas fa-spinner fa-pulse" id="loading-status" hidden="hidden"></i><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="text-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  資料載入中</span></div><div class="local-search-input"><input placeholder="搜尋文章" type="text"/></div><hr/><div id="local-search-results"></div><div class="ais-Pagination" id="local-search-pagination" style="display:none;"><ul class="ais-Pagination-list"></ul></div><div id="local-search-stats"></div></div><div id="search-mask"></div><script src="/js/search/local-search.js"></script></div></div></body></html>

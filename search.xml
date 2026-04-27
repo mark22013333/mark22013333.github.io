@@ -4,6 +4,39 @@
   
     
     <entry>
+      <title>168 斷食工程師實戰 — 為什麼寫 Code 的人特別適合間歇性斷食</title>
+      <link href="/2026/04/27/168-%E6%96%B7%E9%A3%9F%E5%B7%A5%E7%A8%8B%E5%B8%AB%E5%AF%A6%E6%88%B0-%E7%82%BA%E4%BB%80%E9%BA%BC%E5%AF%AB-Code-%E7%9A%84%E4%BA%BA%E7%89%B9%E5%88%A5%E9%81%A9%E5%90%88%E9%96%93%E6%AD%87%E6%80%A7%E6%96%B7%E9%A3%9F/"/>
+      <url>/2026/04/27/168-%E6%96%B7%E9%A3%9F%E5%B7%A5%E7%A8%8B%E5%B8%AB%E5%AF%A6%E6%88%B0-%E7%82%BA%E4%BB%80%E9%BA%BC%E5%AF%AB-Code-%E7%9A%84%E4%BA%BA%E7%89%B9%E5%88%A5%E9%81%A9%E5%90%88%E9%96%93%E6%AD%87%E6%80%A7%E6%96%B7%E9%A3%9F/</url>
+      
+        <content type="html"><![CDATA[<p>下午兩點，午餐後的血糖高峰。你盯著螢幕上的 stack trace，同一行看了三遍，腦袋像灌了水泥。</p><p>這個場景每天都在上演。不是你不夠努力，是你的身體正在拿所有的能量去消化那碗滷肉飯。</p><p>Reddit 的 r&#x2F;Biohackers 最近有一串討論特別有意思：有人問「斷食最大的好處是什麼？」，底下的回覆不是講減肥，是講<strong>專注力</strong>。一個軟體工程師在 Dev.to 上寫了一篇長文，說他開始 168 斷食之後，上午的 coding session 從平均專注 45 分鐘拉長到 2 小時不中斷。</p><p>這引起了我的好奇：為什麼「不吃東西」反而讓大腦跑得更快？</p><hr><h2 id="先講機制，不然聽起來像邪教"><a href="#先講機制，不然聽起來像邪教" class="headerlink" title="先講機制，不然聽起來像邪教"></a>先講機制，不然聽起來像邪教</h2><p>168 斷食就是一天 24 小時裡，16 小時不吃東西，8 小時內把三餐吃完。</p><p>聽起來很極端，但其實大部分人本來就在做 12 小時的斷食——晚餐到隔天早餐的時間。168 只是把早餐往後推到中午而已。</p><p>身體在斷食狀態下會發生幾件事。第一，血糖穩定下來。吃東西會讓血糖飆高然後掉下來（那個掉下來的時段就是你想睡覺的時候）。不吃東西，血糖就像一條平的線，沒有雲霄飛車。</p><p>第二，大約斷食 12-14 小時後，身體開始燒脂肪當燃料。脂肪代謝產生的酮體（ketones）剛好是大腦很喜歡的燃料——比葡萄糖更穩定、不會忽高忽低。Fortune 報導引用的研究顯示，這個狀態下焦慮感降低、學習和記憶能力改善。</p><p>白話講：你的大腦從燒 92 無鉛換成燒航空燃油。輸出更穩定，但你得先讓油箱裡的 92 燒完。</p><hr><h2 id="工程師的一天長什麼樣"><a href="#工程師的一天長什麼樣" class="headerlink" title="工程師的一天長什麼樣"></a>工程師的一天長什麼樣</h2><p>PTT FITNESS 版上有個經典問題：「168 斷早餐還是晚餐？」</p><p>對工程師來說，答案幾乎都是<strong>斷早餐</strong>。原因很實際：</p><p>早上 9 點到中午 12 點是大部分開發者生產力最高的時段。你剛起床，inbox 還沒被塞滿，Slack 還沒開始轟炸。這三個小時如果是空腹狀態，血糖穩定、酮體供能——專注力是一天裡的巔峰。</p><p>中午 12 點吃第一餐。下午做 code review、開會、回覆訊息這些不需要深度專注的事。晚上 8 點前吃完最後一餐。然後 16 小時的斷食自動開始跑。</p><p>一個 PTT 上分享半年心得的網友說，他最驚訝的不是體重掉了，是「下午三點不會想睡了」。</p><hr><h2 id="那些你會擔心的事"><a href="#那些你會擔心的事" class="headerlink" title="那些你會擔心的事"></a>那些你會擔心的事</h2><p>「不吃早餐不是會低血糖嗎？」</p><p>健康的人不會。你的肝臟存了大約 400-500 大卡的肝醣，足夠撐 12-16 小時。真正的低血糖是糖尿病患者的問題，不是跳過一餐早餐會發生的事。Reddit r&#x2F;diabetes_t1 最近有一串討論就在講這個——第一型糖尿病患者做斷食需要醫師指導，但健康人不需要。</p><p>「會不會肌肉流失？」</p><p>在 8 小時的進食窗口吃夠蛋白質就不會。一個 X 上的健身帳號分享她的 16:8 routine，每天攝取 150g 蛋白質，搭配清晨有氧訓練。重點是<strong>進食窗口裡吃什麼</strong>，不是吃幾餐。</p><p>「工作到一半很餓怎麼辦？」</p><p>前三到五天會餓。之後身體適應了，飢餓感會在固定時間出現然後自己消退。PTT 上那個半年心得的分享者說「第一週超痛苦，第二週開始就忘記早餐這件事了」。黑咖啡和水在斷食期間可以喝，不會打破斷食狀態。</p><hr><h2 id="什麼人不該試"><a href="#什麼人不該試" class="headerlink" title="什麼人不該試"></a>什麼人不該試</h2><p>講清楚邊界比推銷重要。</p><p>有以下狀況的人不適合 168 斷食：孕婦或哺乳中的人、有飲食障礙史的人、第一型糖尿病患者（除非有醫師監督）、BMI 過低的人、正在服用需要隨餐吃的藥物的人。</p><p>另外，如果你的工作需要大量體力勞動（不是坐在電腦前的那種），斷食對你的影響會不一樣。工程師適合 168 的原因之一就是我們的工作是腦力密集、體力消耗低——剛好是斷食最有利的組合。</p><hr><h2 id="我從社群裡挖到的三個反直覺發現"><a href="#我從社群裡挖到的三個反直覺發現" class="headerlink" title="我從社群裡挖到的三個反直覺發現"></a>我從社群裡挖到的三個反直覺發現</h2><p>翻了 Reddit、PTT、YouTube 的討論後，有三個觀察跟我原本想的不一樣。</p><p><strong>第一，最大的好處不是減重，是睡眠品質。</strong> 好幾個人提到，晚餐提早到 6-7 點吃完之後，睡眠品質明顯改善。原因是消化在睡前就完成了，身體不用一邊睡覺一邊處理食物。對工程師來說，睡眠品質直接影響隔天的認知能力。</p><p><strong>第二，168 不是唯一的窗口。</strong> YouTube 上 Sadhguru 的影片（5,700 萬次觀看）提到，重點不在於精確的 16:8，而在於給消化系統足夠的休息時間。有些人用 14:10 也有同樣效果。PTT 上的討論也是——「12:12 到 16:8 之間找一個你能持續的就好」。</p><p><strong>第三，最難的不是餓，是社交壓力。</strong> 同事問「要不要一起吃早餐？」、家人說「不吃早餐會傷胃」、聚餐時間超出進食窗口。好幾個討論串的重點都不是在討論飢餓感，是在討論怎麼跟周圍的人解釋。</p><hr><h2 id="如果你想試"><a href="#如果你想試" class="headerlink" title="如果你想試"></a>如果你想試</h2><p>不需要一步到位。</p><p><strong>第一週：</strong> 把早餐延後一小時。本來 8 點吃，改成 9 點。感受一下空腹工作的狀態。</p><p><strong>第二週：</strong> 再延後到 10 點。這時候你已經有了 14 小時的斷食窗口（如果前一天 8 點吃完晚餐的話）。</p><p><strong>第三週：</strong> 延後到中午。恭喜，你已經在做 16:8 了。</p><p>整個過程中，黑咖啡是你的好朋友。不加糖、不加奶——加了就不算斷食了。</p><p>一個可以量化的指標：記錄你每天下午 2-4 點的專注力狀態（1-10 分）。跑兩週之後跟之前比較。如果沒有明顯改善，這個方法可能不適合你，放棄也沒什麼。</p><p>重點從來不是「堅持某個飲食法」，而是「找到讓你的大腦長時間高效運作的方法」。168 只是其中一種選項。</p><blockquote><p>來源：<a href="https://www.reddit.com/r/diabetes_t1/comments/1srq6g0/intermittent_fasting_and_mental_health/">Intermittent fasting and mental health 討論</a>（Reddit r&#x2F;diabetes_t1）<br>來源：<a href="https://www.reddit.com/r/Biohackers/comments/1s7sydb/what_was_the_biggest_health_benefit_you_got_from/">What was the biggest health benefit from IF?</a>（Reddit r&#x2F;Biohackers）<br>來源：<a href="https://dev.to/rjrobinson/how-intermittent-fasting-improved-my-productivity-and-other-helpful-tips-ne7">How Intermittent Fasting Improved My Productivity</a>（DEV Community）<br>來源：<a href="https://fortune.com/well/article/intermittent-fasting-improve-work-performance/">Intermittent fasting improves sleep, focus, and memory</a>（Fortune Well）<br>來源：<a href="https://www.ptt.cc/bbs/FITNESS/M.1670548239.A.4E1.html">168斷食半年心得</a>（PTT FITNESS）<br>來源：<a href="https://www.ptt.cc/bbs/FITNESS/M.1664076447.A.ECE.html">168 斷早餐還是晚餐？</a>（PTT FITNESS）</p></blockquote>]]></content>
+      
+      
+      <categories>
+          
+          <category> 生活札記 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> 168斷食 </tag>
+            
+            <tag> 間歇性斷食 </tag>
+            
+            <tag> 工程師健康 </tag>
+            
+            <tag> 生產力 </tag>
+            
+            <tag> 專注力 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>Claude Code Multi-Model 混用策略 — Haiku / Sonnet / Opus 怎麼搭才省錢又有效</title>
       <link href="/2026/04/27/Claude-Code-Multi-Model-%E6%B7%B7%E7%94%A8%E7%AD%96%E7%95%A5-Haiku-Sonnet-Opus-%E6%80%8E%E9%BA%BC%E6%90%AD%E6%89%8D%E7%9C%81%E9%8C%A2%E5%8F%88%E6%9C%89%E6%95%88/"/>
       <url>/2026/04/27/Claude-Code-Multi-Model-%E6%B7%B7%E7%94%A8%E7%AD%96%E7%95%A5-Haiku-Sonnet-Opus-%E6%80%8E%E9%BA%BC%E6%90%AD%E6%89%8D%E7%9C%81%E9%8C%A2%E5%8F%88%E6%9C%89%E6%95%88/</url>
@@ -160,9 +193,9 @@
       
         <tags>
             
-            <tag> 資安 </tag>
-            
             <tag> MCP </tag>
+            
+            <tag> 資安 </tag>
             
             <tag> AI Coding </tag>
             
@@ -193,11 +226,11 @@
       
         <tags>
             
+            <tag> Google </tag>
+            
             <tag> 資安 </tag>
             
             <tag> Anthropic </tag>
-            
-            <tag> Google </tag>
             
             <tag> Claude Mythos </tag>
             
@@ -230,9 +263,9 @@
             
             <tag> Claude Code </tag>
             
-            <tag> 自動化 </tag>
-            
             <tag> Hooks </tag>
+            
+            <tag> 自動化 </tag>
             
             <tag> 教學 </tag>
             
@@ -424,9 +457,9 @@
       
         <tags>
             
-            <tag> MCP </tag>
-            
             <tag> OpenAI </tag>
+            
+            <tag> MCP </tag>
             
             <tag> GPT-5.5 </tag>
             
@@ -632,9 +665,9 @@
             
             <tag> Kiro </tag>
             
-            <tag> GitHub Copilot </tag>
-            
             <tag> Stanford AI Index </tag>
+            
+            <tag> GitHub Copilot </tag>
             
         </tags>
       
@@ -723,11 +756,11 @@
       
         <tags>
             
-            <tag> 資安 </tag>
+            <tag> OpenAI </tag>
             
             <tag> MCP </tag>
             
-            <tag> OpenAI </tag>
+            <tag> 資安 </tag>
             
             <tag> Claude Code </tag>
             
@@ -857,11 +890,11 @@
       
         <tags>
             
-            <tag> 資安 </tag>
+            <tag> OpenAI </tag>
             
             <tag> MCP </tag>
             
-            <tag> OpenAI </tag>
+            <tag> 資安 </tag>
             
             <tag> Anthropic </tag>
             
@@ -987,13 +1020,13 @@
       
         <tags>
             
-            <tag> 資安 </tag>
-            
             <tag> OpenAI </tag>
             
-            <tag> Cursor </tag>
+            <tag> 資安 </tag>
             
             <tag> Microsoft </tag>
+            
+            <tag> Cursor </tag>
             
             <tag> EY </tag>
             
@@ -1119,11 +1152,11 @@
       
         <tags>
             
-            <tag> 資安 </tag>
-            
             <tag> OpenAI </tag>
             
             <tag> Google </tag>
+            
+            <tag> 資安 </tag>
             
             <tag> Gemini </tag>
             
@@ -1218,11 +1251,11 @@
       
         <tags>
             
-            <tag> 資安 </tag>
-            
             <tag> Claude </tag>
             
             <tag> OpenAI </tag>
+            
+            <tag> 資安 </tag>
             
             <tag> Anthropic </tag>
             
@@ -1736,9 +1769,9 @@
             
             <tag> MCP </tag>
             
-            <tag> Anthropic </tag>
-            
             <tag> Google </tag>
+            
+            <tag> Anthropic </tag>
             
             <tag> Copilot </tag>
             
@@ -1802,9 +1835,9 @@
       
         <tags>
             
-            <tag> AI Agent </tag>
-            
             <tag> Claude </tag>
+            
+            <tag> AI Agent </tag>
             
             <tag> Multi-Model </tag>
             
@@ -1926,9 +1959,9 @@
             
             <tag> Claude Code </tag>
             
-            <tag> Cursor </tag>
-            
             <tag> Copilot </tag>
+            
+            <tag> Cursor </tag>
             
             <tag> 開發工具 </tag>
             
@@ -2176,9 +2209,9 @@
             
             <tag> MCP </tag>
             
-            <tag> Copilot </tag>
-            
             <tag> Microsoft </tag>
+            
+            <tag> Copilot </tag>
             
         </tags>
       
@@ -2257,13 +2290,13 @@
       
         <tags>
             
-            <tag> AI Agent </tag>
-            
-            <tag> 資安 </tag>
-            
             <tag> Claude </tag>
             
             <tag> OpenAI </tag>
+            
+            <tag> AI Agent </tag>
+            
+            <tag> 資安 </tag>
             
             <tag> Copilot </tag>
             
@@ -2408,9 +2441,9 @@
       
         <tags>
             
-            <tag> AI Agent </tag>
-            
             <tag> MCP </tag>
+            
+            <tag> AI Agent </tag>
             
             <tag> Claude Code </tag>
             
@@ -2466,13 +2499,13 @@
       
         <tags>
             
-            <tag> 資安 </tag>
-            
             <tag> Claude </tag>
             
-            <tag> Copilot </tag>
+            <tag> 資安 </tag>
             
             <tag> Microsoft </tag>
+            
+            <tag> Copilot </tag>
             
         </tags>
       
@@ -2555,9 +2588,9 @@
             
             <tag> 資安 </tag>
             
-            <tag> Cursor </tag>
-            
             <tag> Copilot </tag>
+            
+            <tag> Cursor </tag>
             
         </tags>
       
@@ -2640,11 +2673,11 @@
       
         <tags>
             
-            <tag> 資安 </tag>
-            
             <tag> OpenAI </tag>
             
             <tag> NVIDIA </tag>
+            
+            <tag> 資安 </tag>
             
         </tags>
       
@@ -2698,9 +2731,9 @@
             
             <tag> LLM </tag>
             
-            <tag> AI Agent </tag>
-            
             <tag> MCP </tag>
+            
+            <tag> AI Agent </tag>
             
             <tag> Claude Code </tag>
             
@@ -2843,9 +2876,9 @@
       
         <tags>
             
-            <tag> AI Agent </tag>
-            
             <tag> MCP </tag>
+            
+            <tag> AI Agent </tag>
             
             <tag> Claude Code </tag>
             
@@ -2901,11 +2934,11 @@
       
         <tags>
             
-            <tag> 資安 </tag>
+            <tag> OpenAI </tag>
             
             <tag> MCP </tag>
             
-            <tag> OpenAI </tag>
+            <tag> 資安 </tag>
             
         </tags>
       
@@ -2932,9 +2965,9 @@
             
             <tag> Claude </tag>
             
-            <tag> 自動化 </tag>
-            
             <tag> macOS </tag>
+            
+            <tag> 自動化 </tag>
             
         </tags>
       
@@ -3110,9 +3143,9 @@
             
             <tag> Claude Code </tag>
             
-            <tag> 自動化 </tag>
-            
             <tag> macOS </tag>
+            
+            <tag> 自動化 </tag>
             
             <tag> 教學 </tag>
             
@@ -3139,13 +3172,13 @@
       
         <tags>
             
-            <tag> 資安 </tag>
-            
             <tag> MCP </tag>
             
-            <tag> Anthropic </tag>
-            
             <tag> NVIDIA </tag>
+            
+            <tag> 資安 </tag>
+            
+            <tag> Anthropic </tag>
             
             <tag> Claude Code </tag>
             
@@ -3265,9 +3298,9 @@
             
             <tag> AI 新聞 </tag>
             
-            <tag> MCP </tag>
-            
             <tag> Apple </tag>
+            
+            <tag> MCP </tag>
             
             <tag> Anthropic </tag>
             
@@ -3408,9 +3441,9 @@
             
             <tag> OpenAI </tag>
             
-            <tag> Anthropic </tag>
-            
             <tag> Google </tag>
+            
+            <tag> Anthropic </tag>
             
         </tags>
       
@@ -3495,13 +3528,13 @@
             
             <tag> AI 新聞 </tag>
             
-            <tag> 資安 </tag>
-            
             <tag> MCP </tag>
+            
+            <tag> NVIDIA </tag>
             
             <tag> Google </tag>
             
-            <tag> NVIDIA </tag>
+            <tag> 資安 </tag>
             
         </tags>
       
@@ -3557,13 +3590,13 @@
             
             <tag> AI 新聞 </tag>
             
-            <tag> 資安 </tag>
-            
             <tag> MCP </tag>
             
-            <tag> Anthropic </tag>
-            
             <tag> Google </tag>
+            
+            <tag> 資安 </tag>
+            
+            <tag> Anthropic </tag>
             
         </tags>
       
@@ -3673,9 +3706,9 @@
             
             <tag> AI 新聞 </tag>
             
-            <tag> 資安 </tag>
-            
             <tag> OpenAI </tag>
+            
+            <tag> 資安 </tag>
             
         </tags>
       
@@ -3756,17 +3789,17 @@
       
         <tags>
             
-            <tag> LLM </tag>
-            
             <tag> AI 新聞 </tag>
             
-            <tag> Claude </tag>
+            <tag> LLM </tag>
             
-            <tag> MCP </tag>
+            <tag> Claude </tag>
             
             <tag> OpenAI </tag>
             
             <tag> Apple </tag>
+            
+            <tag> MCP </tag>
             
         </tags>
       
@@ -3849,13 +3882,13 @@
             
             <tag> AI 新聞 </tag>
             
-            <tag> 資安 </tag>
-            
             <tag> Claude </tag>
+            
+            <tag> OpenAI </tag>
             
             <tag> MCP </tag>
             
-            <tag> OpenAI </tag>
+            <tag> 資安 </tag>
             
         </tags>
       
@@ -3988,9 +4021,9 @@
       
         <tags>
             
-            <tag> LLM </tag>
-            
             <tag> AI 新聞 </tag>
+            
+            <tag> LLM </tag>
             
             <tag> 資安 </tag>
             
