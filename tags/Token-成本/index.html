@@ -1,0 +1,336 @@
+<!DOCTYPE html><html lang="zh-TW" data-theme="dark"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>標籤: Token 成本 | Cheng's Tech &amp; Life</title><meta name="author" content="Cheng®"><meta name="copyright" content="Cheng®"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#0d0d0d"><meta name="description" content="台灣工程師的技術筆記 — Claude Code 教學、AI 與科技新聞、Java Spring 實戰、開發工具推薦">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Cheng&#39;s Tech &amp; Life">
+<meta property="og:url" content="https://mark22013333.github.io/tags/Token-%E6%88%90%E6%9C%AC/index.html">
+<meta property="og:site_name" content="Cheng&#39;s Tech &amp; Life">
+<meta property="og:description" content="台灣工程師的技術筆記 — Claude Code 教學、AI 與科技新聞、Java Spring 實戰、開發工具推薦">
+<meta property="og:locale" content="zh_TW">
+<meta property="og:image" content="https://lh3.googleusercontent.com/pw/ABLVV87_po8nBc6F_tXcoYDmtzMGWxHuhhrbguYILCjmjWKLOS8DTpubm0YoQLKgjyjRIZyV5TjYe7XVEz_YU4squfr37GTZqPZP1hlMVZ_MIgXpTxWu73M=w1200">
+<meta property="article:author" content="Cheng®">
+<meta property="article:tag" content="Claude Code, AI 新聞, Java, Spring, MCP, 技術筆記, 工程師, 開發工具">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://lh3.googleusercontent.com/pw/ABLVV87_po8nBc6F_tXcoYDmtzMGWxHuhhrbguYILCjmjWKLOS8DTpubm0YoQLKgjyjRIZyV5TjYe7XVEz_YU4squfr37GTZqPZP1hlMVZ_MIgXpTxWu73M=w1200"><script type="application/ld+json"></script><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://mark22013333.github.io/tags/Token-%E6%88%90%E6%9C%AC/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//www.google-analytics.com" crossorigin=""/><link rel="preconnect" href="//fonts.googleapis.com" crossorigin=""/><link rel="preconnect" href="//busuanzi.ibruce.info"/><meta name="google-site-verification" content="6ywUr8k2n_CT1PFYJzlSvI3CZ-JmJ55RYbA39VrFBDs"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!true && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          const hour = new Date().getHours()
+          const isNight = hour <= 9 || hour >= 18
+          if (theme === undefined) isNight ? activateDarkMode() : activateLightMode()
+          else theme === 'light' ? activateLightMode() : activateDarkMode()
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script async="async" src="https://www.googletagmanager.com/gtag/js?id=G-JBV14NRDH3"></script><script>window.dataLayer = window.dataLayer || []
+function gtag(){dataLayer.push(arguments)}
+gtag('js', new Date())
+gtag('config', 'G-JBV14NRDH3')
+btf.addGlobalFn('pjaxComplete', () => {
+  gtag('config', 'G-JBV14NRDH3', {'page_path': window.location.pathname})
+}, 'google_analytics')
+</script><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Titillium+Web&amp;display=swap" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"pagination":{"enable":false,"hitsPerPage":8},"languages":{"hits_empty":"找不到符合您查詢的內容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '複製成功',
+    error: '複製失敗',
+    noSupport: '瀏覽器不支援'
+  },
+  relativeDate: {
+    homepage: false,
+    post: true
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '剛剛',
+    min: '分鐘前',
+    hour: '小時前',
+    day: '天前',
+    month: '個月前'
+  },
+  copyright: {"limitCount":1,"languages":{"author":"作者: Cheng®","link":"連結: ","source":"來源: Cheng's Tech & Life","info":"著作權歸作者所有。如需商業轉載，請聯絡作者獲得授權，非商業轉載請註明出處😁。"}},
+  lightbox: 'fancybox',
+  Snackbar: {"chs_to_cht":"已切換為繁體中文","cht_to_chs":"已切換為簡體中文","day_to_night":"已切換為深色模式","night_to_day":"已切換為淺色模式","bgLight":"#49b1f5","bgDark":"#1f1f1f","position":"top-center"},
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid/dist/infinitegrid.min.js',
+    buttonText: '載入更多'
+  },
+  isPhotoFigcaption: true,
+  islazyloadPlugin: false,
+  isAnchor: true,
+  percent: {
+    toc: true,
+    rightside: true,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '標籤: Token 成本',
+  isHighlightShrink: false,
+  isToc: false,
+  pageType: 'tag'
+}</script><link rel="stylesheet" href="/css/kkbox-player.css"><link rel="stylesheet" href="/css/tag-cloud-fancy.css"><link rel="stylesheet" href="/css/font-resize.css"><link rel="stylesheet" href="/css/dark-palette.css"><link rel="stylesheet" href="/css/loading-override.css"><link rel="alternate" href="/atom.xml" title="Cheng's Tech & Life" type="application/atom+xml">
+</head><body><div id="loading-box"><div class="loading-glass-overlay"></div><div class="loading-indicator"><div class="loading-dot"></div><div class="loading-dot"></div><div class="loading-dot"></div></div></div><script>(()=>{
+  const $loadingBox = document.getElementById('loading-box')
+  const $body = document.body
+  const preloader = {
+    endLoading: () => {
+      if ($loadingBox.classList.contains('loaded')) return
+      $body.style.overflow = ''
+      $loadingBox.classList.add('loaded')
+    },
+    initLoading: () => {
+      $body.style.overflow = 'hidden'
+      $loadingBox.classList.remove('loaded')
+    }
+  }
+
+  preloader.initLoading()
+
+  if (document.readyState === 'complete') {
+    preloader.endLoading()
+  } else {
+    window.addEventListener('load', preloader.endLoading)
+    document.addEventListener('DOMContentLoaded', preloader.endLoading)
+    setTimeout(preloader.endLoading, 7000)
+  }
+
+  if (true) {
+    btf.addGlobalFn('pjaxSend', preloader.initLoading, 'preloader_init')
+    btf.addGlobalFn('pjaxComplete', preloader.endLoading, 'preloader_end')
+  }
+})()</script><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="https://lh3.googleusercontent.com/pw/ABLVV87_po8nBc6F_tXcoYDmtzMGWxHuhhrbguYILCjmjWKLOS8DTpubm0YoQLKgjyjRIZyV5TjYe7XVEz_YU4squfr37GTZqPZP1hlMVZ_MIgXpTxWu73M=w1200" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">175</div></a><a href="/tags/"><div class="headline">標籤</div><div class="length-num">186</div></a><a href="/categories/"><div class="headline">分類</div><div class="length-num">13</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首頁-Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 時間軸-archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 標籤-tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分類-Categories</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-list"></i><span> 其他列表</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音樂-Music</span></a></li><li><a class="site-page child" href="/gallery/"><i class="fa-fw fas fa-images"></i><span> 畫館-Gallery</span></a></li></ul></div></div></div></div><div class="page" id="body-wrap"><header class="not-home-page fixed" id="page-header" style="background-image: url(https://lh3.googleusercontent.com/pw/ABLVV853NQFWL4WeSSrWk5muVHD0zrcrFPpWIUUavM_Whrk2S6MxmPC6IZTRkUrg4ibCJsO0mFugBuJvMdwQu5_kpa9M08ZXqLsNmJa62GuQJ1zVZrXrMBg=w2400);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><img class="site-icon" src="https://lh3.googleusercontent.com/pw/ABLVV87_po8nBc6F_tXcoYDmtzMGWxHuhhrbguYILCjmjWKLOS8DTpubm0YoQLKgjyjRIZyV5TjYe7XVEz_YU4squfr37GTZqPZP1hlMVZ_MIgXpTxWu73M=w1200" alt="Logo"><span class="site-name">Cheng's Tech &amp; Life</span></a></span><div id="menus"><div id="search-button" title="Ctrl+K / Cmd+K"><span class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜尋</span></span></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首頁-Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 時間軸-archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 標籤-tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分類-Categories</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-list"></i><span> 其他列表</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音樂-Music</span></a></li><li><a class="site-page child" href="/gallery/"><i class="fa-fw fas fa-images"></i><span> 畫館-Gallery</span></a></li></ul></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="page-site-info"><h1 id="site-title">Token 成本</h1></div></header><main class="layout" id="content-inner"><div id="tag"><div class="article-sort-title">標籤 - Token 成本</div><div class="article-sort"><div class="article-sort-item year">2026</div><div class="article-sort-item"><a class="article-sort-item-img" href="/2026/04/27/Claude-Code-Multi-Model-%E6%B7%B7%E7%94%A8%E7%AD%96%E7%95%A5-Haiku-Sonnet-Opus-%E6%80%8E%E9%BA%BC%E6%90%AD%E6%89%8D%E7%9C%81%E9%8C%A2%E5%8F%88%E6%9C%89%E6%95%88/" title="Claude Code Multi-Model 混用策略 — Haiku / Sonnet / Opus 怎麼搭才省錢又有效"><img src="/img/20260427-03.webp" alt="Claude Code Multi-Model 混用策略 — Haiku / Sonnet / Opus 怎麼搭才省錢又有效" onerror="this.onerror=null;this.src='/img/404.jpg'"></a><div class="article-sort-item-info"><div class="article-sort-item-time"><i class="far fa-calendar-alt"></i><time class="post-meta-date-created" datetime="2026-04-27T04:00:00.000Z" title="發表於 2026-04-27 12:00:00">2026-04-27</time></div><a class="article-sort-item-title" href="/2026/04/27/Claude-Code-Multi-Model-%E6%B7%B7%E7%94%A8%E7%AD%96%E7%95%A5-Haiku-Sonnet-Opus-%E6%80%8E%E9%BA%BC%E6%90%AD%E6%89%8D%E7%9C%81%E9%8C%A2%E5%8F%88%E6%9C%89%E6%95%88/" title="Claude Code Multi-Model 混用策略 — Haiku / Sonnet / Opus 怎麼搭才省錢又有效">Claude Code Multi-Model 混用策略 — Haiku / Sonnet / Opus 怎麼搭才省錢又有效</a></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="https://lh3.googleusercontent.com/pw/ABLVV87_po8nBc6F_tXcoYDmtzMGWxHuhhrbguYILCjmjWKLOS8DTpubm0YoQLKgjyjRIZyV5TjYe7XVEz_YU4squfr37GTZqPZP1hlMVZ_MIgXpTxWu73M=w1200" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">Cheng®</div><div class="author-info-description">Backend Developer / 技術筆記 & AI 新聞分享</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">175</div></a><a href="/tags/"><div class="headline">標籤</div><div class="length-num">186</div></a><a href="/categories/"><div class="headline">分類</div><div class="length-num">13</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/mark22013333"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons"><a class="social-icon" href="https://github.com/mark22013333" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:mark22013333@gmail.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a></div><div class="card-info-sponsor"><a class="sponsor-glow-btn" href="https://www.buymeacoffee.com/mark22013333" target="_blank" rel="noopener noreferrer" title="Buy Me A Coffee"><img src="https://img.shields.io/badge/Buy_Me_A_Coffee-FFDD00?style=for-the-badge&amp;logo=buy-me-a-coffee&amp;logoColor=black" alt="Buy Me A Coffee"/></a><a class="sponsor-glow-btn" href="https://p.ecpay.com.tw/EFC3F8F" target="_blank" rel="noopener noreferrer" title="綠界贊助"><img src="https://img.shields.io/badge/☕_%E8%AB%8B%E6%88%91%E5%96%9D%E6%9D%AF%E5%92%96%E5%95%A1-Donate-11998e?style=for-the-badge&amp;logo=coffee&amp;logoColor=white" alt="綠界贊助"/></a><a class="sponsor-glow-btn" href="https://calendly.com/markcheng00806-intumit/15min" target="_blank" rel="noopener noreferrer" title="預約時間"><img src="https://img.shields.io/badge/📅_%E9%A0%90%E7%B4%84_15_%E5%88%86%E9%90%98-Book_Time-0072ff?style=for-the-badge" alt="預約時間"/></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">這裡記錄我在後端開發路上踩過的坑、學到的東西，也會分享每日 AI 與科技新聞觀點。歡迎一起交流！</div></div><div class="sticky_layout"><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2026/04/27/Claude-Code-Multi-Model-%E6%B7%B7%E7%94%A8%E7%AD%96%E7%95%A5-Haiku-Sonnet-Opus-%E6%80%8E%E9%BA%BC%E6%90%AD%E6%89%8D%E7%9C%81%E9%8C%A2%E5%8F%88%E6%9C%89%E6%95%88/" title="Claude Code Multi-Model 混用策略 — Haiku / Sonnet / Opus 怎麼搭才省錢又有效"><img src="/img/20260427-03.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Claude Code Multi-Model 混用策略 — Haiku / Sonnet / Opus 怎麼搭才省錢又有效"/></a><div class="content"><a class="title" href="/2026/04/27/Claude-Code-Multi-Model-%E6%B7%B7%E7%94%A8%E7%AD%96%E7%95%A5-Haiku-Sonnet-Opus-%E6%80%8E%E9%BA%BC%E6%90%AD%E6%89%8D%E7%9C%81%E9%8C%A2%E5%8F%88%E6%9C%89%E6%95%88/" title="Claude Code Multi-Model 混用策略 — Haiku / Sonnet / Opus 怎麼搭才省錢又有效">Claude Code Multi-Model 混用策略 — Haiku / Sonnet / Opus 怎麼搭才省錢又有效</a><time datetime="2026-04-27T04:00:00.000Z" title="發表於 2026-04-27 12:00:00">2026-04-27</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/04/27/Lightpanda-%E5%B0%88%E7%82%BA-AI-Agent-%E6%89%93%E9%80%A0%E7%9A%84%E8%BC%95%E9%87%8F%E7%B4%9A-Headless-Browser/" title="Lightpanda — 專為 AI Agent 打造的輕量級 Headless Browser"><img src="/img/20260427-01.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Lightpanda — 專為 AI Agent 打造的輕量級 Headless Browser"/></a><div class="content"><a class="title" href="/2026/04/27/Lightpanda-%E5%B0%88%E7%82%BA-AI-Agent-%E6%89%93%E9%80%A0%E7%9A%84%E8%BC%95%E9%87%8F%E7%B4%9A-Headless-Browser/" title="Lightpanda — 專為 AI Agent 打造的輕量級 Headless Browser">Lightpanda — 專為 AI Agent 打造的輕量級 Headless Browser</a><time datetime="2026-04-27T02:00:00.000Z" title="發表於 2026-04-27 10:00:00">2026-04-27</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/04/27/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260427/" title="AI 與科技新聞摘要 - 2026/04/27"><img src="/img/20260427-02.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="AI 與科技新聞摘要 - 2026/04/27"/></a><div class="content"><a class="title" href="/2026/04/27/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260427/" title="AI 與科技新聞摘要 - 2026/04/27">AI 與科技新聞摘要 - 2026/04/27</a><time datetime="2026-04-27T00:30:00.000Z" title="發表於 2026-04-27 08:30:00">2026-04-27</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/04/27/Claude-Design-%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8-%E7%94%A8%E5%B0%8D%E8%A9%B1%E5%81%9A%E8%A8%AD%E8%A8%88%E5%BE%9E-Prototype-%E5%88%B0-Claude-Code-%E4%BA%A4%E6%8E%A5/" title="Claude Design 完整教學 - 用對話做設計從 Prototype 到 Claude Code 交接"><img src="/img/20260427-03.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Claude Design 完整教學 - 用對話做設計從 Prototype 到 Claude Code 交接"/></a><div class="content"><a class="title" href="/2026/04/27/Claude-Design-%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8-%E7%94%A8%E5%B0%8D%E8%A9%B1%E5%81%9A%E8%A8%AD%E8%A8%88%E5%BE%9E-Prototype-%E5%88%B0-Claude-Code-%E4%BA%A4%E6%8E%A5/" title="Claude Design 完整教學 - 用對話做設計從 Prototype 到 Claude Code 交接">Claude Design 完整教學 - 用對話做設計從 Prototype 到 Claude Code 交接</a><time datetime="2026-04-27T00:30:00.000Z" title="發表於 2026-04-27 08:30:00">2026-04-27</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/04/27/Sonatype-Guide-AI-%E5%AF%AB%E7%9A%84%E7%A8%8B%E5%BC%8F%E7%A2%BC%E8%AA%B0%E4%BE%86%E6%8A%8A%E9%97%9C%E4%BE%9D%E8%B3%B4%E5%AE%89%E5%85%A8/" title="Sonatype Guide - AI 寫的程式碼誰來把關依賴安全"><img src="/img/20260427-01.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Sonatype Guide - AI 寫的程式碼誰來把關依賴安全"/></a><div class="content"><a class="title" href="/2026/04/27/Sonatype-Guide-AI-%E5%AF%AB%E7%9A%84%E7%A8%8B%E5%BC%8F%E7%A2%BC%E8%AA%B0%E4%BE%86%E6%8A%8A%E9%97%9C%E4%BE%9D%E8%B3%B4%E5%AE%89%E5%85%A8/" title="Sonatype Guide - AI 寫的程式碼誰來把關依賴安全">Sonatype Guide - AI 寫的程式碼誰來把關依賴安全</a><time datetime="2026-04-27T00:30:00.000Z" title="發表於 2026-04-27 08:30:00">2026-04-27</time></div></div></div></div><div class="card-widget card-categories"><div class="item-headline">
+            <i class="fas fa-folder-open"></i>
+            <span>分類</span>
+            <a class="card-more-btn" href="/categories/" title="檢視更多">
+      <i class="fas fa-angle-right"></i></a>
+          </div>
+          <ul class="card-category-list" id="aside-cat-list">
+            <li class="card-category-list-item "><a class="card-category-list-link" href="/categories/AI-ML/"><span class="card-category-list-name">AI / ML</span><span class="card-category-list-count">1</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/AI%E8%88%87ML/"><span class="card-category-list-name">AI與ML</span><span class="card-category-list-count">1</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/AI%E8%88%87%E7%A7%91%E6%8A%80/"><span class="card-category-list-name">AI與科技</span><span class="card-category-list-count">1</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/AI%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E/"><span class="card-category-list-name">AI與科技新聞</span><span class="card-category-list-count">35</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/Claude-Code/"><span class="card-category-list-name">Claude Code</span><span class="card-category-list-count">66</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/DevOps/"><span class="card-category-list-name">DevOps</span><span class="card-category-list-count">3</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/HTML/"><span class="card-category-list-name">HTML</span><span class="card-category-list-count">1</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/Java/"><span class="card-category-list-name">Java</span><span class="card-category-list-count">25</span></a></li>
+          </ul></div><div class="card-widget card-tags"><div class="item-headline"><i class="fas fa-tags"></i><span>標籤</span></div><div class="card-tag-cloud"><a href="/tags/AI-%E6%96%B0%E8%81%9E/" style="font-size: 1.31em; color: rgb(84, 154, 155);">AI 新聞</a><a href="/tags/LLM/" style="font-size: 1.27em; color: rgb(57, 50, 153);">LLM</a><a href="/tags/Claude/" style="font-size: 1.36em; color: rgb(50, 145, 170);">Claude</a><a href="/tags/OpenAI/" style="font-size: 1.38em; color: rgb(84, 130, 196);">OpenAI</a><a href="/tags/Apple/" style="font-size: 1.2em; color: rgb(50, 50, 150);">Apple</a><a href="/tags/MCP/" style="font-size: 1.43em; color: rgb(179, 179, 50);">MCP</a><a href="/tags/%E8%B3%87%E5%AE%89/" style="font-size: 1.4em; color: rgb(50, 164, 87);">資安</a><a href="/tags/Anthropic/" style="font-size: 1.36em; color: rgb(160, 139, 168);">Anthropic</a><a href="/tags/Google/" style="font-size: 1.29em; color: rgb(119, 50, 50);">Google</a><a href="/tags/NVIDIA/" style="font-size: 1.2em; color: rgb(142, 180, 124);">NVIDIA</a><a href="/tags/AI-Agent/" style="font-size: 1.38em; color: rgb(137, 157, 50);">AI Agent</a><a href="/tags/%E7%90%86%E8%B2%A1/" style="font-size: 1.24em; color: rgb(170, 182, 94);">理財</a><a href="/tags/%E9%96%8B%E6%BA%90/" style="font-size: 1.2em; color: rgb(150, 83, 157);">開源</a><a href="/tags/Perplexity/" style="font-size: 1.15em; color: rgb(50, 110, 93);">Perplexity</a><a href="/tags/Gemini/" style="font-size: 1.27em; color: rgb(164, 50, 56);">Gemini</a><a href="/tags/Mistral/" style="font-size: 1.15em; color: rgb(179, 50, 99);">Mistral</a><a href="/tags/Qwen/" style="font-size: 1.15em; color: rgb(120, 154, 50);">Qwen</a><a href="/tags/Copilot/" style="font-size: 1.33em; color: rgb(91, 110, 133);">Copilot</a><a href="/tags/Claude-Code/" style="font-size: 1.45em; color: rgb(69, 101, 50);">Claude Code</a><a href="/tags/Cursor/" style="font-size: 1.22em; color: rgb(50, 50, 65);">Cursor</a><a href="/tags/AI-%E6%B3%95%E8%A6%8F/" style="font-size: 1.17em; color: rgb(191, 163, 103);">AI 法規</a><a href="/tags/Meta/" style="font-size: 1.15em; color: rgb(108, 187, 50);">Meta</a><a href="/tags/Microsoft/" style="font-size: 1.24em; color: rgb(121, 50, 50);">Microsoft</a><a href="/tags/Kiro/" style="font-size: 1.2em; color: rgb(141, 117, 50);">Kiro</a><a href="/tags/Codex/" style="font-size: 1.17em; color: rgb(111, 77, 55);">Codex</a><a href="/tags/Mythos/" style="font-size: 1.15em; color: rgb(50, 78, 164);">Mythos</a><a href="/tags/Stripe/" style="font-size: 1.15em; color: rgb(61, 185, 50);">Stripe</a><a href="/tags/GitHub/" style="font-size: 1.31em; color: rgb(50, 50, 50);">GitHub</a><a href="/tags/MiniMax/" style="font-size: 1.15em; color: rgb(192, 109, 119);">MiniMax</a><a href="/tags/EU/" style="font-size: 1.15em; color: rgb(92, 164, 188);">EU</a><a href="/tags/Adobe/" style="font-size: 1.15em; color: rgb(173, 103, 50);">Adobe</a><a href="/tags/EY/" style="font-size: 1.15em; color: rgb(154, 164, 50);">EY</a><a href="/tags/Canva/" style="font-size: 1.15em; color: rgb(101, 50, 71);">Canva</a><a href="/tags/Novo-Nordisk/" style="font-size: 1.15em; color: rgb(184, 105, 61);">Novo Nordisk</a><a href="/tags/Google-Cloud/" style="font-size: 1.15em; color: rgb(72, 50, 113);">Google Cloud</a><a href="/tags/A2A-Protocol/" style="font-size: 1.15em; color: rgb(156, 126, 182);">A2A Protocol</a><a href="/tags/AI%E5%B8%82%E5%A0%B4/" style="font-size: 1.15em; color: rgb(181, 94, 106);">AI市場</a><a href="/tags/PwC/" style="font-size: 1.15em; color: rgb(113, 50, 56);">PwC</a><a href="/tags/Visa/" style="font-size: 1.15em; color: rgb(77, 175, 50);">Visa</a><a href="/tags/Stanford-AI-Index/" style="font-size: 1.2em; color: rgb(173, 120, 133);">Stanford AI Index</a></div></div><div class="card-widget card-archives">
+    <div class="item-headline">
+      <i class="fas fa-archive"></i>
+      <span>歸檔</span>
+      <a class="card-more-btn" href="/archives/"
+            title="檢視更多">
+            <i class="fas fa-angle-right"></i>
+          </a>
+    </div>
+  
+    <ul class="card-archive-list">
+      
+        <li class="card-archive-list-item">
+          <a class="card-archive-list-link" href="/archives/2026/04/">
+            <span class="card-archive-list-date">
+              四月 2026
+            </span>
+            <span class="card-archive-list-count">102</span>
+          </a>
+        </li>
+      
+        <li class="card-archive-list-item">
+          <a class="card-archive-list-link" href="/archives/2026/03/">
+            <span class="card-archive-list-date">
+              三月 2026
+            </span>
+            <span class="card-archive-list-count">31</span>
+          </a>
+        </li>
+      
+        <li class="card-archive-list-item">
+          <a class="card-archive-list-link" href="/archives/2026/02/">
+            <span class="card-archive-list-date">
+              二月 2026
+            </span>
+            <span class="card-archive-list-count">2</span>
+          </a>
+        </li>
+      
+        <li class="card-archive-list-item">
+          <a class="card-archive-list-link" href="/archives/2026/01/">
+            <span class="card-archive-list-date">
+              一月 2026
+            </span>
+            <span class="card-archive-list-count">3</span>
+          </a>
+        </li>
+      
+        <li class="card-archive-list-item">
+          <a class="card-archive-list-link" href="/archives/2025/12/">
+            <span class="card-archive-list-date">
+              十二月 2025
+            </span>
+            <span class="card-archive-list-count">3</span>
+          </a>
+        </li>
+      
+        <li class="card-archive-list-item">
+          <a class="card-archive-list-link" href="/archives/2025/11/">
+            <span class="card-archive-list-date">
+              十一月 2025
+            </span>
+            <span class="card-archive-list-count">3</span>
+          </a>
+        </li>
+      
+        <li class="card-archive-list-item">
+          <a class="card-archive-list-link" href="/archives/2025/10/">
+            <span class="card-archive-list-date">
+              十月 2025
+            </span>
+            <span class="card-archive-list-count">2</span>
+          </a>
+        </li>
+      
+        <li class="card-archive-list-item">
+          <a class="card-archive-list-link" href="/archives/2025/09/">
+            <span class="card-archive-list-date">
+              九月 2025
+            </span>
+            <span class="card-archive-list-count">3</span>
+          </a>
+        </li>
+      
+    </ul>
+  </div><div class="card-widget card-webinfo"><div class="item-headline"><i class="fas fa-chart-line"></i><span>網站資訊</span></div><div class="webinfo"><div class="webinfo-item"><div class="item-name">文章數量 :</div><div class="item-count">175</div></div><div class="webinfo-item"><div class="item-name">總字數 :</div><div class="item-count">267.7k</div></div><div class="webinfo-item"><div class="item-name">訪客數 :</div><div class="item-count" id="busuanzi_value_site_uv"><i class="fa-solid fa-spinner fa-spin"></i></div></div><div class="webinfo-item"><div class="item-name">總瀏覽量 :</div><div class="item-count" id="busuanzi_value_site_pv"><i class="fa-solid fa-spinner fa-spin"></i></div></div><div class="webinfo-item"><div class="item-name">最後更新時間 :</div><div class="item-count" id="last-push-date" data-lastPushDate="2026-04-27T14:19:26.721Z"><i class="fa-solid fa-spinner fa-spin"></i></div></div></div></div></div></div></main><footer id="footer" style="background-image: url(https://lh3.googleusercontent.com/pw/ABLVV853NQFWL4WeSSrWk5muVHD0zrcrFPpWIUUavM_Whrk2S6MxmPC6IZTRkUrg4ibCJsO0mFugBuJvMdwQu5_kpa9M08ZXqLsNmJa62GuQJ1zVZrXrMBg=w2400);"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2024 - 2026 By Cheng®</span></div><div class="footer_custom_text">Written by Cheng® — 自律，從當下的一念開始。</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="darkmode" type="button" title="日夜模式切換"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="單欄和雙欄切換"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="設定"><i class="fas fa-cog fa-spin"></i></button><button id="go-up" type="button" title="回到頂端"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.umd.min.js"></script><script src="https://cdn.jsdelivr.net/npm/instant.page/instantpage.min.js" type="module"></script><script src="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.js"></script><div class="js-pjax"></div><script src="/js/kkbox-player.js"></script><script src="/js/archives-pagination.js"></script><script src="/js/font-resize.js"></script><script src="/js/dark-palette.js"></script><script defer="defer" id="fluttering_ribbon" mobile="false" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/canvas-fluttering-ribbon.min.js"></script><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/activate-power-mode.min.js"></script><script>POWERMODE.colorful = true;
+POWERMODE.shake = true;
+POWERMODE.mobile = true;
+document.body.addEventListener('input', POWERMODE);
+</script><script src="https://cdn.jsdelivr.net/npm/pjax/pjax.min.js" defer="defer"></script><script>document.addEventListener('DOMContentLoaded', () => {
+  const pjaxSelectors = ["meta[property=\"og:image\"]","meta[property=\"og:title\"]","meta[property=\"og:url\"]","meta[property=\"og:description\"]","link[rel=\"canonical\"]","head > title","#config-diff","#body-wrap","#rightside-config-hide","#rightside-config-show",".js-pjax"]
+
+  window.pjax = new Pjax({
+    elements: 'a:not([target="_blank"])',
+    selectors: pjaxSelectors,
+    cacheBust: false,
+    analytics: true,
+    scrollRestoration: false
+  })
+
+  const triggerPjaxFn = (val) => {
+    if (!val) return
+    Object.values(val).forEach(fn => {
+      try {
+        fn()
+      } catch (err) {
+        console.debug('Pjax callback failed:', err)
+      }
+    })
+  }
+
+  document.addEventListener('pjax:send', () => {
+    // removeEventListener
+    btf.removeGlobalFnEvent('pjaxSendOnce')
+    btf.removeGlobalFnEvent('themeChange')
+
+    // reset readmode
+    const $bodyClassList = document.body.classList
+    if ($bodyClassList.contains('read-mode')) $bodyClassList.remove('read-mode')
+
+    triggerPjaxFn(window.globalFn.pjaxSend)
+  })
+
+  document.addEventListener('pjax:complete', () => {
+    btf.removeGlobalFnEvent('pjaxCompleteOnce')
+    document.querySelectorAll('script[data-pjax]').forEach(item => {
+      const newScript = document.createElement('script')
+      const content = item.text || item.textContent || item.innerHTML || ""
+      Array.from(item.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value))
+      newScript.appendChild(document.createTextNode(content))
+      item.parentNode.replaceChild(newScript, item)
+    })
+
+    triggerPjaxFn(window.globalFn.pjaxComplete)
+  })
+
+  document.addEventListener('pjax:error', e => {
+    if (e.request.status === 404) {
+      true
+        ? pjax.loadUrl('/404.html')
+        : window.location.href = e.request.responseURL
+    }
+  })
+})</script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜尋</span><i class="fas fa-spinner fa-pulse" id="loading-status" hidden="hidden"></i><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="text-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  資料載入中</span></div><div class="local-search-input"><input placeholder="搜尋文章" type="text"/></div><hr/><div id="local-search-results"></div><div class="ais-Pagination" id="local-search-pagination" style="display:none;"><ul class="ais-Pagination-list"></ul></div><div id="local-search-stats"></div></div><div id="search-mask"></div><script src="/js/search/local-search.js"></script></div></div></body></html>

@@ -1,0 +1,389 @@
+<!DOCTYPE html><html lang="zh-TW" data-theme="dark"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>AI 與科技新聞摘要 - 2026/04/24 | Cheng's Tech &amp; Life</title><meta name="author" content="Cheng®"><meta name="copyright" content="Cheng®"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#0d0d0d"><meta name="description" content="OpenAI GPT-5.5 Spud 正式上線、DeepSeek V4-Pro 和 V4-Flash 今日發布、MCP 架構設計漏洞讓 7,000 個伺服器暴露在 RCE 風險下、NIST 限縮 CVE 補充速度、Anthropic Project Glasswing 對外公開。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="AI 與科技新聞摘要 - 2026&#x2F;04&#x2F;24">
+<meta property="og:url" content="https://mark22013333.github.io/2026/04/24/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260424/index.html">
+<meta property="og:site_name" content="Cheng&#39;s Tech &amp; Life">
+<meta property="og:description" content="OpenAI GPT-5.5 Spud 正式上線、DeepSeek V4-Pro 和 V4-Flash 今日發布、MCP 架構設計漏洞讓 7,000 個伺服器暴露在 RCE 風險下、NIST 限縮 CVE 補充速度、Anthropic Project Glasswing 對外公開。">
+<meta property="og:locale" content="zh_TW">
+<meta property="og:image" content="https://mark22013333.github.io/img/20260424-02.webp">
+<meta property="article:published_time" content="2026-04-24T00:30:00.000Z">
+<meta property="article:modified_time" content="2026-04-24T13:28:17.801Z">
+<meta property="article:author" content="Cheng®">
+<meta property="article:tag" content="OpenAI">
+<meta property="article:tag" content="MCP">
+<meta property="article:tag" content="GPT-5.5">
+<meta property="article:tag" content="DeepSeek">
+<meta property="article:tag" content="Cybersecurity">
+<meta property="article:tag" content="AI Security">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://mark22013333.github.io/img/20260424-02.webp"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "AI 與科技新聞摘要 - 2026/04/24",
+  "url": "https://mark22013333.github.io/2026/04/24/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260424/",
+  "image": "https://mark22013333.github.io/img/20260424-02.webp",
+  "datePublished": "2026-04-24T00:30:00.000Z",
+  "dateModified": "2026-04-24T13:28:17.801Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "Cheng®",
+      "url": "https://mark22013333.github.io"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://mark22013333.github.io/2026/04/24/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260424/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//www.google-analytics.com" crossorigin=""/><link rel="preconnect" href="//fonts.googleapis.com" crossorigin=""/><link rel="preconnect" href="//busuanzi.ibruce.info"/><meta name="google-site-verification" content="6ywUr8k2n_CT1PFYJzlSvI3CZ-JmJ55RYbA39VrFBDs"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!true && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          const hour = new Date().getHours()
+          const isNight = hour <= 9 || hour >= 18
+          if (theme === undefined) isNight ? activateDarkMode() : activateLightMode()
+          else theme === 'light' ? activateLightMode() : activateDarkMode()
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script async="async" src="https://www.googletagmanager.com/gtag/js?id=G-JBV14NRDH3"></script><script>window.dataLayer = window.dataLayer || []
+function gtag(){dataLayer.push(arguments)}
+gtag('js', new Date())
+gtag('config', 'G-JBV14NRDH3')
+btf.addGlobalFn('pjaxComplete', () => {
+  gtag('config', 'G-JBV14NRDH3', {'page_path': window.location.pathname})
+}, 'google_analytics')
+</script><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Titillium+Web&amp;display=swap" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"pagination":{"enable":false,"hitsPerPage":8},"languages":{"hits_empty":"找不到符合您查詢的內容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '複製成功',
+    error: '複製失敗',
+    noSupport: '瀏覽器不支援'
+  },
+  relativeDate: {
+    homepage: false,
+    post: true
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '剛剛',
+    min: '分鐘前',
+    hour: '小時前',
+    day: '天前',
+    month: '個月前'
+  },
+  copyright: {"limitCount":1,"languages":{"author":"作者: Cheng®","link":"連結: ","source":"來源: Cheng's Tech & Life","info":"著作權歸作者所有。如需商業轉載，請聯絡作者獲得授權，非商業轉載請註明出處😁。"}},
+  lightbox: 'fancybox',
+  Snackbar: {"chs_to_cht":"已切換為繁體中文","cht_to_chs":"已切換為簡體中文","day_to_night":"已切換為深色模式","night_to_day":"已切換為淺色模式","bgLight":"#49b1f5","bgDark":"#1f1f1f","position":"top-center"},
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid/dist/infinitegrid.min.js',
+    buttonText: '載入更多'
+  },
+  isPhotoFigcaption: true,
+  islazyloadPlugin: false,
+  isAnchor: true,
+  percent: {
+    toc: true,
+    rightside: true,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'AI 與科技新聞摘要 - 2026/04/24',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><link rel="stylesheet" href="/css/kkbox-player.css"><link rel="stylesheet" href="/css/tag-cloud-fancy.css"><link rel="stylesheet" href="/css/font-resize.css"><link rel="stylesheet" href="/css/dark-palette.css"><link rel="stylesheet" href="/css/loading-override.css"><link rel="alternate" href="/atom.xml" title="Cheng's Tech & Life" type="application/atom+xml">
+</head><body><div id="loading-box"><div class="loading-glass-overlay"></div><div class="loading-indicator"><div class="loading-dot"></div><div class="loading-dot"></div><div class="loading-dot"></div></div></div><script>(()=>{
+  const $loadingBox = document.getElementById('loading-box')
+  const $body = document.body
+  const preloader = {
+    endLoading: () => {
+      if ($loadingBox.classList.contains('loaded')) return
+      $body.style.overflow = ''
+      $loadingBox.classList.add('loaded')
+    },
+    initLoading: () => {
+      $body.style.overflow = 'hidden'
+      $loadingBox.classList.remove('loaded')
+    }
+  }
+
+  preloader.initLoading()
+
+  if (document.readyState === 'complete') {
+    preloader.endLoading()
+  } else {
+    window.addEventListener('load', preloader.endLoading)
+    document.addEventListener('DOMContentLoaded', preloader.endLoading)
+    setTimeout(preloader.endLoading, 7000)
+  }
+
+  if (true) {
+    btf.addGlobalFn('pjaxSend', preloader.initLoading, 'preloader_init')
+    btf.addGlobalFn('pjaxComplete', preloader.endLoading, 'preloader_end')
+  }
+})()</script><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="https://lh3.googleusercontent.com/pw/ABLVV87_po8nBc6F_tXcoYDmtzMGWxHuhhrbguYILCjmjWKLOS8DTpubm0YoQLKgjyjRIZyV5TjYe7XVEz_YU4squfr37GTZqPZP1hlMVZ_MIgXpTxWu73M=w1200" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">175</div></a><a href="/tags/"><div class="headline">標籤</div><div class="length-num">186</div></a><a href="/categories/"><div class="headline">分類</div><div class="length-num">13</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首頁-Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 時間軸-archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 標籤-tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分類-Categories</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-list"></i><span> 其他列表</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音樂-Music</span></a></li><li><a class="site-page child" href="/gallery/"><i class="fa-fw fas fa-images"></i><span> 畫館-Gallery</span></a></li></ul></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg fixed" id="page-header" style="background-image: url(/img/20260424-02.webp);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><img class="site-icon" src="https://lh3.googleusercontent.com/pw/ABLVV87_po8nBc6F_tXcoYDmtzMGWxHuhhrbguYILCjmjWKLOS8DTpubm0YoQLKgjyjRIZyV5TjYe7XVEz_YU4squfr37GTZqPZP1hlMVZ_MIgXpTxWu73M=w1200" alt="Logo"><span class="site-name">Cheng's Tech &amp; Life</span></a><a class="nav-page-title" href="/"><span class="site-name">AI 與科技新聞摘要 - 2026/04/24</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首頁</span></span></a></span><div id="menus"><div id="search-button" title="Ctrl+K / Cmd+K"><span class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜尋</span></span></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首頁-Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 時間軸-archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 標籤-tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分類-Categories</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-list"></i><span> 其他列表</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音樂-Music</span></a></li><li><a class="site-page child" href="/gallery/"><i class="fa-fw fas fa-images"></i><span> 畫館-Gallery</span></a></li></ul></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">AI 與科技新聞摘要 - 2026/04/24</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">發表於</span><time class="post-meta-date-created" datetime="2026-04-24T00:30:00.000Z" title="發表於 2026-04-24 08:30:00">2026-04-24</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新於</span><time class="post-meta-date-updated" datetime="2026-04-24T13:28:17.801Z" title="更新於 2026-04-24 21:28:17">2026-04-24</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/AI%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E/">AI與科技新聞</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">總字數:</span><span class="word-count">2k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">閱讀時間:</span><span>6分鐘</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">瀏覽量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><p>六週。GPT-5.4 到 GPT-5.5，就是六週。</p>
+<p>上個月還在討論 GPT-5.4 夠不夠用，這週 GPT-5.5 已經在 ChatGPT 和 Codex 上線。AI 模型的發布週期現在短到讓人懷疑：這些版本之間的差距到底是「真進化」還是「讓人有理由繼續訂閱的節奏感」？</p>
+<p>同一天，DeepSeek 在台灣上午發布了 V4-Pro 和 V4-Flash。定價讓人有點沉默。</p>
+<hr>
+<h2 id="OpenAI-GPT-5-5-—-「Spud」上線，主打-Agentic-能力"><a href="#OpenAI-GPT-5-5-—-「Spud」上線，主打-Agentic-能力" class="headerlink" title="OpenAI GPT-5.5 — 「Spud」上線，主打 Agentic 能力"></a>OpenAI GPT-5.5 — 「Spud」上線，主打 Agentic 能力</h2><p>4 月 23 日，OpenAI 推出 GPT-5.5，內部代號 Spud，向 Plus、Pro、Business、Enterprise 用戶全面開放，同時升級了 Codex 的底層模型。</p>
+<p>API 定價：$5&#x2F;百萬 input tokens，$30&#x2F;百萬 output tokens，context window 1M。跟 GPT-5.4 相比，token 延遲持平，但能力更強——OpenAI 的說法是「更少 tokens 做更多事的思考者」。</p>
+<p>重點能力是多步驟工作流的自主性：GPT-5.5 設計上可以在更少用戶介入的情況下跑完複雜的 agentic 任務。OpenAI 內部 10,000 名員工已經在用 GPT-5.5 驅動的 Codex，涵蓋工程、法務、行銷、財務、HR——不只限工程師。</p>
+<p>邊界在哪裡？GPT-5.5 上線六週後的現在，GPT-5.4 就已經變成過時選項。這是廠商意圖的體現：不斷讓用戶感到「需要升級」，而不是「已經夠用」。從風險的角度看，這個節奏對企業客戶不友善——IT 採購、評估、合規審查都需要時間，模型每六週換一次讓企業的穩定性需求和廠商的競爭節奏永遠對不齊。</p>
+<blockquote>
+<p>原文來源：<a target="_blank" rel="noopener" href="https://openai.com/index/introducing-gpt-5-5/">Introducing GPT-5.5 | OpenAI</a><br>原文來源：<a target="_blank" rel="noopener" href="https://www.axios.com/2026/04/23/openai-releases-spud-gpt-model">OpenAI releases “Spud” GPT-5.5 model - Axios</a></p>
+</blockquote>
+<hr>
+<h2 id="DeepSeek-V4-今日發布-—-定價才是重點"><a href="#DeepSeek-V4-今日發布-—-定價才是重點" class="headerlink" title="DeepSeek V4 今日發布 — 定價才是重點"></a>DeepSeek V4 今日發布 — 定價才是重點</h2><p>4 月 24 日，DeepSeek 推出 V4-Pro 和 V4-Flash 預覽版。</p>
+<p>技術規格：V4-Pro 總參數 1.6T，但只有 49B 是 active 的（MoE 架構）；V4-Flash 則是 284B 總參數，13B active。兩個版本 context window 都是 1M。</p>
+<p>效能比較：V4-Pro 超越 GPT-5.2 和 Gemini 3.0-Pro 的基準測試，接近 Claude Opus 4.5 的水準，略低於 GPT-5.4 和 Gemini 3.1-Pro。</p>
+<p>然後是定價。V4-Flash：$0.14&#x2F;百萬 input tokens，$0.28&#x2F;百萬 output。V4-Pro：$1.74&#x2F;百萬 input，$3.48&#x2F;百萬 output。</p>
+<p>拿 GPT-5.5 的 $5 input 跟 V4-Pro 的 $1.74 比，同等能力區間便宜超過 60%。跟 V4-Flash 比，是將近 35 倍的差距。</p>
+<p>逆向問這件事：如果性能差距不到 20%，但價格差六倍，企業客戶的採購決策邏輯應該是什麼？理性算法很簡單，但現實裡還有資料主權、地緣政治風險、合規需求、vendor reliability 這些因子。DeepSeek 的定價不斷逼迫市場給這些因子標上明確的價格——你願意多付多少，換取「不是中國廠商」這件事？</p>
+<blockquote>
+<p>原文來源：<a target="_blank" rel="noopener" href="https://simonwillison.net/2026/Apr/24/deepseek-v4/">DeepSeek V4 - Simon Willison</a><br>原文來源：<a target="_blank" rel="noopener" href="https://www.aljazeera.com/economy/2026/4/24/chinas-deepseek-unveils-latest-model-a-year-after-upending-global-tech">China’s DeepSeek unveils latest model - Al Jazeera</a></p>
+</blockquote>
+<hr>
+<h2 id="MCP-架構設計漏洞-—-7-000-個伺服器暴露在-RCE-風險"><a href="#MCP-架構設計漏洞-—-7-000-個伺服器暴露在-RCE-風險" class="headerlink" title="MCP 架構設計漏洞 — 7,000 個伺服器暴露在 RCE 風險"></a>MCP 架構設計漏洞 — 7,000 個伺服器暴露在 RCE 風險</h2><p>資安研究人員在 MCP 的架構層發現了一個「by design」的漏洞，可以在執行任何 MCP 實作的系統上達成 RCE（遠端程式碼執行），直接存取用戶資料、內部資料庫、API keys 和對話歷史。</p>
+<p>影響範圍：超過 7,000 個公開可存取的 MCP 伺服器，以及總計超過 1.5 億次下載的軟體套件。部分資料來源估計真正暴露的伺服器超過 20 萬個。</p>
+<p>技術根因是 MCP STDIO 傳輸介面的不安全預設值，攻擊路徑涵蓋：未驗證的指令注入（via MCP STDIO）、直接 STDIO 設定的未驗證指令注入（帶繞過強化機制的變體）、以及透過 zero-click prompt injection 的 MCP 設定修改。</p>
+<p>更值得注意的：<strong>Anthropic 拒絕修改協定架構，理由是這是「預期行為」</strong>。部分 vendors 自行發 patch，但根本問題在 Anthropic 的官方 SDK 裡未修復，等於讓所有基於這個 SDK 開發的工具繼承了這個風險。</p>
+<p>這是 MCP 成為事實標準之後必然會出現的系統性問題。越多工具支援 MCP、越多開發者直接用 Anthropic 的 SDK 建 MCP server，這個架構缺陷的攻擊面積就越大。一個生態系的標準化，帶來的不只是互通性，同時帶來了風險的均一化——一個協定層的漏洞，等於所有工具同時受影響。</p>
+<p>如果你目前有跑 MCP server，先確認你的 STDIO 設定和授權邏輯，不要等官方修復。</p>
+<blockquote>
+<p>原文來源：<a target="_blank" rel="noopener" href="https://thehackernews.com/2026/04/anthropic-mcp-design-vulnerability.html">Anthropic MCP Design Vulnerability Enables RCE, Threatening AI Supply Chain - The Hacker News</a><br>原文來源：<a target="_blank" rel="noopener" href="https://www.ox.security/blog/the-mother-of-all-ai-supply-chains-critical-systemic-vulnerability-at-the-core-of-the-mcp/">The Mother of All AI Supply Chains: Critical, Systemic Vulnerability - OX Security</a></p>
+</blockquote>
+<hr>
+<h2 id="NIST-限縮-CVE-補充速度-—-漏洞提交量暴增-263"><a href="#NIST-限縮-CVE-補充速度-—-漏洞提交量暴增-263" class="headerlink" title="NIST 限縮 CVE 補充速度 — 漏洞提交量暴增 263%"></a>NIST 限縮 CVE 補充速度 — 漏洞提交量暴增 263%</h2><p>NIST 在 4 月 15 日新規生效後，開始限制 CVE 的 enrichment 工作——不再對所有進來的 CVE 條目做完整分析和資料補充，改為優先處理 CISA 已知被利用漏洞清單（KEV）上的項目。</p>
+<p>原因很直接：CVE 提交量同比暴增 263%。AI 工具讓漏洞研究和報告的門檻大幅降低，同時 AI framework 本身成為新的攻擊標的，兩個因素疊加，讓 CVE 系統的處理量超過 NIST 現有人力可以應對的範圍。</p>
+<p>後果是什麼？大量剛進 NVD 的 CVE 條目長期停在「Awaiting Analysis」狀態，沒有 CVSS 分數、沒有 CWE 分類、沒有詳細描述。依賴 NVD 做自動化漏洞掃描的安全工具，拿到的資料會是不完整的。</p>
+<p>這件事的系統性含義比表面看起來嚴重。整個資安產業有大量 SLA 綁著「確認漏洞的 CVSS 分數後 N 天內修復」，如果漏洞進 NVD 但遲遲沒有分數，觸發修復流程的 threshold 就永遠不會到。這不是 NIST 的問題，是 AI 讓漏洞提交速度和安全基礎設施處理速度之間的落差變成了結構性問題。</p>
+<blockquote>
+<p>原文來源：<a target="_blank" rel="noopener" href="https://thehackernews.com/2026/04/nist-limits-cve-enrichment-after-263.html">NIST Limits CVE Enrichment After 263% Surge in Vulnerability Submissions - The Hacker News</a></p>
+</blockquote>
+<hr>
+<h2 id="Anthropic-Project-Glasswing-—-AI-找漏洞，公開給業界用"><a href="#Anthropic-Project-Glasswing-—-AI-找漏洞，公開給業界用" class="headerlink" title="Anthropic Project Glasswing — AI 找漏洞，公開給業界用"></a>Anthropic Project Glasswing — AI 找漏洞，公開給業界用</h2><p>Anthropic 對外公布了 Project Glasswing——一個在發現軟體漏洞方面特別強的 AI 模型，並且已經開放給 Apple、Microsoft、Google、Amazon 和一批合作伙伴使用，目標是在惡意行為者利用之前找到並修復漏洞。</p>
+<p>這件事有兩層。第一層是技術：AI 找漏洞的能力在這一年內快速提升，Glasswing 是 Anthropic 把這個能力產品化的第一個動作。第二層是策略：Anthropic 在 AI 安全上的品牌定位一直是核心，Glasswing 把「我們比別人更在意安全」這個敘事，從公司原則層轉化成了可以被合作夥伴實際使用的工具。</p>
+<p>有趣的地方是：就在同一週，MCP 的架構漏洞被公開，Anthropic 選擇不修。兩條新聞放在一起，敘事有點複雜——一方面在跟業界說「我們幫你找漏洞」，一方面對自家協定的架構問題說「這是預期行為」。怎麼解讀這個落差，各自判斷。</p>
+<blockquote>
+<p>原文來源：<a target="_blank" rel="noopener" href="https://thehackernews.com/2026/04/cisa-adds-6-known-exploited-flaws-in.html">CISA Adds 6 Known Exploited Flaws in Fortinet, Microsoft, and Adobe Software - The Hacker News</a></p>
+</blockquote>
+<hr>
+<p>今天幾條新聞讀起來，有一個共同的底層結構：AI 的推進速度，正在逼迫依賴穩定性的各種系統露出破口。CVE 補充速度跟不上漏洞提交量、企業採購週期跟不上模型發布節奏、MCP 生態系的安全基礎設施跟不上協定擴散速度。</p>
+<p>這不是「AI 進步太快」的道德命題，是系統脆弱性在加速暴露的工程命題。哪些地方有冗餘、哪些環節是單點失敗——現在是把這個清單認真列出來的時候。</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://mark22013333.github.io">Cheng®</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章連結: </span><span class="post-copyright-info"><a href="https://mark22013333.github.io/2026/04/24/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260424/">https://mark22013333.github.io/2026/04/24/AI-與科技新聞摘要-20260424/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版權聲明: </span><span class="post-copyright-info">本部落格所有文章除特別聲明外，均採用<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 授權協議。轉載請註明來源 <a href="https://mark22013333.github.io" target="_blank">Cheng's Tech & Life</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/OpenAI/">OpenAI</a><a class="post-meta__tags" href="/tags/MCP/">MCP</a><a class="post-meta__tags" href="/tags/GPT-5-5/">GPT-5.5</a><a class="post-meta__tags" href="/tags/DeepSeek/">DeepSeek</a><a class="post-meta__tags" href="/tags/Cybersecurity/">Cybersecurity</a><a class="post-meta__tags" href="/tags/AI-Security/">AI Security</a></div><div class="post-share"><div class="social-share" data-image="/img/20260424-02.webp" data-sites="facebook,x"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><div class="post-reward"><div class="reward-badges"><a class="sponsor-glow-btn" href="https://www.buymeacoffee.com/mark22013333" target="_blank" rel="noopener noreferrer" title="Buy Me A Coffee"><img src="https://img.shields.io/badge/Buy_Me_A_Coffee-FFDD00?style=for-the-badge&amp;logo=buy-me-a-coffee&amp;logoColor=black" alt="Buy Me A Coffee"/></a><a class="sponsor-glow-btn" href="https://p.ecpay.com.tw/EFC3F8F" target="_blank" rel="noopener noreferrer" title="綠界贊助"><img src="https://img.shields.io/badge/☕_%E8%AB%8B%E6%88%91%E5%96%9D%E6%9D%AF%E5%92%96%E5%95%A1-Donate-11998e?style=for-the-badge&amp;logo=coffee&amp;logoColor=white" alt="綠界贊助"/></a><a class="sponsor-glow-btn" href="https://calendly.com/markcheng00806-intumit/15min" target="_blank" rel="noopener noreferrer" title="預約時間"><img src="https://img.shields.io/badge/📅_%E9%A0%90%E7%B4%84_15_%E5%88%86%E9%90%98-Book_Time-0072ff?style=for-the-badge" alt="預約時間"/></a><p class="reward-badges-note">你的鼓勵將被轉換為我明天繼續加班的動力（真的）。 ❤️</p></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2026/04/24/OpenAI-Codex-2026-%E9%9B%B2%E7%AB%AF%E4%B8%A6%E8%A1%8C%E7%9A%84%E8%87%AA%E4%B8%BB-AI-%E7%B7%A8%E7%A8%8B%E4%BB%A3%E7%90%86/" title="OpenAI Codex 2026 — 雲端並行的自主 AI 編程代理"><img class="cover" src="/img/20260424-01.webp" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">OpenAI Codex 2026 — 雲端並行的自主 AI 編程代理</div></div><div class="info-2"><div class="info-item-1">大部分 AI coding 工具解決的是「怎麼讓工程師打字打得更快」這個問題。Codex 想解決的是另一個問題——怎麼讓工程師不用打字。 這個區別看起來小，但它改變了工具的整個設計邏輯。  Codex 是什麼，不是什麼先清楚一件事：2026 年的 OpenAI Codex 跟 2021 年那個同名模型沒有直接關係。新 Codex 是一個自主 coding agent 應用程式，底層跑的是 GPT-5.5，現在已有超過 300 萬名每週活躍的開發者在用。 它的定位更接近一個「可以放在背景跑的工程師同事」——你給任務，它去幹，你去睡覺。 和 Cursor、Windsurf 這種 IDE 不同，Codex 不是在你的編輯器裡工作的。它跑在雲端的隔離容器裡，每個任務有自己的 sandbox，預先 clone 你的 repo，在裡面執行指令、跑測試、改程式碼，完成後把結果推回來給你 review。  雲端 Sandbox 的設計邏輯每個 Codex 任務都在一個乾淨的容器裡跑。這個容器：  預先載入你的 git repo（透過 GitHub 連結） 可以執行 shell 指令、跑 lint...</div></div></div></a><a class="pagination-related" href="/2026/04/24/Claude-Code-CLAUDE-md-%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8-%E8%AE%93-AI-%E8%A8%98%E4%BD%8F%E4%BD%A0%E7%9A%84%E5%B0%88%E6%A1%88-%E5%BE%9E%E6%AD%A4%E4%B8%8D%E7%94%A8%E9%87%8D%E8%A4%87%E8%A7%A3%E9%87%8B/" title="Claude Code CLAUDE.md 完整教學 — 讓 AI 記住你的專案，從此不用重複解釋"><img class="cover" src="/img/20260424-03.webp" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">Claude Code CLAUDE.md 完整教學 — 讓 AI 記住你的專案，從此不用重複解釋</div></div><div class="info-2"><div class="info-item-1">同樣的事說第三遍，通常代表有個地方沒設計好。 你跟 Claude Code 說「用 pnpm 不要用 npm」，它照做了。第二天開新 session，它又裝了 npm。你說了第二次。第三次。第四次。 這不是 Claude 記性差，是 session 的設計就是這樣——每次啟動都是乾淨的 context，不帶任何記憶。CLAUDE.md 就是專門解決這件事的機制。  兩種記憶，分工不同Claude Code 有兩套跨 session 的記憶機制，先把它們搞清楚再說怎麼用。 CLAUDE.md：你寫的，Claude 讀的。放進去的是「每個 session 都要成立的規則」——build 指令、coding style、專案架構、「一定要做 X」這種事。每次 Claude Code 啟動都會自動讀進來，不需要你再說一次。 Auto Memory：Claude 寫的，你檢查的。Claude 在工作過程中，如果遇到它判斷「下次會有用」的資訊，就會自動存進去——你糾正了一個它老是用錯的函式、跑了一個奇特的 debug 流程、說了一個這個 repo 特有的習慣，它會把這些記下來。 用一個類比：...</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相關推薦</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2026/04/03/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260403/" title="AI 與科技新聞摘要 — 2026&#x2F;04&#x2F;03"><img class="cover" src="/img/20260403-02.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-04-03</div><div class="info-item-2">AI 與科技新聞摘要 — 2026&#x2F;04&#x2F;03</div></div><div class="info-2"><div class="info-item-1">這週科技圈又有幾個有夠猛的進展——Pinterest 用上生產級 MCP 生態系統、Chrome 又被爆零日漏洞、MCP 供應鏈安全拉警報、OpenAI 併購力道凶猛，以及 Red Hat 帶著 MCP Server 開發者預覽版現身。 Pinterest 部署生產級 MCP 生態系統Pinterest 工程團隊最近釋出了他們的生產級 MCP 生態系統細節，有夠扯欸。他們不是只搞個玩具出來，而是打造了完整的基礎設施，整合 Presto、Spark、Airflow 等領域特定的伺服器，配上中央註冊表和人工審核治理機制。 數字會說話：月均 66,000 次呼叫、844 個活躍使用者，每個月幫公司省下 7,000 小時。這表示 MCP 已經從「有趣的實驗」升級成真實生產系統，開始在大規模工程團隊的日常工作流中發揮實際價值。這對整個 MCP 生態發展是個正面信號。  原文來源：Pinterest engineering brings MCP to production scale  Chrome 零日漏洞 CVE-2026-5281 遭實際利用Google 又挨了一刀。CVE-2026-...</div></div></div></a><a class="pagination-related" href="/2026/03/26/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260326/" title="AI 與科技新聞摘要 — 2026&#x2F;03&#x2F;26"><img class="cover" src="/img/20260326-02.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-03-26</div><div class="info-item-2">AI 與科技新聞摘要 — 2026&#x2F;03&#x2F;26</div></div><div class="info-2"><div class="info-item-1">Claude Code 可以自己決定要不要跑指令了、Apple 砸十億美金讓 Google Gemini 接管 Siri、OpenAI 的安全掃描工具在一百二十萬個 commit 裡抓出上萬個高嚴重度漏洞。今天的新聞有幾條挺重的。  1. Anthropic 推出 Claude Code Auto Mode — AI 自己判斷該不該執行Claude Code 新增了 Auto Mode，讓 AI 自主決定檔案寫入和 bash 指令的執行權限。以前每個動作都要你按同意，現在它會用雙層分類器先過濾：安全的直接跑，有風險的擋下來。 內部測試數據：0.4% 的誤攔率（安全指令被擋），5.7% 的漏放率（危險指令沒攔到）。目前僅限 Enterprise 和 API 用戶，建議在 sandbox 環境使用。 這是 Anthropic 在「給 AI 更多自主權」和「不要讓它搞砸東西」之間找平衡的一步。方向是對的，但 5.7% 的漏放率放在 production 還是讓人有點緊張。  原文來源：Anthropic hands Claude Code more control, but keeps...</div></div></div></a><a class="pagination-related" href="/2026/04/20/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260420/" title="AI 與科技新聞摘要 - 2026&#x2F;04&#x2F;20"><img class="cover" src="/img/20260420-02.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-04-20</div><div class="info-item-2">AI 與科技新聞摘要 - 2026&#x2F;04&#x2F;20</div></div><div class="info-2"><div class="info-item-1">658 倍。這是一個惡意 MCP 伺服器可以把你的 LLM 帳單灌到幾倍——而且標準防禦的偵測率不到 3%。這不是假設性攻擊，是本週剛被學界證實的攻擊技術。同一週，OpenAI 寫了一份內部備忘錄批 Anthropic 的收入造假、Windsurf 在被 Google 挖角後以 2.5 億被 Cognition 救援式收購、Claude Code Game Studios 把 49 個 agent 組成一家虛擬遊戲公司。 這幾條新聞放在一起看，你會看到一個共同模式：AI 的基礎設施跑得比風險管控快。 商業結構、攻擊面、agent 編排這三塊都在同一個時間軸上加速，但「怎麼守住」的答案集體還沒跟上。過去兩年大家在談「AI 怎麼改變我的工作」，今年開始變成「AI 怎麼攻破我的系統」。 Claude Code Game Studios — 49 個 agent 組一家虛擬遊戲公司4 月 19 日，GitHub 開發者 Donchitos 開源了 Claude Code Game Studios，一個把 Claude Code 單一 session 變成完整遊戲開發工作室的專案。不是把幾...</div></div></div></a><a class="pagination-related" href="/2026/04/24/OpenAI-Codex-2026-%E9%9B%B2%E7%AB%AF%E4%B8%A6%E8%A1%8C%E7%9A%84%E8%87%AA%E4%B8%BB-AI-%E7%B7%A8%E7%A8%8B%E4%BB%A3%E7%90%86/" title="OpenAI Codex 2026 — 雲端並行的自主 AI 編程代理"><img class="cover" src="/img/20260424-01.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-04-24</div><div class="info-item-2">OpenAI Codex 2026 — 雲端並行的自主 AI 編程代理</div></div><div class="info-2"><div class="info-item-1">大部分 AI coding 工具解決的是「怎麼讓工程師打字打得更快」這個問題。Codex 想解決的是另一個問題——怎麼讓工程師不用打字。 這個區別看起來小，但它改變了工具的整個設計邏輯。  Codex 是什麼，不是什麼先清楚一件事：2026 年的 OpenAI Codex 跟 2021 年那個同名模型沒有直接關係。新 Codex 是一個自主 coding agent 應用程式，底層跑的是 GPT-5.5，現在已有超過 300 萬名每週活躍的開發者在用。 它的定位更接近一個「可以放在背景跑的工程師同事」——你給任務，它去幹，你去睡覺。 和 Cursor、Windsurf 這種 IDE 不同，Codex 不是在你的編輯器裡工作的。它跑在雲端的隔離容器裡，每個任務有自己的 sandbox，預先 clone 你的 repo，在裡面執行指令、跑測試、改程式碼，完成後把結果推回來給你 review。  雲端 Sandbox 的設計邏輯每個 Codex 任務都在一個乾淨的容器裡跑。這個容器：  預先載入你的 git repo（透過 GitHub 連結） 可以執行 shell 指令、跑 lint...</div></div></div></a><a class="pagination-related" href="/2026/03/25/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260325/" title="AI 與科技新聞摘要 — 2026&#x2F;03&#x2F;25"><img class="cover" src="/img/20260325-02.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-03-25</div><div class="info-item-2">AI 與科技新聞摘要 — 2026&#x2F;03&#x2F;25</div></div><div class="info-2"><div class="info-item-1">三月的最後一週，AI 的版圖在跳舞。Anthropic 把電腦控制權交給 Claude，結果反而跟五角大廈打起官司；OpenAI 花錢買了個 Python 工具鏈，要讓 AI 不只生代碼，還能管工程流程；而 MCP 生態繁花盛開，一邊是新工具層出不窮，一邊是人人都在忙著堵安全漏洞。Google 速度比誰都快，Gemini 3.1 Flash-Lite 便宜到不行，Claude 的用量限制還暫時加倍——三天內把能用的額度全燒了，再見了各位。  Anthropic Claude 電腦控制正式上線——AI 手伸進你的電腦了這週 Anthropic 最大的新聞：Claude 可以從手機發指令，然後 AI 會自己開應用程式、操作瀏覽器、填寫試算表。不只是生成程式碼那麼簡單，是真的在你電腦上幫你點按鈕。 auto mode 的安全機制怎麼做的？ 每個動作執行前都要過一道審查，系統會檢查有沒有風險行為、有沒有 prompt injection 企圖。聽起來防護還算周密，但新功能上線第一天就被拿去測試安全漏洞，這很正常——真實世界永遠比實驗室複雜。 限制條件也蠻嚴的：只有 Claude Pro ...</div></div></div></a><a class="pagination-related" href="/2026/04/21/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260421/" title="AI 與科技新聞摘要 - 2026&#x2F;04&#x2F;21"><img class="cover" src="/img/20260421-02.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-04-21</div><div class="info-item-2">AI 與科技新聞摘要 - 2026&#x2F;04&#x2F;21</div></div><div class="info-2"><div class="info-item-1">一行指令，五個工具，同一個技能包。 4 月 16 日 GitHub 推出 gh skill 命令，讓 GitHub Copilot、Claude Code、Cursor、Codex、Gemini CLI 共用同一套技能安裝標準。這不是一個小更新。這是整個 AI coding 工具生態系第一次在「如何安裝技能」這件事上達成共識——而且是用 Claude Code 那邊流出去的 SKILL.md 格式當基礎。 把這件事和同一週的其他幾條新聞擺在一起看，你會看到一個還沒被廣泛討論的系統性趨勢：AI 工具市場正在跑一場「誰的基礎設施先成為業界標準」的賽局——不是誰的模型最強，是誰的規格先被其他人採用。先成為標準的那個，接下來的每一個新工具都得跟它相容。  Claude Code v2.1.116 — resume 快了 67%，MCP 工具結果可以不被截斷4 月 20 日釋出的 v2.1.116，有兩個更新值得注意。 第一個：/resume 在大型 session（40MB+）上快了 67%。這個改善針對的是長期使用者——session 積累愈久、dead-fork 愈多，之前 resu...</div></div></div></a></div></div><hr class="custom-hr"/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 評論</span></div></div><div class="comment-wrap"><div><div id="giscus-wrap"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="https://lh3.googleusercontent.com/pw/ABLVV87_po8nBc6F_tXcoYDmtzMGWxHuhhrbguYILCjmjWKLOS8DTpubm0YoQLKgjyjRIZyV5TjYe7XVEz_YU4squfr37GTZqPZP1hlMVZ_MIgXpTxWu73M=w1200" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">Cheng®</div><div class="author-info-description">Backend Developer / 技術筆記 & AI 新聞分享</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">175</div></a><a href="/tags/"><div class="headline">標籤</div><div class="length-num">186</div></a><a href="/categories/"><div class="headline">分類</div><div class="length-num">13</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/mark22013333"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons"><a class="social-icon" href="https://github.com/mark22013333" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:mark22013333@gmail.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a></div><div class="card-info-sponsor"><a class="sponsor-glow-btn" href="https://www.buymeacoffee.com/mark22013333" target="_blank" rel="noopener noreferrer" title="Buy Me A Coffee"><img src="https://img.shields.io/badge/Buy_Me_A_Coffee-FFDD00?style=for-the-badge&amp;logo=buy-me-a-coffee&amp;logoColor=black" alt="Buy Me A Coffee"/></a><a class="sponsor-glow-btn" href="https://p.ecpay.com.tw/EFC3F8F" target="_blank" rel="noopener noreferrer" title="綠界贊助"><img src="https://img.shields.io/badge/☕_%E8%AB%8B%E6%88%91%E5%96%9D%E6%9D%AF%E5%92%96%E5%95%A1-Donate-11998e?style=for-the-badge&amp;logo=coffee&amp;logoColor=white" alt="綠界贊助"/></a><a class="sponsor-glow-btn" href="https://calendly.com/markcheng00806-intumit/15min" target="_blank" rel="noopener noreferrer" title="預約時間"><img src="https://img.shields.io/badge/📅_%E9%A0%90%E7%B4%84_15_%E5%88%86%E9%90%98-Book_Time-0072ff?style=for-the-badge" alt="預約時間"/></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">這裡記錄我在後端開發路上踩過的坑、學到的東西，也會分享每日 AI 與科技新聞觀點。歡迎一起交流！</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目錄</span><span class="toc-percentage"></span></div><div class="toc-content is-expand"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#OpenAI-GPT-5-5-%E2%80%94-%E3%80%8CSpud%E3%80%8D%E4%B8%8A%E7%B7%9A%EF%BC%8C%E4%B8%BB%E6%89%93-Agentic-%E8%83%BD%E5%8A%9B"><span class="toc-number">1.</span> <span class="toc-text">OpenAI GPT-5.5 — 「Spud」上線，主打 Agentic 能力</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#DeepSeek-V4-%E4%BB%8A%E6%97%A5%E7%99%BC%E5%B8%83-%E2%80%94-%E5%AE%9A%E5%83%B9%E6%89%8D%E6%98%AF%E9%87%8D%E9%BB%9E"><span class="toc-number">2.</span> <span class="toc-text">DeepSeek V4 今日發布 — 定價才是重點</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#MCP-%E6%9E%B6%E6%A7%8B%E8%A8%AD%E8%A8%88%E6%BC%8F%E6%B4%9E-%E2%80%94-7-000-%E5%80%8B%E4%BC%BA%E6%9C%8D%E5%99%A8%E6%9A%B4%E9%9C%B2%E5%9C%A8-RCE-%E9%A2%A8%E9%9A%AA"><span class="toc-number">3.</span> <span class="toc-text">MCP 架構設計漏洞 — 7,000 個伺服器暴露在 RCE 風險</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#NIST-%E9%99%90%E7%B8%AE-CVE-%E8%A3%9C%E5%85%85%E9%80%9F%E5%BA%A6-%E2%80%94-%E6%BC%8F%E6%B4%9E%E6%8F%90%E4%BA%A4%E9%87%8F%E6%9A%B4%E5%A2%9E-263"><span class="toc-number">4.</span> <span class="toc-text">NIST 限縮 CVE 補充速度 — 漏洞提交量暴增 263%</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Anthropic-Project-Glasswing-%E2%80%94-AI-%E6%89%BE%E6%BC%8F%E6%B4%9E%EF%BC%8C%E5%85%AC%E9%96%8B%E7%B5%A6%E6%A5%AD%E7%95%8C%E7%94%A8"><span class="toc-number">5.</span> <span class="toc-text">Anthropic Project Glasswing — AI 找漏洞，公開給業界用</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2026/04/27/Claude-Code-Multi-Model-%E6%B7%B7%E7%94%A8%E7%AD%96%E7%95%A5-Haiku-Sonnet-Opus-%E6%80%8E%E9%BA%BC%E6%90%AD%E6%89%8D%E7%9C%81%E9%8C%A2%E5%8F%88%E6%9C%89%E6%95%88/" title="Claude Code Multi-Model 混用策略 — Haiku / Sonnet / Opus 怎麼搭才省錢又有效"><img src="/img/20260427-03.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Claude Code Multi-Model 混用策略 — Haiku / Sonnet / Opus 怎麼搭才省錢又有效"/></a><div class="content"><a class="title" href="/2026/04/27/Claude-Code-Multi-Model-%E6%B7%B7%E7%94%A8%E7%AD%96%E7%95%A5-Haiku-Sonnet-Opus-%E6%80%8E%E9%BA%BC%E6%90%AD%E6%89%8D%E7%9C%81%E9%8C%A2%E5%8F%88%E6%9C%89%E6%95%88/" title="Claude Code Multi-Model 混用策略 — Haiku / Sonnet / Opus 怎麼搭才省錢又有效">Claude Code Multi-Model 混用策略 — Haiku / Sonnet / Opus 怎麼搭才省錢又有效</a><time datetime="2026-04-27T04:00:00.000Z" title="發表於 2026-04-27 12:00:00">2026-04-27</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/04/27/Lightpanda-%E5%B0%88%E7%82%BA-AI-Agent-%E6%89%93%E9%80%A0%E7%9A%84%E8%BC%95%E9%87%8F%E7%B4%9A-Headless-Browser/" title="Lightpanda — 專為 AI Agent 打造的輕量級 Headless Browser"><img src="/img/20260427-01.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Lightpanda — 專為 AI Agent 打造的輕量級 Headless Browser"/></a><div class="content"><a class="title" href="/2026/04/27/Lightpanda-%E5%B0%88%E7%82%BA-AI-Agent-%E6%89%93%E9%80%A0%E7%9A%84%E8%BC%95%E9%87%8F%E7%B4%9A-Headless-Browser/" title="Lightpanda — 專為 AI Agent 打造的輕量級 Headless Browser">Lightpanda — 專為 AI Agent 打造的輕量級 Headless Browser</a><time datetime="2026-04-27T02:00:00.000Z" title="發表於 2026-04-27 10:00:00">2026-04-27</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/04/27/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260427/" title="AI 與科技新聞摘要 - 2026/04/27"><img src="/img/20260427-02.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="AI 與科技新聞摘要 - 2026/04/27"/></a><div class="content"><a class="title" href="/2026/04/27/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260427/" title="AI 與科技新聞摘要 - 2026/04/27">AI 與科技新聞摘要 - 2026/04/27</a><time datetime="2026-04-27T00:30:00.000Z" title="發表於 2026-04-27 08:30:00">2026-04-27</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/04/27/Claude-Design-%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8-%E7%94%A8%E5%B0%8D%E8%A9%B1%E5%81%9A%E8%A8%AD%E8%A8%88%E5%BE%9E-Prototype-%E5%88%B0-Claude-Code-%E4%BA%A4%E6%8E%A5/" title="Claude Design 完整教學 - 用對話做設計從 Prototype 到 Claude Code 交接"><img src="/img/20260427-03.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Claude Design 完整教學 - 用對話做設計從 Prototype 到 Claude Code 交接"/></a><div class="content"><a class="title" href="/2026/04/27/Claude-Design-%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8-%E7%94%A8%E5%B0%8D%E8%A9%B1%E5%81%9A%E8%A8%AD%E8%A8%88%E5%BE%9E-Prototype-%E5%88%B0-Claude-Code-%E4%BA%A4%E6%8E%A5/" title="Claude Design 完整教學 - 用對話做設計從 Prototype 到 Claude Code 交接">Claude Design 完整教學 - 用對話做設計從 Prototype 到 Claude Code 交接</a><time datetime="2026-04-27T00:30:00.000Z" title="發表於 2026-04-27 08:30:00">2026-04-27</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/04/27/Sonatype-Guide-AI-%E5%AF%AB%E7%9A%84%E7%A8%8B%E5%BC%8F%E7%A2%BC%E8%AA%B0%E4%BE%86%E6%8A%8A%E9%97%9C%E4%BE%9D%E8%B3%B4%E5%AE%89%E5%85%A8/" title="Sonatype Guide - AI 寫的程式碼誰來把關依賴安全"><img src="/img/20260427-01.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Sonatype Guide - AI 寫的程式碼誰來把關依賴安全"/></a><div class="content"><a class="title" href="/2026/04/27/Sonatype-Guide-AI-%E5%AF%AB%E7%9A%84%E7%A8%8B%E5%BC%8F%E7%A2%BC%E8%AA%B0%E4%BE%86%E6%8A%8A%E9%97%9C%E4%BE%9D%E8%B3%B4%E5%AE%89%E5%85%A8/" title="Sonatype Guide - AI 寫的程式碼誰來把關依賴安全">Sonatype Guide - AI 寫的程式碼誰來把關依賴安全</a><time datetime="2026-04-27T00:30:00.000Z" title="發表於 2026-04-27 08:30:00">2026-04-27</time></div></div></div></div></div></div></main><footer id="footer" style="background-image: url(/img/20260424-02.webp);"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2024 - 2026 By Cheng®</span></div><div class="footer_custom_text">Written by Cheng® — 自律，從當下的一念開始。</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="閱讀模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日夜模式切換"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="單欄和雙欄切換"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="設定"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目錄"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="前往評論"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到頂端"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.umd.min.js"></script><script src="https://cdn.jsdelivr.net/npm/instant.page/instantpage.min.js" type="module"></script><script src="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.js"></script><div class="js-pjax"><script>(() => {
+  const isShuoshuo = GLOBAL_CONFIG_SITE.pageType === 'shuoshuo'
+  const option = {"mapping":"pathname","strict":0,"reactionsEnabled":1,"emitMetadata":0,"inputPosition":"bottom","lang":"zh-TW"}
+
+  const getGiscusTheme = theme => theme === 'dark' ? 'dark' : 'light'
+
+  const createScriptElement = config => {
+    const ele = document.createElement('script')
+    Object.entries(config).forEach(([key, value]) => {
+      ele.setAttribute(key, value)
+    })
+    return ele
+  }
+
+  const loadGiscus = (el = document, key) => {
+    const mappingConfig = isShuoshuo
+      ? { 'data-mapping': 'specific', 'data-term': key }
+      : { 'data-mapping': (option && option['data-mapping']) || 'pathname' }
+
+    const giscusConfig = {
+      src: 'https://giscus.app/client.js',
+      'data-repo': 'mark22013333/mark22013333.github.io',
+      'data-repo-id': 'R_kgDOLAxa6A',
+      'data-category-id': 'DIC_kwDOLAxa6M4C5eO9',
+      'data-theme': getGiscusTheme(document.documentElement.getAttribute('data-theme')),
+      'data-reactions-enabled': '1',
+      crossorigin: 'anonymous',
+      async: true,
+      ...option,
+      ...mappingConfig
+    }
+
+    const scriptElement = createScriptElement(giscusConfig)
+
+    el.querySelector('#giscus-wrap').appendChild(scriptElement)
+
+    if (isShuoshuo) {
+      window.shuoshuoComment.destroyGiscus = () => {
+        if (el.children.length) {
+          el.innerHTML = ''
+          el.classList.add('no-comment')
+        }
+      }
+    }
+  }
+
+  const changeGiscusTheme = theme => {
+    const iframe = document.querySelector('#giscus-wrap iframe')
+    if (iframe) {
+      const message = {
+        giscus: {
+          setConfig: {
+            theme: getGiscusTheme(theme)
+          }
+        }
+      }
+      iframe.contentWindow.postMessage(message, 'https://giscus.app')
+    }
+  }
+
+  btf.addGlobalFn('themeChange', changeGiscusTheme, 'giscus')
+
+  if (isShuoshuo) {
+    'Giscus' === 'Giscus'
+      ? window.shuoshuoComment = { loadComment: loadGiscus }
+      : window.loadOtherComment = loadGiscus
+    return
+  }
+
+  if ('Giscus' === 'Giscus' || !true) {
+    if (true) btf.loadComment(document.getElementById('giscus-wrap'), loadGiscus)
+    else loadGiscus()
+  } else {
+    window.loadOtherComment = loadGiscus
+  }
+})()</script></div><script src="/js/kkbox-player.js"></script><script src="/js/archives-pagination.js"></script><script src="/js/font-resize.js"></script><script src="/js/dark-palette.js"></script><script defer="defer" id="fluttering_ribbon" mobile="false" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/canvas-fluttering-ribbon.min.js"></script><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/activate-power-mode.min.js"></script><script>POWERMODE.colorful = true;
+POWERMODE.shake = true;
+POWERMODE.mobile = true;
+document.body.addEventListener('input', POWERMODE);
+</script><script src="https://cdn.jsdelivr.net/npm/pjax/pjax.min.js" defer="defer"></script><script>document.addEventListener('DOMContentLoaded', () => {
+  const pjaxSelectors = ["meta[property=\"og:image\"]","meta[property=\"og:title\"]","meta[property=\"og:url\"]","meta[property=\"og:description\"]","link[rel=\"canonical\"]","head > title","#config-diff","#body-wrap","#rightside-config-hide","#rightside-config-show",".js-pjax"]
+
+  window.pjax = new Pjax({
+    elements: 'a:not([target="_blank"])',
+    selectors: pjaxSelectors,
+    cacheBust: false,
+    analytics: true,
+    scrollRestoration: false
+  })
+
+  const triggerPjaxFn = (val) => {
+    if (!val) return
+    Object.values(val).forEach(fn => {
+      try {
+        fn()
+      } catch (err) {
+        console.debug('Pjax callback failed:', err)
+      }
+    })
+  }
+
+  document.addEventListener('pjax:send', () => {
+    // removeEventListener
+    btf.removeGlobalFnEvent('pjaxSendOnce')
+    btf.removeGlobalFnEvent('themeChange')
+
+    // reset readmode
+    const $bodyClassList = document.body.classList
+    if ($bodyClassList.contains('read-mode')) $bodyClassList.remove('read-mode')
+
+    triggerPjaxFn(window.globalFn.pjaxSend)
+  })
+
+  document.addEventListener('pjax:complete', () => {
+    btf.removeGlobalFnEvent('pjaxCompleteOnce')
+    document.querySelectorAll('script[data-pjax]').forEach(item => {
+      const newScript = document.createElement('script')
+      const content = item.text || item.textContent || item.innerHTML || ""
+      Array.from(item.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value))
+      newScript.appendChild(document.createTextNode(content))
+      item.parentNode.replaceChild(newScript, item)
+    })
+
+    triggerPjaxFn(window.globalFn.pjaxComplete)
+  })
+
+  document.addEventListener('pjax:error', e => {
+    if (e.request.status === 404) {
+      true
+        ? pjax.loadUrl('/404.html')
+        : window.location.href = e.request.responseURL
+    }
+  })
+})</script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜尋</span><i class="fas fa-spinner fa-pulse" id="loading-status" hidden="hidden"></i><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="text-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  資料載入中</span></div><div class="local-search-input"><input placeholder="搜尋文章" type="text"/></div><hr/><div id="local-search-results"></div><div class="ais-Pagination" id="local-search-pagination" style="display:none;"><ul class="ais-Pagination-list"></ul></div><div id="local-search-stats"></div></div><div id="search-mask"></div><script src="/js/search/local-search.js"></script></div></div></body></html>

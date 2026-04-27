@@ -1,0 +1,399 @@
+<!DOCTYPE html><html lang="zh-TW" data-theme="dark"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>Claude Code Multi-Model 混用策略 — Haiku / Sonnet / Opus 怎麼搭才省錢又有效 | Cheng's Tech &amp; Life</title><meta name="author" content="Cheng®"><meta name="copyright" content="Cheng®"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#0d0d0d"><meta name="description" content="同一個工作流裡混用三種模型，讓簡單任務用 Haiku 跑、複雜決策交 Opus 想。實測省下 60% token 成本，產出品質不掉。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Claude Code Multi-Model 混用策略 — Haiku &#x2F; Sonnet &#x2F; Opus 怎麼搭才省錢又有效">
+<meta property="og:url" content="https://mark22013333.github.io/2026/04/27/Claude-Code-Multi-Model-%E6%B7%B7%E7%94%A8%E7%AD%96%E7%95%A5-Haiku-Sonnet-Opus-%E6%80%8E%E9%BA%BC%E6%90%AD%E6%89%8D%E7%9C%81%E9%8C%A2%E5%8F%88%E6%9C%89%E6%95%88/index.html">
+<meta property="og:site_name" content="Cheng&#39;s Tech &amp; Life">
+<meta property="og:description" content="同一個工作流裡混用三種模型，讓簡單任務用 Haiku 跑、複雜決策交 Opus 想。實測省下 60% token 成本，產出品質不掉。">
+<meta property="og:locale" content="zh_TW">
+<meta property="og:image" content="https://mark22013333.github.io/img/20260427-03.webp">
+<meta property="article:published_time" content="2026-04-27T04:00:00.000Z">
+<meta property="article:modified_time" content="2026-04-27T14:18:45.276Z">
+<meta property="article:author" content="Cheng®">
+<meta property="article:tag" content="Claude Code">
+<meta property="article:tag" content="Multi-Model">
+<meta property="article:tag" content="Haiku">
+<meta property="article:tag" content="Sonnet">
+<meta property="article:tag" content="Opus">
+<meta property="article:tag" content="Token 成本">
+<meta property="article:tag" content="AI 工作流">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://mark22013333.github.io/img/20260427-03.webp"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Claude Code Multi-Model 混用策略 — Haiku / Sonnet / Opus 怎麼搭才省錢又有效",
+  "url": "https://mark22013333.github.io/2026/04/27/Claude-Code-Multi-Model-%E6%B7%B7%E7%94%A8%E7%AD%96%E7%95%A5-Haiku-Sonnet-Opus-%E6%80%8E%E9%BA%BC%E6%90%AD%E6%89%8D%E7%9C%81%E9%8C%A2%E5%8F%88%E6%9C%89%E6%95%88/",
+  "image": "https://mark22013333.github.io/img/20260427-03.webp",
+  "datePublished": "2026-04-27T04:00:00.000Z",
+  "dateModified": "2026-04-27T14:18:45.276Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "Cheng®",
+      "url": "https://mark22013333.github.io"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://mark22013333.github.io/2026/04/27/Claude-Code-Multi-Model-%E6%B7%B7%E7%94%A8%E7%AD%96%E7%95%A5-Haiku-Sonnet-Opus-%E6%80%8E%E9%BA%BC%E6%90%AD%E6%89%8D%E7%9C%81%E9%8C%A2%E5%8F%88%E6%9C%89%E6%95%88/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//www.google-analytics.com" crossorigin=""/><link rel="preconnect" href="//fonts.googleapis.com" crossorigin=""/><link rel="preconnect" href="//busuanzi.ibruce.info"/><meta name="google-site-verification" content="6ywUr8k2n_CT1PFYJzlSvI3CZ-JmJ55RYbA39VrFBDs"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!true && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          const hour = new Date().getHours()
+          const isNight = hour <= 9 || hour >= 18
+          if (theme === undefined) isNight ? activateDarkMode() : activateLightMode()
+          else theme === 'light' ? activateLightMode() : activateDarkMode()
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script async="async" src="https://www.googletagmanager.com/gtag/js?id=G-JBV14NRDH3"></script><script>window.dataLayer = window.dataLayer || []
+function gtag(){dataLayer.push(arguments)}
+gtag('js', new Date())
+gtag('config', 'G-JBV14NRDH3')
+btf.addGlobalFn('pjaxComplete', () => {
+  gtag('config', 'G-JBV14NRDH3', {'page_path': window.location.pathname})
+}, 'google_analytics')
+</script><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Titillium+Web&amp;display=swap" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"pagination":{"enable":false,"hitsPerPage":8},"languages":{"hits_empty":"找不到符合您查詢的內容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '複製成功',
+    error: '複製失敗',
+    noSupport: '瀏覽器不支援'
+  },
+  relativeDate: {
+    homepage: false,
+    post: true
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '剛剛',
+    min: '分鐘前',
+    hour: '小時前',
+    day: '天前',
+    month: '個月前'
+  },
+  copyright: {"limitCount":1,"languages":{"author":"作者: Cheng®","link":"連結: ","source":"來源: Cheng's Tech & Life","info":"著作權歸作者所有。如需商業轉載，請聯絡作者獲得授權，非商業轉載請註明出處😁。"}},
+  lightbox: 'fancybox',
+  Snackbar: {"chs_to_cht":"已切換為繁體中文","cht_to_chs":"已切換為簡體中文","day_to_night":"已切換為深色模式","night_to_day":"已切換為淺色模式","bgLight":"#49b1f5","bgDark":"#1f1f1f","position":"top-center"},
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid/dist/infinitegrid.min.js',
+    buttonText: '載入更多'
+  },
+  isPhotoFigcaption: true,
+  islazyloadPlugin: false,
+  isAnchor: true,
+  percent: {
+    toc: true,
+    rightside: true,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Claude Code Multi-Model 混用策略 — Haiku / Sonnet / Opus 怎麼搭才省錢又有效',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><link rel="stylesheet" href="/css/kkbox-player.css"><link rel="stylesheet" href="/css/tag-cloud-fancy.css"><link rel="stylesheet" href="/css/font-resize.css"><link rel="stylesheet" href="/css/dark-palette.css"><link rel="stylesheet" href="/css/loading-override.css"><link rel="alternate" href="/atom.xml" title="Cheng's Tech & Life" type="application/atom+xml">
+</head><body><div id="loading-box"><div class="loading-glass-overlay"></div><div class="loading-indicator"><div class="loading-dot"></div><div class="loading-dot"></div><div class="loading-dot"></div></div></div><script>(()=>{
+  const $loadingBox = document.getElementById('loading-box')
+  const $body = document.body
+  const preloader = {
+    endLoading: () => {
+      if ($loadingBox.classList.contains('loaded')) return
+      $body.style.overflow = ''
+      $loadingBox.classList.add('loaded')
+    },
+    initLoading: () => {
+      $body.style.overflow = 'hidden'
+      $loadingBox.classList.remove('loaded')
+    }
+  }
+
+  preloader.initLoading()
+
+  if (document.readyState === 'complete') {
+    preloader.endLoading()
+  } else {
+    window.addEventListener('load', preloader.endLoading)
+    document.addEventListener('DOMContentLoaded', preloader.endLoading)
+    setTimeout(preloader.endLoading, 7000)
+  }
+
+  if (true) {
+    btf.addGlobalFn('pjaxSend', preloader.initLoading, 'preloader_init')
+    btf.addGlobalFn('pjaxComplete', preloader.endLoading, 'preloader_end')
+  }
+})()</script><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="https://lh3.googleusercontent.com/pw/ABLVV87_po8nBc6F_tXcoYDmtzMGWxHuhhrbguYILCjmjWKLOS8DTpubm0YoQLKgjyjRIZyV5TjYe7XVEz_YU4squfr37GTZqPZP1hlMVZ_MIgXpTxWu73M=w1200" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">175</div></a><a href="/tags/"><div class="headline">標籤</div><div class="length-num">186</div></a><a href="/categories/"><div class="headline">分類</div><div class="length-num">13</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首頁-Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 時間軸-archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 標籤-tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分類-Categories</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-list"></i><span> 其他列表</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音樂-Music</span></a></li><li><a class="site-page child" href="/gallery/"><i class="fa-fw fas fa-images"></i><span> 畫館-Gallery</span></a></li></ul></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg fixed" id="page-header" style="background-image: url(/img/20260427-03.webp);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><img class="site-icon" src="https://lh3.googleusercontent.com/pw/ABLVV87_po8nBc6F_tXcoYDmtzMGWxHuhhrbguYILCjmjWKLOS8DTpubm0YoQLKgjyjRIZyV5TjYe7XVEz_YU4squfr37GTZqPZP1hlMVZ_MIgXpTxWu73M=w1200" alt="Logo"><span class="site-name">Cheng's Tech &amp; Life</span></a><a class="nav-page-title" href="/"><span class="site-name">Claude Code Multi-Model 混用策略 — Haiku / Sonnet / Opus 怎麼搭才省錢又有效</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首頁</span></span></a></span><div id="menus"><div id="search-button" title="Ctrl+K / Cmd+K"><span class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜尋</span></span></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首頁-Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 時間軸-archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 標籤-tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分類-Categories</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-list"></i><span> 其他列表</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音樂-Music</span></a></li><li><a class="site-page child" href="/gallery/"><i class="fa-fw fas fa-images"></i><span> 畫館-Gallery</span></a></li></ul></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">Claude Code Multi-Model 混用策略 — Haiku / Sonnet / Opus 怎麼搭才省錢又有效</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">發表於</span><time class="post-meta-date-created" datetime="2026-04-27T04:00:00.000Z" title="發表於 2026-04-27 12:00:00">2026-04-27</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新於</span><time class="post-meta-date-updated" datetime="2026-04-27T14:18:45.276Z" title="更新於 2026-04-27 22:18:45">2026-04-27</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Claude-Code/">Claude Code</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">總字數:</span><span class="word-count">1.6k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">閱讀時間:</span><span>5分鐘</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">瀏覽量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><p>你的 Claude Code session 裡，每一次工具呼叫都用 Opus。讀一個 5 行的 config 檔？Opus。跑一個 <code>ls</code> 指令？Opus。改一個 typo？還是 Opus。</p>
+<p>這就像叫一個年薪千萬的 CTO 去影印文件。他當然做得到，但你的預算會先陣亡。</p>
+<p>Claude Code 其實內建了三種模型可以切換——Haiku、Sonnet、Opus。差異不只是「聰明程度」，是整個成本結構不同。Haiku 的 token 價格大概是 Opus 的十分之一，但處理日常任務的能力有 Sonnet 九成水準。</p>
+<p>關鍵不是「哪個模型最好」，而是「哪個任務配哪個模型最划算」。</p>
+<hr>
+<h2 id="三種模型像三種員工"><a href="#三種模型像三種員工" class="headerlink" title="三種模型像三種員工"></a>三種模型像三種員工</h2><p>先用一個類比把基本概念打通。</p>
+<p>想像你開了一間軟體公司，有三種角色可以指派任務：</p>
+<p><strong>Haiku 是剛畢業的工程師。</strong> 速度快、成本低、日常任務處理得不錯。寫個腳本、跑個指令、讀個檔案回報內容——這些事交給他完全沒問題。但你不會讓他做架構決策。</p>
+<p><strong>Sonnet 是資深工程師。</strong> 寫 code 品質穩定，能處理中等複雜度的 bug，理解上下文的能力強。大部分日常開發工作交給他就對了。</p>
+<p><strong>Opus 是技術長。</strong> 深度推理、跨檔案架構分析、處理模糊需求——這些是他的強項。但他的時間（token）最貴，不該花在影印文件上。</p>
+<p>一間有效率的公司不會讓 CTO 做所有事。它會讓每個人做最適合自己的工作。模型混用的邏輯一模一樣。</p>
+<hr>
+<h2 id="Claude-Code-怎麼切換模型"><a href="#Claude-Code-怎麼切換模型" class="headerlink" title="Claude Code 怎麼切換模型"></a>Claude Code 怎麼切換模型</h2><p>切換方式很直覺。在 Claude Code 裡有幾種做法：</p>
+<p><strong>互動式切換：</strong> 按 <code>/model</code> 叫出模型選擇器，或用快捷鍵切換。</p>
+<p><strong>設定預設模型：</strong> 在 <code>~/.claude/settings.json</code> 裡設定 <code>defaultModel</code>。</p>
+<p><strong>Sub-agent 指定模型：</strong> 這是混用策略的核心。當你用 Agent tool 啟動子代理時，可以透過 <code>model</code> 參數指定該子代理要用哪個模型：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Agent(&#123;</span><br><span class="line">  description: &quot;讀取 config 檔案&quot;,</span><br><span class="line">  prompt: &quot;讀取 /app/config.json 並回報其中的 database host 設定&quot;,</span><br><span class="line">  model: &quot;haiku&quot;</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+
+<p>這行 <code>model: &quot;haiku&quot;</code> 就是關鍵。主 session 用 Opus 做決策，但把簡單的讀檔任務交給 Haiku 子代理去跑。一來一回省下的 token 是倍數級的。</p>
+<p><strong>Skill 裡指定模型：</strong> 寫 Skill 的時候也可以建議使用特定模型。例如一個負責格式化 log 的 Skill，完全可以用 Haiku 跑。</p>
+<hr>
+<h2 id="什麼任務配什麼模型"><a href="#什麼任務配什麼模型" class="headerlink" title="什麼任務配什麼模型"></a>什麼任務配什麼模型</h2><p>這張對照不用背，看一遍有個直覺就好。核心原則就一句話：<strong>任務越不需要推理，越該往便宜的模型丟。</strong></p>
+<h3 id="Haiku-負責的事（成本最低，速度最快）"><a href="#Haiku-負責的事（成本最低，速度最快）" class="headerlink" title="Haiku 負責的事（成本最低，速度最快）"></a>Haiku 負責的事（成本最低，速度最快）</h3><p>檔案讀取和內容回報。跑 shell 指令然後回傳結果。格式轉換（JSON 轉 YAML、Markdown 轉 HTML）。搜尋 codebase 裡的特定字串。簡單的正則表達式處理。</p>
+<p>這些任務有個共同特徵：輸入明確、輸出格式固定、不需要判斷。</p>
+<h3 id="Sonnet-負責的事（性價比最高）"><a href="#Sonnet-負責的事（性價比最高）" class="headerlink" title="Sonnet 負責的事（性價比最高）"></a>Sonnet 負責的事（性價比最高）</h3><p>寫單一函式或模組。修復明確的 bug（有 error message 可以追）。Code review 單個檔案。寫測試案例。文件撰寫和更新。</p>
+<p>這類任務需要理解上下文，但不需要跨多個系統思考。Sonnet 在這個區間的 CP 值最高。</p>
+<h3 id="Opus-才出場的事（深度推理）"><a href="#Opus-才出場的事（深度推理）" class="headerlink" title="Opus 才出場的事（深度推理）"></a>Opus 才出場的事（深度推理）</h3><p>跨多檔案的架構重構。模糊需求的拆解和規劃。複雜 debug（牽涉多個服務的交互作用）。安全性分析。需要權衡取捨的設計決策。</p>
+<p>如果一個任務你自己想了十分鐘還沒結論，那它就值得用 Opus。</p>
+<hr>
+<h2 id="實際工作流長什麼樣"><a href="#實際工作流長什麼樣" class="headerlink" title="實際工作流長什麼樣"></a>實際工作流長什麼樣</h2><p>舉一個真實場景。你想重構一個 API 模組，需要：</p>
+<ol>
+<li>先掃描所有用到這個模組的地方</li>
+<li>理解目前的呼叫模式</li>
+<li>設計新的介面</li>
+<li>實作修改</li>
+<li>跑測試確認沒壞</li>
+</ol>
+<p>用單一模型跑，全程 Opus，token 用量大概 150K。</p>
+<p>混用策略是這樣拆的：</p>
+<p><strong>Step 1（Haiku）：</strong> 掃描 codebase，列出所有 import 和呼叫點。這是純搜尋任務，不需要推理。</p>
+<p><strong>Step 2（Sonnet）：</strong> 分析呼叫模式，歸類出幾種使用方式。需要理解程式碼，但不需要做設計決策。</p>
+<p><strong>Step 3（Opus）：</strong> 根據 Step 2 的分析結果，設計新介面。這步需要權衡 breaking change 的影響、向後相容性、未來擴展性。</p>
+<p><strong>Step 4（Sonnet）：</strong> 按 Step 3 的設計實作程式碼。設計已經定了，剩下的是執行。</p>
+<p><strong>Step 5（Haiku）：</strong> 跑測試套件，回報結果。純執行，不需要判斷。</p>
+<p>結果？Token 用量降到大約 60K，省了 60%。產出品質相同，因為需要深度推理的 Step 3 還是 Opus 在做。</p>
+<hr>
+<h2 id="三個容易踩的坑"><a href="#三個容易踩的坑" class="headerlink" title="三個容易踩的坑"></a>三個容易踩的坑</h2><p><strong>第一，別讓 Haiku 做需要上下文的事。</strong> Haiku 的 context window 較小，而且對微妙的程式碼語意掌握不如 Sonnet。如果一個任務需要「理解這段 code 在做什麼」而不只是「找到這段 code 在哪」，至少用 Sonnet。</p>
+<p><strong>第二，別在 Opus session 裡做太多瑣事。</strong> 每次你在 Opus session 裡跑 <code>ls</code> 或 <code>cat</code>，那些 token 都是按 Opus 的價格計算的。把瑣事委派給 Haiku 子代理，主 session 只負責決策。</p>
+<p><strong>第三，模型切換本身有 overhead。</strong> 每次啟動一個子代理都有 prompt 的固定成本。如果一個任務只需要 10 個 token 就能完成，拆出去反而更貴。經驗法則是：預期輸出超過 200 token 的任務才值得拆。</p>
+<hr>
+<h2 id="一個可以掛更多東西的框架"><a href="#一個可以掛更多東西的框架" class="headerlink" title="一個可以掛更多東西的框架"></a>一個可以掛更多東西的框架</h2><p>學完這篇，你手上有一個很簡單的決策框架：</p>
+<p>看到一個任務，問自己：「這個需要推理嗎？」</p>
+<p>不需要推理 → Haiku。需要理解上下文但不需要設計決策 → Sonnet。需要權衡取捨、做判斷 → Opus。</p>
+<p>這個框架不只適用於 Claude Code。任何 multi-model 的 AI 系統——不管是 LangChain、CrewAI、還是自己寫的 agent pipeline——底層邏輯都一樣：把推理成本分配到真正需要推理的地方。</p>
+<p>接下來可以研究的方向：<a href="/2026/03/26/Claude-Code-Sub-agents-%E6%8B%86%E8%A7%A3%E4%BB%BB%E5%8B%99%E7%9A%84%E6%AD%A3%E7%A2%BA%E5%A7%BF%E5%8B%A2/">Claude Code Sub-agents 教學</a> 講的是怎麼把任務拆給子代理執行，跟這篇的模型混用策略剛好互補。</p>
+<blockquote>
+<p>參考來源：<a target="_blank" rel="noopener" href="https://code.claude.com/docs/en/">Claude Code Docs - Models</a><br>參考來源：<a href="https://mark22013333.github.io/2026/04/24/Claude-Opus-4.7-%E6%96%B0%E5%8A%9F%E8%83%BD%E5%AF%A6%E6%88%B0-xhigh-Task-Budgets-%E8%88%87-ultrareview/">Claude Opus 4.7 新功能實戰</a></p>
+</blockquote>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://mark22013333.github.io">Cheng®</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章連結: </span><span class="post-copyright-info"><a href="https://mark22013333.github.io/2026/04/27/Claude-Code-Multi-Model-%E6%B7%B7%E7%94%A8%E7%AD%96%E7%95%A5-Haiku-Sonnet-Opus-%E6%80%8E%E9%BA%BC%E6%90%AD%E6%89%8D%E7%9C%81%E9%8C%A2%E5%8F%88%E6%9C%89%E6%95%88/">https://mark22013333.github.io/2026/04/27/Claude-Code-Multi-Model-混用策略-Haiku-Sonnet-Opus-怎麼搭才省錢又有效/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版權聲明: </span><span class="post-copyright-info">本部落格所有文章除特別聲明外，均採用<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 授權協議。轉載請註明來源 <a href="https://mark22013333.github.io" target="_blank">Cheng's Tech & Life</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Claude-Code/">Claude Code</a><a class="post-meta__tags" href="/tags/Multi-Model/">Multi-Model</a><a class="post-meta__tags" href="/tags/Haiku/">Haiku</a><a class="post-meta__tags" href="/tags/Sonnet/">Sonnet</a><a class="post-meta__tags" href="/tags/Opus/">Opus</a><a class="post-meta__tags" href="/tags/Token-%E6%88%90%E6%9C%AC/">Token 成本</a><a class="post-meta__tags" href="/tags/AI-%E5%B7%A5%E4%BD%9C%E6%B5%81/">AI 工作流</a></div><div class="post-share"><div class="social-share" data-image="/img/20260427-03.webp" data-sites="facebook,x"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><div class="post-reward"><div class="reward-badges"><a class="sponsor-glow-btn" href="https://www.buymeacoffee.com/mark22013333" target="_blank" rel="noopener noreferrer" title="Buy Me A Coffee"><img src="https://img.shields.io/badge/Buy_Me_A_Coffee-FFDD00?style=for-the-badge&amp;logo=buy-me-a-coffee&amp;logoColor=black" alt="Buy Me A Coffee"/></a><a class="sponsor-glow-btn" href="https://p.ecpay.com.tw/EFC3F8F" target="_blank" rel="noopener noreferrer" title="綠界贊助"><img src="https://img.shields.io/badge/☕_%E8%AB%8B%E6%88%91%E5%96%9D%E6%9D%AF%E5%92%96%E5%95%A1-Donate-11998e?style=for-the-badge&amp;logo=coffee&amp;logoColor=white" alt="綠界贊助"/></a><a class="sponsor-glow-btn" href="https://calendly.com/markcheng00806-intumit/15min" target="_blank" rel="noopener noreferrer" title="預約時間"><img src="https://img.shields.io/badge/📅_%E9%A0%90%E7%B4%84_15_%E5%88%86%E9%90%98-Book_Time-0072ff?style=for-the-badge" alt="預約時間"/></a><p class="reward-badges-note">你的鼓勵將被轉換為我明天繼續加班的動力（真的）。 ❤️</p></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related full-width" href="/2026/04/27/Lightpanda-%E5%B0%88%E7%82%BA-AI-Agent-%E6%89%93%E9%80%A0%E7%9A%84%E8%BC%95%E9%87%8F%E7%B4%9A-Headless-Browser/" title="Lightpanda — 專為 AI Agent 打造的輕量級 Headless Browser"><img class="cover" src="/img/20260427-01.webp" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">Lightpanda — 專為 AI Agent 打造的輕量級 Headless Browser</div></div><div class="info-2"><div class="info-item-1">你的 headless Chrome 每開一個 tab 吃掉 300 MB RAM。十幾個同時跑，OOM killer 就來敲門了。 這件事荒謬的地方在於：你根本不需要一個「瀏覽器」。你需要的是 DOM 樹、JavaScript 引擎、還有網路請求能力。螢幕渲染、GPU 合成、真皮座椅級的 Web API——這些東西在 headless 模式下全是死重。 Lightpanda 就是把這個死重砍乾淨的產物。GitHub 上 26,000 顆星，用 Zig 從零寫的 headless browser，記憶體是 Chrome 的十六分之一，速度快九倍。 它不是「更輕的 Chrome」。它是一台只剩引擎和輪子的車。  為什麼不「改良」headless Chrome 就好想像你要搬家。你需要一台貨車。但你手上只有一台全配的賓士 S-Class——真皮座椅、Burmester 音響、12 吋螢幕儀表板，全都佔空間。你當然可以把後座拆了硬塞箱子進去，但不管怎麼拆，底盤設計就不是給載貨用的。 headless Chrome 就是那台拆了座椅的 S-Class。 它的架構天生就是多進程的：每個 t...</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相關推薦</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2026/04/06/Self-Evolving-Agents-%E8%AE%93-AI-Agent-%E8%87%AA%E5%B7%B1%E9%80%B2%E5%8C%96%E7%9A%84%E5%AE%8C%E6%95%B4%E6%8A%80%E8%A1%93%E5%9C%B0%E5%9C%96/" title="Self-Evolving Agents - 讓 AI Agent 自己進化的完整技術地圖"><img class="cover" src="/img/20260406-01.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-04-06</div><div class="info-item-2">Self-Evolving Agents - 讓 AI Agent 自己進化的完整技術地圖</div></div><div class="info-2"><div class="info-item-1">前陣子在看 University of Glasgow 的研究，發現一個有夠猛的方向：AI Agent 能夠自己進化，不用人類干預就越來越強。以前我們都以為模型 deploy 下去就固定了，沒想到還有這麼多角度可以自我優化。 Agent 自己進化，到底在進化什麼？Self-Evolving Agent 的核心概念其實很簡單：讓系統在運作過程中自動改善自己。但「改善」這個詞太寬泛了。這波操作跨越 4 個維度： 第一個維度是 LLM 本身的行為。透過 Reinforcement Learning 和 self-play 這類技巧，模型能從自己的嘗試裡學習。STaR（Self-Taught Reasoner）就是代表作，它讓模型從推理過程中的成功案例自動學習。Absolute Zero 是今年新出的，直接從零資料開始自我對弈，效果炸了。 第二個維度是 Prompt 優化。有人用進化演算法，有人用梯度下降，用 TextGrad 或 OPRO 這樣的框架，系統能自動調整提示詞。不用人類手工調整，程式自己試出更有效的 prompt。 第三個維度是記憶機制。A-MEM 和 Mem0 專注在怎麼...</div></div></div></a><a class="pagination-related" href="/2026/04/13/Claude-Code-Voice-Mode-%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8-%E7%94%A8%E5%98%B4%E5%B7%B4%E5%AF%AB%E7%A8%8B%E5%BC%8F%E7%9A%84%E6%AD%A3%E7%A2%BA%E5%A7%BF%E5%8B%A2/" title="Claude Code Voice Mode 完整教學 - 用嘴巴寫程式的正確姿勢"><img class="cover" src="/img/20260413-03.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-04-13</div><div class="info-item-2">Claude Code Voice Mode 完整教學 - 用嘴巴寫程式的正確姿勢</div></div><div class="info-2"><div class="info-item-1">打了三個小時的 prompt，手指已經不是自己的了。這時候你的同事走過來：「欸你幹嘛不用說的？」 Claude Code 從 v2.1.69 開始支援 Voice Mode。按住空白鍵說話，放開就變成文字指令。聽起來簡單，但裡面有不少細節值得搞懂。 啟用方式一行指令： 1/voice  第一次啟用時，Claude Code 會跑一次麥克風檢查。macOS 使用者會看到系統權限彈窗，允許你的終端機存取麥克風就好。 啟用後，輸入區底部會出現 hold Space to speak 的提示。Voice Mode 是持久設定，關掉終端機下次開還在。要關掉就再打一次 /voice。 也可以直接寫進設定檔 ~/.claude/settings.json： 123&#123;  &quot;voiceEnabled&quot;: true&#125;  按住、說話、放開操作流程：  按住空白鍵 — 底部會先顯示 keep holding...（這是暖機階段，偵測你是長按還是短按） 開始說話 — 暖機結束後出現波形動畫，語音即時串流到 Anthropic 伺服器做轉錄 放開空白鍵 — 語音轉文字...</div></div></div></a><a class="pagination-related" href="/2026/04/21/Model-Thinking-%E6%8A%8A-253-%E5%80%8B%E6%80%9D%E7%B6%AD%E6%A8%A1%E5%9E%8B%E5%A1%9E%E9%80%B2-Claude-Code-%E7%9A%84-Skill/" title="Model Thinking — 把 253 個思維模型塞進 Claude Code 的 Skill"><img class="cover" src="/img/20260421-01.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-04-21</div><div class="info-item-2">Model Thinking — 把 253 個思維模型塞進 Claude Code 的 Skill</div></div><div class="info-2"><div class="info-item-1">大部分人覺得決策困難是因為資訊不夠。其實不是。 你已經有夠多資訊了——Google、Perplexity、你自己的工作記憶。問題是你用同一個角度看來看去，不管資訊再多，最後還是用你最熟悉的那個框架下結論。 model-thinking 是台灣工程師 kcchien 做的 Claude Code Skill，把 253 個跨學科思維模型打包成一個 AI 可以動態調用的工具箱。它讓 Claude Code 幫你挑框架——不是挑一個，是挑三個：一個做主分析，一個補你看不到的面向，一個故意反駁前兩個。 這個設計本身就值得拆開來看。  先搞清楚「思維模型」是什麼修一個一直在 crash 的服務，大部分工程師的第一反應是看 log、加 breakpoint、問 ChatGPT。這是一個框架——叫「找最近的變化」或「用症狀反推原因」。 思維模型（Mental Models）就是這類可以重複套用的推理骨架。工程師有除錯框架，物理學家有第一性原理，投資人有機率思考。問題不是某個框架對不對，是你有幾個框架。 只有一個框架的人，所有問題看起來都像是那個框架能解的問題。有一百個框架的人，看到問題的第一步...</div></div></div></a><a class="pagination-related" href="/2026/04/08/Claude-Code-powerup-%E4%BA%92%E5%8B%95%E5%BC%8F%E6%95%99%E5%AD%B8%E8%88%87-April-2026-%E9%87%8D%E9%BB%9E%E6%9B%B4%E6%96%B0%E5%AE%8C%E6%95%B4%E6%8C%87%E5%8D%97/" title="Claude Code &#x2F;powerup 互動式教學與 April 2026 重點更新完整指南"><img class="cover" src="/img/20260408-03.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-04-08</div><div class="info-item-2">Claude Code &#x2F;powerup 互動式教學與 April 2026 重點更新完整指南</div></div><div class="info-2"><div class="info-item-1">打開 Claude Code 輸入 /powerup，終端機裡跑出一段互動式動畫教學。不用開瀏覽器、不用翻文件，在你寫程式的地方直接學怎麼用這個工具。這是 v2.1.89 加進來的新功能，搭配同一時期的 MCP 500K 上限、headless defer 機制和 &#x2F;cost 增強，四月的第一週就塞了四個版本更新。 &#x2F;powerup：終端機裡的互動教學/powerup 的設計哲學很明確——新手不需要離開終端機就能學會 Claude Code 的核心功能。每個 lesson 都有動畫示範，不是只給你看文字說明，而是實際在終端機裡播放操作過程。 12345# 啟動 Claude Code 後直接打/powerup# 會看到課程選單，選你想學的功能# 每個課程有互動式的 step-by-step 引導  跟一般文件的差別在哪？文件告訴你「你可以用 &#x2F;loop 設定排程」，&#x2F;powerup 則是在終端機裡示範整個設定流程，讓你跟著操作。學習曲線直接壓平一截。 對比一下其他 AI coding 工具的新手引導：Cursor 靠的是 GUI 裡的 to...</div></div></div></a><a class="pagination-related" href="/2026/04/08/Career-Ops-%E7%94%A8-Claude-Code-%E6%89%93%E9%80%A0%E7%9A%84-AI-%E6%B1%82%E8%81%B7%E7%AE%A1%E7%B7%9A%E7%B3%BB%E7%B5%B1/" title="Career-Ops - 用 Claude Code 打造的 AI 求職管線系統"><img class="cover" src="/img/20260408-01.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-04-08</div><div class="info-item-2">Career-Ops - 用 Claude Code 打造的 AI 求職管線系統</div></div><div class="info-2"><div class="info-item-1">740 個職缺，四天之內全部評估完畢，最後拿到 Head of Applied AI 的 offer。這不是什麼招募平台的廣告詞，而是一個工程師用 Claude Code 搭出來的求職自動化管線——Career-Ops。 不是投遞工具，是篩選器先釐清一件事：Career-Ops 不會幫你自動投履歷。它的定位比較像是求職版的 CI&#x2F;CD pipeline——你丟一個職缺 URL 進去，它幫你跑完評估、產生客製化 CV、登錄追蹤器，所有產出都要經過你人工審查才送出。 整個系統建構在 Claude Code CLI 上面，但有趣的地方在於它的邏輯不是寫在程式碼裡，而是寫在 Markdown 檔案中。CLAUDE.md 加上 14 個 modes/*.md 定義了所有行為——評估框架、評分公式、PDF 格式、外聯訊息模板。如果你想客製化，改 Markdown 就好，不用動程式碼。 作者把這個設計叫做「Prompt-as-Code」。類比的話，傳統軟體是「用程式碼寫邏輯」，Career-Ops 是「用 Markdown 寫邏輯，讓 AI 當執行引擎」。 評估系統：六個區塊，十個維...</div></div></div></a><a class="pagination-related" href="/2026/03/24/Claude-Code-Hooks-%E5%AE%8C%E6%95%B4%E6%8C%87%E5%8D%97-%E8%AE%93-AI-%E8%87%AA%E5%8B%95%E5%8C%96%E4%B8%8D%E5%86%8D%E9%9D%A0%E9%81%8B%E6%B0%A3/" title="Claude Code Hooks 完整指南 — 讓 AI 自動化不再靠運氣"><img class="cover" src="/img/20260324-06.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-03-24</div><div class="info-item-2">Claude Code Hooks 完整指南 — 讓 AI 自動化不再靠運氣</div></div><div class="info-2"><div class="info-item-1">你有沒有遇過這種狀況：叫 Claude Code 改完檔案，結果忘了跑 formatter，code review 被打回來的全是 style issue？ 或者更痛的——Claude 很盡責地幫你改了五個檔案，你說「好了可以了」，它就真的停了。然後你才發現 test 沒跑、lint 沒過、有一個 .env 被改到。 Hooks 就是拿來解決這類問題的。它不是什麼 AI 魔法，反而是整套 Claude Code 裡面最不 AI 的部分——純粹的 shell 腳本，在特定時間點被觸發，做你設定好的事情。確定性的行為，不靠 LLM 判斷。  概念：Hook 是什麼？一句話講完：在 Claude Code 生命週期的特定節點，自動執行你寫的腳本。 跟 Git hooks 很像。pre-commit hook 在 commit 前跑 lint，Claude Code 的 PreToolUse hook 在工具執行前跑你的檢查。概念相通，只是觸發的時機不一樣。 目前支援的 hook 事件超過 20 個，常用的幾個：    事件 觸發時機    PreToolUse 工具執行前，可以攔截  ...</div></div></div></a></div></div><hr class="custom-hr"/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 評論</span></div></div><div class="comment-wrap"><div><div id="giscus-wrap"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="https://lh3.googleusercontent.com/pw/ABLVV87_po8nBc6F_tXcoYDmtzMGWxHuhhrbguYILCjmjWKLOS8DTpubm0YoQLKgjyjRIZyV5TjYe7XVEz_YU4squfr37GTZqPZP1hlMVZ_MIgXpTxWu73M=w1200" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">Cheng®</div><div class="author-info-description">Backend Developer / 技術筆記 & AI 新聞分享</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">175</div></a><a href="/tags/"><div class="headline">標籤</div><div class="length-num">186</div></a><a href="/categories/"><div class="headline">分類</div><div class="length-num">13</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/mark22013333"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons"><a class="social-icon" href="https://github.com/mark22013333" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:mark22013333@gmail.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a></div><div class="card-info-sponsor"><a class="sponsor-glow-btn" href="https://www.buymeacoffee.com/mark22013333" target="_blank" rel="noopener noreferrer" title="Buy Me A Coffee"><img src="https://img.shields.io/badge/Buy_Me_A_Coffee-FFDD00?style=for-the-badge&amp;logo=buy-me-a-coffee&amp;logoColor=black" alt="Buy Me A Coffee"/></a><a class="sponsor-glow-btn" href="https://p.ecpay.com.tw/EFC3F8F" target="_blank" rel="noopener noreferrer" title="綠界贊助"><img src="https://img.shields.io/badge/☕_%E8%AB%8B%E6%88%91%E5%96%9D%E6%9D%AF%E5%92%96%E5%95%A1-Donate-11998e?style=for-the-badge&amp;logo=coffee&amp;logoColor=white" alt="綠界贊助"/></a><a class="sponsor-glow-btn" href="https://calendly.com/markcheng00806-intumit/15min" target="_blank" rel="noopener noreferrer" title="預約時間"><img src="https://img.shields.io/badge/📅_%E9%A0%90%E7%B4%84_15_%E5%88%86%E9%90%98-Book_Time-0072ff?style=for-the-badge" alt="預約時間"/></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">這裡記錄我在後端開發路上踩過的坑、學到的東西，也會分享每日 AI 與科技新聞觀點。歡迎一起交流！</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目錄</span><span class="toc-percentage"></span></div><div class="toc-content is-expand"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89%E7%A8%AE%E6%A8%A1%E5%9E%8B%E5%83%8F%E4%B8%89%E7%A8%AE%E5%93%A1%E5%B7%A5"><span class="toc-number">1.</span> <span class="toc-text">三種模型像三種員工</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Claude-Code-%E6%80%8E%E9%BA%BC%E5%88%87%E6%8F%9B%E6%A8%A1%E5%9E%8B"><span class="toc-number">2.</span> <span class="toc-text">Claude Code 怎麼切換模型</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%80%E9%BA%BC%E4%BB%BB%E5%8B%99%E9%85%8D%E4%BB%80%E9%BA%BC%E6%A8%A1%E5%9E%8B"><span class="toc-number">3.</span> <span class="toc-text">什麼任務配什麼模型</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Haiku-%E8%B2%A0%E8%B2%AC%E7%9A%84%E4%BA%8B%EF%BC%88%E6%88%90%E6%9C%AC%E6%9C%80%E4%BD%8E%EF%BC%8C%E9%80%9F%E5%BA%A6%E6%9C%80%E5%BF%AB%EF%BC%89"><span class="toc-number">3.1.</span> <span class="toc-text">Haiku 負責的事（成本最低，速度最快）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Sonnet-%E8%B2%A0%E8%B2%AC%E7%9A%84%E4%BA%8B%EF%BC%88%E6%80%A7%E5%83%B9%E6%AF%94%E6%9C%80%E9%AB%98%EF%BC%89"><span class="toc-number">3.2.</span> <span class="toc-text">Sonnet 負責的事（性價比最高）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Opus-%E6%89%8D%E5%87%BA%E5%A0%B4%E7%9A%84%E4%BA%8B%EF%BC%88%E6%B7%B1%E5%BA%A6%E6%8E%A8%E7%90%86%EF%BC%89"><span class="toc-number">3.3.</span> <span class="toc-text">Opus 才出場的事（深度推理）</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AF%A6%E9%9A%9B%E5%B7%A5%E4%BD%9C%E6%B5%81%E9%95%B7%E4%BB%80%E9%BA%BC%E6%A8%A3"><span class="toc-number">4.</span> <span class="toc-text">實際工作流長什麼樣</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89%E5%80%8B%E5%AE%B9%E6%98%93%E8%B8%A9%E7%9A%84%E5%9D%91"><span class="toc-number">5.</span> <span class="toc-text">三個容易踩的坑</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E5%80%8B%E5%8F%AF%E4%BB%A5%E6%8E%9B%E6%9B%B4%E5%A4%9A%E6%9D%B1%E8%A5%BF%E7%9A%84%E6%A1%86%E6%9E%B6"><span class="toc-number">6.</span> <span class="toc-text">一個可以掛更多東西的框架</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2026/04/27/Claude-Code-Multi-Model-%E6%B7%B7%E7%94%A8%E7%AD%96%E7%95%A5-Haiku-Sonnet-Opus-%E6%80%8E%E9%BA%BC%E6%90%AD%E6%89%8D%E7%9C%81%E9%8C%A2%E5%8F%88%E6%9C%89%E6%95%88/" title="Claude Code Multi-Model 混用策略 — Haiku / Sonnet / Opus 怎麼搭才省錢又有效"><img src="/img/20260427-03.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Claude Code Multi-Model 混用策略 — Haiku / Sonnet / Opus 怎麼搭才省錢又有效"/></a><div class="content"><a class="title" href="/2026/04/27/Claude-Code-Multi-Model-%E6%B7%B7%E7%94%A8%E7%AD%96%E7%95%A5-Haiku-Sonnet-Opus-%E6%80%8E%E9%BA%BC%E6%90%AD%E6%89%8D%E7%9C%81%E9%8C%A2%E5%8F%88%E6%9C%89%E6%95%88/" title="Claude Code Multi-Model 混用策略 — Haiku / Sonnet / Opus 怎麼搭才省錢又有效">Claude Code Multi-Model 混用策略 — Haiku / Sonnet / Opus 怎麼搭才省錢又有效</a><time datetime="2026-04-27T04:00:00.000Z" title="發表於 2026-04-27 12:00:00">2026-04-27</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/04/27/Lightpanda-%E5%B0%88%E7%82%BA-AI-Agent-%E6%89%93%E9%80%A0%E7%9A%84%E8%BC%95%E9%87%8F%E7%B4%9A-Headless-Browser/" title="Lightpanda — 專為 AI Agent 打造的輕量級 Headless Browser"><img src="/img/20260427-01.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Lightpanda — 專為 AI Agent 打造的輕量級 Headless Browser"/></a><div class="content"><a class="title" href="/2026/04/27/Lightpanda-%E5%B0%88%E7%82%BA-AI-Agent-%E6%89%93%E9%80%A0%E7%9A%84%E8%BC%95%E9%87%8F%E7%B4%9A-Headless-Browser/" title="Lightpanda — 專為 AI Agent 打造的輕量級 Headless Browser">Lightpanda — 專為 AI Agent 打造的輕量級 Headless Browser</a><time datetime="2026-04-27T02:00:00.000Z" title="發表於 2026-04-27 10:00:00">2026-04-27</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/04/27/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260427/" title="AI 與科技新聞摘要 - 2026/04/27"><img src="/img/20260427-02.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="AI 與科技新聞摘要 - 2026/04/27"/></a><div class="content"><a class="title" href="/2026/04/27/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260427/" title="AI 與科技新聞摘要 - 2026/04/27">AI 與科技新聞摘要 - 2026/04/27</a><time datetime="2026-04-27T00:30:00.000Z" title="發表於 2026-04-27 08:30:00">2026-04-27</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/04/27/Claude-Design-%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8-%E7%94%A8%E5%B0%8D%E8%A9%B1%E5%81%9A%E8%A8%AD%E8%A8%88%E5%BE%9E-Prototype-%E5%88%B0-Claude-Code-%E4%BA%A4%E6%8E%A5/" title="Claude Design 完整教學 - 用對話做設計從 Prototype 到 Claude Code 交接"><img src="/img/20260427-03.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Claude Design 完整教學 - 用對話做設計從 Prototype 到 Claude Code 交接"/></a><div class="content"><a class="title" href="/2026/04/27/Claude-Design-%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8-%E7%94%A8%E5%B0%8D%E8%A9%B1%E5%81%9A%E8%A8%AD%E8%A8%88%E5%BE%9E-Prototype-%E5%88%B0-Claude-Code-%E4%BA%A4%E6%8E%A5/" title="Claude Design 完整教學 - 用對話做設計從 Prototype 到 Claude Code 交接">Claude Design 完整教學 - 用對話做設計從 Prototype 到 Claude Code 交接</a><time datetime="2026-04-27T00:30:00.000Z" title="發表於 2026-04-27 08:30:00">2026-04-27</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/04/27/Sonatype-Guide-AI-%E5%AF%AB%E7%9A%84%E7%A8%8B%E5%BC%8F%E7%A2%BC%E8%AA%B0%E4%BE%86%E6%8A%8A%E9%97%9C%E4%BE%9D%E8%B3%B4%E5%AE%89%E5%85%A8/" title="Sonatype Guide - AI 寫的程式碼誰來把關依賴安全"><img src="/img/20260427-01.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Sonatype Guide - AI 寫的程式碼誰來把關依賴安全"/></a><div class="content"><a class="title" href="/2026/04/27/Sonatype-Guide-AI-%E5%AF%AB%E7%9A%84%E7%A8%8B%E5%BC%8F%E7%A2%BC%E8%AA%B0%E4%BE%86%E6%8A%8A%E9%97%9C%E4%BE%9D%E8%B3%B4%E5%AE%89%E5%85%A8/" title="Sonatype Guide - AI 寫的程式碼誰來把關依賴安全">Sonatype Guide - AI 寫的程式碼誰來把關依賴安全</a><time datetime="2026-04-27T00:30:00.000Z" title="發表於 2026-04-27 08:30:00">2026-04-27</time></div></div></div></div></div></div></main><footer id="footer" style="background-image: url(/img/20260427-03.webp);"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2024 - 2026 By Cheng®</span></div><div class="footer_custom_text">Written by Cheng® — 自律，從當下的一念開始。</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="閱讀模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日夜模式切換"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="單欄和雙欄切換"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="設定"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目錄"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="前往評論"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到頂端"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.umd.min.js"></script><script src="https://cdn.jsdelivr.net/npm/instant.page/instantpage.min.js" type="module"></script><script src="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.js"></script><div class="js-pjax"><script>(() => {
+  const isShuoshuo = GLOBAL_CONFIG_SITE.pageType === 'shuoshuo'
+  const option = {"mapping":"pathname","strict":0,"reactionsEnabled":1,"emitMetadata":0,"inputPosition":"bottom","lang":"zh-TW"}
+
+  const getGiscusTheme = theme => theme === 'dark' ? 'dark' : 'light'
+
+  const createScriptElement = config => {
+    const ele = document.createElement('script')
+    Object.entries(config).forEach(([key, value]) => {
+      ele.setAttribute(key, value)
+    })
+    return ele
+  }
+
+  const loadGiscus = (el = document, key) => {
+    const mappingConfig = isShuoshuo
+      ? { 'data-mapping': 'specific', 'data-term': key }
+      : { 'data-mapping': (option && option['data-mapping']) || 'pathname' }
+
+    const giscusConfig = {
+      src: 'https://giscus.app/client.js',
+      'data-repo': 'mark22013333/mark22013333.github.io',
+      'data-repo-id': 'R_kgDOLAxa6A',
+      'data-category-id': 'DIC_kwDOLAxa6M4C5eO9',
+      'data-theme': getGiscusTheme(document.documentElement.getAttribute('data-theme')),
+      'data-reactions-enabled': '1',
+      crossorigin: 'anonymous',
+      async: true,
+      ...option,
+      ...mappingConfig
+    }
+
+    const scriptElement = createScriptElement(giscusConfig)
+
+    el.querySelector('#giscus-wrap').appendChild(scriptElement)
+
+    if (isShuoshuo) {
+      window.shuoshuoComment.destroyGiscus = () => {
+        if (el.children.length) {
+          el.innerHTML = ''
+          el.classList.add('no-comment')
+        }
+      }
+    }
+  }
+
+  const changeGiscusTheme = theme => {
+    const iframe = document.querySelector('#giscus-wrap iframe')
+    if (iframe) {
+      const message = {
+        giscus: {
+          setConfig: {
+            theme: getGiscusTheme(theme)
+          }
+        }
+      }
+      iframe.contentWindow.postMessage(message, 'https://giscus.app')
+    }
+  }
+
+  btf.addGlobalFn('themeChange', changeGiscusTheme, 'giscus')
+
+  if (isShuoshuo) {
+    'Giscus' === 'Giscus'
+      ? window.shuoshuoComment = { loadComment: loadGiscus }
+      : window.loadOtherComment = loadGiscus
+    return
+  }
+
+  if ('Giscus' === 'Giscus' || !true) {
+    if (true) btf.loadComment(document.getElementById('giscus-wrap'), loadGiscus)
+    else loadGiscus()
+  } else {
+    window.loadOtherComment = loadGiscus
+  }
+})()</script></div><script src="/js/kkbox-player.js"></script><script src="/js/archives-pagination.js"></script><script src="/js/font-resize.js"></script><script src="/js/dark-palette.js"></script><script defer="defer" id="fluttering_ribbon" mobile="false" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/canvas-fluttering-ribbon.min.js"></script><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/activate-power-mode.min.js"></script><script>POWERMODE.colorful = true;
+POWERMODE.shake = true;
+POWERMODE.mobile = true;
+document.body.addEventListener('input', POWERMODE);
+</script><script src="https://cdn.jsdelivr.net/npm/pjax/pjax.min.js" defer="defer"></script><script>document.addEventListener('DOMContentLoaded', () => {
+  const pjaxSelectors = ["meta[property=\"og:image\"]","meta[property=\"og:title\"]","meta[property=\"og:url\"]","meta[property=\"og:description\"]","link[rel=\"canonical\"]","head > title","#config-diff","#body-wrap","#rightside-config-hide","#rightside-config-show",".js-pjax"]
+
+  window.pjax = new Pjax({
+    elements: 'a:not([target="_blank"])',
+    selectors: pjaxSelectors,
+    cacheBust: false,
+    analytics: true,
+    scrollRestoration: false
+  })
+
+  const triggerPjaxFn = (val) => {
+    if (!val) return
+    Object.values(val).forEach(fn => {
+      try {
+        fn()
+      } catch (err) {
+        console.debug('Pjax callback failed:', err)
+      }
+    })
+  }
+
+  document.addEventListener('pjax:send', () => {
+    // removeEventListener
+    btf.removeGlobalFnEvent('pjaxSendOnce')
+    btf.removeGlobalFnEvent('themeChange')
+
+    // reset readmode
+    const $bodyClassList = document.body.classList
+    if ($bodyClassList.contains('read-mode')) $bodyClassList.remove('read-mode')
+
+    triggerPjaxFn(window.globalFn.pjaxSend)
+  })
+
+  document.addEventListener('pjax:complete', () => {
+    btf.removeGlobalFnEvent('pjaxCompleteOnce')
+    document.querySelectorAll('script[data-pjax]').forEach(item => {
+      const newScript = document.createElement('script')
+      const content = item.text || item.textContent || item.innerHTML || ""
+      Array.from(item.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value))
+      newScript.appendChild(document.createTextNode(content))
+      item.parentNode.replaceChild(newScript, item)
+    })
+
+    triggerPjaxFn(window.globalFn.pjaxComplete)
+  })
+
+  document.addEventListener('pjax:error', e => {
+    if (e.request.status === 404) {
+      true
+        ? pjax.loadUrl('/404.html')
+        : window.location.href = e.request.responseURL
+    }
+  })
+})</script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜尋</span><i class="fas fa-spinner fa-pulse" id="loading-status" hidden="hidden"></i><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="text-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  資料載入中</span></div><div class="local-search-input"><input placeholder="搜尋文章" type="text"/></div><hr/><div id="local-search-results"></div><div class="ais-Pagination" id="local-search-pagination" style="display:none;"><ul class="ais-Pagination-list"></ul></div><div id="local-search-stats"></div></div><div id="search-mask"></div><script src="/js/search/local-search.js"></script></div></div></body></html>
