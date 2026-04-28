@@ -37,39 +37,6 @@
     
     
     <entry>
-      <title>MCP Server 開發入門教學 — 用 Python 從零打造 AI 工具連接器</title>
-      <link href="/2026/04/28/MCP-Server-%E9%96%8B%E7%99%BC%E5%85%A5%E9%96%80%E6%95%99%E5%AD%B8-%E7%94%A8-Python-%E5%BE%9E%E9%9B%B6%E6%89%93%E9%80%A0-AI-%E5%B7%A5%E5%85%B7%E9%80%A3%E6%8E%A5%E5%99%A8/"/>
-      <url>/2026/04/28/MCP-Server-%E9%96%8B%E7%99%BC%E5%85%A5%E9%96%80%E6%95%99%E5%AD%B8-%E7%94%A8-Python-%E5%BE%9E%E9%9B%B6%E6%89%93%E9%80%A0-AI-%E5%B7%A5%E5%85%B7%E9%80%A3%E6%8E%A5%E5%99%A8/</url>
-      
-        <content type="html"><![CDATA[<p>你家一定有 USB 轉接頭。Type-C 轉 HDMI、Lightning 轉 3.5mm、各種奇奇怪怪的接頭。轉接頭本身不做任何事，它只是讓兩個本來講不同語言的東西能接上。螢幕不需要知道你的筆電是什麼牌子，筆電也不需要知道螢幕的解析度怎麼設定 — 轉接頭搞定一切。</p><p>MCP（Model Context Protocol）就是 AI 世界的 USB 轉接頭。</p><p>Anthropic 開發了這個開放協定，現在已經捐給 Linux Foundation AAIF。它讓 AI model 連接外部工具和資料來源，不管是資料庫、API、檔案系統，接上就能用。目前生態系已經長到 <strong>164M 月下載量、超過 2,400 個 server</strong>，Microsoft、GitHub、Cloudflare、Stripe 都在用。Claude Code、Cursor、Kiro 這些 AI coding 工具也全部支援。</p><p>這不是什麼還在實驗階段的新玩意。這已經是事實標準了。</p><h2 id="MCP-的三個核心原語"><a href="#MCP-的三個核心原語" class="headerlink" title="MCP 的三個核心原語"></a>MCP 的三個核心原語</h2><p>在寫 code 之前，先搞懂 MCP 的三個核心概念。我用遙控器來比喻：</p><p><strong>Tools（工具）</strong> — 遙控器上的按鈕。按下「計算」，AI 就去算數學；按下「查天氣」，AI 就去打 API。每個按鈕定義了一個動作，AI 決定什麼時候按。</p><p><strong>Resources（資源）</strong> — 書架上的參考資料。AI 可以翻閱這些資料來回答問題，但它不會去修改書架上的東西。適合放設定檔、文件、靜態資料。</p><p><strong>Prompts（提示）</strong> — 預設的操作手冊。你幫 AI 寫好一套 SOP，它可以直接拿來用，省去每次都要重新描述需求的麻煩。</p><p>技術上的定義是：MCP Server 透過 JSON-RPC 2.0 協定，向 MCP Client（像是 Claude Code）暴露 tools、resources 和 prompts。Client 負責呼叫，Server 負責執行。</p><h2 id="環境準備"><a href="#環境準備" class="headerlink" title="環境準備"></a>環境準備</h2><p>需要的東西很簡單：</p><ol><li><strong>Python 3.10 以上</strong>（asyncio 的一些語法需要）</li><li><strong>MCP Python SDK</strong></li></ol><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip install mcp</span><br></pre></td></tr></table></figure><p>就這樣。沒有其他依賴。</p><h2 id="第一個-MCP-Server：計算機"><a href="#第一個-MCP-Server：計算機" class="headerlink" title="第一個 MCP Server：計算機"></a>第一個 MCP Server：計算機</h2><p>先從最小的東西開始。我們要做一個計算機 MCP Server，讓 AI 可以做加減乘除。</p><p>為什麼選計算機？因為邏輯簡單到不需要花腦力理解業務需求，可以把注意力全部放在 MCP 的架構上。</p><p>建一個 <code>calculator_server.py</code>：</p><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> mcp.server <span class="keyword">import</span> Server</span><br><span class="line"><span class="keyword">from</span> mcp.server.stdio <span class="keyword">import</span> stdio_server</span><br><span class="line"><span class="keyword">from</span> mcp.types <span class="keyword">import</span> Tool, TextContent</span><br><span class="line"></span><br><span class="line">app = Server(<span class="string">&quot;calculator&quot;</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="meta">@app.list_tools()</span></span><br><span class="line"><span class="keyword">async</span> <span class="keyword">def</span> <span class="title function_">list_tools</span>():</span><br><span class="line">    <span class="string">&quot;&quot;&quot;告訴 Client 我們有哪些工具可以用&quot;&quot;&quot;</span></span><br><span class="line">    <span class="keyword">return</span> [</span><br><span class="line">        Tool(</span><br><span class="line">            name=<span class="string">&quot;calculate&quot;</span>,</span><br><span class="line">            description=<span class="string">&quot;Perform basic arithmetic&quot;</span>,</span><br><span class="line">            inputSchema=&#123;</span><br><span class="line">                <span class="string">&quot;type&quot;</span>: <span class="string">&quot;object&quot;</span>,</span><br><span class="line">                <span class="string">&quot;properties&quot;</span>: &#123;</span><br><span class="line">                    <span class="string">&quot;expression&quot;</span>: &#123;</span><br><span class="line">                        <span class="string">&quot;type&quot;</span>: <span class="string">&quot;string&quot;</span>,</span><br><span class="line">                        <span class="string">&quot;description&quot;</span>: <span class="string">&quot;Math expression like &#x27;2 + 3&#x27;&quot;</span></span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;,</span><br><span class="line">                <span class="string">&quot;required&quot;</span>: [<span class="string">&quot;expression&quot;</span>]</span><br><span class="line">            &#125;</span><br><span class="line">        )</span><br><span class="line">    ]</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="meta">@app.call_tool()</span></span><br><span class="line"><span class="keyword">async</span> <span class="keyword">def</span> <span class="title function_">call_tool</span>(<span class="params">name: <span class="built_in">str</span>, arguments: <span class="built_in">dict</span></span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;Client 呼叫工具時，這裡處理邏輯&quot;&quot;&quot;</span></span><br><span class="line">    <span class="keyword">if</span> name == <span class="string">&quot;calculate&quot;</span>:</span><br><span class="line">        <span class="keyword">try</span>:</span><br><span class="line">            result = <span class="built_in">eval</span>(arguments[<span class="string">&quot;expression&quot;</span>])</span><br><span class="line">            <span class="keyword">return</span> [TextContent(<span class="built_in">type</span>=<span class="string">&quot;text&quot;</span>, text=<span class="built_in">str</span>(result))]</span><br><span class="line">        <span class="keyword">except</span> Exception <span class="keyword">as</span> e:</span><br><span class="line">            <span class="keyword">return</span> [TextContent(<span class="built_in">type</span>=<span class="string">&quot;text&quot;</span>, text=<span class="string">f&quot;計算錯誤：<span class="subst">&#123;e&#125;</span>&quot;</span>)]</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">async</span> <span class="keyword">def</span> <span class="title function_">main</span>():</span><br><span class="line">    <span class="keyword">async</span> <span class="keyword">with</span> stdio_server() <span class="keyword">as</span> (read, write):</span><br><span class="line">        <span class="keyword">await</span> app.run(read, write, app.create_initialization_options())</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&quot;__main__&quot;</span>:</span><br><span class="line">    <span class="keyword">import</span> asyncio</span><br><span class="line">    asyncio.run(main())</span><br></pre></td></tr></table></figure><blockquote><p>⚠️ <code>eval()</code> 在這裡純粹是教學用。正式環境請用 <code>ast.literal_eval()</code> 或數學解析器，不然使用者傳一段惡意程式碼進來你就去吃泡麵了。</p></blockquote><p>拆解一下這段 code 在做什麼：</p><ul><li><code>Server(&quot;calculator&quot;)</code> — 建立一個叫 <code>calculator</code> 的 MCP Server 實例</li><li><code>@app.list_tools()</code> — 註冊一個 handler，當 Client 問「你有什麼工具？」時回應。這裡回傳一個 <code>Tool</code> 物件，定義工具名稱、描述、參數的 JSON Schema</li><li><code>@app.call_tool()</code> — 註冊另一個 handler，當 Client 說「幫我執行這個工具」時處理。回傳 <code>TextContent</code> 包著結果</li><li><code>stdio_server()</code> — 用標準輸入輸出做傳輸。MCP 支援 stdio 和 SSE 兩種傳輸方式，stdio 最簡單，本機開發直接用</li></ul><p>整個流程就是：Client 連上 → 問有什麼工具 → 選一個工具呼叫 → Server 執行 → 回傳結果。跟你按遙控器一模一樣。</p><h2 id="接上-Claude-Code"><a href="#接上-Claude-Code" class="headerlink" title="接上 Claude Code"></a>接上 Claude Code</h2><p>Server 寫好了，接下來讓 Claude Code 認識它。</p><p>打開 Claude Code 的設定，把 MCP server 加進去。在你的專案根目錄建立 <code>.claude/settings.json</code>，或是加到全域設定 <code>~/.claude/settings.json</code>：</p><figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;mcpServers&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;calculator&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;command&quot;</span><span class="punctuation">:</span> <span class="string">&quot;python3&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;args&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span><span class="string">&quot;/absolute/path/to/calculator_server.py&quot;</span><span class="punctuation">]</span></span><br><span class="line">    <span class="punctuation">&#125;</span></span><br><span class="line">  <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure><p>注意 <code>args</code> 裡面的路徑要用絕對路徑。弄了半天 server 連不上，結果是相對路徑的問題 — 這種坑真的會讓人懷疑人生。</p><p>設定好之後，重新啟動 Claude Code，你應該會看到它自動偵測到 calculator 這個 MCP Server。這時候你可以直接跟 Claude 說「幫我算 1024 * 768」，它就會透過 MCP 呼叫你寫的計算機工具。</p><p>跑起來那一刻蠻爽的。你寫的 Python 程式，被 AI 當成自己的工具在用。</p><h2 id="進階：加上-Resources"><a href="#進階：加上-Resources" class="headerlink" title="進階：加上 Resources"></a>進階：加上 Resources</h2><p>Tools 是讓 AI 「做事」，Resources 是讓 AI 「讀資料」。</p><p>來提供一份數學公式表給 AI 參考。在同一個 server 裡加上 resource handler：</p><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> mcp.types <span class="keyword">import</span> Resource</span><br><span class="line"></span><br><span class="line"><span class="meta">@app.list_resources()</span></span><br><span class="line"><span class="keyword">async</span> <span class="keyword">def</span> <span class="title function_">list_resources</span>():</span><br><span class="line">    <span class="keyword">return</span> [</span><br><span class="line">        Resource(</span><br><span class="line">            uri=<span class="string">&quot;math://formulas&quot;</span>,</span><br><span class="line">            name=<span class="string">&quot;常用數學公式&quot;</span>,</span><br><span class="line">            description=<span class="string">&quot;基礎數學公式速查表&quot;</span>,</span><br><span class="line">            mimeType=<span class="string">&quot;text/plain&quot;</span></span><br><span class="line">        )</span><br><span class="line">    ]</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="meta">@app.read_resource()</span></span><br><span class="line"><span class="keyword">async</span> <span class="keyword">def</span> <span class="title function_">read_resource</span>(<span class="params">uri: <span class="built_in">str</span></span>):</span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">str</span>(uri) == <span class="string">&quot;math://formulas&quot;</span>:</span><br><span class="line">        content = <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">        面積公式：</span></span><br><span class="line"><span class="string">        - 圓形：π × r²</span></span><br><span class="line"><span class="string">        - 三角形：底 × 高 ÷ 2</span></span><br><span class="line"><span class="string">        - 梯形：(上底 + 下底) × 高 ÷ 2</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">        體積公式：</span></span><br><span class="line"><span class="string">        - 球體：4/3 × π × r³</span></span><br><span class="line"><span class="string">        - 圓柱：π × r² × h</span></span><br><span class="line"><span class="string">        &quot;&quot;&quot;</span></span><br><span class="line">        <span class="keyword">return</span> content</span><br></pre></td></tr></table></figure><p>這樣 AI 在需要的時候，可以自己去讀這份公式表，不用你每次都在 prompt 裡貼一大段。Resource 的 URI 格式是自定義的，你可以用 <code>math://</code>、<code>db://</code>、<code>file://</code>，只要 Client 和 Server 說好就行。</p><h2 id="完整的-Server-長什麼樣"><a href="#完整的-Server-長什麼樣" class="headerlink" title="完整的 Server 長什麼樣"></a>完整的 Server 長什麼樣</h2><p>把 tools 和 resources 組合起來，完整的 <code>calculator_server.py</code> 如下：</p><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> mcp.server <span class="keyword">import</span> Server</span><br><span class="line"><span class="keyword">from</span> mcp.server.stdio <span class="keyword">import</span> stdio_server</span><br><span class="line"><span class="keyword">from</span> mcp.types <span class="keyword">import</span> Tool, TextContent, Resource</span><br><span class="line"></span><br><span class="line">app = Server(<span class="string">&quot;calculator&quot;</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="meta">@app.list_tools()</span></span><br><span class="line"><span class="keyword">async</span> <span class="keyword">def</span> <span class="title function_">list_tools</span>():</span><br><span class="line">    <span class="keyword">return</span> [</span><br><span class="line">        Tool(</span><br><span class="line">            name=<span class="string">&quot;calculate&quot;</span>,</span><br><span class="line">            description=<span class="string">&quot;Perform basic arithmetic&quot;</span>,</span><br><span class="line">            inputSchema=&#123;</span><br><span class="line">                <span class="string">&quot;type&quot;</span>: <span class="string">&quot;object&quot;</span>,</span><br><span class="line">                <span class="string">&quot;properties&quot;</span>: &#123;</span><br><span class="line">                    <span class="string">&quot;expression&quot;</span>: &#123;</span><br><span class="line">                        <span class="string">&quot;type&quot;</span>: <span class="string">&quot;string&quot;</span>,</span><br><span class="line">                        <span class="string">&quot;description&quot;</span>: <span class="string">&quot;Math expression like &#x27;2 + 3&#x27;&quot;</span></span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;,</span><br><span class="line">                <span class="string">&quot;required&quot;</span>: [<span class="string">&quot;expression&quot;</span>]</span><br><span class="line">            &#125;</span><br><span class="line">        )</span><br><span class="line">    ]</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="meta">@app.call_tool()</span></span><br><span class="line"><span class="keyword">async</span> <span class="keyword">def</span> <span class="title function_">call_tool</span>(<span class="params">name: <span class="built_in">str</span>, arguments: <span class="built_in">dict</span></span>):</span><br><span class="line">    <span class="keyword">if</span> name == <span class="string">&quot;calculate&quot;</span>:</span><br><span class="line">        <span class="keyword">try</span>:</span><br><span class="line">            result = <span class="built_in">eval</span>(arguments[<span class="string">&quot;expression&quot;</span>])</span><br><span class="line">            <span class="keyword">return</span> [TextContent(<span class="built_in">type</span>=<span class="string">&quot;text&quot;</span>, text=<span class="built_in">str</span>(result))]</span><br><span class="line">        <span class="keyword">except</span> Exception <span class="keyword">as</span> e:</span><br><span class="line">            <span class="keyword">return</span> [TextContent(<span class="built_in">type</span>=<span class="string">&quot;text&quot;</span>, text=<span class="string">f&quot;計算錯誤：<span class="subst">&#123;e&#125;</span>&quot;</span>)]</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="meta">@app.list_resources()</span></span><br><span class="line"><span class="keyword">async</span> <span class="keyword">def</span> <span class="title function_">list_resources</span>():</span><br><span class="line">    <span class="keyword">return</span> [</span><br><span class="line">        Resource(</span><br><span class="line">            uri=<span class="string">&quot;math://formulas&quot;</span>,</span><br><span class="line">            name=<span class="string">&quot;常用數學公式&quot;</span>,</span><br><span class="line">            description=<span class="string">&quot;基礎數學公式速查表&quot;</span>,</span><br><span class="line">            mimeType=<span class="string">&quot;text/plain&quot;</span></span><br><span class="line">        )</span><br><span class="line">    ]</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="meta">@app.read_resource()</span></span><br><span class="line"><span class="keyword">async</span> <span class="keyword">def</span> <span class="title function_">read_resource</span>(<span class="params">uri: <span class="built_in">str</span></span>):</span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">str</span>(uri) == <span class="string">&quot;math://formulas&quot;</span>:</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">面積公式：</span></span><br><span class="line"><span class="string">- 圓形：π × r²</span></span><br><span class="line"><span class="string">- 三角形：底 × 高 ÷ 2</span></span><br><span class="line"><span class="string">- 梯形：(上底 + 下底) × 高 ÷ 2</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">體積公式：</span></span><br><span class="line"><span class="string">- 球體：4/3 × π × r³</span></span><br><span class="line"><span class="string">- 圓柱：π × r² × h</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">async</span> <span class="keyword">def</span> <span class="title function_">main</span>():</span><br><span class="line">    <span class="keyword">async</span> <span class="keyword">with</span> stdio_server() <span class="keyword">as</span> (read, write):</span><br><span class="line">        <span class="keyword">await</span> app.run(read, write, app.create_initialization_options())</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&quot;__main__&quot;</span>:</span><br><span class="line">    <span class="keyword">import</span> asyncio</span><br><span class="line">    asyncio.run(main())</span><br></pre></td></tr></table></figure><p>一個檔案，70 行不到，你就有一個完整的 MCP Server，同時提供計算工具和參考資料。</p><h2 id="接下來的路"><a href="#接下來的路" class="headerlink" title="接下來的路"></a>接下來的路</h2><p>你現在有了一個能跑的 MCP Server。計算機當然只是起點。</p><p>真正有趣的事情在後面。MCP 的價值不在於讓 AI 做加法，而在於你可以把任何系統變成 AI 的工具。資料庫、內部 API、CI&#x2F;CD pipeline、監控系統 — 只要你能寫 Python 去操作它，你就能把它包成 MCP Server，讓 AI 直接用。</p><p>幾個值得探索的方向：</p><ul><li><strong>Database MCP</strong> — 讓 AI 直接查資料庫。不用再複製貼上 SQL 結果。MCP 生態系已經有現成的 DBHub 可以用</li><li><strong>API MCP</strong> — 包裝你公司的內部 API。AI 能直接呼叫，省掉人工轉介</li><li><strong>認證機制</strong> — MCP 的 OAuth 2.1 授權框架，讓 remote server 安全地接受外部連線</li><li><strong>Remote MCP Server</strong> — 用 SSE（Server-Sent Events）傳輸，部署到雲端，多個 Client 共用</li></ul><p>這些東西有一個共通的思維模式：<strong>你不是在寫「給人用的工具」，你是在寫「給 AI 用的介面」</strong>。設計 inputSchema 的時候，你在想的不是 UI 怎麼排版，而是 AI 怎麼理解參數的意義。Tool 的 description 不是給人讀的說明文件，是給 AI 判斷「這個工具能不能解決當前問題」的依據。</p><p>這是一種完全不同的軟體設計思維。當你掌握了這個框架，你看待自己寫的每一個 function、每一個 API endpoint 的眼光都會不一樣。不是「使用者會怎麼操作」，而是「AI 會怎麼理解和使用」。</p><p>Anthropic Academy 有免費的 MCP 課程，想深入的話可以從那邊開始。</p><hr><blockquote><p>參考來源：<a href="https://anthropic.skilljar.com/">Model Context Protocol (MCP) - Anthropic Academy</a><br>官方文件：<a href="https://modelcontextprotocol.io/">MCP Documentation</a></p></blockquote>]]></content>
-      
-      
-      <categories>
-          
-          <category> Claude Code </category>
-          
-      </categories>
-      
-      
-        <tags>
-            
-            <tag> MCP </tag>
-            
-            <tag> AI Agent </tag>
-            
-            <tag> Claude Code </tag>
-            
-            <tag> 教學 </tag>
-            
-            <tag> Python </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    
-    
-    <entry>
       <title>RTK — 讓 Claude Code 少燒 80% Token 的 Rust 壓縮代理</title>
       <link href="/2026/04/28/RTK-%E8%AE%93-Claude-Code-%E5%B0%91%E7%87%92-80-Token-%E7%9A%84-Rust-%E5%A3%93%E7%B8%AE%E4%BB%A3%E7%90%86/"/>
       <url>/2026/04/28/RTK-%E8%AE%93-Claude-Code-%E5%B0%91%E7%87%92-80-Token-%E7%9A%84-Rust-%E5%A3%93%E7%B8%AE%E4%BB%A3%E7%90%86/</url>
@@ -95,6 +62,39 @@
             <tag> Token 優化 </tag>
             
             <tag> CLI </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>MCP Server 開發入門教學 — 用 Python 從零打造 AI 工具連接器</title>
+      <link href="/2026/04/28/MCP-Server-%E9%96%8B%E7%99%BC%E5%85%A5%E9%96%80%E6%95%99%E5%AD%B8-%E7%94%A8-Python-%E5%BE%9E%E9%9B%B6%E6%89%93%E9%80%A0-AI-%E5%B7%A5%E5%85%B7%E9%80%A3%E6%8E%A5%E5%99%A8/"/>
+      <url>/2026/04/28/MCP-Server-%E9%96%8B%E7%99%BC%E5%85%A5%E9%96%80%E6%95%99%E5%AD%B8-%E7%94%A8-Python-%E5%BE%9E%E9%9B%B6%E6%89%93%E9%80%A0-AI-%E5%B7%A5%E5%85%B7%E9%80%A3%E6%8E%A5%E5%99%A8/</url>
+      
+        <content type="html"><![CDATA[<p>你家一定有 USB 轉接頭。Type-C 轉 HDMI、Lightning 轉 3.5mm、各種奇奇怪怪的接頭。轉接頭本身不做任何事，它只是讓兩個本來講不同語言的東西能接上。螢幕不需要知道你的筆電是什麼牌子，筆電也不需要知道螢幕的解析度怎麼設定 — 轉接頭搞定一切。</p><p>MCP（Model Context Protocol）就是 AI 世界的 USB 轉接頭。</p><p>Anthropic 開發了這個開放協定，現在已經捐給 Linux Foundation AAIF。它讓 AI model 連接外部工具和資料來源，不管是資料庫、API、檔案系統，接上就能用。目前生態系已經長到 <strong>164M 月下載量、超過 2,400 個 server</strong>，Microsoft、GitHub、Cloudflare、Stripe 都在用。Claude Code、Cursor、Kiro 這些 AI coding 工具也全部支援。</p><p>這不是什麼還在實驗階段的新玩意。這已經是事實標準了。</p><h2 id="MCP-的三個核心原語"><a href="#MCP-的三個核心原語" class="headerlink" title="MCP 的三個核心原語"></a>MCP 的三個核心原語</h2><p>在寫 code 之前，先搞懂 MCP 的三個核心概念。我用遙控器來比喻：</p><p><strong>Tools（工具）</strong> — 遙控器上的按鈕。按下「計算」，AI 就去算數學；按下「查天氣」，AI 就去打 API。每個按鈕定義了一個動作，AI 決定什麼時候按。</p><p><strong>Resources（資源）</strong> — 書架上的參考資料。AI 可以翻閱這些資料來回答問題，但它不會去修改書架上的東西。適合放設定檔、文件、靜態資料。</p><p><strong>Prompts（提示）</strong> — 預設的操作手冊。你幫 AI 寫好一套 SOP，它可以直接拿來用，省去每次都要重新描述需求的麻煩。</p><p>技術上的定義是：MCP Server 透過 JSON-RPC 2.0 協定，向 MCP Client（像是 Claude Code）暴露 tools、resources 和 prompts。Client 負責呼叫，Server 負責執行。</p><h2 id="環境準備"><a href="#環境準備" class="headerlink" title="環境準備"></a>環境準備</h2><p>需要的東西很簡單：</p><ol><li><strong>Python 3.10 以上</strong>（asyncio 的一些語法需要）</li><li><strong>MCP Python SDK</strong></li></ol><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip install mcp</span><br></pre></td></tr></table></figure><p>就這樣。沒有其他依賴。</p><h2 id="第一個-MCP-Server：計算機"><a href="#第一個-MCP-Server：計算機" class="headerlink" title="第一個 MCP Server：計算機"></a>第一個 MCP Server：計算機</h2><p>先從最小的東西開始。我們要做一個計算機 MCP Server，讓 AI 可以做加減乘除。</p><p>為什麼選計算機？因為邏輯簡單到不需要花腦力理解業務需求，可以把注意力全部放在 MCP 的架構上。</p><p>建一個 <code>calculator_server.py</code>：</p><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> mcp.server <span class="keyword">import</span> Server</span><br><span class="line"><span class="keyword">from</span> mcp.server.stdio <span class="keyword">import</span> stdio_server</span><br><span class="line"><span class="keyword">from</span> mcp.types <span class="keyword">import</span> Tool, TextContent</span><br><span class="line"></span><br><span class="line">app = Server(<span class="string">&quot;calculator&quot;</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="meta">@app.list_tools()</span></span><br><span class="line"><span class="keyword">async</span> <span class="keyword">def</span> <span class="title function_">list_tools</span>():</span><br><span class="line">    <span class="string">&quot;&quot;&quot;告訴 Client 我們有哪些工具可以用&quot;&quot;&quot;</span></span><br><span class="line">    <span class="keyword">return</span> [</span><br><span class="line">        Tool(</span><br><span class="line">            name=<span class="string">&quot;calculate&quot;</span>,</span><br><span class="line">            description=<span class="string">&quot;Perform basic arithmetic&quot;</span>,</span><br><span class="line">            inputSchema=&#123;</span><br><span class="line">                <span class="string">&quot;type&quot;</span>: <span class="string">&quot;object&quot;</span>,</span><br><span class="line">                <span class="string">&quot;properties&quot;</span>: &#123;</span><br><span class="line">                    <span class="string">&quot;expression&quot;</span>: &#123;</span><br><span class="line">                        <span class="string">&quot;type&quot;</span>: <span class="string">&quot;string&quot;</span>,</span><br><span class="line">                        <span class="string">&quot;description&quot;</span>: <span class="string">&quot;Math expression like &#x27;2 + 3&#x27;&quot;</span></span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;,</span><br><span class="line">                <span class="string">&quot;required&quot;</span>: [<span class="string">&quot;expression&quot;</span>]</span><br><span class="line">            &#125;</span><br><span class="line">        )</span><br><span class="line">    ]</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="meta">@app.call_tool()</span></span><br><span class="line"><span class="keyword">async</span> <span class="keyword">def</span> <span class="title function_">call_tool</span>(<span class="params">name: <span class="built_in">str</span>, arguments: <span class="built_in">dict</span></span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;Client 呼叫工具時，這裡處理邏輯&quot;&quot;&quot;</span></span><br><span class="line">    <span class="keyword">if</span> name == <span class="string">&quot;calculate&quot;</span>:</span><br><span class="line">        <span class="keyword">try</span>:</span><br><span class="line">            result = <span class="built_in">eval</span>(arguments[<span class="string">&quot;expression&quot;</span>])</span><br><span class="line">            <span class="keyword">return</span> [TextContent(<span class="built_in">type</span>=<span class="string">&quot;text&quot;</span>, text=<span class="built_in">str</span>(result))]</span><br><span class="line">        <span class="keyword">except</span> Exception <span class="keyword">as</span> e:</span><br><span class="line">            <span class="keyword">return</span> [TextContent(<span class="built_in">type</span>=<span class="string">&quot;text&quot;</span>, text=<span class="string">f&quot;計算錯誤：<span class="subst">&#123;e&#125;</span>&quot;</span>)]</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">async</span> <span class="keyword">def</span> <span class="title function_">main</span>():</span><br><span class="line">    <span class="keyword">async</span> <span class="keyword">with</span> stdio_server() <span class="keyword">as</span> (read, write):</span><br><span class="line">        <span class="keyword">await</span> app.run(read, write, app.create_initialization_options())</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&quot;__main__&quot;</span>:</span><br><span class="line">    <span class="keyword">import</span> asyncio</span><br><span class="line">    asyncio.run(main())</span><br></pre></td></tr></table></figure><blockquote><p>⚠️ <code>eval()</code> 在這裡純粹是教學用。正式環境請用 <code>ast.literal_eval()</code> 或數學解析器，不然使用者傳一段惡意程式碼進來你就去吃泡麵了。</p></blockquote><p>拆解一下這段 code 在做什麼：</p><ul><li><code>Server(&quot;calculator&quot;)</code> — 建立一個叫 <code>calculator</code> 的 MCP Server 實例</li><li><code>@app.list_tools()</code> — 註冊一個 handler，當 Client 問「你有什麼工具？」時回應。這裡回傳一個 <code>Tool</code> 物件，定義工具名稱、描述、參數的 JSON Schema</li><li><code>@app.call_tool()</code> — 註冊另一個 handler，當 Client 說「幫我執行這個工具」時處理。回傳 <code>TextContent</code> 包著結果</li><li><code>stdio_server()</code> — 用標準輸入輸出做傳輸。MCP 支援 stdio 和 SSE 兩種傳輸方式，stdio 最簡單，本機開發直接用</li></ul><p>整個流程就是：Client 連上 → 問有什麼工具 → 選一個工具呼叫 → Server 執行 → 回傳結果。跟你按遙控器一模一樣。</p><h2 id="接上-Claude-Code"><a href="#接上-Claude-Code" class="headerlink" title="接上 Claude Code"></a>接上 Claude Code</h2><p>Server 寫好了，接下來讓 Claude Code 認識它。</p><p>打開 Claude Code 的設定，把 MCP server 加進去。在你的專案根目錄建立 <code>.claude/settings.json</code>，或是加到全域設定 <code>~/.claude/settings.json</code>：</p><figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;mcpServers&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;calculator&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;command&quot;</span><span class="punctuation">:</span> <span class="string">&quot;python3&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;args&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span><span class="string">&quot;/absolute/path/to/calculator_server.py&quot;</span><span class="punctuation">]</span></span><br><span class="line">    <span class="punctuation">&#125;</span></span><br><span class="line">  <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure><p>注意 <code>args</code> 裡面的路徑要用絕對路徑。弄了半天 server 連不上，結果是相對路徑的問題 — 這種坑真的會讓人懷疑人生。</p><p>設定好之後，重新啟動 Claude Code，你應該會看到它自動偵測到 calculator 這個 MCP Server。這時候你可以直接跟 Claude 說「幫我算 1024 * 768」，它就會透過 MCP 呼叫你寫的計算機工具。</p><p>跑起來那一刻蠻爽的。你寫的 Python 程式，被 AI 當成自己的工具在用。</p><h2 id="進階：加上-Resources"><a href="#進階：加上-Resources" class="headerlink" title="進階：加上 Resources"></a>進階：加上 Resources</h2><p>Tools 是讓 AI 「做事」，Resources 是讓 AI 「讀資料」。</p><p>來提供一份數學公式表給 AI 參考。在同一個 server 裡加上 resource handler：</p><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> mcp.types <span class="keyword">import</span> Resource</span><br><span class="line"></span><br><span class="line"><span class="meta">@app.list_resources()</span></span><br><span class="line"><span class="keyword">async</span> <span class="keyword">def</span> <span class="title function_">list_resources</span>():</span><br><span class="line">    <span class="keyword">return</span> [</span><br><span class="line">        Resource(</span><br><span class="line">            uri=<span class="string">&quot;math://formulas&quot;</span>,</span><br><span class="line">            name=<span class="string">&quot;常用數學公式&quot;</span>,</span><br><span class="line">            description=<span class="string">&quot;基礎數學公式速查表&quot;</span>,</span><br><span class="line">            mimeType=<span class="string">&quot;text/plain&quot;</span></span><br><span class="line">        )</span><br><span class="line">    ]</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="meta">@app.read_resource()</span></span><br><span class="line"><span class="keyword">async</span> <span class="keyword">def</span> <span class="title function_">read_resource</span>(<span class="params">uri: <span class="built_in">str</span></span>):</span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">str</span>(uri) == <span class="string">&quot;math://formulas&quot;</span>:</span><br><span class="line">        content = <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">        面積公式：</span></span><br><span class="line"><span class="string">        - 圓形：π × r²</span></span><br><span class="line"><span class="string">        - 三角形：底 × 高 ÷ 2</span></span><br><span class="line"><span class="string">        - 梯形：(上底 + 下底) × 高 ÷ 2</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">        體積公式：</span></span><br><span class="line"><span class="string">        - 球體：4/3 × π × r³</span></span><br><span class="line"><span class="string">        - 圓柱：π × r² × h</span></span><br><span class="line"><span class="string">        &quot;&quot;&quot;</span></span><br><span class="line">        <span class="keyword">return</span> content</span><br></pre></td></tr></table></figure><p>這樣 AI 在需要的時候，可以自己去讀這份公式表，不用你每次都在 prompt 裡貼一大段。Resource 的 URI 格式是自定義的，你可以用 <code>math://</code>、<code>db://</code>、<code>file://</code>，只要 Client 和 Server 說好就行。</p><h2 id="完整的-Server-長什麼樣"><a href="#完整的-Server-長什麼樣" class="headerlink" title="完整的 Server 長什麼樣"></a>完整的 Server 長什麼樣</h2><p>把 tools 和 resources 組合起來，完整的 <code>calculator_server.py</code> 如下：</p><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> mcp.server <span class="keyword">import</span> Server</span><br><span class="line"><span class="keyword">from</span> mcp.server.stdio <span class="keyword">import</span> stdio_server</span><br><span class="line"><span class="keyword">from</span> mcp.types <span class="keyword">import</span> Tool, TextContent, Resource</span><br><span class="line"></span><br><span class="line">app = Server(<span class="string">&quot;calculator&quot;</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="meta">@app.list_tools()</span></span><br><span class="line"><span class="keyword">async</span> <span class="keyword">def</span> <span class="title function_">list_tools</span>():</span><br><span class="line">    <span class="keyword">return</span> [</span><br><span class="line">        Tool(</span><br><span class="line">            name=<span class="string">&quot;calculate&quot;</span>,</span><br><span class="line">            description=<span class="string">&quot;Perform basic arithmetic&quot;</span>,</span><br><span class="line">            inputSchema=&#123;</span><br><span class="line">                <span class="string">&quot;type&quot;</span>: <span class="string">&quot;object&quot;</span>,</span><br><span class="line">                <span class="string">&quot;properties&quot;</span>: &#123;</span><br><span class="line">                    <span class="string">&quot;expression&quot;</span>: &#123;</span><br><span class="line">                        <span class="string">&quot;type&quot;</span>: <span class="string">&quot;string&quot;</span>,</span><br><span class="line">                        <span class="string">&quot;description&quot;</span>: <span class="string">&quot;Math expression like &#x27;2 + 3&#x27;&quot;</span></span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;,</span><br><span class="line">                <span class="string">&quot;required&quot;</span>: [<span class="string">&quot;expression&quot;</span>]</span><br><span class="line">            &#125;</span><br><span class="line">        )</span><br><span class="line">    ]</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="meta">@app.call_tool()</span></span><br><span class="line"><span class="keyword">async</span> <span class="keyword">def</span> <span class="title function_">call_tool</span>(<span class="params">name: <span class="built_in">str</span>, arguments: <span class="built_in">dict</span></span>):</span><br><span class="line">    <span class="keyword">if</span> name == <span class="string">&quot;calculate&quot;</span>:</span><br><span class="line">        <span class="keyword">try</span>:</span><br><span class="line">            result = <span class="built_in">eval</span>(arguments[<span class="string">&quot;expression&quot;</span>])</span><br><span class="line">            <span class="keyword">return</span> [TextContent(<span class="built_in">type</span>=<span class="string">&quot;text&quot;</span>, text=<span class="built_in">str</span>(result))]</span><br><span class="line">        <span class="keyword">except</span> Exception <span class="keyword">as</span> e:</span><br><span class="line">            <span class="keyword">return</span> [TextContent(<span class="built_in">type</span>=<span class="string">&quot;text&quot;</span>, text=<span class="string">f&quot;計算錯誤：<span class="subst">&#123;e&#125;</span>&quot;</span>)]</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="meta">@app.list_resources()</span></span><br><span class="line"><span class="keyword">async</span> <span class="keyword">def</span> <span class="title function_">list_resources</span>():</span><br><span class="line">    <span class="keyword">return</span> [</span><br><span class="line">        Resource(</span><br><span class="line">            uri=<span class="string">&quot;math://formulas&quot;</span>,</span><br><span class="line">            name=<span class="string">&quot;常用數學公式&quot;</span>,</span><br><span class="line">            description=<span class="string">&quot;基礎數學公式速查表&quot;</span>,</span><br><span class="line">            mimeType=<span class="string">&quot;text/plain&quot;</span></span><br><span class="line">        )</span><br><span class="line">    ]</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="meta">@app.read_resource()</span></span><br><span class="line"><span class="keyword">async</span> <span class="keyword">def</span> <span class="title function_">read_resource</span>(<span class="params">uri: <span class="built_in">str</span></span>):</span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">str</span>(uri) == <span class="string">&quot;math://formulas&quot;</span>:</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">面積公式：</span></span><br><span class="line"><span class="string">- 圓形：π × r²</span></span><br><span class="line"><span class="string">- 三角形：底 × 高 ÷ 2</span></span><br><span class="line"><span class="string">- 梯形：(上底 + 下底) × 高 ÷ 2</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">體積公式：</span></span><br><span class="line"><span class="string">- 球體：4/3 × π × r³</span></span><br><span class="line"><span class="string">- 圓柱：π × r² × h</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">async</span> <span class="keyword">def</span> <span class="title function_">main</span>():</span><br><span class="line">    <span class="keyword">async</span> <span class="keyword">with</span> stdio_server() <span class="keyword">as</span> (read, write):</span><br><span class="line">        <span class="keyword">await</span> app.run(read, write, app.create_initialization_options())</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&quot;__main__&quot;</span>:</span><br><span class="line">    <span class="keyword">import</span> asyncio</span><br><span class="line">    asyncio.run(main())</span><br></pre></td></tr></table></figure><p>一個檔案，70 行不到，你就有一個完整的 MCP Server，同時提供計算工具和參考資料。</p><h2 id="接下來的路"><a href="#接下來的路" class="headerlink" title="接下來的路"></a>接下來的路</h2><p>你現在有了一個能跑的 MCP Server。計算機當然只是起點。</p><p>真正有趣的事情在後面。MCP 的價值不在於讓 AI 做加法，而在於你可以把任何系統變成 AI 的工具。資料庫、內部 API、CI&#x2F;CD pipeline、監控系統 — 只要你能寫 Python 去操作它，你就能把它包成 MCP Server，讓 AI 直接用。</p><p>幾個值得探索的方向：</p><ul><li><strong>Database MCP</strong> — 讓 AI 直接查資料庫。不用再複製貼上 SQL 結果。MCP 生態系已經有現成的 DBHub 可以用</li><li><strong>API MCP</strong> — 包裝你公司的內部 API。AI 能直接呼叫，省掉人工轉介</li><li><strong>認證機制</strong> — MCP 的 OAuth 2.1 授權框架，讓 remote server 安全地接受外部連線</li><li><strong>Remote MCP Server</strong> — 用 SSE（Server-Sent Events）傳輸，部署到雲端，多個 Client 共用</li></ul><p>這些東西有一個共通的思維模式：<strong>你不是在寫「給人用的工具」，你是在寫「給 AI 用的介面」</strong>。設計 inputSchema 的時候，你在想的不是 UI 怎麼排版，而是 AI 怎麼理解參數的意義。Tool 的 description 不是給人讀的說明文件，是給 AI 判斷「這個工具能不能解決當前問題」的依據。</p><p>這是一種完全不同的軟體設計思維。當你掌握了這個框架，你看待自己寫的每一個 function、每一個 API endpoint 的眼光都會不一樣。不是「使用者會怎麼操作」，而是「AI 會怎麼理解和使用」。</p><p>Anthropic Academy 有免費的 MCP 課程，想深入的話可以從那邊開始。</p><hr><blockquote><p>參考來源：<a href="https://anthropic.skilljar.com/">Model Context Protocol (MCP) - Anthropic Academy</a><br>官方文件：<a href="https://modelcontextprotocol.io/">MCP Documentation</a></p></blockquote>]]></content>
+      
+      
+      <categories>
+          
+          <category> Claude Code </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> AI Agent </tag>
+            
+            <tag> MCP </tag>
+            
+            <tag> Claude Code </tag>
+            
+            <tag> 教學 </tag>
+            
+            <tag> Python </tag>
             
         </tags>
       
@@ -226,6 +226,8 @@
             
             <tag> GitHub </tag>
             
+            <tag> Stanford AI Index </tag>
+            
             <tag> Snap </tag>
             
             <tag> JetBrains </tag>
@@ -233,8 +235,6 @@
             <tag> Kiro CLI </tag>
             
             <tag> Shield AI </tag>
-            
-            <tag> Stanford AI Index </tag>
             
         </tags>
       
@@ -362,9 +362,9 @@
             
             <tag> Claude Code </tag>
             
-            <tag> 自動化 </tag>
-            
             <tag> Hooks </tag>
+            
+            <tag> 自動化 </tag>
             
             <tag> 教學 </tag>
             
@@ -556,9 +556,9 @@
       
         <tags>
             
-            <tag> OpenAI </tag>
-            
             <tag> MCP </tag>
+            
+            <tag> OpenAI </tag>
             
             <tag> GPT-5.5 </tag>
             
@@ -764,9 +764,9 @@
             
             <tag> Kiro </tag>
             
-            <tag> Stanford AI Index </tag>
-            
             <tag> GitHub Copilot </tag>
+            
+            <tag> Stanford AI Index </tag>
             
         </tags>
       
@@ -857,9 +857,9 @@
             
             <tag> 資安 </tag>
             
-            <tag> OpenAI </tag>
-            
             <tag> MCP </tag>
+            
+            <tag> OpenAI </tag>
             
             <tag> Claude Code </tag>
             
@@ -958,13 +958,13 @@
             
             <tag> GitHub </tag>
             
-            <tag> SDD </tag>
-            
-            <tag> TDD </tag>
-            
             <tag> GH-300 </tag>
             
             <tag> Responsible AI </tag>
+            
+            <tag> SDD </tag>
+            
+            <tag> TDD </tag>
             
         </tags>
       
@@ -991,9 +991,9 @@
             
             <tag> 資安 </tag>
             
-            <tag> OpenAI </tag>
-            
             <tag> MCP </tag>
+            
+            <tag> OpenAI </tag>
             
             <tag> Anthropic </tag>
             
@@ -1123,9 +1123,9 @@
             
             <tag> OpenAI </tag>
             
-            <tag> Cursor </tag>
-            
             <tag> Microsoft </tag>
+            
+            <tag> Cursor </tag>
             
             <tag> EY </tag>
             
@@ -1383,9 +1383,9 @@
       
         <tags>
             
-            <tag> DevOps </tag>
-            
             <tag> Rust </tag>
+            
+            <tag> DevOps </tag>
             
             <tag> Claude-Code </tag>
             
@@ -1490,9 +1490,9 @@
             
             <tag> Microsoft </tag>
             
-            <tag> GitHub </tag>
-            
             <tag> Stripe </tag>
+            
+            <tag> GitHub </tag>
             
         </tags>
       
@@ -1934,9 +1934,9 @@
       
         <tags>
             
-            <tag> Claude </tag>
-            
             <tag> AI Agent </tag>
+            
+            <tag> Claude </tag>
             
             <tag> Multi-Model </tag>
             
@@ -2058,13 +2058,13 @@
             
             <tag> Claude Code </tag>
             
-            <tag> Cursor </tag>
-            
             <tag> Copilot </tag>
             
-            <tag> 教學 </tag>
+            <tag> Cursor </tag>
             
             <tag> 開發工具 </tag>
+            
+            <tag> 教學 </tag>
             
         </tags>
       
@@ -2308,9 +2308,9 @@
             
             <tag> MCP </tag>
             
-            <tag> Copilot </tag>
-            
             <tag> Microsoft </tag>
+            
+            <tag> Copilot </tag>
             
         </tags>
       
@@ -2389,13 +2389,13 @@
       
         <tags>
             
+            <tag> AI Agent </tag>
+            
             <tag> 資安 </tag>
             
             <tag> Claude </tag>
             
             <tag> OpenAI </tag>
-            
-            <tag> AI Agent </tag>
             
             <tag> Copilot </tag>
             
@@ -2484,9 +2484,9 @@
             
             <tag> 理財 </tag>
             
-            <tag> Gemini </tag>
-            
             <tag> Claude Code </tag>
+            
+            <tag> Gemini </tag>
             
         </tags>
       
@@ -2513,9 +2513,9 @@
             
             <tag> DevOps </tag>
             
-            <tag> 教學 </tag>
-            
             <tag> 開發工具 </tag>
+            
+            <tag> 教學 </tag>
             
         </tags>
       
@@ -2540,9 +2540,9 @@
       
         <tags>
             
-            <tag> MCP </tag>
-            
             <tag> AI Agent </tag>
+            
+            <tag> MCP </tag>
             
             <tag> Claude Code </tag>
             
@@ -2602,9 +2602,9 @@
             
             <tag> Claude </tag>
             
-            <tag> Copilot </tag>
-            
             <tag> Microsoft </tag>
+            
+            <tag> Copilot </tag>
             
         </tags>
       
@@ -2687,9 +2687,9 @@
             
             <tag> 資安 </tag>
             
-            <tag> Cursor </tag>
-            
             <tag> Copilot </tag>
+            
+            <tag> Cursor </tag>
             
         </tags>
       
@@ -2714,9 +2714,9 @@
       
         <tags>
             
-            <tag> DevOps </tag>
-            
             <tag> 自動化 </tag>
+            
+            <tag> DevOps </tag>
             
             <tag> Code Review </tag>
             
@@ -2830,9 +2830,9 @@
             
             <tag> LLM </tag>
             
-            <tag> MCP </tag>
-            
             <tag> AI Agent </tag>
+            
+            <tag> MCP </tag>
             
             <tag> Claude Code </tag>
             
@@ -2919,9 +2919,9 @@
             
             <tag> Skills </tag>
             
-            <tag> 教學 </tag>
-            
             <tag> 開發工具 </tag>
+            
+            <tag> 教學 </tag>
             
         </tags>
       
@@ -2975,9 +2975,9 @@
       
         <tags>
             
-            <tag> MCP </tag>
-            
             <tag> AI Agent </tag>
+            
+            <tag> MCP </tag>
             
             <tag> Claude Code </tag>
             
@@ -3035,9 +3035,9 @@
             
             <tag> 資安 </tag>
             
-            <tag> OpenAI </tag>
-            
             <tag> MCP </tag>
+            
+            <tag> OpenAI </tag>
             
         </tags>
       
@@ -3064,9 +3064,9 @@
             
             <tag> Claude </tag>
             
-            <tag> 自動化 </tag>
-            
             <tag> macOS </tag>
+            
+            <tag> 自動化 </tag>
             
         </tags>
       
@@ -3120,9 +3120,9 @@
       
         <tags>
             
-            <tag> 資安 </tag>
-            
             <tag> 理財 </tag>
+            
+            <tag> 資安 </tag>
             
             <tag> Perplexity </tag>
             
@@ -3209,9 +3209,9 @@
       
         <tags>
             
-            <tag> 資安 </tag>
-            
             <tag> 開源 </tag>
+            
+            <tag> 資安 </tag>
             
             <tag> 開發工具 </tag>
             
@@ -3242,9 +3242,9 @@
             
             <tag> Claude Code </tag>
             
-            <tag> 自動化 </tag>
-            
             <tag> macOS </tag>
+            
+            <tag> 自動化 </tag>
             
             <tag> 教學 </tag>
             
@@ -3277,9 +3277,9 @@
             
             <tag> Anthropic </tag>
             
-            <tag> Claude Code </tag>
-            
             <tag> NVIDIA </tag>
+            
+            <tag> Claude Code </tag>
             
         </tags>
       
@@ -3310,9 +3310,9 @@
             
             <tag> 自動化 </tag>
             
-            <tag> 教學 </tag>
-            
             <tag> 開發工具 </tag>
+            
+            <tag> 教學 </tag>
             
         </tags>
       
@@ -3397,9 +3397,9 @@
             
             <tag> AI 新聞 </tag>
             
-            <tag> Apple </tag>
-            
             <tag> MCP </tag>
+            
+            <tag> Apple </tag>
             
             <tag> Anthropic </tag>
             
@@ -3567,9 +3567,9 @@
       
         <tags>
             
-            <tag> DevOps </tag>
-            
             <tag> Rust </tag>
+            
+            <tag> DevOps </tag>
             
             <tag> 系統監控 </tag>
             
@@ -3888,17 +3888,17 @@
       
         <tags>
             
-            <tag> AI 新聞 </tag>
-            
             <tag> LLM </tag>
             
+            <tag> AI 新聞 </tag>
+            
             <tag> Claude </tag>
+            
+            <tag> MCP </tag>
             
             <tag> OpenAI </tag>
             
             <tag> Apple </tag>
-            
-            <tag> MCP </tag>
             
         </tags>
       
@@ -3985,9 +3985,9 @@
             
             <tag> Claude </tag>
             
-            <tag> OpenAI </tag>
-            
             <tag> MCP </tag>
+            
+            <tag> OpenAI </tag>
             
         </tags>
       
@@ -4120,9 +4120,9 @@
       
         <tags>
             
-            <tag> AI 新聞 </tag>
-            
             <tag> LLM </tag>
+            
+            <tag> AI 新聞 </tag>
             
             <tag> 資安 </tag>
             
@@ -5252,9 +5252,9 @@
       
         <tags>
             
-            <tag> Docker </tag>
-            
             <tag> 資料庫 </tag>
+            
+            <tag> Docker </tag>
             
         </tags>
       
