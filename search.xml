@@ -101,6 +101,35 @@
     
     
     <entry>
+      <title>Elasticsearch 快速上手與環境建置 — Hello Elastic</title>
+      <link href="/2026/04/29/Elasticsearch-%E5%BF%AB%E9%80%9F%E4%B8%8A%E6%89%8B%E8%88%87%E7%92%B0%E5%A2%83%E5%BB%BA%E7%BD%AE-Hello-Elastic/"/>
+      <url>/2026/04/29/Elasticsearch-%E5%BF%AB%E9%80%9F%E4%B8%8A%E6%89%8B%E8%88%87%E7%92%B0%E5%A2%83%E5%BB%BA%E7%BD%AE-Hello-Elastic/</url>
+      
+        <content type="html"><![CDATA[<p>你去過 Costco 嗎？100 萬件商品堆在倉庫裡，你要找一瓶特定的醬油。</p><p>用 MySQL 的 <code>LIKE &#39;%醬油%&#39;</code> 來找，等於從第一排貨架開始一排一排翻。Costco 那個面積，翻完天都黑了。但如果門口站了一個超級管理員，他記住了每個字出現在哪些商品上——你說「醬油」，他毫秒級回你：「C7 排第三層、D2 排第一層。」</p><p>Elasticsearch 就是那個超級管理員。底層用 Apache Lucene 的倒排索引（Inverted Index），把「每個詞 → 出現在哪些文件」這件事預先算好。搜尋的時候不是遍歷，是查表。</p><p>這是為什麼它快。快不是魔法，是資料結構。</p><hr><h2 id="從搜食譜到紐約上市"><a href="#從搜食譜到紐約上市" class="headerlink" title="從搜食譜到紐約上市"></a>從搜食譜到紐約上市</h2><p>ES 的起源是一段聽起來不太正經的故事。2004 年，Shay Banon 的老婆在學做菜，他想幫她建一個食譜搜尋工具。於是寫了 Compass——一個 Lucene 的 Java 封裝。</p><p>六年後他把 Compass 整個重寫，2010 年以 Elasticsearch 的名字開源。2012 年成立公司，2018 年在紐約證交所上市，股票代碼 ESTC。</p><p>中間幾個關鍵版本轉折：</p><ul><li><strong>7.0（2019）</strong>：廢除 Mapping Type。這是面試必考題，後面會講為什麼。</li><li><strong>8.0（2021）</strong>：預設啟用安全性 + 原生向量搜尋 kNN。很多人從 7.x 升上來打 API 結果 401，就是因為 8.x 預設要帳密和 HTTPS。</li><li><strong>2023-2025</strong>：ES|QL 查詢語言、Serverless 架構、向量 + 傳統混合檢索。RAG 整合大爆發的時期。</li></ul><p>從食譜到上市公司，14 年。有時候好東西的起點就是「我老婆需要這個」。</p><hr><h2 id="ELK-Stack-家族——不是只有-E"><a href="#ELK-Stack-家族——不是只有-E" class="headerlink" title="ELK Stack 家族——不是只有 E"></a>ELK Stack 家族——不是只有 E</h2><p>面試被問「ELK Stack 是什麼」，只回答 Elasticsearch 會被扣分。Elastic Stack 是一整個家族，每個成員各司其職。</p><p><strong>Elasticsearch</strong> 是核心大腦。儲存、索引、搜尋，全文檢索加結構化查詢加聚合分析加向量搜尋。它是「資料庫 + 搜尋引擎」的合體。</p><p><strong>Logstash</strong> 是 ETL 工具。從各種來源收集資料——檔案、Kafka、DB、HTTP——過濾轉換後送進 ES。但它是 JVM 寫的，吃記憶體。小場景不需要動到它。</p><p><strong>Kibana</strong> 是 ES 的眼睛。Dashboard、Dev Tools、Maps、Machine Learning、Alerting，所有視覺化和管理操作都在這裡。等一下的 Hello World 就在 Kibana 的 Dev Tools 裡面打。</p><p><strong>Beats</strong> 是用 Go 寫的輕量 agent，部署在每台主機上搬資料。Filebeat 搬 log（最常用）、Metricbeat 搬系統指標、Packetbeat 搬網路封包、Heartbeat 搬健康檢查。比 Logstash 輕量得多，吃不到它十分之一的記憶體。</p><p>還有一個新角色：<strong>Elastic Agent</strong>。它是 Beats 的下一代整合版，一個 Agent 搞定所有資料收集，透過 Fleet Server 統一管理。Elastic 官方正在推動從 Beats 遷移過去。</p><p>整個資料流向長這樣：</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">[資料來源]</span><br><span class="line">    ├── Filebeat ──────┐</span><br><span class="line">    ├── Metricbeat ────┤</span><br><span class="line">    ├── Elastic Agent ──┤──▶ Elasticsearch ──▶ Kibana</span><br><span class="line">    └── Logstash ──────┘</span><br><span class="line">         (ETL)            (儲存+搜尋)      (視覺化)</span><br></pre></td></tr></table></figure><p>每個元件都可以獨立部署。你不一定需要全家桶——很多團隊只用 ES + Kibana + Filebeat 就搞定了 80% 的場景。</p><hr><h2 id="Docker-Compose-實戰：一行指令搞定"><a href="#Docker-Compose-實戰：一行指令搞定" class="headerlink" title="Docker Compose 實戰：一行指令搞定"></a>Docker Compose 實戰：一行指令搞定</h2><p>以下是一份 ES 8.17 + Kibana 的單節點 Docker Compose 設定。我加了 <code>healthcheck</code>，讓 Kibana 等 ES 真正啟動後才連線。這步不加的話，業界最常踩的坑就是 Kibana 先起來但 ES 還沒準備好，紅字一片。</p><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">services:</span></span><br><span class="line">  <span class="attr">es01:</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">docker.elastic.co/elasticsearch/elasticsearch:8.17.0</span></span><br><span class="line">    <span class="attr">container_name:</span> <span class="string">es01</span></span><br><span class="line">    <span class="attr">environment:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">node.name=es01</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">cluster.name=es-docker-cluster</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">discovery.type=single-node</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">ELASTIC_PASSWORD=changeme</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">xpack.security.enabled=true</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">xpack.security.http.ssl.enabled=false</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">bootstrap.memory_lock=true</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;ES_JAVA_OPTS=-Xms1g -Xmx1g&quot;</span></span><br><span class="line">    <span class="attr">ulimits:</span></span><br><span class="line">      <span class="attr">memlock:</span></span><br><span class="line">        <span class="attr">soft:</span> <span class="number">-1</span></span><br><span class="line">        <span class="attr">hard:</span> <span class="number">-1</span></span><br><span class="line">    <span class="attr">volumes:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">esdata01:/usr/share/elasticsearch/data</span></span><br><span class="line">    <span class="attr">ports:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;9200:9200&quot;</span></span><br><span class="line">    <span class="attr">networks:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">elastic</span></span><br><span class="line">    <span class="attr">healthcheck:</span></span><br><span class="line">      <span class="attr">test:</span> <span class="string">curl</span> <span class="string">-s</span> <span class="string">-u</span> <span class="string">elastic:changeme</span> <span class="string">http://localhost:9200</span> <span class="string">||</span> <span class="string">exit</span> <span class="number">1</span></span><br><span class="line">      <span class="attr">interval:</span> <span class="string">10s</span></span><br><span class="line">      <span class="attr">timeout:</span> <span class="string">5s</span></span><br><span class="line">      <span class="attr">retries:</span> <span class="number">10</span></span><br><span class="line"></span><br><span class="line">  <span class="attr">kibana:</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">docker.elastic.co/kibana/kibana:8.17.0</span></span><br><span class="line">    <span class="attr">container_name:</span> <span class="string">kibana</span></span><br><span class="line">    <span class="attr">environment:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">ELASTICSEARCH_HOSTS=http://es01:9200</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">ELASTICSEARCH_USERNAME=kibana_system</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">ELASTICSEARCH_PASSWORD=changeme</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">xpack.security.enabled=true</span></span><br><span class="line">    <span class="attr">ports:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;5601:5601&quot;</span></span><br><span class="line">    <span class="attr">depends_on:</span></span><br><span class="line">      <span class="attr">es01:</span></span><br><span class="line">        <span class="attr">condition:</span> <span class="string">service_healthy</span></span><br><span class="line">    <span class="attr">networks:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">elastic</span></span><br><span class="line"></span><br><span class="line"><span class="attr">volumes:</span></span><br><span class="line">  <span class="attr">esdata01:</span></span><br><span class="line">    <span class="attr">driver:</span> <span class="string">local</span></span><br><span class="line"></span><br><span class="line"><span class="attr">networks:</span></span><br><span class="line">  <span class="attr">elastic:</span></span><br><span class="line">    <span class="attr">driver:</span> <span class="string">bridge</span></span><br></pre></td></tr></table></figure><p>儲存為 <code>docker-compose.yml</code>，然後：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker compose up -d</span><br></pre></td></tr></table></figure><p>等 30-60 秒讓叢集啟動。ES 8.x 安全性預設開啟，所以還需要設定 <code>kibana_system</code> 的密碼：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">curl -s -u elastic:changeme -X POST \</span><br><span class="line">  <span class="string">&#x27;http://localhost:9200/_security/user/kibana_system/_password&#x27;</span> \</span><br><span class="line">  -H <span class="string">&#x27;Content-Type: application/json&#x27;</span> \</span><br><span class="line">  -d <span class="string">&#x27;&#123;&quot;password&quot;:&quot;changeme&quot;&#125;&#x27;</span></span><br></pre></td></tr></table></figure><p>驗證一下叢集狀態：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl -u elastic:changeme http://localhost:9200/_cluster/health?pretty</span><br></pre></td></tr></table></figure><p>你會看到 <code>status: yellow</code>。別慌——單節點叢集的 health 永遠是 yellow，因為 Replica 找不到另一台機器可以放。正式環境至少 3 個節點才會看到 green。</p><hr><h2 id="Kibana-Dev-Tools——第一支-API"><a href="#Kibana-Dev-Tools——第一支-API" class="headerlink" title="Kibana Dev Tools——第一支 API"></a>Kibana Dev Tools——第一支 API</h2><p>打開瀏覽器到 <code>http://localhost:5601</code>，用 <code>elastic</code> &#x2F; <code>changeme</code> 登入。左邊選單找到 <strong>Dev Tools</strong>（或直接 <code>Ctrl/Cmd + /</code> 快速開啟）。</p><p>先看叢集健康：</p><figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">GET _cluster/health</span><br></pre></td></tr></table></figure><p>建立第一個 Index：</p><figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">PUT /my-first-index</span><br><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;settings&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;number_of_shards&quot;</span><span class="punctuation">:</span> <span class="number">1</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;number_of_replicas&quot;</span><span class="punctuation">:</span> <span class="number">0</span></span><br><span class="line">  <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure><p><code>number_of_replicas</code> 設 0 是因為單節點沒地方放副本。正式環境至少設 1。</p><p>寫入第一筆文件：</p><figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">POST /my-first-index/_doc/<span class="number">1</span></span><br><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;title&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Hello Elasticsearch&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;message&quot;</span><span class="punctuation">:</span> <span class="string">&quot;我的第一筆文件&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;timestamp&quot;</span><span class="punctuation">:</span> <span class="string">&quot;2026-04-29T10:00:00&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;tags&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span><span class="string">&quot;tutorial&quot;</span><span class="punctuation">,</span> <span class="string">&quot;hello-world&quot;</span><span class="punctuation">]</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure><p>搜尋看看：</p><figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">GET /my-first-index/_search</span><br><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;query&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;match&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;message&quot;</span><span class="punctuation">:</span> <span class="string">&quot;第一筆&quot;</span></span><br><span class="line">    <span class="punctuation">&#125;</span></span><br><span class="line">  <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure><p><code>match</code> 查詢會做全文搜尋——先分詞，再用倒排索引比對。不是字串精確匹配。這是 ES 最核心的搜尋方式。</p><p>查看 Mapping：</p><figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">GET /my-first-index/_mapping</span><br></pre></td></tr></table></figure><p>你會看到 ES 自動推斷出的欄位型別。<code>timestamp</code> 會被推斷為 <code>date</code>，<code>tags</code> 是 <code>text</code> + <code>keyword</code>。這叫 dynamic mapping——方便，但有坑。型別一旦推斷就鎖死了，設錯只能 reindex 重建。正式環境務必先手動定義 mapping。</p><hr><h2 id="五個會讓你加班的坑"><a href="#五個會讓你加班的坑" class="headerlink" title="五個會讓你加班的坑"></a>五個會讓你加班的坑</h2><p><strong>JVM 記憶體設太大</strong>：<code>ES_JAVA_OPTS</code> 別超過實體記憶體的 50%。另外 50% 要留給 Lucene 的 filesystem cache。超過 32GB 還會失去 Compressed OOPs 優化，效能反而更差。</p><p><strong>Production 跑 single-node</strong>：<code>discovery.type=single-node</code> 只適合開發環境。正式環境至少 3 個 master-eligible 節點，一掛全掛不是開玩笑。</p><p><strong>Linux 忘記設 vm.max_map_count</strong>：ES 需要 <code>sysctl -w vm.max_map_count=262144</code>，不然啟動直接報錯。Docker Desktop 內建處理了這個，但 Linux 伺服器上要自己來。</p><p><strong>8.x 安全性預設開啟</strong>：不少人照 7.x 教學打 API 結果 401，就是因為 8.x 預設需要帳密。踩這個坑的人多到 Stack Overflow 上相關問題的瀏覽量破百萬。</p><p><strong>Mapping 建完不能改</strong>：欄位型別一旦確定就鎖死。要改只能建新 Index 然後 reindex。聽起來很麻煩——但這是倒排索引的物理限制，不是 ES 故意刁難你。</p><hr><p>搜尋引擎的世界有兩條線在拉扯：<strong>寫入的方便</strong> 和 <strong>查詢的速度</strong>。</p><p>傳統資料庫選了寫入方便——資料進來就存，查的時候再慢慢翻。ES 選了查詢速度——資料進來的時候就先建好索引，查的時候查表就好。代價是寫入時要多做一步（建倒排索引），而且 schema 一旦定了就很難改。</p><p>這不是好壞的問題，是取捨。知道自己選了什麼、放棄了什麼，就不會在半夜被 Mapping 炸到的時候覺得 ES 在整你。</p><p>下一篇我們打開引擎蓋——Node、Shard、Lucene、Segment，搞懂 ES 底層是怎麼把資料切開、存起來、搜出來的。</p><blockquote><p>參考來源：<a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/index.html">Elasticsearch 官方文件</a><br>參考來源：<a href="https://www.elastic.co/elastic-stack">Elastic Stack 概觀</a></p></blockquote>]]></content>
+      
+      
+      <categories>
+          
+          <category> Elasticsearch </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> Docker </tag>
+            
+            <tag> Elasticsearch </tag>
+            
+            <tag> ELK Stack </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>AI 與科技新聞摘要 - 2026/04/28</title>
       <link href="/2026/04/28/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260428/"/>
       <url>/2026/04/28/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260428/</url>
@@ -323,6 +352,8 @@
             
             <tag> GitHub </tag>
             
+            <tag> Stanford AI Index </tag>
+            
             <tag> Snap </tag>
             
             <tag> JetBrains </tag>
@@ -330,8 +361,6 @@
             <tag> Kiro CLI </tag>
             
             <tag> Shield AI </tag>
-            
-            <tag> Stanford AI Index </tag>
             
         </tags>
       
@@ -424,9 +453,9 @@
             
             <tag> 資安 </tag>
             
-            <tag> Google </tag>
-            
             <tag> Anthropic </tag>
+            
+            <tag> Google </tag>
             
             <tag> Claude Mythos </tag>
             
@@ -560,9 +589,9 @@
             
             <tag> Claude Code </tag>
             
-            <tag> OpenAI Codex </tag>
-            
             <tag> Windsurf </tag>
+            
+            <tag> OpenAI Codex </tag>
             
             <tag> Claude Design </tag>
             
@@ -653,9 +682,9 @@
       
         <tags>
             
-            <tag> OpenAI </tag>
-            
             <tag> MCP </tag>
+            
+            <tag> OpenAI </tag>
             
             <tag> GPT-5.5 </tag>
             
@@ -853,9 +882,9 @@
       
         <tags>
             
-            <tag> Anthropic </tag>
-            
             <tag> AI Agent </tag>
+            
+            <tag> Anthropic </tag>
             
             <tag> Claude Code </tag>
             
@@ -952,9 +981,9 @@
       
         <tags>
             
-            <tag> OpenAI </tag>
-            
             <tag> MCP </tag>
+            
+            <tag> OpenAI </tag>
             
             <tag> 資安 </tag>
             
@@ -1086,9 +1115,9 @@
       
         <tags>
             
-            <tag> OpenAI </tag>
-            
             <tag> MCP </tag>
+            
+            <tag> OpenAI </tag>
             
             <tag> 資安 </tag>
             
@@ -1158,9 +1187,9 @@
             
             <tag> Hooks </tag>
             
-            <tag> Monitor Tool </tag>
-            
             <tag> 教學 </tag>
+            
+            <tag> Monitor Tool </tag>
             
         </tags>
       
@@ -1220,9 +1249,9 @@
             
             <tag> 資安 </tag>
             
-            <tag> Cursor </tag>
-            
             <tag> Microsoft </tag>
+            
+            <tag> Cursor </tag>
             
             <tag> EY </tag>
             
@@ -1587,9 +1616,9 @@
             
             <tag> Microsoft </tag>
             
-            <tag> Stripe </tag>
-            
             <tag> GitHub </tag>
+            
+            <tag> Stripe </tag>
             
         </tags>
       
@@ -1965,15 +1994,15 @@
             
             <tag> MCP </tag>
             
-            <tag> Google </tag>
-            
             <tag> Anthropic </tag>
+            
+            <tag> Google </tag>
             
             <tag> Copilot </tag>
             
-            <tag> Kiro </tag>
-            
             <tag> Mythos </tag>
+            
+            <tag> Kiro </tag>
             
         </tags>
       
@@ -2153,15 +2182,15 @@
       
         <tags>
             
+            <tag> Copilot </tag>
+            
             <tag> Claude Code </tag>
             
             <tag> Cursor </tag>
             
-            <tag> Copilot </tag>
+            <tag> 開發工具 </tag>
             
             <tag> 教學 </tag>
-            
-            <tag> 開發工具 </tag>
             
         </tags>
       
@@ -2405,9 +2434,9 @@
             
             <tag> MCP </tag>
             
-            <tag> Copilot </tag>
-            
             <tag> Microsoft </tag>
+            
+            <tag> Copilot </tag>
             
         </tags>
       
@@ -2519,9 +2548,9 @@
       
         <tags>
             
-            <tag> Anthropic </tag>
-            
             <tag> AI Agent </tag>
+            
+            <tag> Anthropic </tag>
             
             <tag> 開發工具 </tag>
             
@@ -2548,9 +2577,9 @@
       
         <tags>
             
-            <tag> LLM </tag>
-            
             <tag> MCP </tag>
+            
+            <tag> LLM </tag>
             
             <tag> Microsoft </tag>
             
@@ -2610,9 +2639,9 @@
             
             <tag> DevOps </tag>
             
-            <tag> 教學 </tag>
-            
             <tag> 開發工具 </tag>
+            
+            <tag> 教學 </tag>
             
         </tags>
       
@@ -2699,9 +2728,9 @@
             
             <tag> 資安 </tag>
             
-            <tag> Copilot </tag>
-            
             <tag> Microsoft </tag>
+            
+            <tag> Copilot </tag>
             
         </tags>
       
@@ -2784,9 +2813,9 @@
             
             <tag> 資安 </tag>
             
-            <tag> Cursor </tag>
-            
             <tag> Copilot </tag>
+            
+            <tag> Cursor </tag>
             
         </tags>
       
@@ -2925,9 +2954,9 @@
       
         <tags>
             
-            <tag> LLM </tag>
-            
             <tag> MCP </tag>
+            
+            <tag> LLM </tag>
             
             <tag> AI Agent </tag>
             
@@ -2983,9 +3012,9 @@
       
         <tags>
             
-            <tag> LLM </tag>
-            
             <tag> 資安 </tag>
+            
+            <tag> LLM </tag>
             
             <tag> Qwen </tag>
             
@@ -3016,9 +3045,9 @@
             
             <tag> Skills </tag>
             
-            <tag> 教學 </tag>
-            
             <tag> 開發工具 </tag>
+            
+            <tag> 教學 </tag>
             
         </tags>
       
@@ -3130,9 +3159,9 @@
       
         <tags>
             
-            <tag> OpenAI </tag>
-            
             <tag> MCP </tag>
+            
+            <tag> OpenAI </tag>
             
             <tag> 資安 </tag>
             
@@ -3372,9 +3401,9 @@
             
             <tag> 資安 </tag>
             
-            <tag> NVIDIA </tag>
-            
             <tag> Anthropic </tag>
+            
+            <tag> NVIDIA </tag>
             
             <tag> Claude Code </tag>
             
@@ -3407,9 +3436,9 @@
             
             <tag> 自動化 </tag>
             
-            <tag> 教學 </tag>
-            
             <tag> 開發工具 </tag>
+            
+            <tag> 教學 </tag>
             
         </tags>
       
@@ -3494,9 +3523,9 @@
             
             <tag> AI 新聞 </tag>
             
-            <tag> Apple </tag>
-            
             <tag> MCP </tag>
+            
+            <tag> Apple </tag>
             
             <tag> Anthropic </tag>
             
@@ -3637,9 +3666,9 @@
             
             <tag> OpenAI </tag>
             
-            <tag> Google </tag>
-            
             <tag> Anthropic </tag>
+            
+            <tag> Google </tag>
             
         </tags>
       
@@ -3728,9 +3757,9 @@
             
             <tag> 資安 </tag>
             
-            <tag> NVIDIA </tag>
-            
             <tag> Google </tag>
+            
+            <tag> NVIDIA </tag>
             
         </tags>
       
@@ -3790,9 +3819,9 @@
             
             <tag> 資安 </tag>
             
-            <tag> Google </tag>
-            
             <tag> Anthropic </tag>
+            
+            <tag> Google </tag>
             
         </tags>
       
@@ -3987,15 +4016,15 @@
             
             <tag> AI 新聞 </tag>
             
-            <tag> LLM </tag>
-            
             <tag> Claude </tag>
+            
+            <tag> MCP </tag>
             
             <tag> OpenAI </tag>
             
-            <tag> Apple </tag>
+            <tag> LLM </tag>
             
-            <tag> MCP </tag>
+            <tag> Apple </tag>
             
         </tags>
       
@@ -4080,9 +4109,9 @@
             
             <tag> Claude </tag>
             
-            <tag> OpenAI </tag>
-            
             <tag> MCP </tag>
+            
+            <tag> OpenAI </tag>
             
             <tag> 資安 </tag>
             
@@ -4219,9 +4248,9 @@
             
             <tag> AI 新聞 </tag>
             
-            <tag> LLM </tag>
-            
             <tag> 資安 </tag>
+            
+            <tag> LLM </tag>
             
         </tags>
       
