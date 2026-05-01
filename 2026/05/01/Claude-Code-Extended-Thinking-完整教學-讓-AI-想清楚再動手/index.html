@@ -1,0 +1,442 @@
+<!DOCTYPE html><html lang="zh-TW" data-theme="dark"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>Claude Code Extended Thinking 完整教學 — 讓 AI 想清楚再動手 | Cheng's Tech &amp; Life</title><meta name="author" content="Cheng®"><meta name="copyright" content="Cheng®"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#0d0d0d"><meta name="description" content="同一個 bug，開著 thinking 找到根因只花 3 分鐘，關掉 thinking 瞎猜了 20 分鐘還在繞。差別不是模型變笨了，是你沒給它草稿紙。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Claude Code Extended Thinking 完整教學 — 讓 AI 想清楚再動手">
+<meta property="og:url" content="https://mark22013333.github.io/2026/05/01/Claude-Code-Extended-Thinking-%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8-%E8%AE%93-AI-%E6%83%B3%E6%B8%85%E6%A5%9A%E5%86%8D%E5%8B%95%E6%89%8B/index.html">
+<meta property="og:site_name" content="Cheng&#39;s Tech &amp; Life">
+<meta property="og:description" content="同一個 bug，開著 thinking 找到根因只花 3 分鐘，關掉 thinking 瞎猜了 20 分鐘還在繞。差別不是模型變笨了，是你沒給它草稿紙。">
+<meta property="og:locale" content="zh_TW">
+<meta property="og:image" content="https://mark22013333.github.io/img/20260501-03.webp">
+<meta property="article:published_time" content="2026-05-01T00:30:00.000Z">
+<meta property="article:modified_time" content="2026-05-01T15:00:52.484Z">
+<meta property="article:author" content="Cheng®">
+<meta property="article:tag" content="Claude Code">
+<meta property="article:tag" content="Extended Thinking">
+<meta property="article:tag" content="Reasoning">
+<meta property="article:tag" content="AI">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://mark22013333.github.io/img/20260501-03.webp"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Claude Code Extended Thinking 完整教學 — 讓 AI 想清楚再動手",
+  "url": "https://mark22013333.github.io/2026/05/01/Claude-Code-Extended-Thinking-%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8-%E8%AE%93-AI-%E6%83%B3%E6%B8%85%E6%A5%9A%E5%86%8D%E5%8B%95%E6%89%8B/",
+  "image": "https://mark22013333.github.io/img/20260501-03.webp",
+  "datePublished": "2026-05-01T00:30:00.000Z",
+  "dateModified": "2026-05-01T15:00:52.484Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "Cheng®",
+      "url": "https://mark22013333.github.io"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://mark22013333.github.io/2026/05/01/Claude-Code-Extended-Thinking-%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8-%E8%AE%93-AI-%E6%83%B3%E6%B8%85%E6%A5%9A%E5%86%8D%E5%8B%95%E6%89%8B/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//www.google-analytics.com" crossorigin=""/><link rel="preconnect" href="//fonts.googleapis.com" crossorigin=""/><link rel="preconnect" href="//busuanzi.ibruce.info"/><meta name="google-site-verification" content="6ywUr8k2n_CT1PFYJzlSvI3CZ-JmJ55RYbA39VrFBDs"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!true && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          const hour = new Date().getHours()
+          const isNight = hour <= 9 || hour >= 18
+          if (theme === undefined) isNight ? activateDarkMode() : activateLightMode()
+          else theme === 'light' ? activateLightMode() : activateDarkMode()
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script async="async" src="https://www.googletagmanager.com/gtag/js?id=G-JBV14NRDH3"></script><script>window.dataLayer = window.dataLayer || []
+function gtag(){dataLayer.push(arguments)}
+gtag('js', new Date())
+gtag('config', 'G-JBV14NRDH3')
+btf.addGlobalFn('pjaxComplete', () => {
+  gtag('config', 'G-JBV14NRDH3', {'page_path': window.location.pathname})
+}, 'google_analytics')
+</script><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Titillium+Web&amp;display=swap" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"pagination":{"enable":false,"hitsPerPage":8},"languages":{"hits_empty":"找不到符合您查詢的內容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '複製成功',
+    error: '複製失敗',
+    noSupport: '瀏覽器不支援'
+  },
+  relativeDate: {
+    homepage: false,
+    post: true
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '剛剛',
+    min: '分鐘前',
+    hour: '小時前',
+    day: '天前',
+    month: '個月前'
+  },
+  copyright: {"limitCount":1,"languages":{"author":"作者: Cheng®","link":"連結: ","source":"來源: Cheng's Tech & Life","info":"著作權歸作者所有。如需商業轉載，請聯絡作者獲得授權，非商業轉載請註明出處😁。"}},
+  lightbox: 'fancybox',
+  Snackbar: {"chs_to_cht":"已切換為繁體中文","cht_to_chs":"已切換為簡體中文","day_to_night":"已切換為深色模式","night_to_day":"已切換為淺色模式","bgLight":"#49b1f5","bgDark":"#1f1f1f","position":"top-center"},
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid/dist/infinitegrid.min.js',
+    buttonText: '載入更多'
+  },
+  isPhotoFigcaption: true,
+  islazyloadPlugin: false,
+  isAnchor: true,
+  percent: {
+    toc: true,
+    rightside: true,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Claude Code Extended Thinking 完整教學 — 讓 AI 想清楚再動手',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><link rel="stylesheet" href="/css/kkbox-player.css"><link rel="stylesheet" href="/css/tag-cloud-fancy.css"><link rel="stylesheet" href="/css/font-resize.css"><link rel="stylesheet" href="/css/dark-palette.css"><link rel="stylesheet" href="/css/loading-override.css"><link rel="alternate" href="/atom.xml" title="Cheng's Tech & Life" type="application/atom+xml">
+</head><body><div id="loading-box"><div class="loading-glass-overlay"></div><div class="loading-indicator"><div class="loading-dot"></div><div class="loading-dot"></div><div class="loading-dot"></div></div></div><script>(()=>{
+  const $loadingBox = document.getElementById('loading-box')
+  const $body = document.body
+  const preloader = {
+    endLoading: () => {
+      if ($loadingBox.classList.contains('loaded')) return
+      $body.style.overflow = ''
+      $loadingBox.classList.add('loaded')
+    },
+    initLoading: () => {
+      $body.style.overflow = 'hidden'
+      $loadingBox.classList.remove('loaded')
+    }
+  }
+
+  preloader.initLoading()
+
+  if (document.readyState === 'complete') {
+    preloader.endLoading()
+  } else {
+    window.addEventListener('load', preloader.endLoading)
+    document.addEventListener('DOMContentLoaded', preloader.endLoading)
+    setTimeout(preloader.endLoading, 7000)
+  }
+
+  if (true) {
+    btf.addGlobalFn('pjaxSend', preloader.initLoading, 'preloader_init')
+    btf.addGlobalFn('pjaxComplete', preloader.endLoading, 'preloader_end')
+  }
+})()</script><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="https://lh3.googleusercontent.com/pw/ABLVV87_po8nBc6F_tXcoYDmtzMGWxHuhhrbguYILCjmjWKLOS8DTpubm0YoQLKgjyjRIZyV5TjYe7XVEz_YU4squfr37GTZqPZP1hlMVZ_MIgXpTxWu73M=w1200" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">189</div></a><a href="/tags/"><div class="headline">標籤</div><div class="length-num">219</div></a><a href="/categories/"><div class="headline">分類</div><div class="length-num">14</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首頁-Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 時間軸-archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 標籤-tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分類-Categories</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-list"></i><span> 其他列表</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音樂-Music</span></a></li><li><a class="site-page child" href="/gallery/"><i class="fa-fw fas fa-images"></i><span> 畫館-Gallery</span></a></li></ul></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg fixed" id="page-header" style="background-image: url(/img/20260501-03.webp);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><img class="site-icon" src="https://lh3.googleusercontent.com/pw/ABLVV87_po8nBc6F_tXcoYDmtzMGWxHuhhrbguYILCjmjWKLOS8DTpubm0YoQLKgjyjRIZyV5TjYe7XVEz_YU4squfr37GTZqPZP1hlMVZ_MIgXpTxWu73M=w1200" alt="Logo"><span class="site-name">Cheng's Tech &amp; Life</span></a><a class="nav-page-title" href="/"><span class="site-name">Claude Code Extended Thinking 完整教學 — 讓 AI 想清楚再動手</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首頁</span></span></a></span><div id="menus"><div id="search-button" title="Ctrl+K / Cmd+K"><span class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜尋</span></span></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首頁-Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 時間軸-archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 標籤-tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分類-Categories</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-list"></i><span> 其他列表</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音樂-Music</span></a></li><li><a class="site-page child" href="/gallery/"><i class="fa-fw fas fa-images"></i><span> 畫館-Gallery</span></a></li></ul></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">Claude Code Extended Thinking 完整教學 — 讓 AI 想清楚再動手</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">發表於</span><time class="post-meta-date-created" datetime="2026-05-01T00:30:00.000Z" title="發表於 2026-05-01 08:30:00">2026-05-01</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新於</span><time class="post-meta-date-updated" datetime="2026-05-01T15:00:52.484Z" title="更新於 2026-05-01 23:00:52">2026-05-01</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Claude-Code/">Claude Code</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">總字數:</span><span class="word-count">2.4k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">閱讀時間:</span><span>7分鐘</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">瀏覽量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><p>你有沒有注意過，數學考試的時候，直接在腦裡算跟在紙上列算式，答對率差很多？</p>
+<p>不是因為你的腦子變強了。是因為紙上多了一個地方讓你放「中間結果」。你可以回頭看第三步有沒有算錯，可以比較兩個路徑哪個比較短，可以在死胡同的時候從前面某一步重來。</p>
+<p>Extended Thinking 就是 Claude 的那張草稿紙。</p>
+<hr>
+<h2 id="草稿紙長什麼樣"><a href="#草稿紙長什麼樣" class="headerlink" title="草稿紙長什麼樣"></a>草稿紙長什麼樣</h2><p>Claude Code 裡，extended thinking 預設是開著的。你下一個指令，Claude 不會立刻回覆——它先在一個你看不到的區域做推理，把問題拆解、列出可能的方向、排除不合理的選項，然後才組織出最終回覆。</p>
+<p>這個「看不到的區域」就是 thinking tokens。它們不會出現在你的 terminal 裡（除非你主動打開），但它們確實在消耗 token 預算。</p>
+<p>類比一下：你請了一個資深工程師幫你 debug。他拿到問題之後，低頭在筆記本上畫了五分鐘——你看不到他畫什麼，但五分鐘後他抬頭告訴你「問題在第 47 行，race condition，你的 mutex 少鎖了一個 map」。那五分鐘就是 extended thinking。</p>
+<p>沒有 thinking 的版本？他聽完問題直接說「試試看把 timeout 調大」。可能對，可能不對，但你知道他沒有真的想過。</p>
+<hr>
+<h2 id="開關在哪裡"><a href="#開關在哪裡" class="headerlink" title="開關在哪裡"></a>開關在哪裡</h2><p>三種方式控制 extended thinking，看你的使用場景選一個。</p>
+<h3 id="即時切換"><a href="#即時切換" class="headerlink" title="即時切換"></a>即時切換</h3><p>在 Claude Code 裡按 <code>Option+T</code>（macOS）或 <code>Alt+T</code>（Windows&#x2F;Linux），thinking 就會開&#x2F;關。terminal 底部會顯示目前的狀態。</p>
+<p>適合什麼情境？你正在跟 Claude 來回快速問答——「這個 function 回傳什麼」「那個 env var 設在哪」——這種不需要深度推理的問題，關掉 thinking 回覆更快。遇到「幫我重構這個模組的錯誤處理邏輯」，再按一下打開。</p>
+<h3 id="永久設定"><a href="#永久設定" class="headerlink" title="永久設定"></a>永久設定</h3><p>在 <code>~/.claude/settings.json</code> 加上：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;alwaysThinkingEnabled&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">true</span></span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>預設就是 <code>true</code>。如果你大部分時間都在做簡單操作（讀檔、搜尋、格式轉換），可以考慮設成 <code>false</code>，需要的時候手動 <code>Option+T</code> 打開。</p>
+<h3 id="Token-預算上限"><a href="#Token-預算上限" class="headerlink" title="Token 預算上限"></a>Token 預算上限</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">export</span> MAX_THINKING_TOKENS=10000</span><br></pre></td></tr></table></figure>
+
+<p>或在 settings.json 裡面設。這限制了 Claude 每次回覆最多花多少 token 在 thinking 上。設太低會限制推理深度，設太高會燒錢又慢。</p>
+<p>預設值對大部分場景夠用。只有在你發現 Claude 的 thinking 太長（verbose mode 裡看到它反覆自我質疑十幾輪），才需要手動壓預算。</p>
+<hr>
+<p>等等，有個功能很多人不知道。</p>
+<p>按 <code>Ctrl+O</code> 可以切換 verbose mode。打開之後，你會看到 Claude 在 thinking 階段到底想了什麼——推理過程、排除的選項、自我修正的地方。</p>
+<p>這不只是好奇心。Verbose mode 是你校準 thinking 效果的工具。如果你看到 Claude 在 thinking 裡花了 3,000 token 做你覺得不需要的分析，那就該降 effort level。如果你看到它在關鍵步驟跳過了重要的邊界條件檢查，那就該升。</p>
+<hr>
+<h2 id="Effort-Level：油門而不是開關"><a href="#Effort-Level：油門而不是開關" class="headerlink" title="Effort Level：油門而不是開關"></a>Effort Level：油門而不是開關</h2><p>Thinking 不是只有開跟關。<code>/effort</code> 讓你控制 Claude 推理的深度——像油門，不是開關。</p>
+<p>在 Claude Code 裡輸入 <code>/effort</code> 會出現一個 slider。目前有四個檔位：</p>
+<table>
+<thead>
+<tr>
+<th>Effort</th>
+<th>適合場景</th>
+<th>思考深度</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>low</td>
+<td>讀檔、grep、格式化</td>
+<td>幾乎不思考，直接回</td>
+</tr>
+<tr>
+<td>medium</td>
+<td>一般 coding、小 bug</td>
+<td>適度推理</td>
+</tr>
+<tr>
+<td>high</td>
+<td>架構設計、複雜重構</td>
+<td>深度推理</td>
+</tr>
+<tr>
+<td>xhigh</td>
+<td>最困難的問題、多方案評估</td>
+<td>最深度，反覆驗證</td>
+</tr>
+</tbody></table>
+<p><code>xhigh</code> 是 Opus 4.7 推出時新增的檔位，官方建議用在「大部分 coding 工作」。但這不代表你應該永遠開 xhigh——它真的很慢，token 消耗也是 medium 的好幾倍。</p>
+<p>這裡有個反直覺的地方。大部分人以為「effort 越高 &#x3D; 結果越好」。不完全對。</p>
+<p>Effort 越高，Claude 越容易「overthink」——在不需要深度推理的問題上花大量 token 自我質疑，最後回覆反而繞了一大圈。叫它幫你 rename 一個變數，xhigh 可能會先分析命名慣例、考慮 backward compatibility、評估 IDE refactoring 工具的差異——然後才告訴你「把 <code>x</code> 改成 <code>userId</code>」。</p>
+<p>medium 直接就回了。而且是對的。</p>
+<h3 id="Adaptive-Reasoning"><a href="#Adaptive-Reasoning" class="headerlink" title="Adaptive Reasoning"></a>Adaptive Reasoning</h3><p>好消息是，新版模型支援 adaptive reasoning——就算你設了某個 effort level，模型會根據問題的實際複雜度動態調整。簡單問題自動跳過深度推理，複雜問題自動加碼。</p>
+<p>你也可以在 CLAUDE.md 裡用自然語言引導：</p>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="section"># 推理偏好</span></span><br><span class="line"><span class="bullet">-</span> 架構相關的問題，請深度思考，考慮所有邊界條件</span><br><span class="line"><span class="bullet">-</span> 簡單的 CRUD 操作，快速回覆即可</span><br></pre></td></tr></table></figure>
+
+<p>Claude 會讀 CLAUDE.md 並據此調整行為。</p>
+<hr>
+<h2 id="實戰：什麼時候開、什麼時候關"><a href="#實戰：什麼時候開、什麼時候關" class="headerlink" title="實戰：什麼時候開、什麼時候關"></a>實戰：什麼時候開、什麼時候關</h2><p>踩了幾次坑之後整理出來的經驗法則。</p>
+<h3 id="一定要開-thinking-的場景"><a href="#一定要開-thinking-的場景" class="headerlink" title="一定要開 thinking 的場景"></a>一定要開 thinking 的場景</h3><p><strong>跨檔案 bug 追蹤。</strong> 錯誤訊息在 A 檔案，根因在 B 檔案，B 又被 C 呼叫。沒有 thinking 的 Claude 會盯著 A 猜，有 thinking 的會先畫出呼叫鏈再定位。</p>
+<p><strong>架構決策。</strong> 「這個功能應該放在 service layer 還是 domain layer？」「用 event-driven 還是直接 call？」——這種問題沒有標準答案，需要權衡利弊。Thinking 讓 Claude 在回覆前把 pros&#x2F;cons 列出來比較。</p>
+<p><strong>多步驟實作規劃。</strong> 「幫我把這個 monolith 的 auth 模組拆出來。」不是一步能做完的事。Thinking 讓 Claude 先規劃步驟順序、識別依賴關係、標記風險點，再開始動手。</p>
+<p><strong>Trade-off 評估。</strong> 「PostgreSQL 還是 DynamoDB？」「monorepo 還是 multirepo？」沒有 thinking 的回覆通常是各列優缺點。有 thinking 的回覆會考慮你的具體場景——團隊大小、預算、技術債狀態——然後給出有立場的建議。</p>
+<h3 id="可以關-thinking-的場景"><a href="#可以關-thinking-的場景" class="headerlink" title="可以關 thinking 的場景"></a>可以關 thinking 的場景</h3><p><strong>簡單搜尋。</strong> 「package.json 裡的 express 版本是多少？」不需要推理。</p>
+<p><strong>格式轉換。</strong> 「把這個 JSON 轉成 YAML。」機械性操作。</p>
+<p><strong>已知操作。</strong> 「幫我建一個 React component 的 boilerplate。」模板化任務。</p>
+<p><strong>高頻輪詢。</strong> <code>/loop</code> 裡每 30 秒跑一次的檢查指令。Thinking 會讓每次輪詢多花好幾秒。</p>
+<hr>
+<p>講個冷知識。</p>
+<p>Claude 的 thinking tokens 跟 output tokens 是從同一個 context window 扣的。如果你的 context 已經很滿（接近 200K tokens），Claude 分配給 thinking 的空間會被壓縮，推理品質可能下降。</p>
+<p>這就是為什麼 <code>/compact</code> 指令很重要。定期壓縮對話歷史，不只是省 token——是保護 thinking 的推理空間。</p>
+<p>如果你的任務同時需要大量 context（讀很多檔案）和深度推理（複雜架構設計），考慮分兩步：先用一個 session 讀檔收集資訊，<code>/compact</code> 壓縮後，再開新 session 做設計。</p>
+<hr>
+<h2 id="跟其他工具的-Reasoning-Mode-比較"><a href="#跟其他工具的-Reasoning-Mode-比較" class="headerlink" title="跟其他工具的 Reasoning Mode 比較"></a>跟其他工具的 Reasoning Mode 比較</h2><p>GPT-5.5 有自己的推理模式（之前 o1&#x2F;o3 系列的延續）。Kiro 走的是 spec-centric 路線——先寫規格再寫 code，規格本身就是一種「強迫思考」。</p>
+<p>核心差異在控制粒度。</p>
+<p>GPT 的 reasoning 比較像「全開或全關」——你選了 reasoning model 就得等它想完，沒辦法中途說「這題不用想那麼深」。</p>
+<p>Claude 的 effort level 讓你在同一個 session 裡動態調整。問完一個架構問題（xhigh），下一句問「這個 import 路徑對嗎？」（low），不用切模型、不用開新 session。</p>
+<p>Kiro 把思考結構化成 spec 文件，好處是 thinking 的產出是永久的——下一個 session 還能讀。Claude 的 thinking tokens 是一次性的，session 結束就消失了。如果你需要保留推理過程，可以在 verbose mode 裡手動擷取，或用 CLAUDE.md 寫下決策結論。</p>
+<p>三種方式沒有哪個「最好」。Claude 的強項在於彈性——你可以在同一個 terminal 裡從「快速問答」無縫切換到「深度推理」，不用換工具。</p>
+<hr>
+<h2 id="建議的預設配置"><a href="#建議的預設配置" class="headerlink" title="建議的預設配置"></a>建議的預設配置</h2><p>新手可以直接用這組設定，之後根據自己的工作模式調：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// ~/.claude/settings.json</span></span><br><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;alwaysThinkingEnabled&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">true</span></span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>然後在 CLAUDE.md 加上：</p>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="section"># Thinking 偏好</span></span><br><span class="line"><span class="bullet">-</span> 預設 effort: high</span><br><span class="line"><span class="bullet">-</span> 架構設計、安全審查、效能分析：xhigh</span><br><span class="line"><span class="bullet">-</span> 簡單的檔案操作、grep、格式轉換：low</span><br><span class="line"><span class="bullet">-</span> 不確定的時候寧可多想一下</span><br></pre></td></tr></table></figure>
+
+<p>日常使用時，<code>Option+T</code> 切開關，<code>/effort</code> 調深度，<code>Ctrl+O</code> 偶爾打開看看 Claude 到底在想什麼。三個快捷鍵，就是你控制 thinking 的全部了。</p>
+<hr>
+<h2 id="從-Thinking-可以延伸到哪裡"><a href="#從-Thinking-可以延伸到哪裡" class="headerlink" title="從 Thinking 可以延伸到哪裡"></a>從 Thinking 可以延伸到哪裡</h2><p>學會控制 extended thinking 之後，兩條路可以接著走。</p>
+<p>往 <strong>API 開發</strong>走——如果你在寫自己的 AI 應用，Anthropic SDK 的 extended thinking API 讓你在程式碼裡控制思考預算、讀取 thinking 內容、根據 thinking 結果做分支處理。這是從「使用者」到「開發者」的跨越。</p>
+<p>往 <strong>Prompt 工程</strong>走——extended thinking 的效果高度依賴 prompt 品質。一個好的 system prompt 可以引導 Claude 在 thinking 階段聚焦正確的面向。Anthropic Academy 的 Advanced Prompt Engineering 課程專門教這個。</p>
+<p>背後就兩條線：你想要 Claude 想得更好，要嘛改變它思考的框架（prompt engineering），要嘛改變它思考的深度（effort level）。兩者搭配才是完整的控制。</p>
+<p>Extended thinking 不是什麼神秘功能。它就是一張草稿紙。但任何做過數學考試的人都知道——有沒有草稿紙，答對率差很多。</p>
+<blockquote>
+<p>參考來源：<a target="_blank" rel="noopener" href="https://platform.claude.com/docs/en/build-with-claude/extended-thinking">Building with extended thinking - Claude API Docs</a><br>參考來源：<a target="_blank" rel="noopener" href="https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/extended-thinking-tips">Extended thinking tips - Claude API Docs</a><br>參考來源：<a target="_blank" rel="noopener" href="https://code.claude.com/docs/en/common-workflows">Common workflows - Claude Code Docs</a></p>
+</blockquote>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://mark22013333.github.io">Cheng®</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章連結: </span><span class="post-copyright-info"><a href="https://mark22013333.github.io/2026/05/01/Claude-Code-Extended-Thinking-%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8-%E8%AE%93-AI-%E6%83%B3%E6%B8%85%E6%A5%9A%E5%86%8D%E5%8B%95%E6%89%8B/">https://mark22013333.github.io/2026/05/01/Claude-Code-Extended-Thinking-完整教學-讓-AI-想清楚再動手/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版權聲明: </span><span class="post-copyright-info">本部落格所有文章除特別聲明外，均採用<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 授權協議。轉載請註明來源 <a href="https://mark22013333.github.io" target="_blank">Cheng's Tech & Life</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Claude-Code/">Claude Code</a><a class="post-meta__tags" href="/tags/Extended-Thinking/">Extended Thinking</a><a class="post-meta__tags" href="/tags/Reasoning/">Reasoning</a><a class="post-meta__tags" href="/tags/AI/">AI</a></div><div class="post-share"><div class="social-share" data-image="/img/20260501-03.webp" data-sites="facebook,x"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><div class="post-reward"><div class="reward-badges"><a class="sponsor-glow-btn" href="https://www.buymeacoffee.com/mark22013333" target="_blank" rel="noopener noreferrer" title="Buy Me A Coffee"><img src="https://img.shields.io/badge/Buy_Me_A_Coffee-FFDD00?style=for-the-badge&amp;logo=buy-me-a-coffee&amp;logoColor=black" alt="Buy Me A Coffee"/></a><a class="sponsor-glow-btn" href="https://p.ecpay.com.tw/EFC3F8F" target="_blank" rel="noopener noreferrer" title="綠界贊助"><img src="https://img.shields.io/badge/☕_%E8%AB%8B%E6%88%91%E5%96%9D%E6%9D%AF%E5%92%96%E5%95%A1-Donate-11998e?style=for-the-badge&amp;logo=coffee&amp;logoColor=white" alt="綠界贊助"/></a><a class="sponsor-glow-btn" href="https://calendly.com/markcheng00806-intumit/15min" target="_blank" rel="noopener noreferrer" title="預約時間"><img src="https://img.shields.io/badge/📅_%E9%A0%90%E7%B4%84_15_%E5%88%86%E9%90%98-Book_Time-0072ff?style=for-the-badge" alt="預約時間"/></a><p class="reward-badges-note">你的鼓勵將被轉換為我明天繼續加班的動力（真的）。 ❤️</p></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2026/05/01/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260501/" title="AI 與科技新聞摘要 - 2026/05/01"><img class="cover" src="/img/20260501-02.webp" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">AI 與科技新聞摘要 - 2026/05/01</div></div><div class="info-2"><div class="info-item-1">supply chain risk。 五角大廈今天把 Anthropic 貼上這個標籤，正式禁止國防部和所有承包商使用 Claude。同一天，另外七家 AI 公司——SpaceX、OpenAI、Google、NVIDIA、Reflection、Microsoft、AWS——拿到了機密網路的通行證。 一家公司因為堅持底線被踢出去。七家公司因為配合條件被放進來。市場不會管你的底線有多崇高——它只看你有沒有拿到合約。 同一週，Mag-7 財報全部出爐：Amazon、Alphabet、Meta 三家在同一個晚上交卷，四家合計營收超過 $430B，全部上調 AI 資本支出。OpenAI 找了 MediaTek 和 Qualcomm 做一支「沒有 App」的 AI 手機。中國的電動車不打價格戰了，改打 AI 功能戰——700 萬台車已經跑著 ByteDance 的模型。Amazon 則讓你對著商品頁面開口問問題，AI 即時回答。 今天這五條新聞的共同主題：規則正在被重新談判，而談判的籌碼不是技術，是配合度。  五角大廈 7 家 AI 合約：Anthropic 被列供應鏈風險七家進來，一家被趕...</div></div></div></a><a class="pagination-related" href="/2026/05/01/Elasticsearch-%E8%B3%87%E6%96%99%E7%9A%84%E9%80%B2%E8%88%87%E5%87%BA-Data-In-Out-%E8%88%87-REST-API-%E5%A4%A7%E8%A3%9C%E5%B8%96/" title="Elasticsearch 資料的進與出 — Data In/Out 與 REST API 大補帖"><img class="cover" src="/img/20260501-01.webp" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">Elasticsearch 資料的進與出 — Data In/Out 與 REST API 大補帖</div></div><div class="info-2"><div class="info-item-1">你知道怎麼用 Google 搜尋，但你有沒有想過「搜尋引擎的資料是怎麼進去的」？ Google 有爬蟲。Elasticsearch 沒有——你得自己把資料餵進去。而且不只是餵進去就好，還得告訴它每筆資料長什麼樣、哪些欄位要能搜、哪些只要精確比對、哪些需要排序。 這就像開餐廳。菜單不是隨便一張紙——你得決定每道菜的名稱格式（文字還是編號）、價格精度（整數還是小數）、分類方式（依口味還是依烹飪法）。這些決定一旦做了就很難改，改了就得整本菜單重印。 Elasticsearch 的 Mapping 就是這本菜單的格式定義。今天從開菜單開始，教到點菜、上菜、換菜、退菜的全套流程。  開菜單：Index 建立與 Mapping建立一個 Index 等於在 Elasticsearch 裡開一本新菜單。最簡單的方式一行就搞定： 1PUT /menu  這樣 ES 會用預設值——1 個 primary shard、1 個 replica。正式環境通常要自己設： 12345678PUT /menu&#123;  &quot;settings&quot;: &#123;    &quot;number...</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相關推薦</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2026/04/30/Claude-Code-Routines-%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8-%E8%AE%93-AI-%E5%9C%A8%E4%BD%A0%E7%9D%A1%E8%A6%BA%E6%99%82%E8%87%AA%E5%8B%95%E8%B7%91%E4%BB%BB%E5%8B%99/" title="Claude Code Routines 完整教學 — 讓 AI 在你睡覺時自動跑任務"><img class="cover" src="/img/20260430-03.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-04-30</div><div class="info-item-2">Claude Code Routines 完整教學 — 讓 AI 在你睡覺時自動跑任務</div></div><div class="info-2"><div class="info-item-1">凌晨三點，你的 MacBook 闔著，充電燈慢慢呼吸。同一時間，Claude 正在雲端讀你 repo 裡昨天開的三個 PR，逐一 review、留下 comment、標記需要改的地方。你早上起來打開 GitHub，review 已經做完了。 這不是 cron job，也不是 GitHub Actions。這是 Routines。  先搞懂一件事：為什麼需要 Routines你家的洗衣機有定時功能。設好時間、丟進衣服、按下開始，出門上班。洗衣機不需要你站在旁邊盯著它轉。 Claude Code 以前的自動化工具——/loop 和 /schedule——比較像是你站在洗衣機前面，手動按「再洗一次」。terminal 一關，任務就死了。/schedule 雖然跑在雲端，但它的設計是一次性的：「幫我做這件事」，做完就沒了。 Routines 是洗衣機的定時功能。設定一次，它自己會每天跑、每週跑、或在特定事件發生時跑。你的筆電不用開著。    功能 跑在哪 筆電關了會怎樣 適合什麼    /loop 你的 terminal 死掉 短期輪詢：盯 build、等 deploy   /sched...</div></div></div></a><a class="pagination-related" href="/2026/04/16/Multica-%E6%8A%8A-AI-Coding-Agent-%E7%95%B6%E9%9A%8A%E5%8F%8B%E7%AE%A1%E7%90%86%E7%9A%84%E9%96%8B%E6%BA%90%E5%B9%B3%E5%8F%B0/" title="Multica - 把 AI Coding Agent 當隊友管理的開源平台"><img class="cover" src="/img/20260416-01.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-04-16</div><div class="info-item-2">Multica - 把 AI Coding Agent 當隊友管理的開源平台</div></div><div class="info-2"><div class="info-item-1">你有沒有想過，招聘真的那麼難嗎？最近看到一句話：「Your next 10 hires won’t be human.」當時笑了一下，覺得有點誇張，直到我試玩了 Multica。 不是框架，是人力資源管理軟體網路上 AI 框架有夠多，但 Multica 走的是另一條路。它不是讓你寫複雜的 prompt 或組建管道線的工具，而是一個真實的 專案管理層 — 你可以把 Claude Code、Codex、OpenClaw 這些 coding agent 當成正式隊友，在看板上指派任務、追蹤進度、看他們的進展。 這很重要，因為現在的痛點不是「怎樣讓 AI 聽懂我」，而是「怎樣管理好這群虛擬員工」。 想像一下：上午 standup 會議，你把 bug fix 指派給 Claude Code agent、文檔更新給 OpenClaw、技術債清理給 Codex，他們各自在 kanban board 上移動卡片，實時更新進度。這不是科幻，Multica 已經做到了。 核心特色一次說清楚首先，Agent 檔案系統。每個 agent 可以設定名字、大頭貼、專業技能標籤，就像真的員工檔案。這聽起來小，...</div></div></div></a><a class="pagination-related" href="/2026/04/23/Agent-Skills-%E7%B5%A6-AI-%E7%B7%A8%E7%A2%BC%E5%8A%A9%E6%89%8B%E7%9A%84%E5%B7%A5%E7%A8%8B%E7%B4%80%E5%BE%8B%E6%8C%87%E4%BB%A4%E9%9B%86/" title="Agent Skills — 給 AI 編碼助手的工程紀律指令集"><img class="cover" src="/img/20260423-01.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-04-23</div><div class="info-item-2">Agent Skills — 給 AI 編碼助手的工程紀律指令集</div></div><div class="info-2"><div class="info-item-1">AI coding agent 不是不夠聰明。它太會找理由了。 跟它說寫完記得補測試，它會說「這個功能比較簡單，測試等之後再補」。跟它說上線前做 code review，它說「改動很小，應該沒問題」。跟它做安全審查，它說「這只是內部工具，威脅模型不複雜」。每一個理由聽起來都很合理，每一個結果都讓你在兩週後踩坑。 問題不是 AI 不知道該怎麼做。問題是它沒有理由在沒人要求的情況下把每件事都做完整。 Agent Skills 的設計思路就從這裡開始：不靠信任，靠結構。  19 份文件，覆蓋整個開發生命週期整個專案沒有任何程式碼依賴。就是 19 份 Markdown 文件，每份對應開發流程的一個階段，告訴 AI agent 這個階段該做什麼、怎麼驗證自己做完了。 作者是 Addy Osmani，Google Chrome 前工程總監，Software Engineering at Google 的貢獻者之一。這本書裡很多工程紀律的理念——測試文化、增量實作、強制 code review——在 Agent Skills 裡都有對應的實作。 按開發階段分成六大類： Define：idea-...</div></div></div></a><a class="pagination-related" href="/2026/04/01/Codex-Plugin-for-Claude-Code-OpenAI-%E5%AE%98%E6%96%B9%E8%B7%A8%E5%B9%B3%E5%8F%B0%E5%AF%A9%E6%9F%A5%E6%8F%92%E4%BB%B6/" title="Codex Plugin for Claude Code — OpenAI 官方跨平台審查插件"><img class="cover" src="/img/20260401-01.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-04-01</div><div class="info-item-2">Codex Plugin for Claude Code — OpenAI 官方跨平台審查插件</div></div><div class="info-2"><div class="info-item-1">OpenAI 出了一個 Claude Code 的插件。你沒看錯——OpenAI 的 Codex，跑在 Anthropic 的 Claude Code 裡面，幫你做 code review。AI 公司之間的競爭到了這個階段，連「讓對手的產品幫自己做事」都變成一種合作模式了。  這東西是什麼openai/codex-plugin-cc 是 OpenAI 官方開發的 Claude Code 插件，Apache-2.0 授權，GitHub 上 4,400 多顆星。裝完之後，你在 Claude Code 裡面就多了一組 /codex: 開頭的指令，可以直接呼叫 OpenAI Codex 來審查程式碼或委派任務。 用白話講：Claude 寫完 code，叫 Codex 來挑毛病。兩個 AI 互相 review，你坐著看戲。  裝起來要幾步前提：Node.js &gt;&#x3D; 18.18、ChatGPT 訂閱（免費版也行）或 OpenAI API Key、已經裝了 Claude Code。 1234567891011# 新增 marketplace/plugin marketplace...</div></div></div></a><a class="pagination-related" href="/2026/04/07/Harness-Engineering-%E5%A6%82%E4%BD%95%E5%B0%8D-Coding-Agent-%E7%9A%84%E7%A8%8B%E5%BC%8F%E7%A2%BC%E5%BB%BA%E7%AB%8B%E4%BF%A1%E4%BB%BB/" title="Harness Engineering - 如何對 Coding Agent 的程式碼建立信任"><img class="cover" src="/img/20260407-01.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-04-07</div><div class="info-item-2">Harness Engineering - 如何對 Coding Agent 的程式碼建立信任</div></div><div class="info-2"><div class="info-item-1">打開 PR review，看到 800 行 AI 產出的變更。你盯著螢幕三十秒，腦袋浮出那個每次都會出現的問題：這東西能信嗎？ Thoughtworks 的 Distinguished Engineer Birgitta Bockeler 在 Martin Fowler 網站上丟出了一篇重量級文章（2026-04-02 發表），直接正面回答這個問題。她的答案不是「可以」或「不可以」，而是：你需要建構一套系統化的控制機制，叫做 Harness。 Harness 是什麼？一句話講完Harness &#x3D; AI Agent 中除了模型本身以外的所有東西。 人類工程師寫 code 的時候，其實自帶一套「隱性 harness」——多年累積的編碼慣例、對複雜度的直覺痛感、「這段寫太爛了我自己看不下去」的美學標準。Agent 沒有這些。它能吐出幾乎任何程式碼，但沒有品味判斷、沒有組織記憶、沒有那種「雖然能跑但三個月後一定出事」的第六感。 所以你得把這些隱性知識外顯化成可執行的控制系統。人類的角色從「寫程式碼」變成「迭代改進 harness」——harness 的品質直接決定你能對 Age...</div></div></div></a><a class="pagination-related" href="/2026/04/25/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260425/" title="AI 與科技新聞摘要 - 2026&#x2F;04&#x2F;25"><img class="cover" src="/img/20260425-02.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-04-25</div><div class="info-item-2">AI 與科技新聞摘要 - 2026&#x2F;04&#x2F;25</div></div><div class="info-2"><div class="info-item-1">300 萬。 這是 OpenAI Codex 的週活躍開發者數字，截至 2026 年 4 月。兩個月前，這個數字是 160 萬。翻倍，用了不到 60 天。 同一週，Anthropic 在沒有太多預告的情況下，一口氣推出了兩個新產品方向，並且更新了 Claude Code 的核心設定架構。技術圈在消化 GPT-5.5 的同時，後面還有一堆東西在安靜地落地。  Claude Code 2.1.119 — config 設定終於持久化了這個更新聽起來不大，但對每天用 Claude Code 的開發者來說，它解決了一個每次新開 session 都要重設的痛點。 從 2.1.119 開始，/config 指令的設定（主題、editor mode、verbose 輸出等）會自動寫入 ~/.claude/settings.json，並且參與 project&#x2F;local&#x2F;policy 的 override 優先序。換句話說，你設定一次，下次開 Claude Code 就是你的環境，不用每次重來。 同一版本還加了 prUrlTemplate 設定，讓你把 PR URL 的格式綁...</div></div></div></a></div></div><hr class="custom-hr"/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 評論</span></div></div><div class="comment-wrap"><div><div id="giscus-wrap"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="https://lh3.googleusercontent.com/pw/ABLVV87_po8nBc6F_tXcoYDmtzMGWxHuhhrbguYILCjmjWKLOS8DTpubm0YoQLKgjyjRIZyV5TjYe7XVEz_YU4squfr37GTZqPZP1hlMVZ_MIgXpTxWu73M=w1200" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">Cheng®</div><div class="author-info-description">Backend Developer / 技術筆記 & AI 新聞分享</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">189</div></a><a href="/tags/"><div class="headline">標籤</div><div class="length-num">219</div></a><a href="/categories/"><div class="headline">分類</div><div class="length-num">14</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/mark22013333"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons"><a class="social-icon" href="https://github.com/mark22013333" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:mark22013333@gmail.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a></div><div class="card-info-sponsor"><a class="sponsor-glow-btn" href="https://www.buymeacoffee.com/mark22013333" target="_blank" rel="noopener noreferrer" title="Buy Me A Coffee"><img src="https://img.shields.io/badge/Buy_Me_A_Coffee-FFDD00?style=for-the-badge&amp;logo=buy-me-a-coffee&amp;logoColor=black" alt="Buy Me A Coffee"/></a><a class="sponsor-glow-btn" href="https://p.ecpay.com.tw/EFC3F8F" target="_blank" rel="noopener noreferrer" title="綠界贊助"><img src="https://img.shields.io/badge/☕_%E8%AB%8B%E6%88%91%E5%96%9D%E6%9D%AF%E5%92%96%E5%95%A1-Donate-11998e?style=for-the-badge&amp;logo=coffee&amp;logoColor=white" alt="綠界贊助"/></a><a class="sponsor-glow-btn" href="https://calendly.com/markcheng00806-intumit/15min" target="_blank" rel="noopener noreferrer" title="預約時間"><img src="https://img.shields.io/badge/📅_%E9%A0%90%E7%B4%84_15_%E5%88%86%E9%90%98-Book_Time-0072ff?style=for-the-badge" alt="預約時間"/></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">這裡記錄我在後端開發路上踩過的坑、學到的東西，也會分享每日 AI 與科技新聞觀點。歡迎一起交流！</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目錄</span><span class="toc-percentage"></span></div><div class="toc-content is-expand"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%8D%89%E7%A8%BF%E7%B4%99%E9%95%B7%E4%BB%80%E9%BA%BC%E6%A8%A3"><span class="toc-number">1.</span> <span class="toc-text">草稿紙長什麼樣</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%96%8B%E9%97%9C%E5%9C%A8%E5%93%AA%E8%A3%A1"><span class="toc-number">2.</span> <span class="toc-text">開關在哪裡</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8D%B3%E6%99%82%E5%88%87%E6%8F%9B"><span class="toc-number">2.1.</span> <span class="toc-text">即時切換</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%B0%B8%E4%B9%85%E8%A8%AD%E5%AE%9A"><span class="toc-number">2.2.</span> <span class="toc-text">永久設定</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Token-%E9%A0%90%E7%AE%97%E4%B8%8A%E9%99%90"><span class="toc-number">2.3.</span> <span class="toc-text">Token 預算上限</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Effort-Level%EF%BC%9A%E6%B2%B9%E9%96%80%E8%80%8C%E4%B8%8D%E6%98%AF%E9%96%8B%E9%97%9C"><span class="toc-number">3.</span> <span class="toc-text">Effort Level：油門而不是開關</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Adaptive-Reasoning"><span class="toc-number">3.1.</span> <span class="toc-text">Adaptive Reasoning</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AF%A6%E6%88%B0%EF%BC%9A%E4%BB%80%E9%BA%BC%E6%99%82%E5%80%99%E9%96%8B%E3%80%81%E4%BB%80%E9%BA%BC%E6%99%82%E5%80%99%E9%97%9C"><span class="toc-number">4.</span> <span class="toc-text">實戰：什麼時候開、什麼時候關</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80%E5%AE%9A%E8%A6%81%E9%96%8B-thinking-%E7%9A%84%E5%A0%B4%E6%99%AF"><span class="toc-number">4.1.</span> <span class="toc-text">一定要開 thinking 的場景</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8F%AF%E4%BB%A5%E9%97%9C-thinking-%E7%9A%84%E5%A0%B4%E6%99%AF"><span class="toc-number">4.2.</span> <span class="toc-text">可以關 thinking 的場景</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%B7%9F%E5%85%B6%E4%BB%96%E5%B7%A5%E5%85%B7%E7%9A%84-Reasoning-Mode-%E6%AF%94%E8%BC%83"><span class="toc-number">5.</span> <span class="toc-text">跟其他工具的 Reasoning Mode 比較</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%BB%BA%E8%AD%B0%E7%9A%84%E9%A0%90%E8%A8%AD%E9%85%8D%E7%BD%AE"><span class="toc-number">6.</span> <span class="toc-text">建議的預設配置</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%BE%9E-Thinking-%E5%8F%AF%E4%BB%A5%E5%BB%B6%E4%BC%B8%E5%88%B0%E5%93%AA%E8%A3%A1"><span class="toc-number">7.</span> <span class="toc-text">從 Thinking 可以延伸到哪裡</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2026/05/01/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260501/" title="AI 與科技新聞摘要 - 2026/05/01"><img src="/img/20260501-02.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="AI 與科技新聞摘要 - 2026/05/01"/></a><div class="content"><a class="title" href="/2026/05/01/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260501/" title="AI 與科技新聞摘要 - 2026/05/01">AI 與科技新聞摘要 - 2026/05/01</a><time datetime="2026-05-01T00:30:00.000Z" title="發表於 2026-05-01 08:30:00">2026-05-01</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/05/01/Claude-Code-Extended-Thinking-%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8-%E8%AE%93-AI-%E6%83%B3%E6%B8%85%E6%A5%9A%E5%86%8D%E5%8B%95%E6%89%8B/" title="Claude Code Extended Thinking 完整教學 — 讓 AI 想清楚再動手"><img src="/img/20260501-03.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Claude Code Extended Thinking 完整教學 — 讓 AI 想清楚再動手"/></a><div class="content"><a class="title" href="/2026/05/01/Claude-Code-Extended-Thinking-%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8-%E8%AE%93-AI-%E6%83%B3%E6%B8%85%E6%A5%9A%E5%86%8D%E5%8B%95%E6%89%8B/" title="Claude Code Extended Thinking 完整教學 — 讓 AI 想清楚再動手">Claude Code Extended Thinking 完整教學 — 讓 AI 想清楚再動手</a><time datetime="2026-05-01T00:30:00.000Z" title="發表於 2026-05-01 08:30:00">2026-05-01</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/05/01/Elasticsearch-%E8%B3%87%E6%96%99%E7%9A%84%E9%80%B2%E8%88%87%E5%87%BA-Data-In-Out-%E8%88%87-REST-API-%E5%A4%A7%E8%A3%9C%E5%B8%96/" title="Elasticsearch 資料的進與出 — Data In/Out 與 REST API 大補帖"><img src="/img/20260501-01.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Elasticsearch 資料的進與出 — Data In/Out 與 REST API 大補帖"/></a><div class="content"><a class="title" href="/2026/05/01/Elasticsearch-%E8%B3%87%E6%96%99%E7%9A%84%E9%80%B2%E8%88%87%E5%87%BA-Data-In-Out-%E8%88%87-REST-API-%E5%A4%A7%E8%A3%9C%E5%B8%96/" title="Elasticsearch 資料的進與出 — Data In/Out 與 REST API 大補帖">Elasticsearch 資料的進與出 — Data In/Out 與 REST API 大補帖</a><time datetime="2026-05-01T00:30:00.000Z" title="發表於 2026-05-01 08:30:00">2026-05-01</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/04/30/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260430/" title="AI 與科技新聞摘要 - 2026/04/30"><img src="/img/20260430-02.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="AI 與科技新聞摘要 - 2026/04/30"/></a><div class="content"><a class="title" href="/2026/04/30/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260430/" title="AI 與科技新聞摘要 - 2026/04/30">AI 與科技新聞摘要 - 2026/04/30</a><time datetime="2026-04-30T00:30:00.000Z" title="發表於 2026-04-30 08:30:00">2026-04-30</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/04/30/Claude-Code-Routines-%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8-%E8%AE%93-AI-%E5%9C%A8%E4%BD%A0%E7%9D%A1%E8%A6%BA%E6%99%82%E8%87%AA%E5%8B%95%E8%B7%91%E4%BB%BB%E5%8B%99/" title="Claude Code Routines 完整教學 — 讓 AI 在你睡覺時自動跑任務"><img src="/img/20260430-03.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Claude Code Routines 完整教學 — 讓 AI 在你睡覺時自動跑任務"/></a><div class="content"><a class="title" href="/2026/04/30/Claude-Code-Routines-%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8-%E8%AE%93-AI-%E5%9C%A8%E4%BD%A0%E7%9D%A1%E8%A6%BA%E6%99%82%E8%87%AA%E5%8B%95%E8%B7%91%E4%BB%BB%E5%8B%99/" title="Claude Code Routines 完整教學 — 讓 AI 在你睡覺時自動跑任務">Claude Code Routines 完整教學 — 讓 AI 在你睡覺時自動跑任務</a><time datetime="2026-04-30T00:30:00.000Z" title="發表於 2026-04-30 08:30:00">2026-04-30</time></div></div></div></div></div></div></main><footer id="footer" style="background-image: url(/img/20260501-03.webp);"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2024 - 2026 By Cheng®</span></div><div class="footer_custom_text">Written by Cheng® — 自律，從當下的一念開始。</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="閱讀模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日夜模式切換"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="單欄和雙欄切換"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="設定"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目錄"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="前往評論"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到頂端"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.umd.min.js"></script><script src="https://cdn.jsdelivr.net/npm/instant.page/instantpage.min.js" type="module"></script><script src="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.js"></script><div class="js-pjax"><script>(() => {
+  const isShuoshuo = GLOBAL_CONFIG_SITE.pageType === 'shuoshuo'
+  const option = {"mapping":"pathname","strict":0,"reactionsEnabled":1,"emitMetadata":0,"inputPosition":"bottom","lang":"zh-TW"}
+
+  const getGiscusTheme = theme => theme === 'dark' ? 'dark' : 'light'
+
+  const createScriptElement = config => {
+    const ele = document.createElement('script')
+    Object.entries(config).forEach(([key, value]) => {
+      ele.setAttribute(key, value)
+    })
+    return ele
+  }
+
+  const loadGiscus = (el = document, key) => {
+    const mappingConfig = isShuoshuo
+      ? { 'data-mapping': 'specific', 'data-term': key }
+      : { 'data-mapping': (option && option['data-mapping']) || 'pathname' }
+
+    const giscusConfig = {
+      src: 'https://giscus.app/client.js',
+      'data-repo': 'mark22013333/mark22013333.github.io',
+      'data-repo-id': 'R_kgDOLAxa6A',
+      'data-category-id': 'DIC_kwDOLAxa6M4C5eO9',
+      'data-theme': getGiscusTheme(document.documentElement.getAttribute('data-theme')),
+      'data-reactions-enabled': '1',
+      crossorigin: 'anonymous',
+      async: true,
+      ...option,
+      ...mappingConfig
+    }
+
+    const scriptElement = createScriptElement(giscusConfig)
+
+    el.querySelector('#giscus-wrap').appendChild(scriptElement)
+
+    if (isShuoshuo) {
+      window.shuoshuoComment.destroyGiscus = () => {
+        if (el.children.length) {
+          el.innerHTML = ''
+          el.classList.add('no-comment')
+        }
+      }
+    }
+  }
+
+  const changeGiscusTheme = theme => {
+    const iframe = document.querySelector('#giscus-wrap iframe')
+    if (iframe) {
+      const message = {
+        giscus: {
+          setConfig: {
+            theme: getGiscusTheme(theme)
+          }
+        }
+      }
+      iframe.contentWindow.postMessage(message, 'https://giscus.app')
+    }
+  }
+
+  btf.addGlobalFn('themeChange', changeGiscusTheme, 'giscus')
+
+  if (isShuoshuo) {
+    'Giscus' === 'Giscus'
+      ? window.shuoshuoComment = { loadComment: loadGiscus }
+      : window.loadOtherComment = loadGiscus
+    return
+  }
+
+  if ('Giscus' === 'Giscus' || !true) {
+    if (true) btf.loadComment(document.getElementById('giscus-wrap'), loadGiscus)
+    else loadGiscus()
+  } else {
+    window.loadOtherComment = loadGiscus
+  }
+})()</script></div><script src="/js/kkbox-player.js"></script><script src="/js/archives-pagination.js"></script><script src="/js/font-resize.js"></script><script src="/js/dark-palette.js"></script><script defer="defer" id="fluttering_ribbon" mobile="false" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/canvas-fluttering-ribbon.min.js"></script><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/activate-power-mode.min.js"></script><script>POWERMODE.colorful = true;
+POWERMODE.shake = true;
+POWERMODE.mobile = true;
+document.body.addEventListener('input', POWERMODE);
+</script><script src="https://cdn.jsdelivr.net/npm/pjax/pjax.min.js" defer="defer"></script><script>document.addEventListener('DOMContentLoaded', () => {
+  const pjaxSelectors = ["meta[property=\"og:image\"]","meta[property=\"og:title\"]","meta[property=\"og:url\"]","meta[property=\"og:description\"]","link[rel=\"canonical\"]","head > title","#config-diff","#body-wrap","#rightside-config-hide","#rightside-config-show",".js-pjax"]
+
+  window.pjax = new Pjax({
+    elements: 'a:not([target="_blank"])',
+    selectors: pjaxSelectors,
+    cacheBust: false,
+    analytics: true,
+    scrollRestoration: false
+  })
+
+  const triggerPjaxFn = (val) => {
+    if (!val) return
+    Object.values(val).forEach(fn => {
+      try {
+        fn()
+      } catch (err) {
+        console.debug('Pjax callback failed:', err)
+      }
+    })
+  }
+
+  document.addEventListener('pjax:send', () => {
+    // removeEventListener
+    btf.removeGlobalFnEvent('pjaxSendOnce')
+    btf.removeGlobalFnEvent('themeChange')
+
+    // reset readmode
+    const $bodyClassList = document.body.classList
+    if ($bodyClassList.contains('read-mode')) $bodyClassList.remove('read-mode')
+
+    triggerPjaxFn(window.globalFn.pjaxSend)
+  })
+
+  document.addEventListener('pjax:complete', () => {
+    btf.removeGlobalFnEvent('pjaxCompleteOnce')
+    document.querySelectorAll('script[data-pjax]').forEach(item => {
+      const newScript = document.createElement('script')
+      const content = item.text || item.textContent || item.innerHTML || ""
+      Array.from(item.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value))
+      newScript.appendChild(document.createTextNode(content))
+      item.parentNode.replaceChild(newScript, item)
+    })
+
+    triggerPjaxFn(window.globalFn.pjaxComplete)
+  })
+
+  document.addEventListener('pjax:error', e => {
+    if (e.request.status === 404) {
+      true
+        ? pjax.loadUrl('/404.html')
+        : window.location.href = e.request.responseURL
+    }
+  })
+})</script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜尋</span><i class="fas fa-spinner fa-pulse" id="loading-status" hidden="hidden"></i><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="text-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  資料載入中</span></div><div class="local-search-input"><input placeholder="搜尋文章" type="text"/></div><hr/><div id="local-search-results"></div><div class="ais-Pagination" id="local-search-pagination" style="display:none;"><ul class="ais-Pagination-list"></ul></div><div id="local-search-stats"></div></div><div id="search-mask"></div><script src="/js/search/local-search.js"></script></div></div></body></html>
