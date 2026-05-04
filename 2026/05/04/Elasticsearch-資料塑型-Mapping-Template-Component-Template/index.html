@@ -1,0 +1,410 @@
+<!DOCTYPE html><html lang="zh-TW" data-theme="dark"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>Elasticsearch 資料塑型 — Mapping, Template, Component Template | Cheng's Tech &amp; Life</title><meta name="author" content="Cheng®"><meta name="copyright" content="Cheng®"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#0d0d0d"><meta name="description" content="Dynamic Mapping 方便到讓你忘記它是顆定時炸彈。第一筆資料決定型別命運、字串自動雙倍空間、巢狀物件關聯性消失——這篇教你用 Explicit Mapping 和 Template 積木拆彈。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Elasticsearch 資料塑型 — Mapping, Template, Component Template">
+<meta property="og:url" content="https://mark22013333.github.io/2026/05/04/Elasticsearch-%E8%B3%87%E6%96%99%E5%A1%91%E5%9E%8B-Mapping-Template-Component-Template/index.html">
+<meta property="og:site_name" content="Cheng&#39;s Tech &amp; Life">
+<meta property="og:description" content="Dynamic Mapping 方便到讓你忘記它是顆定時炸彈。第一筆資料決定型別命運、字串自動雙倍空間、巢狀物件關聯性消失——這篇教你用 Explicit Mapping 和 Template 積木拆彈。">
+<meta property="og:locale" content="zh_TW">
+<meta property="og:image" content="https://mark22013333.github.io/img/20260504-01.webp">
+<meta property="article:published_time" content="2026-05-04T00:30:00.000Z">
+<meta property="article:modified_time" content="2026-05-04T14:22:58.439Z">
+<meta property="article:author" content="Cheng®">
+<meta property="article:tag" content="Elasticsearch">
+<meta property="article:tag" content="Mapping">
+<meta property="article:tag" content="Template">
+<meta property="article:tag" content="Schema">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://mark22013333.github.io/img/20260504-01.webp"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Elasticsearch 資料塑型 — Mapping, Template, Component Template",
+  "url": "https://mark22013333.github.io/2026/05/04/Elasticsearch-%E8%B3%87%E6%96%99%E5%A1%91%E5%9E%8B-Mapping-Template-Component-Template/",
+  "image": "https://mark22013333.github.io/img/20260504-01.webp",
+  "datePublished": "2026-05-04T00:30:00.000Z",
+  "dateModified": "2026-05-04T14:22:58.439Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "Cheng®",
+      "url": "https://mark22013333.github.io"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://mark22013333.github.io/2026/05/04/Elasticsearch-%E8%B3%87%E6%96%99%E5%A1%91%E5%9E%8B-Mapping-Template-Component-Template/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//www.google-analytics.com" crossorigin=""/><link rel="preconnect" href="//fonts.googleapis.com" crossorigin=""/><link rel="preconnect" href="//busuanzi.ibruce.info"/><meta name="google-site-verification" content="6ywUr8k2n_CT1PFYJzlSvI3CZ-JmJ55RYbA39VrFBDs"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!true && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          const hour = new Date().getHours()
+          const isNight = hour <= 9 || hour >= 18
+          if (theme === undefined) isNight ? activateDarkMode() : activateLightMode()
+          else theme === 'light' ? activateLightMode() : activateDarkMode()
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script async="async" src="https://www.googletagmanager.com/gtag/js?id=G-JBV14NRDH3"></script><script>window.dataLayer = window.dataLayer || []
+function gtag(){dataLayer.push(arguments)}
+gtag('js', new Date())
+gtag('config', 'G-JBV14NRDH3')
+btf.addGlobalFn('pjaxComplete', () => {
+  gtag('config', 'G-JBV14NRDH3', {'page_path': window.location.pathname})
+}, 'google_analytics')
+</script><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Titillium+Web&amp;display=swap" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"pagination":{"enable":false,"hitsPerPage":8},"languages":{"hits_empty":"找不到符合您查詢的內容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '複製成功',
+    error: '複製失敗',
+    noSupport: '瀏覽器不支援'
+  },
+  relativeDate: {
+    homepage: false,
+    post: true
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '剛剛',
+    min: '分鐘前',
+    hour: '小時前',
+    day: '天前',
+    month: '個月前'
+  },
+  copyright: {"limitCount":1,"languages":{"author":"作者: Cheng®","link":"連結: ","source":"來源: Cheng's Tech & Life","info":"著作權歸作者所有。如需商業轉載，請聯絡作者獲得授權，非商業轉載請註明出處😁。"}},
+  lightbox: 'fancybox',
+  Snackbar: {"chs_to_cht":"已切換為繁體中文","cht_to_chs":"已切換為簡體中文","day_to_night":"已切換為深色模式","night_to_day":"已切換為淺色模式","bgLight":"#49b1f5","bgDark":"#1f1f1f","position":"top-center"},
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid/dist/infinitegrid.min.js',
+    buttonText: '載入更多'
+  },
+  isPhotoFigcaption: true,
+  islazyloadPlugin: false,
+  isAnchor: true,
+  percent: {
+    toc: true,
+    rightside: true,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Elasticsearch 資料塑型 — Mapping, Template, Component Template',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><link rel="stylesheet" href="/css/kkbox-player.css"><link rel="stylesheet" href="/css/tag-cloud-fancy.css"><link rel="stylesheet" href="/css/font-resize.css"><link rel="stylesheet" href="/css/dark-palette.css"><link rel="stylesheet" href="/css/loading-override.css"><link rel="alternate" href="/atom.xml" title="Cheng's Tech & Life" type="application/atom+xml">
+</head><body><div id="loading-box"><div class="loading-glass-overlay"></div><div class="loading-indicator"><div class="loading-dot"></div><div class="loading-dot"></div><div class="loading-dot"></div></div></div><script>(()=>{
+  const $loadingBox = document.getElementById('loading-box')
+  const $body = document.body
+  const preloader = {
+    endLoading: () => {
+      if ($loadingBox.classList.contains('loaded')) return
+      $body.style.overflow = ''
+      $loadingBox.classList.add('loaded')
+    },
+    initLoading: () => {
+      $body.style.overflow = 'hidden'
+      $loadingBox.classList.remove('loaded')
+    }
+  }
+
+  preloader.initLoading()
+
+  if (document.readyState === 'complete') {
+    preloader.endLoading()
+  } else {
+    window.addEventListener('load', preloader.endLoading)
+    document.addEventListener('DOMContentLoaded', preloader.endLoading)
+    setTimeout(preloader.endLoading, 7000)
+  }
+
+  if (true) {
+    btf.addGlobalFn('pjaxSend', preloader.initLoading, 'preloader_init')
+    btf.addGlobalFn('pjaxComplete', preloader.endLoading, 'preloader_end')
+  }
+})()</script><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="https://lh3.googleusercontent.com/pw/ABLVV87_po8nBc6F_tXcoYDmtzMGWxHuhhrbguYILCjmjWKLOS8DTpubm0YoQLKgjyjRIZyV5TjYe7XVEz_YU4squfr37GTZqPZP1hlMVZ_MIgXpTxWu73M=w1200" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">198</div></a><a href="/tags/"><div class="headline">標籤</div><div class="length-num">245</div></a><a href="/categories/"><div class="headline">分類</div><div class="length-num">14</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首頁-Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 時間軸-archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 標籤-tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分類-Categories</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-list"></i><span> 其他列表</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音樂-Music</span></a></li><li><a class="site-page child" href="/gallery/"><i class="fa-fw fas fa-images"></i><span> 畫館-Gallery</span></a></li></ul></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg fixed" id="page-header" style="background-image: url(/img/20260504-01.webp);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><img class="site-icon" src="https://lh3.googleusercontent.com/pw/ABLVV87_po8nBc6F_tXcoYDmtzMGWxHuhhrbguYILCjmjWKLOS8DTpubm0YoQLKgjyjRIZyV5TjYe7XVEz_YU4squfr37GTZqPZP1hlMVZ_MIgXpTxWu73M=w1200" alt="Logo"><span class="site-name">Cheng's Tech &amp; Life</span></a><a class="nav-page-title" href="/"><span class="site-name">Elasticsearch 資料塑型 — Mapping, Template, Component Template</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首頁</span></span></a></span><div id="menus"><div id="search-button" title="Ctrl+K / Cmd+K"><span class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜尋</span></span></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首頁-Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 時間軸-archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 標籤-tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分類-Categories</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-list"></i><span> 其他列表</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音樂-Music</span></a></li><li><a class="site-page child" href="/gallery/"><i class="fa-fw fas fa-images"></i><span> 畫館-Gallery</span></a></li></ul></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">Elasticsearch 資料塑型 — Mapping, Template, Component Template</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">發表於</span><time class="post-meta-date-created" datetime="2026-05-04T00:30:00.000Z" title="發表於 2026-05-04 08:30:00">2026-05-04</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新於</span><time class="post-meta-date-updated" datetime="2026-05-04T14:22:58.439Z" title="更新於 2026-05-04 22:22:58">2026-05-04</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Elasticsearch/">Elasticsearch</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">總字數:</span><span class="word-count">2.2k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">閱讀時間:</span><span>8分鐘</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">瀏覽量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><p>蓋房子之前要先畫藍圖。這個道理大家都懂，但很多人用 Elasticsearch 的時候選擇跳過這一步——直接丟資料進去，讓 Dynamic Mapping 自己猜型別。</p>
+<p>一開始很順。直到某天你寫入一筆小數，系統跟你說：「不行，這個欄位是整數。」</p>
+<p>第一筆資料進來的那一刻，型別就鎖死了。之後想改？只能砍掉重建。沒有 ALTER TABLE。</p>
+<hr>
+<h2 id="Dynamic-Mapping：方便的糖衣，危險的炸彈"><a href="#Dynamic-Mapping：方便的糖衣，危險的炸彈" class="headerlink" title="Dynamic Mapping：方便的糖衣，危險的炸彈"></a>Dynamic Mapping：方便的糖衣，危險的炸彈</h2><p>Elasticsearch 的 Dynamic Mapping 會在你第一次寫入資料時自動推斷欄位型別。你丟 <code>&quot;hello&quot;</code>，它猜 text + keyword；你丟 <code>123</code>，它猜 long；你丟 <code>&quot;2026-04-29&quot;</code>，它猜 date。</p>
+<p>聽起來很聰明。問題是，它只看第一筆。</p>
+<h3 id="五個一定會爆的地雷"><a href="#五個一定會爆的地雷" class="headerlink" title="五個一定會爆的地雷"></a>五個一定會爆的地雷</h3><p><strong>第一筆決定命運</strong>。你的第一筆訂單 <code>price: 100</code> → 欄位被設為 long。第二筆 <code>price: 99.5</code> → 直接報 <code>mapper_parsing_exception</code>。long 欄位塞不下 float。事後想改？砍 Index 重建。</p>
+<p><strong>字串自動雙倍空間</strong>。Dynamic Mapping 對每個字串欄位同時建 text（分詞搜尋）+ keyword 子欄位（精確比對）。你明明只需要精確比對的 status 欄位，它也幫你建了一份分詞索引。空間直接翻倍。</p>
+<p><strong>Mapping Explosion</strong>。使用者上傳結構不固定的 JSON，每筆都多一個新欄位名。Dynamic Mapping 照單全收，欄位數暴增到上限（預設 1,000），然後 <code>IllegalArgumentException</code>。某團隊讓使用者自由上傳，最後搞出 50,000 個欄位，Cluster State 膨脹到 2 GB，Master Node 直接 OOM。</p>
+<p><strong>日期格式鎖定</strong>。第一筆用 ISO 格式 <code>&quot;2026-04-29T10:00:00Z&quot;</code>，日期格式就鎖定了。第二筆用 epoch_millis <code>1745836800000</code>，格式不匹配，寫入失敗。</p>
+<p><strong>object 跟 nested 搞混</strong>。Dynamic Mapping 把巢狀物件推斷為 object——扁平化儲存。<code>items: [&#123;name: &quot;小籠包&quot;, qty: 2&#125;, &#123;name: &quot;炒飯&quot;, qty: 1&#125;]</code> 變成 <code>items.name: [&quot;小籠包&quot;, &quot;炒飯&quot;]</code> + <code>items.qty: [2, 1]</code>。關聯性消失了。搜「name&#x3D;小籠包 AND qty&#x3D;1」會誤命中。</p>
+<h3 id="四種控制模式"><a href="#四種控制模式" class="headerlink" title="四種控制模式"></a>四種控制模式</h3><p>Dynamic Mapping 不是只有開跟關。<code>dynamic</code> 參數有四個值：</p>
+<p><strong>true</strong>（預設）：自動偵測建 Mapping。方便但危險。</p>
+<p><strong>runtime</strong>：新欄位存為 runtime field，不佔索引空間。查的時候動態計算，適合探索階段。</p>
+<p><strong>false</strong>：新欄位存入 <code>_source</code> 但不索引。資料在，但搜不到。</p>
+<p><strong>strict</strong>：未定義的欄位寫入直接報錯。<strong>正式環境永遠用這個。</strong></p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">PUT /strict_index</span><br><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;mappings&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;dynamic&quot;</span><span class="punctuation">:</span> <span class="string">&quot;strict&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;properties&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span> <span class="attr">&quot;type&quot;</span><span class="punctuation">:</span> <span class="string">&quot;text&quot;</span> <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;price&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span> <span class="attr">&quot;type&quot;</span><span class="punctuation">:</span> <span class="string">&quot;float&quot;</span> <span class="punctuation">&#125;</span></span><br><span class="line">    <span class="punctuation">&#125;</span></span><br><span class="line">  <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="手動-Mapping：每個欄位想清楚"><a href="#手動-Mapping：每個欄位想清楚" class="headerlink" title="手動 Mapping：每個欄位想清楚"></a>手動 Mapping：每個欄位想清楚</h2><p>跟 Dynamic Mapping 相反的做法是——自己定義每個欄位的型別。麻煩一點，但不會被第一筆資料綁架。</p>
+<h3 id="型別選擇速查"><a href="#型別選擇速查" class="headerlink" title="型別選擇速查"></a>型別選擇速查</h3><p><strong>text</strong>：全文搜尋用。會過 Analyzer 切成 token 存入倒排索引。不能排序、不能聚合（token 沒有原始值語義）。需要排序就搭配 <code>.keyword</code> 子欄位。</p>
+<p><strong>keyword</strong>：精確比對用。完全不分詞，原封不動存入。status、category、email、ID、tags 這類欄位用這個。<code>ignore_above: 256</code> 是好習慣，避免超長字串浪費空間。</p>
+<p><strong>數值型別</strong>：integer、long、float、double、half_float、scaled_float。金額用 <code>scaled_float</code>（例如 <code>scaling_factor: 100</code>，用整數存「分」），不要用 float——浮點精度問題是永恆的痛。</p>
+<p><strong>date</strong>：支援多種格式，用 <code>||</code> 分隔。ES 內部統一存為 epoch_millis（long），不管你用什麼格式寫入。這就是為什麼 date 可以做 range 查詢和排序。</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">&quot;order_time&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;type&quot;</span><span class="punctuation">:</span> <span class="string">&quot;date&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;format&quot;</span><span class="punctuation">:</span> <span class="string">&quot;yyyy-MM-dd HH:mm:ss||yyyy-MM-dd||epoch_millis&quot;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>object vs nested</strong>：這是最容易搞混的。object 把巢狀結構扁平化，效能好但關聯性消失。nested 為每個巢狀物件建獨立的 Lucene document，保留關聯性但耗資源。如果你需要「商品 A 的數量是 2」這種跨欄位關聯查詢，必須用 nested。</p>
+<p><strong>geo_point</strong>：地理座標。注意陣列格式是 <code>[lon, lat]</code> 不是 <code>[lat, lon]</code>——每個踩過這坑的人都會記得。</p>
+<h3 id="省空間的進階參數"><a href="#省空間的進階參數" class="headerlink" title="省空間的進階參數"></a>省空間的進階參數</h3><p>不需搜尋的欄位設 <code>index: false</code>（存 <code>_source</code> 但不索引），不需排序聚合的設 <code>doc_values: false</code>，不需計分的設 <code>norms: false</code>。每個參數都是空間和效能的取捨。</p>
+<hr>
+<h2 id="Index-Template：一次定義，自動套用"><a href="#Index-Template：一次定義，自動套用" class="headerlink" title="Index Template：一次定義，自動套用"></a>Index Template：一次定義，自動套用</h2><p>每次建 Index 都要手動寫一大堆 Mapping？太累了。</p>
+<p>Index Template 讓你定義一個模板，之後所有名字符合 pattern 的 Index 自動套用。</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">PUT _index_template/logs_template</span><br><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;index_patterns&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span><span class="string">&quot;logs-*&quot;</span><span class="punctuation">]</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;priority&quot;</span><span class="punctuation">:</span> <span class="number">100</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;template&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;settings&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;number_of_shards&quot;</span><span class="punctuation">:</span> <span class="number">3</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;number_of_replicas&quot;</span><span class="punctuation">:</span> <span class="number">1</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;refresh_interval&quot;</span><span class="punctuation">:</span> <span class="string">&quot;30s&quot;</span></span><br><span class="line">    <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;mappings&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;dynamic&quot;</span><span class="punctuation">:</span> <span class="string">&quot;strict&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;properties&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">        <span class="attr">&quot;@timestamp&quot;</span><span class="punctuation">:</span>  <span class="punctuation">&#123;</span> <span class="attr">&quot;type&quot;</span><span class="punctuation">:</span> <span class="string">&quot;date&quot;</span> <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;level&quot;</span><span class="punctuation">:</span>       <span class="punctuation">&#123;</span> <span class="attr">&quot;type&quot;</span><span class="punctuation">:</span> <span class="string">&quot;keyword&quot;</span> <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;message&quot;</span><span class="punctuation">:</span>     <span class="punctuation">&#123;</span> <span class="attr">&quot;type&quot;</span><span class="punctuation">:</span> <span class="string">&quot;text&quot;</span> <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;service&quot;</span><span class="punctuation">:</span>     <span class="punctuation">&#123;</span> <span class="attr">&quot;type&quot;</span><span class="punctuation">:</span> <span class="string">&quot;keyword&quot;</span> <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;trace_id&quot;</span><span class="punctuation">:</span>    <span class="punctuation">&#123;</span> <span class="attr">&quot;type&quot;</span><span class="punctuation">:</span> <span class="string">&quot;keyword&quot;</span> <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;duration_ms&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span> <span class="attr">&quot;type&quot;</span><span class="punctuation">:</span> <span class="string">&quot;integer&quot;</span> <span class="punctuation">&#125;</span></span><br><span class="line">      <span class="punctuation">&#125;</span></span><br><span class="line">    <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;aliases&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;logs_current&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span><span class="punctuation">&#125;</span></span><br><span class="line">    <span class="punctuation">&#125;</span></span><br><span class="line">  <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>之後建任何 <code>logs-</code> 開頭的 Index，Mapping 和 Settings 自動到位：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">PUT /logs-nginx<span class="number">-2026.05</span><span class="number">.04</span></span><br><span class="line"><span class="comment">// 自動套用！不需要手動寫 Mapping</span></span><br></pre></td></tr></table></figure>
+
+<p>兩件事要注意。第一，<strong>一定要設 priority</strong>。多個 Template 的 pattern 都匹配、priority 又相同，ES 會報錯。第二，<strong>index_patterns 記得加萬用字元</strong>。寫成 <code>[&quot;logs&quot;]</code> 而不是 <code>[&quot;logs-*&quot;]</code>，只有名字剛好叫 <code>logs</code> 的 Index 才會套用。</p>
+<hr>
+<h2 id="Component-Template：積木式的模組化設計"><a href="#Component-Template：積木式的模組化設計" class="headerlink" title="Component Template：積木式的模組化設計"></a>Component Template：積木式的模組化設計</h2><p>如果你有 10 種 Index 都需要「相同的基底欄位 + 不同的專用欄位」，Index Template 會讓你複製貼上到崩潰。</p>
+<p>Component Template 把設定拆成積木——通用 Settings 一塊、通用 Mappings 一塊、專用 Mappings 一塊——然後在 Index Template 裡用 <code>composed_of</code> 組裝。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">[base_settings]    [base_mappings]    [logs_mappings]</span><br><span class="line">      │                  │                  │</span><br><span class="line">      └──────────┬───────┘──────────────────┘</span><br><span class="line">                 ▼</span><br><span class="line">        [logs_template]</span><br><span class="line">        composed_of: [base_settings, base_mappings, logs_mappings]</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 積木一：通用 Settings</span></span><br><span class="line">PUT _component_template/base_settings</span><br><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;template&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;settings&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;number_of_replicas&quot;</span><span class="punctuation">:</span> <span class="number">1</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;refresh_interval&quot;</span><span class="punctuation">:</span> <span class="string">&quot;5s&quot;</span></span><br><span class="line">    <span class="punctuation">&#125;</span></span><br><span class="line">  <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 積木二：通用 Mappings</span></span><br><span class="line">PUT _component_template/base_mappings</span><br><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;template&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;mappings&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;properties&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">        <span class="attr">&quot;@timestamp&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span> <span class="attr">&quot;type&quot;</span><span class="punctuation">:</span> <span class="string">&quot;date&quot;</span> <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;created_at&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span> <span class="attr">&quot;type&quot;</span><span class="punctuation">:</span> <span class="string">&quot;date&quot;</span><span class="punctuation">,</span> <span class="attr">&quot;format&quot;</span><span class="punctuation">:</span> <span class="string">&quot;yyyy-MM-dd HH:mm:ss||epoch_millis&quot;</span> <span class="punctuation">&#125;</span></span><br><span class="line">      <span class="punctuation">&#125;</span></span><br><span class="line">    <span class="punctuation">&#125;</span></span><br><span class="line">  <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 積木三：Logs 專用</span></span><br><span class="line">PUT _component_template/logs_mappings</span><br><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;template&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;mappings&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;dynamic&quot;</span><span class="punctuation">:</span> <span class="string">&quot;strict&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;properties&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">        <span class="attr">&quot;level&quot;</span><span class="punctuation">:</span>   <span class="punctuation">&#123;</span> <span class="attr">&quot;type&quot;</span><span class="punctuation">:</span> <span class="string">&quot;keyword&quot;</span> <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;message&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span> <span class="attr">&quot;type&quot;</span><span class="punctuation">:</span> <span class="string">&quot;text&quot;</span> <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;service&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span> <span class="attr">&quot;type&quot;</span><span class="punctuation">:</span> <span class="string">&quot;keyword&quot;</span> <span class="punctuation">&#125;</span></span><br><span class="line">      <span class="punctuation">&#125;</span></span><br><span class="line">    <span class="punctuation">&#125;</span></span><br><span class="line">  <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>組裝：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">PUT _index_template/logs_template</span><br><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;index_patterns&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span><span class="string">&quot;logs-*&quot;</span><span class="punctuation">]</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;priority&quot;</span><span class="punctuation">:</span> <span class="number">200</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;composed_of&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span><span class="string">&quot;base_settings&quot;</span><span class="punctuation">,</span> <span class="string">&quot;base_mappings&quot;</span><span class="punctuation">,</span> <span class="string">&quot;logs_mappings&quot;</span><span class="punctuation">]</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>另一套 Orders Index 只要換第三塊積木，通用的兩塊共用。DRY 原則在 Elasticsearch 也適用。</p>
+<p>想確認某個 Index 會套用哪些設定？用模擬 API：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">POST _index_template/_simulate_index/logs-test<span class="number">-2026</span></span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="改了-Template-不影響舊-Index"><a href="#改了-Template-不影響舊-Index" class="headerlink" title="改了 Template 不影響舊 Index"></a>改了 Template 不影響舊 Index</h2><p>這是最容易忘記的一件事：<strong>Template 只在建立 Index 時套用</strong>。</p>
+<p>你改了 Component Template 加了新欄位，已經存在的 Index 不會自動更新。要讓舊 Index 跟上，得手動 <code>PUT _mapping</code> 補欄位，或直接 Reindex。</p>
+<p>Template 是藍圖，不是遙控器。藍圖改了，已經蓋好的房子不會自己長出新的房間。</p>
+<hr>
+<h2 id="八條實戰準則"><a href="#八條實戰準則" class="headerlink" title="八條實戰準則"></a>八條實戰準則</h2><p>**1. 正式環境永遠 <code>dynamic: strict</code>**。開發環境可以 true，但 merge 前必須補齊 Explicit Mapping。</p>
+<p><strong>2. 字串欄位先想清楚</strong>。需要全文搜尋用 text，需要精確比對用 keyword。不確定就先 keyword——省空間，之後要加 text 還可以加。</p>
+<p>**3. 金額用 <code>scaled_float</code>**。<code>scaling_factor: 100</code>，用整數存「分」。float 的精度問題不值得冒險。</p>
+<p><strong>4. 陣列物件要跨欄位關聯就用 nested</strong>。不需要就用 object。nested 每個物件底層是一個 Lucene doc，一筆訂單 100 個品項 &#x3D; 101 個 doc，效能差距很大。</p>
+<p><strong>5. 日期支援多格式</strong>。<code>format</code> 用 <code>||</code> 分隔，前端後端格式不一致的時候不會炸。</p>
+<p><strong>6. 用 Component Template 做模組化</strong>。通用欄位（timestamp、created_at）抽成共用組件。</p>
+<p>**7. 不需搜尋的欄位設 <code>index: false</code>**。備註、電話這種存著但不需要搜的欄位，不索引就不佔空間。</p>
+<p><strong>8. Template 一定要設 priority</strong>。不同 priority 的 Template 匹配同一個 Index 時，高的贏。沒設 priority 會出不可預測的行為。</p>
+<hr>
+<p>Mapping 的本質是決策——在資料寫入之前，你就得想清楚每個欄位「是什麼」跟「要怎麼用」。Dynamic Mapping 把這個決策延後了，讓第一筆資料替你決定。問題是，第一筆資料不知道你的業務邏輯。</p>
+<p>Template 和 Component Template 則是把決策系統化——定義一次，之後所有符合 pattern 的 Index 自動繼承。改一塊積木，所有新 Index 同步更新。</p>
+<p>先決策、再寫入。先藍圖、再蓋房。資料工程跟蓋房子一樣，最貴的不是水泥，是改設計。</p>
+<blockquote>
+<p>參考來源：<a target="_blank" rel="noopener" href="https://www.elastic.co/guide/en/elasticsearch/reference/current/mapping.html">Elasticsearch 官方文件 — Mapping</a><br>參考來源：<a target="_blank" rel="noopener" href="https://www.elastic.co/guide/en/elasticsearch/reference/current/index-templates.html">Elasticsearch 官方文件 — Index Templates</a></p>
+</blockquote>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://mark22013333.github.io">Cheng®</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章連結: </span><span class="post-copyright-info"><a href="https://mark22013333.github.io/2026/05/04/Elasticsearch-%E8%B3%87%E6%96%99%E5%A1%91%E5%9E%8B-Mapping-Template-Component-Template/">https://mark22013333.github.io/2026/05/04/Elasticsearch-資料塑型-Mapping-Template-Component-Template/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版權聲明: </span><span class="post-copyright-info">本部落格所有文章除特別聲明外，均採用<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 授權協議。轉載請註明來源 <a href="https://mark22013333.github.io" target="_blank">Cheng's Tech & Life</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Elasticsearch/">Elasticsearch</a><a class="post-meta__tags" href="/tags/Mapping/">Mapping</a><a class="post-meta__tags" href="/tags/Template/">Template</a><a class="post-meta__tags" href="/tags/Schema/">Schema</a></div><div class="post-share"><div class="social-share" data-image="/img/20260504-01.webp" data-sites="facebook,x"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><div class="post-reward"><div class="reward-badges"><a class="sponsor-glow-btn" href="https://www.buymeacoffee.com/mark22013333" target="_blank" rel="noopener noreferrer" title="Buy Me A Coffee"><img src="https://img.shields.io/badge/Buy_Me_A_Coffee-FFDD00?style=for-the-badge&amp;logo=buy-me-a-coffee&amp;logoColor=black" alt="Buy Me A Coffee"/></a><a class="sponsor-glow-btn" href="https://p.ecpay.com.tw/EFC3F8F" target="_blank" rel="noopener noreferrer" title="綠界贊助"><img src="https://img.shields.io/badge/☕_%E8%AB%8B%E6%88%91%E5%96%9D%E6%9D%AF%E5%92%96%E5%95%A1-Donate-11998e?style=for-the-badge&amp;logo=coffee&amp;logoColor=white" alt="綠界贊助"/></a><a class="sponsor-glow-btn" href="https://calendly.com/markcheng00806-intumit/15min" target="_blank" rel="noopener noreferrer" title="預約時間"><img src="https://img.shields.io/badge/📅_%E9%A0%90%E7%B4%84_15_%E5%88%86%E9%90%98-Book_Time-0072ff?style=for-the-badge" alt="預約時間"/></a><p class="reward-badges-note">你的鼓勵將被轉換為我明天繼續加班的動力（真的）。 ❤️</p></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related full-width" href="/2026/05/04/Claude-Code-%E8%87%AA%E8%A8%82-Agent-%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8-%E7%94%A8-Markdown-%E6%89%93%E9%80%A0%E4%BD%A0%E7%9A%84%E5%B0%88%E5%B1%AC-AI-%E5%9C%98%E9%9A%8A/" title="Claude Code 自訂 Agent 完整教學 — 用 Markdown 打造你的專屬 AI 團隊"><img class="cover" src="/img/20260504-03.webp" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">Claude Code 自訂 Agent 完整教學 — 用 Markdown 打造你的專屬 AI 團隊</div></div><div class="info-2"><div class="info-item-1">你在公司裡遇到一個問題，不會直接叫全公司的人一起來看。你會找特定的人——資料庫有問題找 DBA、API 設計要討論找架構師、程式碼寫完找資深工程師 review。每個人有自己的專長、自己的看事情的角度、自己負責的範圍。 Claude Code 的自訂 Agent 就是同一件事。你用一份 Markdown 檔案定義一個 AI 隊友——它擅長什麼、能用什麼工具、遇到什麼情況該叫它出場。之後 Claude Code 會自動判斷什麼時候把任務委派給它。 不是「讓 AI 扮演某個角色」那種表演。是真的把工作拆開，讓不同的 agent 負責不同的事。  一份 Agent 檔案長什麼樣子打開 ~/.claude/agents/ 隨便看一個檔案，結構很簡單： 12345678910111213141516171819202122---name: code-reviewerdescription: &quot;程式碼品質審查。寫完 code 後自動觸發，檢查命名、錯誤處理、效能、安全。&quot;tools: Read, Bashmodel: sonnet---你是一位資深工程師，專門做 code...</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相關推薦</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2026/04/30/Elasticsearch-%E6%A0%B8%E5%BF%83%E6%9E%B6%E6%A7%8B%E8%88%87%E8%B3%87%E6%96%99%E5%84%B2%E5%AD%98%E5%A4%A7%E6%8F%AD%E7%A7%98-Node-Shard-Lucene/" title="Elasticsearch 核心架構與資料儲存大揭秘 — Node, Shard, Lucene"><img class="cover" src="/img/20260430-01.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-04-30</div><div class="info-item-2">Elasticsearch 核心架構與資料儲存大揭秘 — Node, Shard, Lucene</div></div><div class="info-2"><div class="info-item-1">上一篇教你怎麼開車——docker compose up、打幾個 API、搜到第一筆文件。這篇要打開引擎蓋，看裡面的引擎、變速箱、底盤是怎麼配合的。 為了不讓這件事變成讀規格書，我用鼎泰豐來比喻。 鼎泰豐集團是一個 Cluster。信義店、永康店、101 店是不同的 Node。每間店的菜單是一個 Index。菜單被切成好幾個工作台，每個工作台是一個 Shard。每個工作台上有一台料理機器人，那就是 Lucene。備份工作台是 Replica——如果永康店的工作台壞了，101 店的備份可以立刻頂上。 12345鼎泰豐集團 (Cluster)├── 信義分店 (Node - Master)     → 負責決策調度├── 永康分店 (Node - Data)       → P0, P1 (Primary Shards)├── 101 分店 (Node - Data)       → R0, R1 (Replica Shards)└── 外帶櫃台 (Node - Coordinating) → 接單、分配、彙整  接下來一個一個拆。  Cluster、Node、IndexCluste...</div></div></div></a><a class="pagination-related" href="/2026/05/03/Elasticsearch-%E6%96%87%E5%AD%97%E5%88%86%E6%9E%90%E8%88%87%E5%A4%9A%E8%AA%9E%E7%B3%BB%E9%AD%94%E6%B3%95-Analyzer-IK-%E4%B8%AD%E6%96%87%E6%90%9C%E5%B0%8B/" title="Elasticsearch 文字分析與多語系魔法 — Analyzer, IK, 中文搜尋"><img class="cover" src="/img/20260503-01.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-05-03</div><div class="info-item-2">Elasticsearch 文字分析與多語系魔法 — Analyzer, IK, 中文搜尋</div></div><div class="info-2"><div class="info-item-1">你打開搜尋框，輸入「小籠包」。系統回傳所有包含「小」、「籠」、「包」的結果——小學、鳥籠、背包全跑出來。 這不是 bug。這是你的搜尋引擎不會「讀中文」。 英文有空格，dog 就是 dog，切詞天生容易。中文沒有這種天然分隔符。「台北市政府捷運站」到底是「台北市 &#x2F; 政府 &#x2F; 捷運站」，還是「台 &#x2F; 北 &#x2F; 市 &#x2F; 政 &#x2F; 府 &#x2F; 捷 &#x2F; 運 &#x2F; 站」？Elasticsearch 預設的 standard analyzer 選了後者——逐字切，簡單粗暴，但搜尋品質慘不忍睹。 要讓搜尋引擎真正讀懂中文，得先搞懂 Analyzer 這條流水線。  洗衣店的三道工序Analyzer 的運作像一家洗衣店。髒衣服進來，經過三道工序，變成乾淨的衣服掛上架。文字進來，經過三道處理，變成可搜尋的 token 存入倒排索引。 第一道：Char Filter（預處理）。衣服進門先掃一遍——有沒有口袋裡忘了掏的衛生紙、有沒有掛在上面的名牌。對文字來說，就是去掉 HTML 標籤、替換特殊字元、用正則做初步清理。可以...</div></div></div></a><a class="pagination-related" href="/2026/04/29/Elasticsearch-%E5%BF%AB%E9%80%9F%E4%B8%8A%E6%89%8B%E8%88%87%E7%92%B0%E5%A2%83%E5%BB%BA%E7%BD%AE-Hello-Elastic/" title="Elasticsearch 快速上手與環境建置 — Hello Elastic"><img class="cover" src="/img/20260429-04.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-04-29</div><div class="info-item-2">Elasticsearch 快速上手與環境建置 — Hello Elastic</div></div><div class="info-2"><div class="info-item-1">你去過 Costco 嗎？100 萬件商品堆在倉庫裡，你要找一瓶特定的醬油。 用 MySQL 的 LIKE &#39;%醬油%&#39; 來找，等於從第一排貨架開始一排一排翻。Costco 那個面積，翻完天都黑了。但如果門口站了一個超級管理員，他記住了每個字出現在哪些商品上——你說「醬油」，他毫秒級回你：「C7 排第三層、D2 排第一層。」 Elasticsearch 就是那個超級管理員。底層用 Apache Lucene 的倒排索引（Inverted Index），把「每個詞 → 出現在哪些文件」這件事預先算好。搜尋的時候不是遍歷，是查表。 這是為什麼它快。快不是魔法，是資料結構。  從搜食譜到紐約上市ES 的起源是一段聽起來不太正經的故事。2004 年，Shay Banon 的老婆在學做菜，他想幫她建一個食譜搜尋工具。於是寫了 Compass——一個 Lucene 的 Java 封裝。 六年後他把 Compass 整個重寫，2010 年以 Elasticsearch 的名字開源。2012 年成立公司，2018 年在紐約證交所上市，股票代碼 ESTC。 中間幾個關鍵版本轉折： ...</div></div></div></a><a class="pagination-related" href="/2026/05/02/Elasticsearch-%E9%A7%AD%E5%AE%A2%E7%B4%9A%E7%9A%84%E5%BA%95%E5%B1%A4%E9%81%8B%E4%BD%9C%E5%8E%9F%E7%90%86-Indexing-Searching-Translog-Segment/" title="Elasticsearch 駭客級的底層運作原理 — Indexing, Searching, Translog, Segment"><img class="cover" src="/img/20260502-01.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-05-02</div><div class="info-item-2">Elasticsearch 駭客級的底層運作原理 — Indexing, Searching, Translog, Segment</div></div><div class="info-2"><div class="info-item-1">你打一行 POST /menu/_doc，ES 回你一個 201 Created。中間發生了什麼？ 如果你的回答是「存進去了」，那你只看到表面。從 HTTP 請求到資料真正可搜尋，中間至少經過六個階段、跨越記憶體和磁碟兩個世界。每個階段的設計決策都直接影響效能天花板。 今天把引擎蓋打開，逐個零件看。  寫入：一筆資料的旅程一筆文件從 client 送出到「可被搜尋」，經過的站點比大多數人想的多。 第一站：Coordinating Node 派工請求打到叢集中任一個 Node，這個 Node 自動成為本次請求的 Coordinating Node。它不存資料，只做一件事——算出這筆資料該去哪個 shard。 1shard_number = hash(routing) % number_of_primary_shards  routing 預設是文件的 _id，hash 用的是 MurmurHash3。為什麼不用 SHA-256？因為這裡不需要加密等級的安全性，只需要分布均勻且計算快。MurmurHash3 在這兩點上幾乎是最佳選擇。 Custom routing 有一個很實用的場景...</div></div></div></a><a class="pagination-related" href="/2026/05/01/Elasticsearch-%E8%B3%87%E6%96%99%E7%9A%84%E9%80%B2%E8%88%87%E5%87%BA-Data-In-Out-%E8%88%87-REST-API-%E5%A4%A7%E8%A3%9C%E5%B8%96/" title="Elasticsearch 資料的進與出 — Data In&#x2F;Out 與 REST API 大補帖"><img class="cover" src="/img/20260501-01.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-05-01</div><div class="info-item-2">Elasticsearch 資料的進與出 — Data In&#x2F;Out 與 REST API 大補帖</div></div><div class="info-2"><div class="info-item-1">你知道怎麼用 Google 搜尋，但你有沒有想過「搜尋引擎的資料是怎麼進去的」？ Google 有爬蟲。Elasticsearch 沒有——你得自己把資料餵進去。而且不只是餵進去就好，還得告訴它每筆資料長什麼樣、哪些欄位要能搜、哪些只要精確比對、哪些需要排序。 這就像開餐廳。菜單不是隨便一張紙——你得決定每道菜的名稱格式（文字還是編號）、價格精度（整數還是小數）、分類方式（依口味還是依烹飪法）。這些決定一旦做了就很難改，改了就得整本菜單重印。 Elasticsearch 的 Mapping 就是這本菜單的格式定義。今天從開菜單開始，教到點菜、上菜、換菜、退菜的全套流程。  開菜單：Index 建立與 Mapping建立一個 Index 等於在 Elasticsearch 裡開一本新菜單。最簡單的方式一行就搞定： 1PUT /menu  這樣 ES 會用預設值——1 個 primary shard、1 個 replica。正式環境通常要自己設： 12345678PUT /menu&#123;  &quot;settings&quot;: &#123;    &quot;number...</div></div></div></a></div></div><hr class="custom-hr"/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 評論</span></div></div><div class="comment-wrap"><div><div id="giscus-wrap"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="https://lh3.googleusercontent.com/pw/ABLVV87_po8nBc6F_tXcoYDmtzMGWxHuhhrbguYILCjmjWKLOS8DTpubm0YoQLKgjyjRIZyV5TjYe7XVEz_YU4squfr37GTZqPZP1hlMVZ_MIgXpTxWu73M=w1200" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">Cheng®</div><div class="author-info-description">Backend Developer / 技術筆記 & AI 新聞分享</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">198</div></a><a href="/tags/"><div class="headline">標籤</div><div class="length-num">245</div></a><a href="/categories/"><div class="headline">分類</div><div class="length-num">14</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/mark22013333"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons"><a class="social-icon" href="https://github.com/mark22013333" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:mark22013333@gmail.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a></div><div class="card-info-sponsor"><a class="sponsor-glow-btn" href="https://www.buymeacoffee.com/mark22013333" target="_blank" rel="noopener noreferrer" title="Buy Me A Coffee"><img src="https://img.shields.io/badge/Buy_Me_A_Coffee-FFDD00?style=for-the-badge&amp;logo=buy-me-a-coffee&amp;logoColor=black" alt="Buy Me A Coffee"/></a><a class="sponsor-glow-btn" href="https://p.ecpay.com.tw/EFC3F8F" target="_blank" rel="noopener noreferrer" title="綠界贊助"><img src="https://img.shields.io/badge/☕_%E8%AB%8B%E6%88%91%E5%96%9D%E6%9D%AF%E5%92%96%E5%95%A1-Donate-11998e?style=for-the-badge&amp;logo=coffee&amp;logoColor=white" alt="綠界贊助"/></a><a class="sponsor-glow-btn" href="https://calendly.com/markcheng00806-intumit/15min" target="_blank" rel="noopener noreferrer" title="預約時間"><img src="https://img.shields.io/badge/📅_%E9%A0%90%E7%B4%84_15_%E5%88%86%E9%90%98-Book_Time-0072ff?style=for-the-badge" alt="預約時間"/></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">這裡記錄我在後端開發路上踩過的坑、學到的東西，也會分享每日 AI 與科技新聞觀點。歡迎一起交流！</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目錄</span><span class="toc-percentage"></span></div><div class="toc-content is-expand"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Dynamic-Mapping%EF%BC%9A%E6%96%B9%E4%BE%BF%E7%9A%84%E7%B3%96%E8%A1%A3%EF%BC%8C%E5%8D%B1%E9%9A%AA%E7%9A%84%E7%82%B8%E5%BD%88"><span class="toc-number">1.</span> <span class="toc-text">Dynamic Mapping：方便的糖衣，危險的炸彈</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%94%E5%80%8B%E4%B8%80%E5%AE%9A%E6%9C%83%E7%88%86%E7%9A%84%E5%9C%B0%E9%9B%B7"><span class="toc-number">1.1.</span> <span class="toc-text">五個一定會爆的地雷</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9B%9B%E7%A8%AE%E6%8E%A7%E5%88%B6%E6%A8%A1%E5%BC%8F"><span class="toc-number">1.2.</span> <span class="toc-text">四種控制模式</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%89%8B%E5%8B%95-Mapping%EF%BC%9A%E6%AF%8F%E5%80%8B%E6%AC%84%E4%BD%8D%E6%83%B3%E6%B8%85%E6%A5%9A"><span class="toc-number">2.</span> <span class="toc-text">手動 Mapping：每個欄位想清楚</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9E%8B%E5%88%A5%E9%81%B8%E6%93%87%E9%80%9F%E6%9F%A5"><span class="toc-number">2.1.</span> <span class="toc-text">型別選擇速查</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%9C%81%E7%A9%BA%E9%96%93%E7%9A%84%E9%80%B2%E9%9A%8E%E5%8F%83%E6%95%B8"><span class="toc-number">2.2.</span> <span class="toc-text">省空間的進階參數</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Index-Template%EF%BC%9A%E4%B8%80%E6%AC%A1%E5%AE%9A%E7%BE%A9%EF%BC%8C%E8%87%AA%E5%8B%95%E5%A5%97%E7%94%A8"><span class="toc-number">3.</span> <span class="toc-text">Index Template：一次定義，自動套用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Component-Template%EF%BC%9A%E7%A9%8D%E6%9C%A8%E5%BC%8F%E7%9A%84%E6%A8%A1%E7%B5%84%E5%8C%96%E8%A8%AD%E8%A8%88"><span class="toc-number">4.</span> <span class="toc-text">Component Template：積木式的模組化設計</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%94%B9%E4%BA%86-Template-%E4%B8%8D%E5%BD%B1%E9%9F%BF%E8%88%8A-Index"><span class="toc-number">5.</span> <span class="toc-text">改了 Template 不影響舊 Index</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%AB%E6%A2%9D%E5%AF%A6%E6%88%B0%E6%BA%96%E5%89%87"><span class="toc-number">6.</span> <span class="toc-text">八條實戰準則</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2026/05/04/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260504/" title="AI 與科技新聞摘要 - 2026/05/04"><img src="/img/20260504-02.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="AI 與科技新聞摘要 - 2026/05/04"/></a><div class="content"><a class="title" href="/2026/05/04/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260504/" title="AI 與科技新聞摘要 - 2026/05/04">AI 與科技新聞摘要 - 2026/05/04</a><time datetime="2026-05-04T00:30:00.000Z" title="發表於 2026-05-04 08:30:00">2026-05-04</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/05/04/Claude-Code-%E8%87%AA%E8%A8%82-Agent-%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8-%E7%94%A8-Markdown-%E6%89%93%E9%80%A0%E4%BD%A0%E7%9A%84%E5%B0%88%E5%B1%AC-AI-%E5%9C%98%E9%9A%8A/" title="Claude Code 自訂 Agent 完整教學 — 用 Markdown 打造你的專屬 AI 團隊"><img src="/img/20260504-03.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Claude Code 自訂 Agent 完整教學 — 用 Markdown 打造你的專屬 AI 團隊"/></a><div class="content"><a class="title" href="/2026/05/04/Claude-Code-%E8%87%AA%E8%A8%82-Agent-%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8-%E7%94%A8-Markdown-%E6%89%93%E9%80%A0%E4%BD%A0%E7%9A%84%E5%B0%88%E5%B1%AC-AI-%E5%9C%98%E9%9A%8A/" title="Claude Code 自訂 Agent 完整教學 — 用 Markdown 打造你的專屬 AI 團隊">Claude Code 自訂 Agent 完整教學 — 用 Markdown 打造你的專屬 AI 團隊</a><time datetime="2026-05-04T00:30:00.000Z" title="發表於 2026-05-04 08:30:00">2026-05-04</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/05/04/Elasticsearch-%E8%B3%87%E6%96%99%E5%A1%91%E5%9E%8B-Mapping-Template-Component-Template/" title="Elasticsearch 資料塑型 — Mapping, Template, Component Template"><img src="/img/20260504-01.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Elasticsearch 資料塑型 — Mapping, Template, Component Template"/></a><div class="content"><a class="title" href="/2026/05/04/Elasticsearch-%E8%B3%87%E6%96%99%E5%A1%91%E5%9E%8B-Mapping-Template-Component-Template/" title="Elasticsearch 資料塑型 — Mapping, Template, Component Template">Elasticsearch 資料塑型 — Mapping, Template, Component Template</a><time datetime="2026-05-04T00:30:00.000Z" title="發表於 2026-05-04 08:30:00">2026-05-04</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/05/03/AI-%E6%9C%83%E5%8F%96%E4%BB%A3%E5%B7%A5%E7%A8%8B%E5%B8%AB%E5%97%8E-%E4%B8%80%E5%80%8B%E5%8F%B0%E7%81%A3%E8%BB%9F%E9%AB%94%E5%B7%A5%E7%A8%8B%E5%B8%AB%E7%9A%84-2026-%E5%B9%B4%E4%B8%AD%E8%A7%80%E5%AF%9F/" title="AI 會取代工程師嗎？一個台灣軟體工程師的 2026 年中觀察"><img src="/img/20260503-03.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="AI 會取代工程師嗎？一個台灣軟體工程師的 2026 年中觀察"/></a><div class="content"><a class="title" href="/2026/05/03/AI-%E6%9C%83%E5%8F%96%E4%BB%A3%E5%B7%A5%E7%A8%8B%E5%B8%AB%E5%97%8E-%E4%B8%80%E5%80%8B%E5%8F%B0%E7%81%A3%E8%BB%9F%E9%AB%94%E5%B7%A5%E7%A8%8B%E5%B8%AB%E7%9A%84-2026-%E5%B9%B4%E4%B8%AD%E8%A7%80%E5%AF%9F/" title="AI 會取代工程師嗎？一個台灣軟體工程師的 2026 年中觀察">AI 會取代工程師嗎？一個台灣軟體工程師的 2026 年中觀察</a><time datetime="2026-05-03T00:30:00.000Z" title="發表於 2026-05-03 08:30:00">2026-05-03</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/05/03/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260503/" title="AI 與科技新聞摘要 - 2026/05/03"><img src="/img/20260503-02.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="AI 與科技新聞摘要 - 2026/05/03"/></a><div class="content"><a class="title" href="/2026/05/03/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260503/" title="AI 與科技新聞摘要 - 2026/05/03">AI 與科技新聞摘要 - 2026/05/03</a><time datetime="2026-05-03T00:30:00.000Z" title="發表於 2026-05-03 08:30:00">2026-05-03</time></div></div></div></div></div></div></main><footer id="footer" style="background-image: url(/img/20260504-01.webp);"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2024 - 2026 By Cheng®</span></div><div class="footer_custom_text">Written by Cheng® — 自律，從當下的一念開始。</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="閱讀模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日夜模式切換"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="單欄和雙欄切換"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="設定"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目錄"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="前往評論"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到頂端"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.umd.min.js"></script><script src="https://cdn.jsdelivr.net/npm/instant.page/instantpage.min.js" type="module"></script><script src="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.js"></script><div class="js-pjax"><script>(() => {
+  const isShuoshuo = GLOBAL_CONFIG_SITE.pageType === 'shuoshuo'
+  const option = {"mapping":"pathname","strict":0,"reactionsEnabled":1,"emitMetadata":0,"inputPosition":"bottom","lang":"zh-TW"}
+
+  const getGiscusTheme = theme => theme === 'dark' ? 'dark' : 'light'
+
+  const createScriptElement = config => {
+    const ele = document.createElement('script')
+    Object.entries(config).forEach(([key, value]) => {
+      ele.setAttribute(key, value)
+    })
+    return ele
+  }
+
+  const loadGiscus = (el = document, key) => {
+    const mappingConfig = isShuoshuo
+      ? { 'data-mapping': 'specific', 'data-term': key }
+      : { 'data-mapping': (option && option['data-mapping']) || 'pathname' }
+
+    const giscusConfig = {
+      src: 'https://giscus.app/client.js',
+      'data-repo': 'mark22013333/mark22013333.github.io',
+      'data-repo-id': 'R_kgDOLAxa6A',
+      'data-category-id': 'DIC_kwDOLAxa6M4C5eO9',
+      'data-theme': getGiscusTheme(document.documentElement.getAttribute('data-theme')),
+      'data-reactions-enabled': '1',
+      crossorigin: 'anonymous',
+      async: true,
+      ...option,
+      ...mappingConfig
+    }
+
+    const scriptElement = createScriptElement(giscusConfig)
+
+    el.querySelector('#giscus-wrap').appendChild(scriptElement)
+
+    if (isShuoshuo) {
+      window.shuoshuoComment.destroyGiscus = () => {
+        if (el.children.length) {
+          el.innerHTML = ''
+          el.classList.add('no-comment')
+        }
+      }
+    }
+  }
+
+  const changeGiscusTheme = theme => {
+    const iframe = document.querySelector('#giscus-wrap iframe')
+    if (iframe) {
+      const message = {
+        giscus: {
+          setConfig: {
+            theme: getGiscusTheme(theme)
+          }
+        }
+      }
+      iframe.contentWindow.postMessage(message, 'https://giscus.app')
+    }
+  }
+
+  btf.addGlobalFn('themeChange', changeGiscusTheme, 'giscus')
+
+  if (isShuoshuo) {
+    'Giscus' === 'Giscus'
+      ? window.shuoshuoComment = { loadComment: loadGiscus }
+      : window.loadOtherComment = loadGiscus
+    return
+  }
+
+  if ('Giscus' === 'Giscus' || !true) {
+    if (true) btf.loadComment(document.getElementById('giscus-wrap'), loadGiscus)
+    else loadGiscus()
+  } else {
+    window.loadOtherComment = loadGiscus
+  }
+})()</script></div><script src="/js/kkbox-player.js"></script><script src="/js/archives-pagination.js"></script><script src="/js/font-resize.js"></script><script src="/js/dark-palette.js"></script><script defer="defer" id="fluttering_ribbon" mobile="false" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/canvas-fluttering-ribbon.min.js"></script><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/activate-power-mode.min.js"></script><script>POWERMODE.colorful = true;
+POWERMODE.shake = true;
+POWERMODE.mobile = true;
+document.body.addEventListener('input', POWERMODE);
+</script><script src="https://cdn.jsdelivr.net/npm/pjax/pjax.min.js" defer="defer"></script><script>document.addEventListener('DOMContentLoaded', () => {
+  const pjaxSelectors = ["meta[property=\"og:image\"]","meta[property=\"og:title\"]","meta[property=\"og:url\"]","meta[property=\"og:description\"]","link[rel=\"canonical\"]","head > title","#config-diff","#body-wrap","#rightside-config-hide","#rightside-config-show",".js-pjax"]
+
+  window.pjax = new Pjax({
+    elements: 'a:not([target="_blank"])',
+    selectors: pjaxSelectors,
+    cacheBust: false,
+    analytics: true,
+    scrollRestoration: false
+  })
+
+  const triggerPjaxFn = (val) => {
+    if (!val) return
+    Object.values(val).forEach(fn => {
+      try {
+        fn()
+      } catch (err) {
+        console.debug('Pjax callback failed:', err)
+      }
+    })
+  }
+
+  document.addEventListener('pjax:send', () => {
+    // removeEventListener
+    btf.removeGlobalFnEvent('pjaxSendOnce')
+    btf.removeGlobalFnEvent('themeChange')
+
+    // reset readmode
+    const $bodyClassList = document.body.classList
+    if ($bodyClassList.contains('read-mode')) $bodyClassList.remove('read-mode')
+
+    triggerPjaxFn(window.globalFn.pjaxSend)
+  })
+
+  document.addEventListener('pjax:complete', () => {
+    btf.removeGlobalFnEvent('pjaxCompleteOnce')
+    document.querySelectorAll('script[data-pjax]').forEach(item => {
+      const newScript = document.createElement('script')
+      const content = item.text || item.textContent || item.innerHTML || ""
+      Array.from(item.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value))
+      newScript.appendChild(document.createTextNode(content))
+      item.parentNode.replaceChild(newScript, item)
+    })
+
+    triggerPjaxFn(window.globalFn.pjaxComplete)
+  })
+
+  document.addEventListener('pjax:error', e => {
+    if (e.request.status === 404) {
+      true
+        ? pjax.loadUrl('/404.html')
+        : window.location.href = e.request.responseURL
+    }
+  })
+})</script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜尋</span><i class="fas fa-spinner fa-pulse" id="loading-status" hidden="hidden"></i><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="text-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  資料載入中</span></div><div class="local-search-input"><input placeholder="搜尋文章" type="text"/></div><hr/><div id="local-search-results"></div><div class="ais-Pagination" id="local-search-pagination" style="display:none;"><ul class="ais-Pagination-list"></ul></div><div id="local-search-stats"></div></div><div id="search-mask"></div><script src="/js/search/local-search.js"></script></div></div></body></html>
