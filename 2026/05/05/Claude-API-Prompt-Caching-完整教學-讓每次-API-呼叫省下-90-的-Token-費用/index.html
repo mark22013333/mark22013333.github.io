@@ -1,0 +1,562 @@
+<!DOCTYPE html><html lang="zh-TW" data-theme="dark"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>Claude API Prompt Caching 完整教學 — 讓每次 API 呼叫省下 90% 的 Token 費用 | Cheng's Tech &amp; Life</title><meta name="author" content="Cheng®"><meta name="copyright" content="Cheng®"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#0d0d0d"><meta name="description" content="你的 system prompt 有 8,000 tokens，每次 API 呼叫都重新處理一遍。Prompt Caching 讓第二次開始只花十分之一的錢。兩行程式碼的事。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Claude API Prompt Caching 完整教學 — 讓每次 API 呼叫省下 90% 的 Token 費用">
+<meta property="og:url" content="https://mark22013333.github.io/2026/05/05/Claude-API-Prompt-Caching-%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8-%E8%AE%93%E6%AF%8F%E6%AC%A1-API-%E5%91%BC%E5%8F%AB%E7%9C%81%E4%B8%8B-90-%E7%9A%84-Token-%E8%B2%BB%E7%94%A8/index.html">
+<meta property="og:site_name" content="Cheng&#39;s Tech &amp; Life">
+<meta property="og:description" content="你的 system prompt 有 8,000 tokens，每次 API 呼叫都重新處理一遍。Prompt Caching 讓第二次開始只花十分之一的錢。兩行程式碼的事。">
+<meta property="og:locale" content="zh_TW">
+<meta property="og:image" content="https://mark22013333.github.io/img/20260505-03.webp">
+<meta property="article:published_time" content="2026-05-05T00:30:00.000Z">
+<meta property="article:modified_time" content="2026-05-06T03:05:37.670Z">
+<meta property="article:author" content="Cheng®">
+<meta property="article:tag" content="Claude API">
+<meta property="article:tag" content="Prompt Caching">
+<meta property="article:tag" content="Anthropic SDK">
+<meta property="article:tag" content="成本優化">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://mark22013333.github.io/img/20260505-03.webp"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Claude API Prompt Caching 完整教學 — 讓每次 API 呼叫省下 90% 的 Token 費用",
+  "url": "https://mark22013333.github.io/2026/05/05/Claude-API-Prompt-Caching-%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8-%E8%AE%93%E6%AF%8F%E6%AC%A1-API-%E5%91%BC%E5%8F%AB%E7%9C%81%E4%B8%8B-90-%E7%9A%84-Token-%E8%B2%BB%E7%94%A8/",
+  "image": "https://mark22013333.github.io/img/20260505-03.webp",
+  "datePublished": "2026-05-05T00:30:00.000Z",
+  "dateModified": "2026-05-06T03:05:37.670Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "Cheng®",
+      "url": "https://mark22013333.github.io"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://mark22013333.github.io/2026/05/05/Claude-API-Prompt-Caching-%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8-%E8%AE%93%E6%AF%8F%E6%AC%A1-API-%E5%91%BC%E5%8F%AB%E7%9C%81%E4%B8%8B-90-%E7%9A%84-Token-%E8%B2%BB%E7%94%A8/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//www.google-analytics.com" crossorigin=""/><link rel="preconnect" href="//fonts.googleapis.com" crossorigin=""/><link rel="preconnect" href="//busuanzi.ibruce.info"/><meta name="google-site-verification" content="6ywUr8k2n_CT1PFYJzlSvI3CZ-JmJ55RYbA39VrFBDs"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!true && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          const hour = new Date().getHours()
+          const isNight = hour <= 9 || hour >= 18
+          if (theme === undefined) isNight ? activateDarkMode() : activateLightMode()
+          else theme === 'light' ? activateLightMode() : activateDarkMode()
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script async="async" src="https://www.googletagmanager.com/gtag/js?id=G-JBV14NRDH3"></script><script>window.dataLayer = window.dataLayer || []
+function gtag(){dataLayer.push(arguments)}
+gtag('js', new Date())
+gtag('config', 'G-JBV14NRDH3')
+btf.addGlobalFn('pjaxComplete', () => {
+  gtag('config', 'G-JBV14NRDH3', {'page_path': window.location.pathname})
+}, 'google_analytics')
+</script><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Titillium+Web&amp;display=swap" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"pagination":{"enable":false,"hitsPerPage":8},"languages":{"hits_empty":"找不到符合您查詢的內容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '複製成功',
+    error: '複製失敗',
+    noSupport: '瀏覽器不支援'
+  },
+  relativeDate: {
+    homepage: false,
+    post: true
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '剛剛',
+    min: '分鐘前',
+    hour: '小時前',
+    day: '天前',
+    month: '個月前'
+  },
+  copyright: {"limitCount":1,"languages":{"author":"作者: Cheng®","link":"連結: ","source":"來源: Cheng's Tech & Life","info":"著作權歸作者所有。如需商業轉載，請聯絡作者獲得授權，非商業轉載請註明出處😁。"}},
+  lightbox: 'fancybox',
+  Snackbar: {"chs_to_cht":"已切換為繁體中文","cht_to_chs":"已切換為簡體中文","day_to_night":"已切換為深色模式","night_to_day":"已切換為淺色模式","bgLight":"#49b1f5","bgDark":"#1f1f1f","position":"top-center"},
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid/dist/infinitegrid.min.js',
+    buttonText: '載入更多'
+  },
+  isPhotoFigcaption: true,
+  islazyloadPlugin: false,
+  isAnchor: true,
+  percent: {
+    toc: true,
+    rightside: true,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Claude API Prompt Caching 完整教學 — 讓每次 API 呼叫省下 90% 的 Token 費用',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><link rel="stylesheet" href="/css/kkbox-player.css"><link rel="stylesheet" href="/css/tag-cloud-fancy.css"><link rel="stylesheet" href="/css/font-resize.css"><link rel="stylesheet" href="/css/dark-palette.css"><link rel="stylesheet" href="/css/loading-override.css"><link rel="alternate" href="/atom.xml" title="Cheng's Tech & Life" type="application/atom+xml">
+</head><body><div id="loading-box"><div class="loading-glass-overlay"></div><div class="loading-indicator"><div class="loading-dot"></div><div class="loading-dot"></div><div class="loading-dot"></div></div></div><script>(()=>{
+  const $loadingBox = document.getElementById('loading-box')
+  const $body = document.body
+  const preloader = {
+    endLoading: () => {
+      if ($loadingBox.classList.contains('loaded')) return
+      $body.style.overflow = ''
+      $loadingBox.classList.add('loaded')
+    },
+    initLoading: () => {
+      $body.style.overflow = 'hidden'
+      $loadingBox.classList.remove('loaded')
+    }
+  }
+
+  preloader.initLoading()
+
+  if (document.readyState === 'complete') {
+    preloader.endLoading()
+  } else {
+    window.addEventListener('load', preloader.endLoading)
+    document.addEventListener('DOMContentLoaded', preloader.endLoading)
+    setTimeout(preloader.endLoading, 7000)
+  }
+
+  if (true) {
+    btf.addGlobalFn('pjaxSend', preloader.initLoading, 'preloader_init')
+    btf.addGlobalFn('pjaxComplete', preloader.endLoading, 'preloader_end')
+  }
+})()</script><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="https://lh3.googleusercontent.com/pw/ABLVV87_po8nBc6F_tXcoYDmtzMGWxHuhhrbguYILCjmjWKLOS8DTpubm0YoQLKgjyjRIZyV5TjYe7XVEz_YU4squfr37GTZqPZP1hlMVZ_MIgXpTxWu73M=w1200" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">201</div></a><a href="/tags/"><div class="headline">標籤</div><div class="length-num">254</div></a><a href="/categories/"><div class="headline">分類</div><div class="length-num">14</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首頁-Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 時間軸-archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 標籤-tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分類-Categories</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-list"></i><span> 其他列表</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音樂-Music</span></a></li><li><a class="site-page child" href="/gallery/"><i class="fa-fw fas fa-images"></i><span> 畫館-Gallery</span></a></li></ul></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg fixed" id="page-header" style="background-image: url(/img/20260505-03.webp);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><img class="site-icon" src="https://lh3.googleusercontent.com/pw/ABLVV87_po8nBc6F_tXcoYDmtzMGWxHuhhrbguYILCjmjWKLOS8DTpubm0YoQLKgjyjRIZyV5TjYe7XVEz_YU4squfr37GTZqPZP1hlMVZ_MIgXpTxWu73M=w1200" alt="Logo"><span class="site-name">Cheng's Tech &amp; Life</span></a><a class="nav-page-title" href="/"><span class="site-name">Claude API Prompt Caching 完整教學 — 讓每次 API 呼叫省下 90% 的 Token 費用</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首頁</span></span></a></span><div id="menus"><div id="search-button" title="Ctrl+K / Cmd+K"><span class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜尋</span></span></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首頁-Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 時間軸-archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 標籤-tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分類-Categories</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-list"></i><span> 其他列表</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音樂-Music</span></a></li><li><a class="site-page child" href="/gallery/"><i class="fa-fw fas fa-images"></i><span> 畫館-Gallery</span></a></li></ul></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">Claude API Prompt Caching 完整教學 — 讓每次 API 呼叫省下 90% 的 Token 費用</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">發表於</span><time class="post-meta-date-created" datetime="2026-05-05T00:30:00.000Z" title="發表於 2026-05-05 08:30:00">2026-05-05</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新於</span><time class="post-meta-date-updated" datetime="2026-05-06T03:05:37.670Z" title="更新於 2026-05-06 11:05:37">2026-05-06</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Claude-Code/">Claude Code</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">總字數:</span><span class="word-count">3.4k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">閱讀時間:</span><span>12分鐘</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">瀏覽量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><p>一家餐廳，午餐時間固定賣三種定食。每天中午一到，廚師不是從零開始切菜——白飯已經煮好、味噌湯底已經熬好、配菜已經備好。客人點餐的時候，廚師只需要處理主菜那一道，30 秒出餐。</p>
+<p>如果每一份定食都從洗米煮飯開始做，一份要 15 分鐘。</p>
+<p>Prompt Caching 就是 API 呼叫的備料。你的 system prompt、工具定義、前幾輪對話——這些每次都一樣的東西，處理一次就好，之後直接用。不用每次都重新「煮」。</p>
+<p>省多少？**90%**。不是寫錯，是九成。</p>
+<hr>
+<h2 id="問題出在哪：每次呼叫都在重複做同一件事"><a href="#問題出在哪：每次呼叫都在重複做同一件事" class="headerlink" title="問題出在哪：每次呼叫都在重複做同一件事"></a>問題出在哪：每次呼叫都在重複做同一件事</h2><p>用 Claude API 寫一個 chatbot，通常會這樣設定：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">response = client.messages.create(</span><br><span class="line">    model=<span class="string">&quot;claude-opus-4-7&quot;</span>,</span><br><span class="line">    max_tokens=<span class="number">1024</span>,</span><br><span class="line">    system=<span class="string">&quot;你是一個專業的客服助理，以下是公司政策文件...(8000 tokens)&quot;</span>,</span><br><span class="line">    tools=[...],  <span class="comment"># 工具定義，2000 tokens</span></span><br><span class="line">    messages=[</span><br><span class="line">        <span class="comment"># 前 10 輪對話，5000 tokens</span></span><br><span class="line">        &#123;<span class="string">&quot;role&quot;</span>: <span class="string">&quot;user&quot;</span>, <span class="string">&quot;content&quot;</span>: <span class="string">&quot;前面的問題...&quot;</span>&#125;,</span><br><span class="line">        &#123;<span class="string">&quot;role&quot;</span>: <span class="string">&quot;assistant&quot;</span>, <span class="string">&quot;content&quot;</span>: <span class="string">&quot;前面的回答...&quot;</span>&#125;,</span><br><span class="line">        <span class="comment"># ...</span></span><br><span class="line">        &#123;<span class="string">&quot;role&quot;</span>: <span class="string">&quot;user&quot;</span>, <span class="string">&quot;content&quot;</span>: <span class="string">&quot;我的新問題&quot;</span>&#125;  <span class="comment"># 100 tokens</span></span><br><span class="line">    ]</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<p>每次使用者發一條新訊息，你送出的 request 裡有 15,100 tokens。其中 15,000 tokens 跟上一次一模一樣——system prompt、工具定義、歷史對話都沒變。只有最後 100 tokens 是新的。</p>
+<p>但 API 照樣收你 15,100 tokens 的錢。每一次。</p>
+<p>如果你的 chatbot 一天處理 10,000 次對話，每次平均 10 輪——那是 100,000 次 API 呼叫。其中 99% 的 input tokens 是重複的。</p>
+<p>這就是 Prompt Caching 要解決的事。</p>
+<hr>
+<h2 id="兩行程式碼搞定：自動快取"><a href="#兩行程式碼搞定：自動快取" class="headerlink" title="兩行程式碼搞定：自動快取"></a>兩行程式碼搞定：自動快取</h2><p>最簡單的用法，加一個參數就好：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> anthropic</span><br><span class="line"></span><br><span class="line">client = anthropic.Anthropic()</span><br><span class="line"></span><br><span class="line">response = client.messages.create(</span><br><span class="line">    model=<span class="string">&quot;claude-opus-4-7&quot;</span>,</span><br><span class="line">    max_tokens=<span class="number">1024</span>,</span><br><span class="line">    cache_control=&#123;<span class="string">&quot;type&quot;</span>: <span class="string">&quot;ephemeral&quot;</span>&#125;,  <span class="comment"># 就這一行</span></span><br><span class="line">    system=<span class="string">&quot;你是一個專業的客服助理...(8000 tokens 的政策文件)&quot;</span>,</span><br><span class="line">    messages=[</span><br><span class="line">        &#123;<span class="string">&quot;role&quot;</span>: <span class="string">&quot;user&quot;</span>, <span class="string">&quot;content&quot;</span>: <span class="string">&quot;我的訂單 #12345 到哪了？&quot;</span>&#125;</span><br><span class="line">    ]</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(response.usage)</span><br></pre></td></tr></table></figure>
+
+<p>TypeScript 版本：</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> response = <span class="keyword">await</span> client.<span class="property">messages</span>.<span class="title function_">create</span>(&#123;</span><br><span class="line">  <span class="attr">model</span>: <span class="string">&quot;claude-opus-4-7&quot;</span>,</span><br><span class="line">  <span class="attr">max_tokens</span>: <span class="number">1024</span>,</span><br><span class="line">  <span class="attr">cache_control</span>: &#123; <span class="attr">type</span>: <span class="string">&quot;ephemeral&quot;</span> &#125;,</span><br><span class="line">  <span class="attr">system</span>: <span class="string">&quot;你是一個專業的客服助理...&quot;</span>,</span><br><span class="line">  <span class="attr">messages</span>: [</span><br><span class="line">    &#123; <span class="attr">role</span>: <span class="string">&quot;user&quot;</span>, <span class="attr">content</span>: <span class="string">&quot;我的訂單 #12345 到哪了？&quot;</span> &#125;</span><br><span class="line">  ],</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(response.<span class="property">usage</span>);</span><br></pre></td></tr></table></figure>
+
+<p>設了 <code>cache_control</code> 之後，Claude 會自動在最後一個可快取的 block 上設定 breakpoint。第一次呼叫照常處理（還會多花一點寫入快取的成本）。第二次呼叫如果前綴一樣，快取命中，那段 tokens 的費用直接打一折。</p>
+<p>回傳的 <code>usage</code> 會告訴你快取的狀況：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;input_tokens&quot;</span><span class="punctuation">:</span> <span class="number">50</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;cache_read_input_tokens&quot;</span><span class="punctuation">:</span> <span class="number">10000</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;cache_creation_input_tokens&quot;</span><span class="punctuation">:</span> <span class="number">0</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;output_tokens&quot;</span><span class="punctuation">:</span> <span class="number">200</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p><code>cache_read_input_tokens: 10000</code> 代表有一萬個 tokens 是從快取讀的。這一萬個 tokens 的費用是正常價的十分之一。</p>
+<hr>
+<h2 id="精確控制：手動設定-Breakpoint"><a href="#精確控制：手動設定-Breakpoint" class="headerlink" title="精確控制：手動設定 Breakpoint"></a>精確控制：手動設定 Breakpoint</h2><p>自動快取很方便，但有時候你需要更精確的控制。比如你的 prompt 裡有三段不同更新頻率的內容：</p>
+<ul>
+<li><strong>工具定義</strong>：幾乎不變</li>
+<li><strong>System prompt + 公司政策</strong>：每週更新一次</li>
+<li><strong>對話歷史</strong>：每次都在變</li>
+</ul>
+<p>這時候用手動 breakpoint，最多可以設 4 個：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">response = client.messages.create(</span><br><span class="line">    model=<span class="string">&quot;claude-opus-4-7&quot;</span>,</span><br><span class="line">    max_tokens=<span class="number">1024</span>,</span><br><span class="line">    tools=[</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="string">&quot;name&quot;</span>: <span class="string">&quot;get_order_status&quot;</span>,</span><br><span class="line">            <span class="string">&quot;description&quot;</span>: <span class="string">&quot;查詢訂單狀態&quot;</span>,</span><br><span class="line">            <span class="string">&quot;input_schema&quot;</span>: &#123;</span><br><span class="line">                <span class="string">&quot;type&quot;</span>: <span class="string">&quot;object&quot;</span>,</span><br><span class="line">                <span class="string">&quot;properties&quot;</span>: &#123;</span><br><span class="line">                    <span class="string">&quot;order_id&quot;</span>: &#123;<span class="string">&quot;type&quot;</span>: <span class="string">&quot;string&quot;</span>&#125;</span><br><span class="line">                &#125;,</span><br><span class="line">                <span class="string">&quot;required&quot;</span>: [<span class="string">&quot;order_id&quot;</span>]</span><br><span class="line">            &#125;,</span><br><span class="line">            <span class="string">&quot;cache_control&quot;</span>: &#123;<span class="string">&quot;type&quot;</span>: <span class="string">&quot;ephemeral&quot;</span>&#125;  <span class="comment"># breakpoint 1</span></span><br><span class="line">        &#125;</span><br><span class="line">    ],</span><br><span class="line">    system=[</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="string">&quot;type&quot;</span>: <span class="string">&quot;text&quot;</span>,</span><br><span class="line">            <span class="string">&quot;text&quot;</span>: <span class="string">&quot;你是一個專業客服助理。以下是完整的公司政策...&quot;</span>,</span><br><span class="line">            <span class="string">&quot;cache_control&quot;</span>: &#123;<span class="string">&quot;type&quot;</span>: <span class="string">&quot;ephemeral&quot;</span>&#125;  <span class="comment"># breakpoint 2</span></span><br><span class="line">        &#125;</span><br><span class="line">    ],</span><br><span class="line">    messages=[</span><br><span class="line">        &#123;<span class="string">&quot;role&quot;</span>: <span class="string">&quot;user&quot;</span>, <span class="string">&quot;content&quot;</span>: <span class="string">&quot;我的訂單到哪了？&quot;</span>&#125;</span><br><span class="line">    ]</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<p>層級結構很重要：<code>tools</code> → <code>system</code> → <code>messages</code>。如果你改了 tools 裡的定義，system 和 messages 的快取全部失效。如果只改了 messages，tools 和 system 的快取繼續用。</p>
+<p>這跟餐廳備料的邏輯一樣——你改了味噌湯的配方，所有用到味噌湯的定食都得重做。但你只是換了主菜的魚，白飯和味噌湯不受影響。</p>
+<hr>
+<h2 id="價格拆解：什麼時候省、什麼時候虧"><a href="#價格拆解：什麼時候省、什麼時候虧" class="headerlink" title="價格拆解：什麼時候省、什麼時候虧"></a>價格拆解：什麼時候省、什麼時候虧</h2><p>以 Claude Opus 4.7 為例（每百萬 tokens）：</p>
+<table>
+<thead>
+<tr>
+<th>類型</th>
+<th>價格</th>
+<th>相對基準</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>基礎 input</td>
+<td>$5.00</td>
+<td>1×</td>
+</tr>
+<tr>
+<td>5 分鐘快取寫入</td>
+<td>$6.25</td>
+<td>1.25×</td>
+</tr>
+<tr>
+<td>1 小時快取寫入</td>
+<td>$10.00</td>
+<td>2×</td>
+</tr>
+<tr>
+<td>快取讀取</td>
+<td>$0.50</td>
+<td><strong>0.1×</strong></td>
+</tr>
+</tbody></table>
+<p>寫入比正常貴 25%，但讀取只要十分之一。所以損益平衡點是：<strong>快取被讀取超過 1.39 次就開始省錢</strong>。</p>
+<p>算一下具體數字。一個有 10,000 tokens system prompt 的 chatbot：</p>
+<ul>
+<li><strong>不用快取</strong>：每次呼叫 input 成本 &#x3D; 10,000 × $5 &#x2F; 1M &#x3D; $0.05</li>
+<li><strong>第 1 次呼叫</strong>（快取寫入）：10,000 × $6.25 &#x2F; 1M &#x3D; $0.0625</li>
+<li><strong>第 2 次開始</strong>（快取讀取）：10,000 × $0.50 &#x2F; 1M &#x3D; $0.005</li>
+</ul>
+<p>第一次多花了 $0.0125（25% 溢價），第二次開始每次省 $0.045（90% 折扣）。用不到兩次就回本了。如果這個 chatbot 5 分鐘內有 100 次對話，光快取讀取就省了 $4.50。</p>
+<p>乘以一天、一週、一個月，數字會大到讓你後悔為什麼不早用。</p>
+<p><strong>Sonnet 4.6 更便宜：</strong></p>
+<table>
+<thead>
+<tr>
+<th>類型</th>
+<th>價格</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>基礎 input</td>
+<td>$3.00</td>
+</tr>
+<tr>
+<td>快取寫入</td>
+<td>$3.75</td>
+</tr>
+<tr>
+<td>快取讀取</td>
+<td>$0.30</td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="快取的有效期：5-分鐘，或-1-小時"><a href="#快取的有效期：5-分鐘，或-1-小時" class="headerlink" title="快取的有效期：5 分鐘，或 1 小時"></a>快取的有效期：5 分鐘，或 1 小時</h2><p>預設快取活 5 分鐘。每次被讀取會重置倒數計時——所以只要每 5 分鐘內至少有一次呼叫，快取就一直活著。</p>
+<p>如果你的使用場景是「偶爾用、但不到每 5 分鐘一次」，可以用 1 小時快取：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">response = client.messages.create(</span><br><span class="line">    model=<span class="string">&quot;claude-opus-4-7&quot;</span>,</span><br><span class="line">    max_tokens=<span class="number">1024</span>,</span><br><span class="line">    cache_control=&#123;</span><br><span class="line">        <span class="string">&quot;type&quot;</span>: <span class="string">&quot;ephemeral&quot;</span>,</span><br><span class="line">        <span class="string">&quot;ttl&quot;</span>: <span class="string">&quot;1h&quot;</span>  <span class="comment"># 1 小時快取</span></span><br><span class="line">    &#125;,</span><br><span class="line">    system=<span class="string">&quot;你的超長 system prompt...&quot;</span>,</span><br><span class="line">    messages=[&#123;<span class="string">&quot;role&quot;</span>: <span class="string">&quot;user&quot;</span>, <span class="string">&quot;content&quot;</span>: <span class="string">&quot;問題&quot;</span>&#125;]</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<p>1 小時快取的寫入成本是 2×（正常的兩倍），但讀取成本跟 5 分鐘快取一樣是 0.1×。適合內部工具、每小時用幾次的 AI 助理。</p>
+<p>重要限制：混用 TTL 時，1 小時快取必須放在 5 分鐘快取之前。</p>
+<hr>
+<h2 id="Pre-warming：消除第一次呼叫的延遲"><a href="#Pre-warming：消除第一次呼叫的延遲" class="headerlink" title="Pre-warming：消除第一次呼叫的延遲"></a>Pre-warming：消除第一次呼叫的延遲</h2><p>第一次呼叫（cache miss）需要處理完整 prompt，延遲比較高。如果你知道使用者「快來了」，可以先暖機：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">prewarm = client.messages.create(</span><br><span class="line">    model=<span class="string">&quot;claude-opus-4-7&quot;</span>,</span><br><span class="line">    max_tokens=<span class="number">0</span>,  <span class="comment"># 不需要回覆，只要建立快取</span></span><br><span class="line">    system=[</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="string">&quot;type&quot;</span>: <span class="string">&quot;text&quot;</span>,</span><br><span class="line">            <span class="string">&quot;text&quot;</span>: <span class="string">&quot;你的 system prompt...(10000 tokens)&quot;</span>,</span><br><span class="line">            <span class="string">&quot;cache_control&quot;</span>: &#123;<span class="string">&quot;type&quot;</span>: <span class="string">&quot;ephemeral&quot;</span>&#125;</span><br><span class="line">        &#125;</span><br><span class="line">    ],</span><br><span class="line">    messages=[&#123;<span class="string">&quot;role&quot;</span>: <span class="string">&quot;user&quot;</span>, <span class="string">&quot;content&quot;</span>: <span class="string">&quot;warmup&quot;</span>&#125;]</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<p><code>max_tokens: 0</code> 告訴 Claude「我不需要你回答，只要把 prompt 處理完存進快取」。使用者真正開始問問題的時候，快取已經熱了，第一次呼叫就是 cache hit。</p>
+<p>這招特別適合：</p>
+<ul>
+<li>部署後的第一個使用者不用等</li>
+<li>排程服務每隔幾分鐘暖一次，保持快取活躍</li>
+<li>流量高峰前預先建立快取</li>
+</ul>
+<hr>
+<h2 id="最低-Token-門檻"><a href="#最低-Token-門檻" class="headerlink" title="最低 Token 門檻"></a>最低 Token 門檻</h2><p>不是所有 prompt 都能被快取。每個模型有最低 token 數要求：</p>
+<table>
+<thead>
+<tr>
+<th>模型</th>
+<th>最低 tokens</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Opus 4.7 &#x2F; 4.6 &#x2F; 4.5、Haiku 4.5</td>
+<td>4,096</td>
+</tr>
+<tr>
+<td>Sonnet 4.6、Haiku 3.5</td>
+<td>2,048</td>
+</tr>
+<tr>
+<td>Sonnet 4.5 &#x2F; 4、Opus 4.1 &#x2F; 4</td>
+<td>1,024</td>
+</tr>
+</tbody></table>
+<p>低於門檻的 prompt 不會報錯，只是默默不快取。所以如果你的 system prompt 只有 500 tokens，加了 <code>cache_control</code> 也不會有效果。</p>
+<p>解法：把工具定義、few-shot examples、參考文件等固定內容塞進 system prompt，湊到門檻以上。這些內容本來就適合放在 prompt 前面，一舉兩得。</p>
+<hr>
+<h2 id="快取失效：哪些改動會讓快取爆掉"><a href="#快取失效：哪些改動會讓快取爆掉" class="headerlink" title="快取失效：哪些改動會讓快取爆掉"></a>快取失效：哪些改動會讓快取爆掉</h2><p>快取的邏輯是「前綴比對」——從頭開始比，遇到第一個不一樣的地方就停。所以：</p>
+<ul>
+<li><strong>改了 tools</strong> → tools、system、messages 的快取全部失效</li>
+<li><strong>改了 system</strong> → system 和 messages 失效，tools 的快取還在</li>
+<li><strong>改了 messages</strong> → 只有 messages 失效</li>
+</ul>
+<p>還有幾個隱藏的地雷：</p>
+<ul>
+<li><strong>tool_choice 改了</strong> → tools 快取 OK，但 system 和 messages 失效</li>
+<li><strong>thinking 參數改了</strong> → system 和 messages 失效</li>
+<li><strong>圖片增減</strong> → system 和 messages 失效</li>
+<li><strong>JSON key 順序不穩定</strong> → 某些程式語言的 dict&#x2F;map 不保證順序，每次 request 的 tools JSON 可能長不一樣，快取永遠 miss</li>
+</ul>
+<p>最後那個踩過的人都知道痛。Python 3.7+ 的 dict 有保序，但如果你用某些 JSON serializer 或其他語言，key 順序可能每次不同。快取命中率離奇低的時候，先檢查這個。</p>
+<hr>
+<h2 id="多輪對話的快取策略"><a href="#多輪對話的快取策略" class="headerlink" title="多輪對話的快取策略"></a>多輪對話的快取策略</h2><p>對話越長，快取越重要。10 輪對話累積下來可能有幾萬個 tokens，每次只新增幾百。</p>
+<p>自動快取在這裡表現很好——它會自動把 breakpoint 往前推，確保前面的對話歷史被快取：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">Request 1: System + User(1) [cache]</span><br><span class="line">→ 寫入快取</span><br><span class="line"></span><br><span class="line">Request 2: System + User(1) + Asst(1) + User(2) [cache]</span><br><span class="line">→ System~User(1) 從快取讀，Asst(1)+User(2) 寫入新快取</span><br><span class="line"></span><br><span class="line">Request 3: System + User(1) + Asst(1) + User(2) + Asst(2) + User(3) [cache]</span><br><span class="line">→ System~User(2) 從快取讀，Asst(2)+User(3) 寫入新快取</span><br></pre></td></tr></table></figure>
+
+<p>每次只有最新的幾百 tokens 需要重新處理，前面的幾萬 tokens 都走快取。</p>
+<p>一個注意點：快取系統有 <strong>20 block 回溯限制</strong>。如果對話超過 20 個 block（大概 10 輪），早期的快取可能會掉出回溯窗口。解法是在中間手動加一個 breakpoint。</p>
+<hr>
+<h2 id="實戰範例：RAG-系統的快取優化"><a href="#實戰範例：RAG-系統的快取優化" class="headerlink" title="實戰範例：RAG 系統的快取優化"></a>實戰範例：RAG 系統的快取優化</h2><p>RAG 架構最適合用快取。一個典型的 RAG prompt 結構：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">system_prompt = <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">你是公司的內部知識助理。</span></span><br><span class="line"><span class="string">以下是相關文件內容：</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">&#123;retrieved_documents&#125;  # 每次檢索結果不同，5000-20000 tokens</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>問題來了——檢索結果每次都不同，system prompt 不是固定的，快取命中率會很低。</p>
+<p>更好的做法是把固定和動態的部分分開：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">response = client.messages.create(</span><br><span class="line">    model=<span class="string">&quot;claude-sonnet-4-6&quot;</span>,</span><br><span class="line">    max_tokens=<span class="number">1024</span>,</span><br><span class="line">    system=[</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="string">&quot;type&quot;</span>: <span class="string">&quot;text&quot;</span>,</span><br><span class="line">            <span class="string">&quot;text&quot;</span>: <span class="string">&quot;你是公司的內部知識助理。回答時引用文件段落。&quot;</span></span><br><span class="line">                    <span class="string">&quot;以下是公司完整的產品目錄和 FAQ（50 頁）...&quot;</span>,</span><br><span class="line">            <span class="string">&quot;cache_control&quot;</span>: &#123;<span class="string">&quot;type&quot;</span>: <span class="string">&quot;ephemeral&quot;</span>&#125;  <span class="comment"># 固定部分，快取</span></span><br><span class="line">        &#125;,</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="string">&quot;type&quot;</span>: <span class="string">&quot;text&quot;</span>,</span><br><span class="line">            <span class="string">&quot;text&quot;</span>: <span class="string">f&quot;本次檢索到的相關段落：\n<span class="subst">&#123;retrieved_docs&#125;</span>&quot;</span></span><br><span class="line">            <span class="comment"># 動態部分，不設 cache_control</span></span><br><span class="line">        &#125;</span><br><span class="line">    ],</span><br><span class="line">    messages=[</span><br><span class="line">        &#123;<span class="string">&quot;role&quot;</span>: <span class="string">&quot;user&quot;</span>, <span class="string">&quot;content&quot;</span>: user_question&#125;</span><br><span class="line">    ]</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<p>固定的產品目錄和 FAQ 被快取（可能有 30,000 tokens），動態檢索結果不快取。這樣每次呼叫只需要處理檢索結果和使用者問題——省了 90% 的固定成本。</p>
+<hr>
+<h2 id="監控：怎麼知道快取有沒有生效"><a href="#監控：怎麼知道快取有沒有生效" class="headerlink" title="監控：怎麼知道快取有沒有生效"></a>監控：怎麼知道快取有沒有生效</h2><p>每次 API 回傳的 <code>usage</code> 裡有三個關鍵數字：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">usage = response.usage</span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;快取讀取: <span class="subst">&#123;usage.cache_read_input_tokens&#125;</span> tokens&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;快取寫入: <span class="subst">&#123;usage.cache_creation_input_tokens&#125;</span> tokens&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;未快取: <span class="subst">&#123;usage.input_tokens&#125;</span> tokens&quot;</span>)</span><br><span class="line"></span><br><span class="line">total = (usage.cache_read_input_tokens + </span><br><span class="line">         usage.cache_creation_input_tokens + </span><br><span class="line">         usage.input_tokens)</span><br><span class="line">hit_rate = usage.cache_read_input_tokens / total * <span class="number">100</span></span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;快取命中率: <span class="subst">&#123;hit_rate:<span class="number">.1</span>f&#125;</span>%&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<p>健康的數字：</p>
+<ul>
+<li><code>cache_read_input_tokens</code> 占總 input 的 80% 以上 → 太好了</li>
+<li><code>cache_creation_input_tokens</code> 一直很高 → 快取一直在重建，可能有失效問題</li>
+<li><code>cache_read_input_tokens</code> 一直是 0 → 快取沒命中，檢查 prompt 結構</li>
+</ul>
+<hr>
+<h2 id="常見踩坑"><a href="#常見踩坑" class="headerlink" title="常見踩坑"></a>常見踩坑</h2><p><strong>1. Prompt 太短沒到門檻</strong><br>你的 system prompt 只有 2000 tokens，用的是 Opus 4.7（門檻 4096）。<code>cache_control</code> 加了但完全沒效果，API 不會報錯，帳單照收全價。</p>
+<p><strong>2. JSON key 順序不穩定</strong><br>tools 陣列裡的 JSON 每次序列化順序不同，等於每次都是新的 prompt，快取永遠 miss。用 <code>json.dumps(tools, sort_keys=True)</code> 或固定順序的 serializer。</p>
+<p><strong>3. 第一個 request 的並行陷阱</strong><br>快取要等第一個 response 開始生成後才會生效。如果你同時送 10 個 request，這 10 個全部是 cache miss——因為快取還沒建好。先送一個，等它開始回應，再送其他的。</p>
+<p><strong>4. 忘記靜態內容要放前面</strong><br>prompt 的順序很重要。把會變的東西（使用者訊息）放前面、固定的東西（system prompt）放後面——快取完全失效。永遠是固定內容在前、動態內容在後。</p>
+<p><strong>5. 改了不該改的參數</strong><br>換了 <code>tool_choice</code> 或調了 <code>thinking</code> 的 <code>budget_tokens</code>，system 的快取就爆了。這些參數最好固定下來，不要每次 request 都變。</p>
+<hr>
+<h2 id="該用自動還是手動？"><a href="#該用自動還是手動？" class="headerlink" title="該用自動還是手動？"></a>該用自動還是手動？</h2><table>
+<thead>
+<tr>
+<th>情境</th>
+<th>推薦</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>多輪對話 chatbot</td>
+<td>自動（<code>cache_control</code> 放 top level）</td>
+</tr>
+<tr>
+<td>固定 system prompt + 動態 messages</td>
+<td>手動（system 上設 breakpoint）</td>
+</tr>
+<tr>
+<td>RAG（固定知識庫 + 動態檢索）</td>
+<td>手動（固定部分設 breakpoint）</td>
+</tr>
+<tr>
+<td>長文件分析</td>
+<td>自動（文件塞 system，自動快取）</td>
+</tr>
+<tr>
+<td>多工具 agent</td>
+<td>手動（tools 和 system 各設 breakpoint）</td>
+</tr>
+</tbody></table>
+<p>大多數情況下從自動開始就好。等你看到快取命中率不夠高，再切手動微調。</p>
+<hr>
+<p>Prompt Caching 的核心其實就一件事：<strong>告訴 API「這段內容你之前看過了，不用再處理一遍」</strong>。</p>
+<p>像餐廳備料。你不會因為每桌客人都點了白飯，就每次從洗米開始做。你提前煮好一大鍋，客人來了直接盛。備料有成本（煮一大鍋比煮一碗花的時間和瓦斯多一點），但只要客人超過兩個，就划算了。</p>
+<p>兩行程式碼，九成的帳單。這大概是 Claude API 裡 ROI 最高的優化。</p>
+<p>學完這個之後，下一步可以看 Anthropic 的 <a target="_blank" rel="noopener" href="https://docs.anthropic.com/en/docs/build-with-claude/batch-processing">Batch API</a>——如果你的任務不需要即時回應，Batch API 可以在快取折扣之上再打五折。兩個一起用，input token 的成本可以壓到基礎價的 5%。</p>
+<blockquote>
+<p>參考來源：<a target="_blank" rel="noopener" href="https://docs.anthropic.com/en/docs/build-with-claude/prompt-caching">Prompt Caching — Anthropic Docs</a><br>參考來源：<a target="_blank" rel="noopener" href="https://anthropic.skilljar.com/">Building with the Claude API — Anthropic Academy</a></p>
+</blockquote>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://mark22013333.github.io">Cheng®</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章連結: </span><span class="post-copyright-info"><a href="https://mark22013333.github.io/2026/05/05/Claude-API-Prompt-Caching-%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8-%E8%AE%93%E6%AF%8F%E6%AC%A1-API-%E5%91%BC%E5%8F%AB%E7%9C%81%E4%B8%8B-90-%E7%9A%84-Token-%E8%B2%BB%E7%94%A8/">https://mark22013333.github.io/2026/05/05/Claude-API-Prompt-Caching-完整教學-讓每次-API-呼叫省下-90-的-Token-費用/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版權聲明: </span><span class="post-copyright-info">本部落格所有文章除特別聲明外，均採用<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 授權協議。轉載請註明來源 <a href="https://mark22013333.github.io" target="_blank">Cheng's Tech & Life</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Claude-API/">Claude API</a><a class="post-meta__tags" href="/tags/Prompt-Caching/">Prompt Caching</a><a class="post-meta__tags" href="/tags/Anthropic-SDK/">Anthropic SDK</a><a class="post-meta__tags" href="/tags/%E6%88%90%E6%9C%AC%E5%84%AA%E5%8C%96/">成本優化</a></div><div class="post-share"><div class="social-share" data-image="/img/20260505-03.webp" data-sites="facebook,x"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><div class="post-reward"><div class="reward-badges"><a class="sponsor-glow-btn" href="https://www.buymeacoffee.com/mark22013333" target="_blank" rel="noopener noreferrer" title="Buy Me A Coffee"><img src="https://img.shields.io/badge/Buy_Me_A_Coffee-FFDD00?style=for-the-badge&amp;logo=buy-me-a-coffee&amp;logoColor=black" alt="Buy Me A Coffee"/></a><a class="sponsor-glow-btn" href="https://p.ecpay.com.tw/EFC3F8F" target="_blank" rel="noopener noreferrer" title="綠界贊助"><img src="https://img.shields.io/badge/☕_%E8%AB%8B%E6%88%91%E5%96%9D%E6%9D%AF%E5%92%96%E5%95%A1-Donate-11998e?style=for-the-badge&amp;logo=coffee&amp;logoColor=white" alt="綠界贊助"/></a><a class="sponsor-glow-btn" href="https://calendly.com/markcheng00806-intumit/15min" target="_blank" rel="noopener noreferrer" title="預約時間"><img src="https://img.shields.io/badge/📅_%E9%A0%90%E7%B4%84_15_%E5%88%86%E9%90%98-Book_Time-0072ff?style=for-the-badge" alt="預約時間"/></a><p class="reward-badges-note">你的鼓勵將被轉換為我明天繼續加班的動力（真的）。 ❤️</p></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2026/05/05/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260505/" title="AI 與科技新聞摘要 - 2026/05/05"><img class="cover" src="/img/20260505-02.webp" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">AI 與科技新聞摘要 - 2026/05/05</div></div><div class="info-2"><div class="info-item-1">27 億。 Apple 生態系的活躍裝置數。iPhone、iPad、Mac、Apple Watch、AirPods——加起來 27 億台。 iOS 26 的時候，這 27 億台裝置上的 AI 只有一個選擇：ChatGPT。Apple Intelligence 的 Writing Tools、Image Playground、Siri 延伸——全部只走 OpenAI。不是技術限制，是商業協議。一家獨佔。 iOS 27 要把這件事拆掉。 MacRumors 今天報導，Apple 將在 iOS 27、iPadOS 27、macOS 27 推出全新的「Extensions」機制，讓 Claude、Gemini、以及任何通過 App Store 審核的 AI 服務，都能接入 Apple Intelligence 的每一個觸點。使用者可以自己選預設的 AI。甚至 Siri 的聲音都可以換成第三方。 同一天，Sierra 拿了 9.5 億美金做 AI 客服。cPanel 有 150 萬台伺服器被零日漏洞打穿。Anthropic 的下一代主動式助理在程式碼裡被挖出來。Fei-Fei Li 的 W...</div></div></div></a><a class="pagination-related" href="/2026/05/05/Elasticsearch-%E9%80%B2%E9%9A%8E%E6%90%9C%E5%B0%8B-%E8%81%9A%E5%90%88%E5%88%86%E6%9E%90%E8%88%87%E6%95%88%E8%83%BD%E9%80%8F%E8%A6%96-Search-Aggregation-Profiler/" title="Elasticsearch 進階搜尋、聚合分析與效能透視 — Search, Aggregation, Profiler"><img class="cover" src="/img/20260505-01.webp" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">Elasticsearch 進階搜尋、聚合分析與效能透視 — Search, Aggregation, Profiler</div></div><div class="info-2"><div class="info-item-1">你去超市買東西。走到飲料區，眼前有 200 瓶飲料。你的腦袋同時在做兩件事：一件是「過濾」——我只要冷的、無糖的、600ml 以下的；另一件是「排序」——在符合條件的裡面，我想先看我最可能喜歡的。 過濾不需要思考，是非題。排序需要判斷，申論題。 Elasticsearch 的 Query 和 Filter 就是這兩件事。搞混它們，你的搜尋會慢 2 到 5 倍。搞懂它們，你就知道為什麼電商搜尋頁面能在 50 毫秒內從百萬商品裡撈出你要的東西。  Query vs Filter：什麼時候算分、什麼時候不算先建一組電商測試資料，後面所有範例都用這個： 1234567891011121314151617PUT /products&#123;  &quot;mappings&quot;: &#123;    &quot;properties&quot;: &#123;      &quot;name&quot;:        &#123; &quot;type&quot;: &quot;text&quot;, &quot;analyzer&quot;: &quot;standard&qu...</div></div></div></a></nav><hr class="custom-hr"/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 評論</span></div></div><div class="comment-wrap"><div><div id="giscus-wrap"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="https://lh3.googleusercontent.com/pw/ABLVV87_po8nBc6F_tXcoYDmtzMGWxHuhhrbguYILCjmjWKLOS8DTpubm0YoQLKgjyjRIZyV5TjYe7XVEz_YU4squfr37GTZqPZP1hlMVZ_MIgXpTxWu73M=w1200" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">Cheng®</div><div class="author-info-description">Backend Developer / 技術筆記 & AI 新聞分享</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">201</div></a><a href="/tags/"><div class="headline">標籤</div><div class="length-num">254</div></a><a href="/categories/"><div class="headline">分類</div><div class="length-num">14</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/mark22013333"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons"><a class="social-icon" href="https://github.com/mark22013333" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:mark22013333@gmail.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a></div><div class="card-info-sponsor"><a class="sponsor-glow-btn" href="https://www.buymeacoffee.com/mark22013333" target="_blank" rel="noopener noreferrer" title="Buy Me A Coffee"><img src="https://img.shields.io/badge/Buy_Me_A_Coffee-FFDD00?style=for-the-badge&amp;logo=buy-me-a-coffee&amp;logoColor=black" alt="Buy Me A Coffee"/></a><a class="sponsor-glow-btn" href="https://p.ecpay.com.tw/EFC3F8F" target="_blank" rel="noopener noreferrer" title="綠界贊助"><img src="https://img.shields.io/badge/☕_%E8%AB%8B%E6%88%91%E5%96%9D%E6%9D%AF%E5%92%96%E5%95%A1-Donate-11998e?style=for-the-badge&amp;logo=coffee&amp;logoColor=white" alt="綠界贊助"/></a><a class="sponsor-glow-btn" href="https://calendly.com/markcheng00806-intumit/15min" target="_blank" rel="noopener noreferrer" title="預約時間"><img src="https://img.shields.io/badge/📅_%E9%A0%90%E7%B4%84_15_%E5%88%86%E9%90%98-Book_Time-0072ff?style=for-the-badge" alt="預約時間"/></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">這裡記錄我在後端開發路上踩過的坑、學到的東西，也會分享每日 AI 與科技新聞觀點。歡迎一起交流！</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目錄</span><span class="toc-percentage"></span></div><div class="toc-content is-expand"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%95%8F%E9%A1%8C%E5%87%BA%E5%9C%A8%E5%93%AA%EF%BC%9A%E6%AF%8F%E6%AC%A1%E5%91%BC%E5%8F%AB%E9%83%BD%E5%9C%A8%E9%87%8D%E8%A4%87%E5%81%9A%E5%90%8C%E4%B8%80%E4%BB%B6%E4%BA%8B"><span class="toc-number">1.</span> <span class="toc-text">問題出在哪：每次呼叫都在重複做同一件事</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%A9%E8%A1%8C%E7%A8%8B%E5%BC%8F%E7%A2%BC%E6%90%9E%E5%AE%9A%EF%BC%9A%E8%87%AA%E5%8B%95%E5%BF%AB%E5%8F%96"><span class="toc-number">2.</span> <span class="toc-text">兩行程式碼搞定：自動快取</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%B2%BE%E7%A2%BA%E6%8E%A7%E5%88%B6%EF%BC%9A%E6%89%8B%E5%8B%95%E8%A8%AD%E5%AE%9A-Breakpoint"><span class="toc-number">3.</span> <span class="toc-text">精確控制：手動設定 Breakpoint</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%83%B9%E6%A0%BC%E6%8B%86%E8%A7%A3%EF%BC%9A%E4%BB%80%E9%BA%BC%E6%99%82%E5%80%99%E7%9C%81%E3%80%81%E4%BB%80%E9%BA%BC%E6%99%82%E5%80%99%E8%99%A7"><span class="toc-number">4.</span> <span class="toc-text">價格拆解：什麼時候省、什麼時候虧</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%BF%AB%E5%8F%96%E7%9A%84%E6%9C%89%E6%95%88%E6%9C%9F%EF%BC%9A5-%E5%88%86%E9%90%98%EF%BC%8C%E6%88%96-1-%E5%B0%8F%E6%99%82"><span class="toc-number">5.</span> <span class="toc-text">快取的有效期：5 分鐘，或 1 小時</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Pre-warming%EF%BC%9A%E6%B6%88%E9%99%A4%E7%AC%AC%E4%B8%80%E6%AC%A1%E5%91%BC%E5%8F%AB%E7%9A%84%E5%BB%B6%E9%81%B2"><span class="toc-number">6.</span> <span class="toc-text">Pre-warming：消除第一次呼叫的延遲</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9C%80%E4%BD%8E-Token-%E9%96%80%E6%AA%BB"><span class="toc-number">7.</span> <span class="toc-text">最低 Token 門檻</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%BF%AB%E5%8F%96%E5%A4%B1%E6%95%88%EF%BC%9A%E5%93%AA%E4%BA%9B%E6%94%B9%E5%8B%95%E6%9C%83%E8%AE%93%E5%BF%AB%E5%8F%96%E7%88%86%E6%8E%89"><span class="toc-number">8.</span> <span class="toc-text">快取失效：哪些改動會讓快取爆掉</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A4%9A%E8%BC%AA%E5%B0%8D%E8%A9%B1%E7%9A%84%E5%BF%AB%E5%8F%96%E7%AD%96%E7%95%A5"><span class="toc-number">9.</span> <span class="toc-text">多輪對話的快取策略</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AF%A6%E6%88%B0%E7%AF%84%E4%BE%8B%EF%BC%9ARAG-%E7%B3%BB%E7%B5%B1%E7%9A%84%E5%BF%AB%E5%8F%96%E5%84%AA%E5%8C%96"><span class="toc-number">10.</span> <span class="toc-text">實戰範例：RAG 系統的快取優化</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%9B%A3%E6%8E%A7%EF%BC%9A%E6%80%8E%E9%BA%BC%E7%9F%A5%E9%81%93%E5%BF%AB%E5%8F%96%E6%9C%89%E6%B2%92%E6%9C%89%E7%94%9F%E6%95%88"><span class="toc-number">11.</span> <span class="toc-text">監控：怎麼知道快取有沒有生效</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B8%B8%E8%A6%8B%E8%B8%A9%E5%9D%91"><span class="toc-number">12.</span> <span class="toc-text">常見踩坑</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%A9%B2%E7%94%A8%E8%87%AA%E5%8B%95%E9%82%84%E6%98%AF%E6%89%8B%E5%8B%95%EF%BC%9F"><span class="toc-number">13.</span> <span class="toc-text">該用自動還是手動？</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2026/05/05/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260505/" title="AI 與科技新聞摘要 - 2026/05/05"><img src="/img/20260505-02.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="AI 與科技新聞摘要 - 2026/05/05"/></a><div class="content"><a class="title" href="/2026/05/05/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260505/" title="AI 與科技新聞摘要 - 2026/05/05">AI 與科技新聞摘要 - 2026/05/05</a><time datetime="2026-05-05T00:30:00.000Z" title="發表於 2026-05-05 08:30:00">2026-05-05</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/05/05/Claude-API-Prompt-Caching-%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8-%E8%AE%93%E6%AF%8F%E6%AC%A1-API-%E5%91%BC%E5%8F%AB%E7%9C%81%E4%B8%8B-90-%E7%9A%84-Token-%E8%B2%BB%E7%94%A8/" title="Claude API Prompt Caching 完整教學 — 讓每次 API 呼叫省下 90% 的 Token 費用"><img src="/img/20260505-03.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Claude API Prompt Caching 完整教學 — 讓每次 API 呼叫省下 90% 的 Token 費用"/></a><div class="content"><a class="title" href="/2026/05/05/Claude-API-Prompt-Caching-%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8-%E8%AE%93%E6%AF%8F%E6%AC%A1-API-%E5%91%BC%E5%8F%AB%E7%9C%81%E4%B8%8B-90-%E7%9A%84-Token-%E8%B2%BB%E7%94%A8/" title="Claude API Prompt Caching 完整教學 — 讓每次 API 呼叫省下 90% 的 Token 費用">Claude API Prompt Caching 完整教學 — 讓每次 API 呼叫省下 90% 的 Token 費用</a><time datetime="2026-05-05T00:30:00.000Z" title="發表於 2026-05-05 08:30:00">2026-05-05</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/05/05/Elasticsearch-%E9%80%B2%E9%9A%8E%E6%90%9C%E5%B0%8B-%E8%81%9A%E5%90%88%E5%88%86%E6%9E%90%E8%88%87%E6%95%88%E8%83%BD%E9%80%8F%E8%A6%96-Search-Aggregation-Profiler/" title="Elasticsearch 進階搜尋、聚合分析與效能透視 — Search, Aggregation, Profiler"><img src="/img/20260505-01.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Elasticsearch 進階搜尋、聚合分析與效能透視 — Search, Aggregation, Profiler"/></a><div class="content"><a class="title" href="/2026/05/05/Elasticsearch-%E9%80%B2%E9%9A%8E%E6%90%9C%E5%B0%8B-%E8%81%9A%E5%90%88%E5%88%86%E6%9E%90%E8%88%87%E6%95%88%E8%83%BD%E9%80%8F%E8%A6%96-Search-Aggregation-Profiler/" title="Elasticsearch 進階搜尋、聚合分析與效能透視 — Search, Aggregation, Profiler">Elasticsearch 進階搜尋、聚合分析與效能透視 — Search, Aggregation, Profiler</a><time datetime="2026-05-05T00:30:00.000Z" title="發表於 2026-05-05 08:30:00">2026-05-05</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/05/04/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260504/" title="AI 與科技新聞摘要 - 2026/05/04"><img src="/img/20260504-02.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="AI 與科技新聞摘要 - 2026/05/04"/></a><div class="content"><a class="title" href="/2026/05/04/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260504/" title="AI 與科技新聞摘要 - 2026/05/04">AI 與科技新聞摘要 - 2026/05/04</a><time datetime="2026-05-04T00:30:00.000Z" title="發表於 2026-05-04 08:30:00">2026-05-04</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/05/04/Claude-Code-%E8%87%AA%E8%A8%82-Agent-%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8-%E7%94%A8-Markdown-%E6%89%93%E9%80%A0%E4%BD%A0%E7%9A%84%E5%B0%88%E5%B1%AC-AI-%E5%9C%98%E9%9A%8A/" title="Claude Code 自訂 Agent 完整教學 — 用 Markdown 打造你的專屬 AI 團隊"><img src="/img/20260504-03.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Claude Code 自訂 Agent 完整教學 — 用 Markdown 打造你的專屬 AI 團隊"/></a><div class="content"><a class="title" href="/2026/05/04/Claude-Code-%E8%87%AA%E8%A8%82-Agent-%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8-%E7%94%A8-Markdown-%E6%89%93%E9%80%A0%E4%BD%A0%E7%9A%84%E5%B0%88%E5%B1%AC-AI-%E5%9C%98%E9%9A%8A/" title="Claude Code 自訂 Agent 完整教學 — 用 Markdown 打造你的專屬 AI 團隊">Claude Code 自訂 Agent 完整教學 — 用 Markdown 打造你的專屬 AI 團隊</a><time datetime="2026-05-04T00:30:00.000Z" title="發表於 2026-05-04 08:30:00">2026-05-04</time></div></div></div></div></div></div></main><footer id="footer" style="background-image: url(/img/20260505-03.webp);"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2024 - 2026 By Cheng®</span></div><div class="footer_custom_text">Written by Cheng® — 自律，從當下的一念開始。</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="閱讀模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日夜模式切換"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="單欄和雙欄切換"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="設定"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目錄"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="前往評論"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到頂端"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.umd.min.js"></script><script src="https://cdn.jsdelivr.net/npm/instant.page/instantpage.min.js" type="module"></script><script src="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.js"></script><div class="js-pjax"><script>(() => {
+  const isShuoshuo = GLOBAL_CONFIG_SITE.pageType === 'shuoshuo'
+  const option = {"mapping":"pathname","strict":0,"reactionsEnabled":1,"emitMetadata":0,"inputPosition":"bottom","lang":"zh-TW"}
+
+  const getGiscusTheme = theme => theme === 'dark' ? 'dark' : 'light'
+
+  const createScriptElement = config => {
+    const ele = document.createElement('script')
+    Object.entries(config).forEach(([key, value]) => {
+      ele.setAttribute(key, value)
+    })
+    return ele
+  }
+
+  const loadGiscus = (el = document, key) => {
+    const mappingConfig = isShuoshuo
+      ? { 'data-mapping': 'specific', 'data-term': key }
+      : { 'data-mapping': (option && option['data-mapping']) || 'pathname' }
+
+    const giscusConfig = {
+      src: 'https://giscus.app/client.js',
+      'data-repo': 'mark22013333/mark22013333.github.io',
+      'data-repo-id': 'R_kgDOLAxa6A',
+      'data-category-id': 'DIC_kwDOLAxa6M4C5eO9',
+      'data-theme': getGiscusTheme(document.documentElement.getAttribute('data-theme')),
+      'data-reactions-enabled': '1',
+      crossorigin: 'anonymous',
+      async: true,
+      ...option,
+      ...mappingConfig
+    }
+
+    const scriptElement = createScriptElement(giscusConfig)
+
+    el.querySelector('#giscus-wrap').appendChild(scriptElement)
+
+    if (isShuoshuo) {
+      window.shuoshuoComment.destroyGiscus = () => {
+        if (el.children.length) {
+          el.innerHTML = ''
+          el.classList.add('no-comment')
+        }
+      }
+    }
+  }
+
+  const changeGiscusTheme = theme => {
+    const iframe = document.querySelector('#giscus-wrap iframe')
+    if (iframe) {
+      const message = {
+        giscus: {
+          setConfig: {
+            theme: getGiscusTheme(theme)
+          }
+        }
+      }
+      iframe.contentWindow.postMessage(message, 'https://giscus.app')
+    }
+  }
+
+  btf.addGlobalFn('themeChange', changeGiscusTheme, 'giscus')
+
+  if (isShuoshuo) {
+    'Giscus' === 'Giscus'
+      ? window.shuoshuoComment = { loadComment: loadGiscus }
+      : window.loadOtherComment = loadGiscus
+    return
+  }
+
+  if ('Giscus' === 'Giscus' || !true) {
+    if (true) btf.loadComment(document.getElementById('giscus-wrap'), loadGiscus)
+    else loadGiscus()
+  } else {
+    window.loadOtherComment = loadGiscus
+  }
+})()</script></div><script src="/js/kkbox-player.js"></script><script src="/js/archives-pagination.js"></script><script src="/js/font-resize.js"></script><script src="/js/dark-palette.js"></script><script defer="defer" id="fluttering_ribbon" mobile="false" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/canvas-fluttering-ribbon.min.js"></script><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/activate-power-mode.min.js"></script><script>POWERMODE.colorful = true;
+POWERMODE.shake = true;
+POWERMODE.mobile = true;
+document.body.addEventListener('input', POWERMODE);
+</script><script src="https://cdn.jsdelivr.net/npm/pjax/pjax.min.js" defer="defer"></script><script>document.addEventListener('DOMContentLoaded', () => {
+  const pjaxSelectors = ["meta[property=\"og:image\"]","meta[property=\"og:title\"]","meta[property=\"og:url\"]","meta[property=\"og:description\"]","link[rel=\"canonical\"]","head > title","#config-diff","#body-wrap","#rightside-config-hide","#rightside-config-show",".js-pjax"]
+
+  window.pjax = new Pjax({
+    elements: 'a:not([target="_blank"])',
+    selectors: pjaxSelectors,
+    cacheBust: false,
+    analytics: true,
+    scrollRestoration: false
+  })
+
+  const triggerPjaxFn = (val) => {
+    if (!val) return
+    Object.values(val).forEach(fn => {
+      try {
+        fn()
+      } catch (err) {
+        console.debug('Pjax callback failed:', err)
+      }
+    })
+  }
+
+  document.addEventListener('pjax:send', () => {
+    // removeEventListener
+    btf.removeGlobalFnEvent('pjaxSendOnce')
+    btf.removeGlobalFnEvent('themeChange')
+
+    // reset readmode
+    const $bodyClassList = document.body.classList
+    if ($bodyClassList.contains('read-mode')) $bodyClassList.remove('read-mode')
+
+    triggerPjaxFn(window.globalFn.pjaxSend)
+  })
+
+  document.addEventListener('pjax:complete', () => {
+    btf.removeGlobalFnEvent('pjaxCompleteOnce')
+    document.querySelectorAll('script[data-pjax]').forEach(item => {
+      const newScript = document.createElement('script')
+      const content = item.text || item.textContent || item.innerHTML || ""
+      Array.from(item.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value))
+      newScript.appendChild(document.createTextNode(content))
+      item.parentNode.replaceChild(newScript, item)
+    })
+
+    triggerPjaxFn(window.globalFn.pjaxComplete)
+  })
+
+  document.addEventListener('pjax:error', e => {
+    if (e.request.status === 404) {
+      true
+        ? pjax.loadUrl('/404.html')
+        : window.location.href = e.request.responseURL
+    }
+  })
+})</script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜尋</span><i class="fas fa-spinner fa-pulse" id="loading-status" hidden="hidden"></i><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="text-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  資料載入中</span></div><div class="local-search-input"><input placeholder="搜尋文章" type="text"/></div><hr/><div id="local-search-results"></div><div class="ais-Pagination" id="local-search-pagination" style="display:none;"><ul class="ais-Pagination-list"></ul></div><div id="local-search-stats"></div></div><div id="search-mask"></div><script src="/js/search/local-search.js"></script></div></div></body></html>
