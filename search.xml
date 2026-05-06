@@ -4,6 +4,101 @@
   
     
     <entry>
+      <title>AI 與科技新聞摘要 - 2026/05/06</title>
+      <link href="/2026/05/06/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260506/"/>
+      <url>/2026/05/06/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260506/</url>
+      
+        <content type="html"><![CDATA[<p>負七天。</p><p>不是「漏洞被發現後七天內被利用」——是漏洞被利用的時間點，比修補程式釋出還<strong>早</strong>七天。攻擊者在你知道門壞了之前，就已經走進來了。</p><p>Mandiant 的 M-Trends 2026 報告把這個數字攤在所有人面前。45 萬小時的事件回應數據，結論是：補丁的概念正在過期。你以為防禦是「發現漏洞 → 安裝修補 → 安全」的線性流程。現實是攻擊者跑得比修補快，而且每年都更快。</p><p>同一天，Cerebras 準備以 266 億美金估值 IPO，挑戰 NVIDIA 的 AI 晶片霸權。鴻海的 AI 伺服器營收首度超越 iPhone。Anthropic 開放 Claude Security 讓企業掃描程式碼漏洞。GPT-5.5 在英國 AISI 的安全測試裡反超了被限制存取的 Mythos。</p><p>速度是這五條新聞的共同語言。問題是，加速的不只是建設——攻擊也在加速。</p><hr><h2 id="Cerebras-IPO：266-億美金估值，AI-晶片市場終於有人敢舉手"><a href="#Cerebras-IPO：266-億美金估值，AI-晶片市場終於有人敢舉手" class="headerlink" title="Cerebras IPO：266 億美金估值，AI 晶片市場終於有人敢舉手"></a>Cerebras IPO：266 億美金估值，AI 晶片市場終於有人敢舉手</h2><p>35 億美金。這是 Cerebras 打算在這次 IPO 募集的金額——2026 年到目前為止最大的科技 IPO。</p><p>Cerebras 的晶片跟 NVIDIA 走完全不同的路。NVIDIA 的 GPU 是一顆一顆組成叢集，靠高速互連把算力疊上去。Cerebras 的 WSE-3（Wafer Scale Engine）是一整片晶圓就是一顆晶片——850,000 個核心、44GB 的 on-chip SRAM，不需要跨晶片通訊。</p><p>換句話說，NVIDIA 解決的問題是「怎麼把很多小晶片連起來」，Cerebras 解決的問題是「為什麼要連」。</p><p>2,800 萬股，每股 $115 到 $125。高端估值 266 億美金。銀行收到的認購意向已經超過 100 億——是募集額度的三倍。顯然市場認為 NVIDIA 需要一個真正的對手。</p><p>OpenAI 是 Cerebras 的重要合作夥伴。這層關係讓 Cerebras 在 AI 推論市場有了一個其他晶片新創夢寐以求的背書。但也帶來一個問題：如果你的最大客戶同時也是你最大的單點風險，你的護城河到底是技術還是關係？</p><p>逆向想一下：怎樣做 Cerebras 一定會失敗？答案是 NVIDIA 的 CUDA 生態系繼續壟斷軟體層。晶片再快，開發者不願意重寫程式碼就沒用。Cerebras 押的賭注是 AI 推論市場大到足以讓客戶願意為了效能和成本跳出 CUDA。266 億的估值在問一個問題：這個賭注成立嗎？</p><blockquote><p>原文來源：<a href="https://www.cnbc.com/2026/05/04/cerebras-ipo-ai-chipmaker.html">AI chipmaker Cerebras targets $3.5 billion raise in IPO — CNBC</a><br>原文來源：<a href="https://theaiinsider.tech/2026/05/06/cerebras-systems-eyes-3-5b-in-largest-tech-ipo-of-2026-on-strength-of-ai-chip-demand/">Cerebras Systems Eyes $3.5B in Largest Tech IPO of 2026 — The AI Insider</a><br>原文來源：<a href="https://siliconangle.com/2026/05/04/ai-chip-provider-cerebras-seeks-raise-3-5b-ipo-26-6b-valuation/">Cerebras files for $3.5 billion IPO at a $26.6 billion valuation — SiliconANGLE</a></p></blockquote><hr><h2 id="鴻海四月營收破紀錄：AI-伺服器正式超越-iPhone"><a href="#鴻海四月營收破紀錄：AI-伺服器正式超越-iPhone" class="headerlink" title="鴻海四月營收破紀錄：AI 伺服器正式超越 iPhone"></a>鴻海四月營收破紀錄：AI 伺服器正式超越 iPhone</h2><p>新台幣 8,321 億。鴻海四月單月營收，年增 29.7%，創下歷史新高。</p><p>但數字本身不是重點。重點是結構性的翻轉。</p><p>鴻海的「雲端與網通產品」事業群（AI 伺服器所在的部門）在 2025 年佔總營收 40%，首度超越消費性電子（iPhone 組裝為主）的 38%。這家靠組裝 iPhone 起家的公司，現在的營收引擎是 AI 伺服器機架。</p><p>這個翻轉的意義不只是鴻海自己的財報好看。它是整個硬體供應鏈的風向球。</p><p>鴻海、緯創、廣達——台灣三大代工廠——2026 年合計 AI 伺服器營收預估突破兆元台幣。這些公司同時在做的事情是：搶 NVIDIA GB200 的組裝訂單、擴建液冷伺服器產線、在美國和墨西哥蓋新廠。</p><p>AI 基礎設施的錢不是「計劃投入」的階段了，是已經在製造端變成營收的階段。Mag-7 上季合計 6,500 億美金 capex 的錢，正在變成鴻海的營收、Cerebras 的 IPO 估值、和你辦公室裡那台 AI 伺服器的散熱風扇聲。</p><p>不過，29.7% 的年增率隱含一個假設：AI 伺服器的需求會持續以這個速度成長。如果——只是如果——AI capex 在 2027 年開始減速（因為 ROI 驗證不如預期），鴻海轉型的故事就會從「成長引擎切換」變成「過度集中在單一客戶群」。台灣三大代工廠同時 all-in AI 伺服器，集中度風險不小。</p><blockquote><p>原文來源：<a href="https://www.digitimes.com/news/a20260505PD233/growth-ai-server-revenue-foxconn-2026.html">Foxconn revenue nears US$95B in first four months, AI server racks fuel 2Q26 outlook — Digitimes</a><br>原文來源：<a href="https://www.taiwannews.com.tw/news/6354842">Foxconn April revenue hits NT$832.1 billion — Taiwan News</a></p></blockquote><hr><h2 id="Mandiant-M-Trends-2026：漏洞被利用的速度比修補快七天"><a href="#Mandiant-M-Trends-2026：漏洞被利用的速度比修補快七天" class="headerlink" title="Mandiant M-Trends 2026：漏洞被利用的速度比修補快七天"></a>Mandiant M-Trends 2026：漏洞被利用的速度比修補快七天</h2><p>45 萬小時的事件回應。這是 Google Mandiant 過去一年在全球處理的資安事件總時數。M-Trends 是他們的年度報告——資安產業最接近「戰場日誌」的東西。</p><p>2026 年報告的核心發現讓整個防禦模型都要重新想。</p><p><strong>漏洞利用的平均時間差是負七天。</strong> 不是「修補後七天被利用」，是「修補前七天就被利用了」。意思是：攻擊者在零日漏洞被公開之前就已經有 exploit。你的修補流程再快都沒用——因為修補還沒出來。</p><p><strong>28.3% 的 CVE 在公開後 24 小時內被利用。</strong> 接近三成。你的 IT 團隊收到漏洞通知、評估影響、測試修補、部署到正式環境——這個流程通常要幾天到幾週。攻擊者只需要幾個小時。</p><p><strong>初始存取的交接時間縮短到 22 秒。</strong> 攻擊者入侵一台機器後，22 秒內就把存取權交給下一個攻擊階段（通常是勒索軟體或資料竊取）。從手動操作變成自動化流水線。</p><p>最常被打的是什麼？VPN、防火牆、路由器——那些坐在網路邊界的設備。它們通常韌體過時、難以用傳統工具監控、而且一旦被打穿就等於直接進入內網。</p><p>Mandiant 的報告有一句話寫得很直白：「依賴設備廠商及時釋出修補，不是策略，是希望。」</p><p>這份報告在說的不是「駭客變厲害了」這種老生常談。它在說的是：<strong>防禦端的基本假設——「先發現、再修補、就安全」——已經不成立了。</strong> 攻擊端的速度優勢是結構性的，不是偶發性的。</p><blockquote><p>原文來源：<a href="https://cloud.google.com/blog/topics/threat-intelligence/m-trends-2026">M-Trends 2026: Data, Insights, and Strategies From the Frontlines — Google Cloud Blog</a><br>原文來源：<a href="https://www.securityweek.com/m-trends-2026-initial-access-handoff-shrinks-from-hours-to-22-seconds/">M-Trends 2026: Initial Access Handoff Shrinks From Hours to 22 Seconds — SecurityWeek</a><br>原文來源：<a href="https://www.helpnetsecurity.com/2026/03/24/mandiant-m-trends-2026-report/">Attackers are handing off access in 22 seconds, Mandiant finds — Help Net Security</a></p></blockquote><hr><h2 id="Claude-Security-公測：Anthropic-讓-AI-幫企業抓漏洞"><a href="#Claude-Security-公測：Anthropic-讓-AI-幫企業抓漏洞" class="headerlink" title="Claude Security 公測：Anthropic 讓 AI 幫企業抓漏洞"></a>Claude Security 公測：Anthropic 讓 AI 幫企業抓漏洞</h2><p>Anthropic 正式開放 Claude Security 的 public beta。</p><p>Claude Security 不是一個獨立產品，是直接整合在 claude.ai 裡的功能——Enterprise 方案的使用者可以在側邊欄或 <code>claude.ai/security</code> 啟動掃描。指定 GitHub repo、branch、掃描範圍（可以鎖定特定目錄），選擇 Standard 或 Extended 深度，按下去就跑了。</p><p>跟 Snyk 或 SonarQube 不一樣的地方在於：Claude Security 不是靠 pattern matching 抓漏洞。它用 Opus 4.7 的推理能力追蹤資料流、跨檔案分析上下文、辨識邏輯層級的漏洞。傳統掃描器看到 <code>user_input</code> 進了 <code>sql_query</code> 會標紅。Claude Security 看的是：這個 <code>user_input</code> 經過了哪些函式、有沒有在中間被消毒、如果沒消毒的話攻擊路徑是什麼。</p><p>每個發現都會附上信心指數、嚴重等級、影響分析、重現步驟、以及修補建議。使用者可以直接在 Claude Code 裡打開修補建議，在程式碼上下文中處理。</p><p>更有意思的是整合。Claude Security 的掃描結果可以透過 webhook 送到 Slack、Jira、或任何 ticketing 系統。也可以匯出成 CSV 或 Markdown 丟進稽核流程。CrowdStrike、Microsoft Security、Palo Alto Networks、SentinelOne、Wiz 都已經整合了 Opus 4.7 的能力。</p><p>不過，有個結構性的問題值得想。Claude Security 用 AI 模型分析程式碼——但 AI 模型本身也有幻覺。如果模型「看到」了一個不存在的漏洞，而你的資安團隊因為「AI 說有」就花了半天去追查，這個成本怎麼算？Anthropic 的解法是加了一層「對抗性驗證」——Claude 會先自我挑戰自己的發現，通過內部辯論的才會呈現。但這終究是用 AI 驗證 AI。</p><blockquote><p>原文來源：<a href="https://claude.com/blog/claude-security-public-beta">Claude Security is now in public beta — Claude Blog</a><br>原文來源：<a href="https://www.helpnetsecurity.com/2026/05/04/anthropic-claude-security-public-beta/">Claude Security enters public beta with Opus 4.7 vulnerability scanning — Help Net Security</a><br>原文來源：<a href="https://www.infosecurity-magazine.com/news/anthropic-claude-security-for-ai/">Anthropic Rolls Out Claude Security for AI Vulnerability Scanning — Infosecurity Magazine</a></p></blockquote><hr><h2 id="GPT-5-5-vs-Mythos：AISI-測試反超，限制存取的邏輯在動搖"><a href="#GPT-5-5-vs-Mythos：AISI-測試反超，限制存取的邏輯在動搖" class="headerlink" title="GPT-5.5 vs Mythos：AISI 測試反超，限制存取的邏輯在動搖"></a>GPT-5.5 vs Mythos：AISI 測試反超，限制存取的邏輯在動搖</h2><p>71.4% 對 68.6%。</p><p>英國 AI 安全研究所（AISI）用 95 個挑戰測試了 GPT-5.5 和 Claude Mythos Preview 在資安能力上的表現。在最高難度的「Expert」等級，GPT-5.5 拿了 71.4%，Mythos 拿了 68.6%。</p><p>這個結果直接動搖了 Mythos 限制存取的論述基礎。</p><p>Anthropic 在發布 Mythos 的時候，特別強調它的資安能力「太強了」——可以在每個主流作業系統和瀏覽器上自主找到高危漏洞——所以必須限制存取，只開放給經過審核的安全研究人員。這是 AI 安全領域的一個標誌性決定：第一次有商業模型因為「太危險」而被自家公司限制。</p><p>現在 AISI 的數據說：OpenAI 的公開模型已經超越了 Anthropic 限制的模型。如果 GPT-5.5 能做到 Mythos 能做的事，而且分數更高，那限制 Mythos 的存取是在保護什麼？</p><p>AISI 的報告結論寫得很直白：「這些資安能力是長程自主性、推理能力和程式碼能力的副產品，不是刻意訓練出來的。」意思是——你不需要專門訓練一個「駭客模型」。只要模型夠聰明、夠會寫程式、夠能自主操作，它就自然具備發現和利用漏洞的能力。</p><p>這對所有 frontier lab 的安全策略都是挑戰。限制一個模型的存取不能阻止另一個同等能力的模型被公開使用。安全不在於鎖住某一個模型，在於整個生態系的防禦能力能不能跟上。</p><blockquote><p>原文來源：<a href="https://www.aisi.gov.uk/work/advanced-ai-evaluations-may-2026">AISI benchmark shows GPT-5.5 matches Mythos on expert cyber tasks — AISI</a></p></blockquote><hr><p>五條新聞，一個加速曲線。</p><p>Cerebras 的 266 億估值在加速晶片競爭。鴻海的 AI 伺服器營收在加速硬體供應鏈的轉型。Mandiant 的報告說攻擊速度在加速——而且跑贏了防禦。Claude Security 試圖用 AI 加速防禦端的回應。GPT-5.5 和 Mythos 的分數說模型能力的收斂也在加速。</p><p>所有東西都在變快。建設在加速、製造在加速、攻擊在加速、防禦在加速、模型能力在加速。</p><p>問題不在於速度本身。問題在於這些加速的速率不一樣。</p><p>攻擊端的時間差是負七天——比防禦快了至少兩週。模型能力的收斂讓「限制存取」的策略失效——你鎖住一個，另一個公開的就追上來了。硬體製造已經在變成營收，但 ROI 驗證還沒追上 capex 的速度。</p><p>歷史上每次不同系統以不同速率加速，最終都會在某個交叉點炸開。不是因為某個系統壞了，是因為它們之間的同步假設失效了。</p><p>現在的問題是：那個交叉點在哪裡？</p>]]></content>
+      
+      
+      <categories>
+          
+          <category> AI與科技新聞 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> GPT-5.5 </tag>
+            
+            <tag> Cerebras </tag>
+            
+            <tag> Foxconn </tag>
+            
+            <tag> Mandiant </tag>
+            
+            <tag> Claude Security </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>Claude Security 完整教學 — 讓 AI 幫你抓漏洞、寫修補</title>
+      <link href="/2026/05/06/Claude-Security-%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8-%E8%AE%93-AI-%E5%B9%AB%E4%BD%A0%E6%8A%93%E6%BC%8F%E6%B4%9E%E5%AF%AB%E4%BF%AE%E8%A3%9C/"/>
+      <url>/2026/05/06/Claude-Security-%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8-%E8%AE%93-AI-%E5%B9%AB%E4%BD%A0%E6%8A%93%E6%BC%8F%E6%B4%9E%E5%AF%AB%E4%BF%AE%E8%A3%9C/</url>
+      
+        <content type="html"><![CDATA[<p>PR review 看到 1,200 行變更。你花了兩小時逐行看，覺得沒問題，按了 approve。三天後 staging 炸了——有一個 SQL injection 藏在第 847 行，user input 經過三個函式轉手之後直接進了 query builder，中間沒有任何消毒。</p><p>你為什麼沒抓到？因為第一個函式在 <code>utils/transform.ts</code>，第二個在 <code>services/order.ts</code>，第三個在 <code>repositories/query.ts</code>。三個檔案，三個不同的人寫的。每個檔案單獨看都很正常。但串起來就是一條從使用者輸入直通資料庫的高速公路。</p><p>這種跨檔案、跨模組的邏輯漏洞，是傳統掃描器的盲區。Snyk 看 dependency、SonarQube 看 pattern——它們都不會「讀懂」你的業務邏輯。</p><p>Claude Security 做的事情不一樣。它用 Opus 4.7 的推理能力，像一個資安研究員一樣追蹤資料流、理解上下文、跨檔案分析。然後告訴你：「這裡有問題，這是為什麼，這是怎麼修。」</p><hr><h2 id="Claude-Security-是什麼"><a href="#Claude-Security-是什麼" class="headerlink" title="Claude Security 是什麼"></a>Claude Security 是什麼</h2><p>想像你請了一個資安顧問。這個顧問不只會看你的程式碼有沒有用到已知有問題的 library——他會真的讀你的 code，理解每一個函式在做什麼，追蹤資料從 API endpoint 流到資料庫的每一步，然後跟你說：「你這個 middleware 有一個路徑可以繞過驗證，攻擊者只要在 header 裡塞一個特定格式的 token 就能直接存取管理員 API。」</p><p>Claude Security 就是這個顧問的 AI 版本。</p><p>它是 Anthropic 直接整合在 claude.ai 裡的功能，用 Opus 4.7（目前最強的 coding model）掃描你的 GitHub repo，找出安全漏洞，然後生成修補建議。不是 regex 比對，不是規則引擎——是推理。</p><p>目前在 public beta 階段，Claude Enterprise 方案可以使用。Team 和 Max 方案的支援即將開放。</p><hr><h2 id="前置條件"><a href="#前置條件" class="headerlink" title="前置條件"></a>前置條件</h2><p>在開始掃描之前，需要三件事到位：</p><p><strong>第一，Enterprise 方案。</strong> Claude Security 目前只開放給 Enterprise 使用者。如果你是 Team 或 Max 方案，暫時只能等。</p><p><strong>第二，Extra Usage 啟用。</strong> 到 Organization Billing 設定裡確認 Extra Usage 已經打開。Claude Security 的掃描會消耗額外的 token，不算在基本配額裡。</p><p><strong>第三，GitHub App 安裝。</strong> 到你的 GitHub organization 安裝 Anthropic 的 GitHub App，授權要掃描的 repository 存取權。這步很關鍵——沒裝 App 的話，Claude Security 連你的 code 都看不到。</p><p>設定路徑：<code>claude.ai/admin-settings/claude-code</code> → 啟用 Claude Security。</p><hr><h2 id="第一次掃描"><a href="#第一次掃描" class="headerlink" title="第一次掃描"></a>第一次掃描</h2><p>打開 <code>claude.ai/security</code>，或者從 claude.ai 側邊欄找到 Security 入口。</p><p>掃描表單有五個欄位：</p><ol><li><strong>Repository</strong>：下拉選單，列出你授權的 GitHub repo</li><li><strong>Branch</strong>：選要掃描哪個 branch（通常是 <code>main</code> 或 <code>develop</code>）</li><li><strong>Scan scope</strong>：可選。留空掃整個 repo，或輸入目錄路徑（例如 <code>src/api/</code>）聚焦特定模組</li><li><strong>Model</strong>：目前固定為 Claude Opus 4.7</li><li><strong>Effort</strong>：兩個選項——Standard（快速掃描）和 Extended（深度掃描，時間較長但更徹底）</li></ol><p>按下掃描，Claude 就開始工作了。</p><p>Standard 掃描適合日常 PR review 後的快速確認。Extended 適合季度安全稽核或新專案上線前的全面體檢。大型 repo（50,000+ 行）跑 Extended 可能需要十幾分鐘，但值得等。</p><hr><h2 id="看懂掃描結果"><a href="#看懂掃描結果" class="headerlink" title="看懂掃描結果"></a>看懂掃描結果</h2><p>掃描完成後，每個發現都有一張結構化的卡片：</p><p><strong>信心指數</strong>——Claude 對這個發現的確信程度。高信心代表「幾乎確定是真的漏洞」，中等信心代表「有風險但需要人工確認上下文」。這是 Claude Security 跟傳統掃描器最大的差異之一——它不只告訴你有問題，還告訴你它有多確定。</p><p><strong>嚴重等級</strong>——Critical、High、Medium、Low。定義跟 CVSS 類似，但 Claude 會根據你的程式碼上下文調整。同一種 SQL injection，如果只能存取到公開資料就是 Medium，如果能碰到用戶個資就是 Critical。</p><p><strong>影響分析</strong>——這個漏洞被利用的話會發生什麼。不是泛泛的「可能導致資料外洩」，而是具體的：「攻擊者可以透過 <code>/api/orders</code> endpoint 的 <code>filter</code> 參數注入 SQL，存取 <code>users</code> 表的 <code>email</code> 和 <code>password_hash</code> 欄位。」</p><p><strong>重現步驟</strong>——怎麼觸發這個漏洞。通常會包含一個 curl 指令或程式碼片段，讓你直接驗證。</p><p><strong>修補建議</strong>——Claude 建議怎麼修。可以點「Open in Claude Code」直接在程式碼上下文裡開始修改。</p><p>有一個很實用的功能：<strong>dismiss with reason</strong>。如果某個發現是誤報或已接受的風險，你可以標記 dismiss 並寫原因。這些 dismiss 紀錄會保留，下次掃描同一個 repo 時 Claude 會參考。</p><hr><h2 id="對抗性驗證：AI-自己挑戰自己"><a href="#對抗性驗證：AI-自己挑戰自己" class="headerlink" title="對抗性驗證：AI 自己挑戰自己"></a>對抗性驗證：AI 自己挑戰自己</h2><p>Claude Security 有一層很少被提到但非常重要的機制——<strong>adversarial verification</strong>。</p><p>每一個 Claude 找到的疑似漏洞，在呈現給你之前，會先經過一輪「自我挑戰」。Claude 會嘗試反駁自己的發現：「這真的是漏洞嗎？有沒有我漏看的防護機制？這個 input 在到達危險函式之前，有沒有在某個 middleware 裡被消毒過？」</p><p>通過挑戰的才會呈現。沒通過的會被內部過濾掉。</p><p>這是 Anthropic 處理 AI 幻覺問題的一個工程解法。你不能讓安全掃描器大量吐 false positive——資安團隊追查每一個 false positive 都是成本。用 AI 先自己過濾一輪，留下來的發現品質會高很多。</p><p>不完美，但比什麼都不過濾好太多。</p><hr><h2 id="在-Claude-Code-裡掃描"><a href="#在-Claude-Code-裡掃描" class="headerlink" title="在 Claude Code 裡掃描"></a>在 Claude Code 裡掃描</h2><p>除了 Web 介面，Claude Code 也有內建的安全掃描。</p><p>在終端機裡打：</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/security-review</span><br></pre></td></tr></table></figure><p>這個 slash command 會對你目前的 pending changes（還沒 commit 的修改）做安全審查。適合在 <code>git commit</code> 之前跑一次，確認新寫的 code 沒有帶入漏洞。</p><p>它跟 Web 版的 Claude Security 有什麼差別？</p><p>Web 版掃描的是整個 repo 或指定目錄，適合全面體檢。<code>/security-review</code> 掃描的是你剛寫的 diff，適合開發中的即時確認。兩者互補，不是二選一。</p><p>另外，Anthropic 在 GitHub 上也開源了 <code>claude-code-security-review</code> GitHub Action。把它加進你的 CI&#x2F;CD pipeline，每次 PR 都會自動跑一輪安全掃描，結果直接留在 PR 的 comment 裡。</p><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># .github/workflows/security-review.yml</span></span><br><span class="line"><span class="attr">name:</span> <span class="string">Claude</span> <span class="string">Security</span> <span class="string">Review</span></span><br><span class="line"><span class="attr">on:</span></span><br><span class="line">  <span class="attr">pull_request:</span></span><br><span class="line">    <span class="attr">types:</span> [<span class="string">opened</span>, <span class="string">synchronize</span>]</span><br><span class="line"></span><br><span class="line"><span class="attr">jobs:</span></span><br><span class="line">  <span class="attr">security-review:</span></span><br><span class="line">    <span class="attr">runs-on:</span> <span class="string">ubuntu-latest</span></span><br><span class="line">    <span class="attr">steps:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">uses:</span> <span class="string">actions/checkout@v4</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">uses:</span> <span class="string">anthropics/claude-code-security-review@v1</span></span><br><span class="line">        <span class="attr">with:</span></span><br><span class="line">          <span class="attr">anthropic_api_key:</span> <span class="string">$&#123;&#123;</span> <span class="string">secrets.ANTHROPIC_API_KEY</span> <span class="string">&#125;&#125;</span></span><br></pre></td></tr></table></figure><hr><h2 id="整合到現有工作流"><a href="#整合到現有工作流" class="headerlink" title="整合到現有工作流"></a>整合到現有工作流</h2><p>掃描結果如果只能在 claude.ai 上看，對大型團隊來說不夠用。</p><p>Claude Security 支援三種匯出方式：</p><p><strong>Webhook</strong>——掃描完成後自動 POST 結果到你指定的 URL。可以接 Slack（即時通知）、Jira（自動建立 ticket）、或任何接受 HTTP POST 的系統。</p><p><strong>CSV 匯出</strong>——給需要跑報表或匯入其他工具的場景。每一行是一個 finding，欄位包含嚴重等級、信心指數、檔案路徑、行數、描述。</p><p><strong>Markdown 匯出</strong>——給稽核報告或知識管理。格式化好的文件，可以直接貼進 Notion 或 Confluence。</p><p>已經有五家主流資安平台整合了 Opus 4.7 的能力：CrowdStrike、Microsoft Security、Palo Alto Networks、SentinelOne、Wiz。如果你的團隊已經在用這些工具，Claude Security 的發現可以直接匯入。</p><hr><h2 id="跟-Snyk、SonarQube-比：什麼時候該用誰"><a href="#跟-Snyk、SonarQube-比：什麼時候該用誰" class="headerlink" title="跟 Snyk、SonarQube 比：什麼時候該用誰"></a>跟 Snyk、SonarQube 比：什麼時候該用誰</h2><p>三個工具解決不同層次的問題。</p><p><strong>Snyk</strong> 擅長 dependency 層。你用的 npm package 有沒有已知漏洞？Docker image 的 base image 安不安全？license 有沒有合規問題？Snyk 是這一層的標準答案。</p><p><strong>SonarQube</strong> 擅長 code quality 和 pattern 層。重複的程式碼、過長的函式、已知的不安全 pattern（hardcoded password、不安全的 random）。規則引擎驅動，穩定可靠，但只能抓到「長得像漏洞」的東西。</p><p><strong>Claude Security</strong> 擅長 logic 層。跨檔案的資料流追蹤、業務邏輯漏洞、複雜的認證繞過路徑。需要「理解」程式碼才能抓到的東西。</p><p>一個成熟的 DevSecOps pipeline 應該三個都有。Snyk 守住 dependency、SonarQube 守住 pattern、Claude Security 守住 logic。它們的覆蓋範圍幾乎不重疊。</p><hr><h2 id="使用建議"><a href="#使用建議" class="headerlink" title="使用建議"></a>使用建議</h2><p><strong>開發階段</strong>：每次 commit 前跑 <code>/security-review</code>。成本低、回饋快。</p><p><strong>PR 階段</strong>：用 GitHub Action 自動掃描每個 PR。強制要求 Critical 和 High 的 finding 必須在 merge 前處理。</p><p><strong>Release 階段</strong>：用 Web 版跑 Extended 掃描。涵蓋整個 repo，確保沒有跨模組的邏輯漏洞被遺漏。</p><p><strong>季度稽核</strong>：跑完整掃描，匯出 Markdown 報告，附在稽核文件裡。</p><hr><p>掃描工具從來不是銀彈。Snyk 抓不到邏輯漏洞。SonarQube 抓不到零日。Claude Security 也會有漏網之魚——它畢竟是一個 AI 模型，不是一個全知的存在。</p><p>但它改變了一件事：以前找邏輯層漏洞只能靠資深工程師花時間做 code review，或者花錢請滲透測試。現在有了一個可以 24 小時跑、不會累、而且每次掃描都是全量分析的選項。</p><p>不是取代人工 code review。是讓人工 code review 可以專注在更高層次的問題——架構決策、設計取捨、業務邏輯的正確性——而不是花時間追蹤某個 user input 有沒有被正確消毒。</p><p>把髒活交給 AI，把判斷留給人。這大概是 2026 年 DevSecOps 最務實的一句話。</p><blockquote><p>參考來源：<a href="https://claude.com/blog/claude-security-public-beta">Claude Security is now in public beta — Claude Blog</a><br>參考來源：<a href="https://claude.com/resources/tutorials/getting-started-with-claude-security">Getting started with Claude Security — Claude Tutorials</a><br>參考來源：<a href="https://support.claude.com/en/articles/14661296-use-claude-security">Use Claude Security — Claude Help Center</a><br>參考來源：<a href="https://github.com/anthropics/claude-code-security-review">claude-code-security-review GitHub Action — GitHub</a></p></blockquote>]]></content>
+      
+      
+      <categories>
+          
+          <category> Claude Code </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> Anthropic </tag>
+            
+            <tag> Claude Code </tag>
+            
+            <tag> Claude Security </tag>
+            
+            <tag> DevSecOps </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>Elasticsearch 正式上線、營運與效能優化 — Production 生存指南</title>
+      <link href="/2026/05/06/Elasticsearch-%E6%AD%A3%E5%BC%8F%E4%B8%8A%E7%B7%9A-%E7%87%9F%E9%81%8B%E8%88%87%E6%95%88%E8%83%BD%E5%84%AA%E5%8C%96-Production-%E7%94%9F%E5%AD%98%E6%8C%87%E5%8D%97/"/>
+      <url>/2026/05/06/Elasticsearch-%E6%AD%A3%E5%BC%8F%E4%B8%8A%E7%B7%9A-%E7%87%9F%E9%81%8B%E8%88%87%E6%95%88%E8%83%BD%E5%84%AA%E5%8C%96-Production-%E7%94%9F%E5%AD%98%E6%8C%87%E5%8D%97/</url>
+      
+        <content type="html"><![CDATA[<p>你蓋了一棟房子。牆壁漂亮、格局合理、水電也通了。然後你搬進去住，第一個冬天就發現：暖氣不夠、水管會凍裂、電線負載不了所有家電同時開。</p><p>蓋房子跟住房子是兩回事。寫 Elasticsearch 跟跑 Elasticsearch 也是。</p><p>這篇是 Elasticsearch 系列的最後一塊拼圖——把你在開發機上「能跑」的東西，變成在 Production 上「跑得穩、跑得快、掛不了」的東西。</p><hr><h2 id="兩個設定檔決定生死"><a href="#兩個設定檔決定生死" class="headerlink" title="兩個設定檔決定生死"></a>兩個設定檔決定生死</h2><h3 id="elasticsearch-yml——叢集的身分證"><a href="#elasticsearch-yml——叢集的身分證" class="headerlink" title="elasticsearch.yml——叢集的身分證"></a>elasticsearch.yml——叢集的身分證</h3><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">cluster.name:</span> <span class="string">my-production-cluster</span></span><br><span class="line"><span class="attr">node.name:</span> <span class="string">node-1</span></span><br><span class="line"><span class="attr">node.roles:</span> [<span class="string">master</span>, <span class="string">data_content</span>]</span><br><span class="line"></span><br><span class="line"><span class="attr">network.host:</span> <span class="number">0.0</span><span class="number">.0</span><span class="number">.0</span></span><br><span class="line"><span class="attr">http.port:</span> <span class="number">9200</span></span><br><span class="line"><span class="attr">transport.port:</span> <span class="number">9300</span></span><br><span class="line"></span><br><span class="line"><span class="attr">discovery.seed_hosts:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">node-1:9300</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">node-2:9300</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">node-3:9300</span></span><br><span class="line"><span class="attr">cluster.initial_master_nodes:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">node-1</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">node-2</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">node-3</span></span><br><span class="line"></span><br><span class="line"><span class="attr">path.data:</span> <span class="string">/var/data/elasticsearch</span></span><br><span class="line"><span class="attr">path.logs:</span> <span class="string">/var/log/elasticsearch</span></span><br><span class="line"></span><br><span class="line"><span class="attr">xpack.security.enabled:</span> <span class="literal">true</span></span><br><span class="line"><span class="attr">xpack.security.transport.ssl.enabled:</span> <span class="literal">true</span></span><br><span class="line"><span class="attr">xpack.security.http.ssl.enabled:</span> <span class="literal">true</span></span><br></pre></td></tr></table></figure><p>幾個踩坑點：</p><p><code>cluster.name</code> 絕對不要用預設的 <code>elasticsearch</code>。同一網段內如果有另一台也叫 <code>elasticsearch</code>，它們會自動組成叢集——然後你的 Production 資料就跟測試環境混在一起了。</p><p><code>node.roles</code> 是 ES 8.x 的新寫法，取代了舊的 <code>node.master: true</code> 布林值。可以組合：master、data_content、data_hot、data_warm、ingest、ml。角色越精確，資源分配越乾淨。</p><p><code>cluster.initial_master_nodes</code> 只在叢集第一次啟動時有用。組建完成後可以拿掉——留著也沒事，但如果未來加新節點，別忘了它不會自動更新。</p><h3 id="jvm-options——記憶體是場零和遊戲"><a href="#jvm-options——記憶體是場零和遊戲" class="headerlink" title="jvm.options——記憶體是場零和遊戲"></a>jvm.options——記憶體是場零和遊戲</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">-Xms16g</span><br><span class="line">-Xmx16g</span><br><span class="line">-XX:+UseG1GC</span><br></pre></td></tr></table></figure><p>四條鐵律：</p><p><strong>Xms 必須等於 Xmx。</strong> 不等的話 JVM 會動態調整 Heap 大小，每次調整都會觸發 Full GC——你的叢集會突然卡個幾百毫秒到幾秒。</p><p><strong>不超過實體記憶體的 50%。</strong> 另一半留給作業系統的 Page Cache。Lucene 的 Segment 檔案大量依賴 mmap 和 Page Cache 加速讀取。如果 Heap 佔掉 80%，Page Cache 所剩無幾，Lucene 每次搜尋都得讀磁碟——效能直接腰斬。</p><p><strong>不超過 32GB。</strong> 超過這個數字，JVM 會關閉 Compressed OOPs 優化，物件指標從 4 byte 變 8 byte。實測結果：Heap 設 64GB 的效能可能還不如 31GB。經典的「多即是少」。</p><p><strong>理想值 26–31GB。</strong> 具體上限跟 JVM 版本有關，用 <code>-XX:+PrintFlagsFinal</code> 檢查 <code>UseCompressedOops</code> 是否為 true 來確認。</p><p>32GB 記憶體的機器 → Heap 設 16GB → Page Cache 可用約 16GB → Segment 檔案住在記憶體中 → 搜尋飛快。</p><hr><h2 id="系統層設定——被忽略但致命"><a href="#系統層設定——被忽略但致命" class="headerlink" title="系統層設定——被忽略但致命"></a>系統層設定——被忽略但致命</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># /etc/sysctl.conf</span></span><br><span class="line">vm.max_map_count=262144</span><br><span class="line">vm.swappiness=1</span><br><span class="line"></span><br><span class="line"><span class="comment"># /etc/security/limits.conf</span></span><br><span class="line">elasticsearch soft nofile 65535</span><br><span class="line">elasticsearch hard nofile 65535</span><br></pre></td></tr></table></figure><p><code>vm.max_map_count</code> 預設值太低，Lucene 用 mmap 開 Segment 檔案會報錯。262144 是官方建議的最低值。</p><p><code>vm.swappiness=1</code> 幾乎禁用 swap。ES 痛恨 swap——一旦 Heap 被 swap 到磁碟，GC 時間從毫秒級變成秒級。配合 <code>elasticsearch.yml</code> 裡的 <code>bootstrap.memory_lock: true</code>，直接鎖住 JVM Heap 不被 swap。</p><p>有人真的踩過這個坑：沒設 memory_lock，某天凌晨 GC 停頓飆到 30 秒。其他 Node 以為這台死了，開始重新分配 Shard。等 GC 結束它又活過來了，但 Shard 已經在搬——叢集雪崩。</p><hr><h2 id="Production-上線清單"><a href="#Production-上線清單" class="headerlink" title="Production 上線清單"></a>Production 上線清單</h2><p>把開發機搬上 Production 之前，逐項確認。少一項都可能讓你半夜被叫起來。</p><h3 id="叢集架構"><a href="#叢集架構" class="headerlink" title="叢集架構"></a>叢集架構</h3><p><strong>至少 3 個 Master-eligible Node。</strong> 2 個 Node 掛 1 個就沒有多數派（quorum），叢集直接不可用。3 個可以容忍掛 1 個。</p><p><strong>Master 和 Data 分離。</strong> Master Node 只管叢集狀態（metadata、Shard 分配），不存資料。如果 Data Node 被大量寫入或搜尋壓到喘不過氣，連帶影響 Master 穩定性——最壞情況是 Master 選舉超時，叢集癱瘓。</p><p><strong>Coordinating-only Node 擋在前面。</strong> 純 coordinating node 接收查詢、分發到 Data Node、合併結果。它的 Heap 用來做結果合併和排序，不跟 Data Node 搶資源。</p><h3 id="硬體"><a href="#硬體" class="headerlink" title="硬體"></a>硬體</h3><p><strong>SSD 是必須的。</strong> 機械磁碟的隨機讀寫速度比 SSD 慢 100 倍。ES 的 Segment merge、搜尋、indexing 全都仰賴隨機 I&#x2F;O。機械磁碟在 Production ES 上是災難等級的。</p><p><strong>記憶體公式：</strong> Heap（不超過 50% 且不超過 31GB）+ 足夠的 Page Cache。64GB 記憶體配 31GB Heap 是常見配置。</p><h3 id="安全性"><a href="#安全性" class="headerlink" title="安全性"></a>安全性</h3><p>ES 8.x 預設開啟 TLS&#x2F;SSL，不用額外設定。但 RBAC 要自己配——不要所有人都用 <code>elastic</code> 超級帳號。依角色給不同權限：開發者只能讀自己的 index，DBA 可以管 ILM，SRE 可以看 cluster health。</p><p>Audit Log 也建議打開。「誰在什麼時間 DELETE 了哪個 index」——沒有 audit log 你永遠查不出來。</p><h3 id="資料保護"><a href="#資料保護" class="headerlink" title="資料保護"></a>資料保護</h3><p><strong>Snapshot 備份到 S3&#x2F;GCS&#x2F;Azure Blob。</strong> 設定排程，每天至少一次。有人在 Production 執行 <code>DELETE /orders</code>，一年的訂單資料消失——沒有 Snapshot 就是沒有。</p><p><strong>Replica 至少 1。</strong> 確保單一 Node 掛掉不丟資料。寫入密集期間可以暫時設 0（效能提升 30–50%），完成後立刻改回。</p><p><strong>ILM 生命週期管理。</strong> 自動 hot → warm → cold → delete。不設 ILM，磁碟終究會滿。ES 在磁碟用量超過 85% 時停止分配新 Shard，超過 95% 會把所有 index 設為唯讀。凌晨三點收到「所有索引變唯讀」的告警——原因就是磁碟滿了。</p><hr><h2 id="寫入效能——從「能寫」到「瘋狂寫」"><a href="#寫入效能——從「能寫」到「瘋狂寫」" class="headerlink" title="寫入效能——從「能寫」到「瘋狂寫」"></a>寫入效能——從「能寫」到「瘋狂寫」</h2><h3 id="API-層"><a href="#API-層" class="headerlink" title="API 層"></a>API 層</h3><p><strong>永遠用 <code>_bulk</code>。</strong> 單筆寫入 &#x3D; 1000 倍 HTTP overhead。一次 1000–5000 筆，payload 控制在 5–15 MB。多執行緒並行（2–4 條），單執行緒打不滿 ES 的寫入頻寬。</p><h3 id="Index-Settings"><a href="#Index-Settings" class="headerlink" title="Index Settings"></a>Index Settings</h3><p>大量匯入時的三板斧：</p><ol><li><code>refresh_interval</code> 改成 <code>30s</code> 或 <code>-1</code>（關閉自動 refresh）。減少 Segment 產生頻率，效能提升 30–50%。完成後改回 <code>1s</code>。</li><li><code>number_of_replicas</code> 設 <code>0</code>。寫入不用等 Replica 同步。完成後改回 1+。</li><li><code>translog.durability</code> 改成 <code>async</code>。每 5 秒 fsync 一次而不是每次請求都 fsync。日誌場景可以接受微量丟失，提升 20–30%。</li></ol><h3 id="Mapping-層"><a href="#Mapping-層" class="headerlink" title="Mapping 層"></a>Mapping 層</h3><p>不搜尋的欄位設 <code>&quot;index&quot;: false</code>——備註、電話號碼這種，不建 Inverted Index，省空間省 CPU。</p><p>不排序不聚合的欄位設 <code>&quot;doc_values&quot;: false</code>——keyword 和 numeric 預設有 doc_values，確定不需要就關掉。</p><p>避免 Dynamic Mapping。用 <code>&quot;dynamic&quot;: &quot;strict&quot;</code>，新欄位必須手動加。不然某天某個 client 多送了一個 <code>debug_info</code> 欄位，ES 自動幫你建 mapping、建 index——莫名其妙多了一堆垃圾欄位吃資源。</p><hr><h2 id="搜尋效能——200ms-內回應"><a href="#搜尋效能——200ms-內回應" class="headerlink" title="搜尋效能——200ms 內回應"></a>搜尋效能——200ms 內回應</h2><p>電商搜尋超過 200ms 使用者就感到遲鈍，超過 1 秒就會離開。</p><p><strong>最高 ROI：精確過濾放 <code>filter</code> 不放 <code>must</code>。</strong> 不算分 + 可快取，快 2–5 倍。（模組七講過，這裡再強調一次——因為真的太重要了。）</p><p><strong>控制 <code>_source</code> 回傳。</strong> 只取需要的欄位。一筆文件如果有 10KB 的 description，搜 100 筆就是 1MB 的傳輸。用 <code>&quot;_source&quot;: [&quot;name&quot;, &quot;price&quot;, &quot;brand&quot;]</code> 過濾到只剩你要的。</p><p><strong>控制 Segment 數量。</strong> Segment 越少搜尋越快。唯讀的歷史索引跑一次 <code>forcemerge</code> 合併到 1 個 Segment，速度快 2–3 倍。活躍索引靠背景 Merge 處理。</p><p><strong>Shard 大小控制在 10–50 GB。</strong> 太小（1 GB × 1000 個 Shard）的 overhead 浪費在 metadata 和 coordinating 上。太大（200 GB × 2 個 Shard）搜尋慢又不好恢復。</p><p><strong>深分頁用 <code>search_after</code>。</strong> <code>from + size</code> 超過 10,000 會崩。search_after 效能恆定——不管翻到第幾頁都一樣快。</p><hr><h2 id="監控——你不盯它，它就盯你"><a href="#監控——你不盯它，它就盯你" class="headerlink" title="監控——你不盯它，它就盯你"></a>監控——你不盯它，它就盯你</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">GET _cluster/health</span><br><span class="line">GET _nodes/stats</span><br><span class="line">GET _nodes/hot_threads</span><br><span class="line">GET _cat/allocation?v</span><br></pre></td></tr></table></figure><p>四個指令夠你做基本健檢。</p><p><strong>Cluster Health：</strong> <code>green</code> 正常，<code>yellow</code> 有 Replica Shard 未分配（通常是單節點開發環境），<code>red</code> 有 Primary Shard 遺失——要立刻處理。</p><p><strong>JVM Heap 使用率：</strong> 持續超過 85% 就該擴容或優化查詢了。GC 頻繁 &#x3D; 效能直線下降。</p><p><strong>Search Latency &#x2F; Indexing Rate：</strong> 建立 baseline，偏離超過 30% 觸發告警。不知道「正常」長什麼樣子，就不可能知道「異常」在哪裡。</p><p>慢查詢日誌也建議打開：</p><figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">PUT /my_index/_settings</span><br><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;index.search.slowlog.threshold.query.warn&quot;</span><span class="punctuation">:</span> <span class="string">&quot;5s&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;index.search.slowlog.threshold.fetch.warn&quot;</span><span class="punctuation">:</span> <span class="string">&quot;2s&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;index.indexing.slowlog.threshold.index.warn&quot;</span><span class="punctuation">:</span> <span class="string">&quot;5s&quot;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure><p>超過 5 秒的搜尋、超過 2 秒的 fetch、超過 5 秒的 indexing——自動記到 slowlog 裡。除錯的時候不用猜，直接去看 log。</p><hr><h2 id="經典災難案例"><a href="#經典災難案例" class="headerlink" title="經典災難案例"></a>經典災難案例</h2><p><strong>Heap 設 64GB 效能反而差。</strong> 超過 32GB 失去 Compressed OOPs，物件指標膨脹。64GB 的可用效能可能還不如 31GB。</p><p><strong>沒設 memory_lock，GC 停頓 30 秒。</strong> Heap 被 swap 到磁碟，GC 暫停從 50ms 飆到 30 秒。其他 Node 以為它死了，開始搬 Shard，叢集雪崩。</p><p><strong>磁碟超過 85% 停止寫入。</strong> 凌晨三點告警：所有索引變唯讀。ES 的自我保護機制觸發了 <code>cluster.routing.allocation.disk.watermark.high</code>。</p><p><strong>誤刪 Index 沒有備份。</strong> 有人在 Production 執行 <code>DELETE /orders</code>。沒有 Snapshot。一年訂單資料消失。</p><p><strong>升級沒用 Rolling Upgrade。</strong> 直接停掉整個叢集升級，數小時停機。正確做法：一個 Node 一個 Node 滾動升級，叢集全程可用。</p><p>每一個案例背後都是同一個教訓——Production 環境的問題 99% 不是 ES 的 bug，是設定沒到位。</p><hr><p>從模組一的 Hello World 到模組八的 Production 部署，這整條路的核心其實就兩件事：<strong>理解資料怎麼儲存的</strong>，跟<strong>理解查詢怎麼運作的</strong>。</p><p>Inverted Index 讓你知道搜尋為什麼快。Segment 和 Translog 讓你知道寫入為什麼安全。BM25 讓你知道排名怎麼來的。Shard 和 Replica 讓你知道資料怎麼分散。JVM Heap 和 Page Cache 讓你知道記憶體怎麼分配。</p><p>把這些拼起來，你就不是在「用 ES」——你是在「理解 ES」。</p><p>遇到效能問題的時候，你不會去 Stack Overflow 找答案。你會知道該看哪個層——是 Query 層的 filter 沒用對？是 Segment 太多沒 merge？是 Heap 被 field data 吃掉了？是 Shard 分配不均？</p><p>那才是這八個模組真正要教的東西。</p><blockquote><p>本文為 Elasticsearch 系列課程模組八筆記改寫</p></blockquote>]]></content>
+      
+      
+      <categories>
+          
+          <category> Elasticsearch </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> Performance </tag>
+            
+            <tag> Elasticsearch </tag>
+            
+            <tag> Production </tag>
+            
+            <tag> Operations </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>AI 與科技新聞摘要 - 2026/05/05</title>
       <link href="/2026/05/05/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260505/"/>
       <url>/2026/05/05/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260505/</url>
@@ -20,9 +115,9 @@
       
         <tags>
             
-            <tag> Apple </tag>
-            
             <tag> Anthropic </tag>
+            
+            <tag> Apple </tag>
             
             <tag> Sierra </tag>
             
@@ -243,11 +338,11 @@
             
             <tag> OpenAI </tag>
             
+            <tag> Mistral </tag>
+            
             <tag> NVIDIA </tag>
             
             <tag> Gemini </tag>
-            
-            <tag> Mistral </tag>
             
             <tag> Copy Fail </tag>
             
@@ -1163,9 +1258,9 @@
             
             <tag> Claude Code </tag>
             
-            <tag> Windsurf </tag>
-            
             <tag> OpenAI Codex </tag>
+            
+            <tag> Windsurf </tag>
             
             <tag> Claude Design </tag>
             
@@ -1456,9 +1551,9 @@
       
         <tags>
             
-            <tag> AI Agent </tag>
-            
             <tag> Anthropic </tag>
+            
+            <tag> AI Agent </tag>
             
             <tag> Claude Code </tag>
             
@@ -1658,9 +1753,9 @@
             
             <tag> GitHub </tag>
             
-            <tag> TDD </tag>
-            
             <tag> SDD </tag>
+            
+            <tag> TDD </tag>
             
             <tag> GH-300 </tag>
             
@@ -2190,9 +2285,9 @@
             
             <tag> Microsoft </tag>
             
-            <tag> GitHub </tag>
-            
             <tag> Stripe </tag>
+            
+            <tag> GitHub </tag>
             
         </tags>
       
@@ -2351,9 +2446,9 @@
             
             <tag> 微軟認證 </tag>
             
-            <tag> TDD </tag>
-            
             <tag> SDD </tag>
+            
+            <tag> TDD </tag>
             
         </tags>
       
@@ -2762,9 +2857,9 @@
             
             <tag> Copilot </tag>
             
-            <tag> 教學 </tag>
-            
             <tag> 開發工具 </tag>
+            
+            <tag> 教學 </tag>
             
         </tags>
       
@@ -3122,9 +3217,9 @@
       
         <tags>
             
-            <tag> AI Agent </tag>
-            
             <tag> Anthropic </tag>
+            
+            <tag> AI Agent </tag>
             
             <tag> 開發工具 </tag>
             
@@ -3184,9 +3279,9 @@
             
             <tag> 理財 </tag>
             
-            <tag> Gemini </tag>
-            
             <tag> Claude Code </tag>
+            
+            <tag> Gemini </tag>
             
         </tags>
       
@@ -3213,9 +3308,9 @@
             
             <tag> DevOps </tag>
             
-            <tag> 教學 </tag>
-            
             <tag> 開發工具 </tag>
+            
+            <tag> 教學 </tag>
             
         </tags>
       
@@ -3619,9 +3714,9 @@
             
             <tag> Skills </tag>
             
-            <tag> 教學 </tag>
-            
             <tag> 開發工具 </tag>
+            
+            <tag> 教學 </tag>
             
         </tags>
       
@@ -3977,9 +4072,9 @@
             
             <tag> Anthropic </tag>
             
-            <tag> NVIDIA </tag>
-            
             <tag> Claude Code </tag>
+            
+            <tag> NVIDIA </tag>
             
         </tags>
       
@@ -4010,9 +4105,9 @@
             
             <tag> 自動化 </tag>
             
-            <tag> 教學 </tag>
-            
             <tag> 開發工具 </tag>
+            
+            <tag> 教學 </tag>
             
         </tags>
       
@@ -4099,9 +4194,9 @@
             
             <tag> MCP </tag>
             
-            <tag> Apple </tag>
-            
             <tag> Anthropic </tag>
+            
+            <tag> Apple </tag>
             
             <tag> Mistral </tag>
             
@@ -4360,9 +4455,9 @@
             
             <tag> Claude Code </tag>
             
-            <tag> 自動化 </tag>
-            
             <tag> Skills </tag>
+            
+            <tag> 自動化 </tag>
             
         </tags>
       
@@ -4930,9 +5025,9 @@
       
         <tags>
             
-            <tag> Collections </tag>
-            
             <tag> Java </tag>
+            
+            <tag> Collections </tag>
             
             <tag> Stream </tag>
             
@@ -4959,9 +5054,9 @@
       
         <tags>
             
-            <tag> Collections </tag>
-            
             <tag> Java </tag>
+            
+            <tag> Collections </tag>
             
         </tags>
       
@@ -5036,9 +5131,9 @@
       
         <tags>
             
-            <tag> Collections </tag>
-            
             <tag> Java </tag>
+            
+            <tag> Collections </tag>
             
             <tag> Stream </tag>
             
@@ -5065,9 +5160,9 @@
       
         <tags>
             
-            <tag> JSON </tag>
-            
             <tag> Java </tag>
+            
+            <tag> JSON </tag>
             
             <tag> Stream </tag>
             
@@ -5550,9 +5645,9 @@
       
         <tags>
             
-            <tag> JSON </tag>
-            
             <tag> Java </tag>
+            
+            <tag> JSON </tag>
             
         </tags>
       

@@ -1,0 +1,416 @@
+<!DOCTYPE html><html lang="zh-TW" data-theme="dark"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>Claude Security 完整教學 — 讓 AI 幫你抓漏洞、寫修補 | Cheng's Tech &amp; Life</title><meta name="author" content="Cheng®"><meta name="copyright" content="Cheng®"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#0d0d0d"><meta name="description" content="Snyk 和 SonarQube 靠 pattern matching 抓漏洞，Claude Security 靠推理追蹤資料流。從啟用設定到 CI&#x2F;CD 整合，一篇搞定企業級 AI 漏洞掃描。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Claude Security 完整教學 — 讓 AI 幫你抓漏洞、寫修補">
+<meta property="og:url" content="https://mark22013333.github.io/2026/05/06/Claude-Security-%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8-%E8%AE%93-AI-%E5%B9%AB%E4%BD%A0%E6%8A%93%E6%BC%8F%E6%B4%9E%E5%AF%AB%E4%BF%AE%E8%A3%9C/index.html">
+<meta property="og:site_name" content="Cheng&#39;s Tech &amp; Life">
+<meta property="og:description" content="Snyk 和 SonarQube 靠 pattern matching 抓漏洞，Claude Security 靠推理追蹤資料流。從啟用設定到 CI&#x2F;CD 整合，一篇搞定企業級 AI 漏洞掃描。">
+<meta property="og:locale" content="zh_TW">
+<meta property="og:image" content="https://mark22013333.github.io/img/20260506-03.webp">
+<meta property="article:published_time" content="2026-05-06T00:30:00.000Z">
+<meta property="article:modified_time" content="2026-05-06T12:45:10.847Z">
+<meta property="article:author" content="Cheng®">
+<meta property="article:tag" content="Anthropic">
+<meta property="article:tag" content="Claude Code">
+<meta property="article:tag" content="Claude Security">
+<meta property="article:tag" content="DevSecOps">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://mark22013333.github.io/img/20260506-03.webp"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Claude Security 完整教學 — 讓 AI 幫你抓漏洞、寫修補",
+  "url": "https://mark22013333.github.io/2026/05/06/Claude-Security-%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8-%E8%AE%93-AI-%E5%B9%AB%E4%BD%A0%E6%8A%93%E6%BC%8F%E6%B4%9E%E5%AF%AB%E4%BF%AE%E8%A3%9C/",
+  "image": "https://mark22013333.github.io/img/20260506-03.webp",
+  "datePublished": "2026-05-06T00:30:00.000Z",
+  "dateModified": "2026-05-06T12:45:10.847Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "Cheng®",
+      "url": "https://mark22013333.github.io"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://mark22013333.github.io/2026/05/06/Claude-Security-%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8-%E8%AE%93-AI-%E5%B9%AB%E4%BD%A0%E6%8A%93%E6%BC%8F%E6%B4%9E%E5%AF%AB%E4%BF%AE%E8%A3%9C/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//www.google-analytics.com" crossorigin=""/><link rel="preconnect" href="//fonts.googleapis.com" crossorigin=""/><link rel="preconnect" href="//busuanzi.ibruce.info"/><meta name="google-site-verification" content="6ywUr8k2n_CT1PFYJzlSvI3CZ-JmJ55RYbA39VrFBDs"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!true && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          const hour = new Date().getHours()
+          const isNight = hour <= 9 || hour >= 18
+          if (theme === undefined) isNight ? activateDarkMode() : activateLightMode()
+          else theme === 'light' ? activateLightMode() : activateDarkMode()
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script async="async" src="https://www.googletagmanager.com/gtag/js?id=G-JBV14NRDH3"></script><script>window.dataLayer = window.dataLayer || []
+function gtag(){dataLayer.push(arguments)}
+gtag('js', new Date())
+gtag('config', 'G-JBV14NRDH3')
+btf.addGlobalFn('pjaxComplete', () => {
+  gtag('config', 'G-JBV14NRDH3', {'page_path': window.location.pathname})
+}, 'google_analytics')
+</script><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Titillium+Web&amp;display=swap" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"pagination":{"enable":false,"hitsPerPage":8},"languages":{"hits_empty":"找不到符合您查詢的內容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '複製成功',
+    error: '複製失敗',
+    noSupport: '瀏覽器不支援'
+  },
+  relativeDate: {
+    homepage: false,
+    post: true
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '剛剛',
+    min: '分鐘前',
+    hour: '小時前',
+    day: '天前',
+    month: '個月前'
+  },
+  copyright: {"limitCount":1,"languages":{"author":"作者: Cheng®","link":"連結: ","source":"來源: Cheng's Tech & Life","info":"著作權歸作者所有。如需商業轉載，請聯絡作者獲得授權，非商業轉載請註明出處😁。"}},
+  lightbox: 'fancybox',
+  Snackbar: {"chs_to_cht":"已切換為繁體中文","cht_to_chs":"已切換為簡體中文","day_to_night":"已切換為深色模式","night_to_day":"已切換為淺色模式","bgLight":"#49b1f5","bgDark":"#1f1f1f","position":"top-center"},
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid/dist/infinitegrid.min.js',
+    buttonText: '載入更多'
+  },
+  isPhotoFigcaption: true,
+  islazyloadPlugin: false,
+  isAnchor: true,
+  percent: {
+    toc: true,
+    rightside: true,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Claude Security 完整教學 — 讓 AI 幫你抓漏洞、寫修補',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><link rel="stylesheet" href="/css/kkbox-player.css"><link rel="stylesheet" href="/css/tag-cloud-fancy.css"><link rel="stylesheet" href="/css/font-resize.css"><link rel="stylesheet" href="/css/dark-palette.css"><link rel="stylesheet" href="/css/loading-override.css"><link rel="alternate" href="/atom.xml" title="Cheng's Tech & Life" type="application/atom+xml">
+</head><body><div id="loading-box"><div class="loading-glass-overlay"></div><div class="loading-indicator"><div class="loading-dot"></div><div class="loading-dot"></div><div class="loading-dot"></div></div></div><script>(()=>{
+  const $loadingBox = document.getElementById('loading-box')
+  const $body = document.body
+  const preloader = {
+    endLoading: () => {
+      if ($loadingBox.classList.contains('loaded')) return
+      $body.style.overflow = ''
+      $loadingBox.classList.add('loaded')
+    },
+    initLoading: () => {
+      $body.style.overflow = 'hidden'
+      $loadingBox.classList.remove('loaded')
+    }
+  }
+
+  preloader.initLoading()
+
+  if (document.readyState === 'complete') {
+    preloader.endLoading()
+  } else {
+    window.addEventListener('load', preloader.endLoading)
+    document.addEventListener('DOMContentLoaded', preloader.endLoading)
+    setTimeout(preloader.endLoading, 7000)
+  }
+
+  if (true) {
+    btf.addGlobalFn('pjaxSend', preloader.initLoading, 'preloader_init')
+    btf.addGlobalFn('pjaxComplete', preloader.endLoading, 'preloader_end')
+  }
+})()</script><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="https://lh3.googleusercontent.com/pw/ABLVV87_po8nBc6F_tXcoYDmtzMGWxHuhhrbguYILCjmjWKLOS8DTpubm0YoQLKgjyjRIZyV5TjYe7XVEz_YU4squfr37GTZqPZP1hlMVZ_MIgXpTxWu73M=w1200" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">204</div></a><a href="/tags/"><div class="headline">標籤</div><div class="length-num">261</div></a><a href="/categories/"><div class="headline">分類</div><div class="length-num">14</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首頁-Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 時間軸-archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 標籤-tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分類-Categories</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-list"></i><span> 其他列表</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音樂-Music</span></a></li><li><a class="site-page child" href="/gallery/"><i class="fa-fw fas fa-images"></i><span> 畫館-Gallery</span></a></li></ul></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg fixed" id="page-header" style="background-image: url(/img/20260506-03.webp);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><img class="site-icon" src="https://lh3.googleusercontent.com/pw/ABLVV87_po8nBc6F_tXcoYDmtzMGWxHuhhrbguYILCjmjWKLOS8DTpubm0YoQLKgjyjRIZyV5TjYe7XVEz_YU4squfr37GTZqPZP1hlMVZ_MIgXpTxWu73M=w1200" alt="Logo"><span class="site-name">Cheng's Tech &amp; Life</span></a><a class="nav-page-title" href="/"><span class="site-name">Claude Security 完整教學 — 讓 AI 幫你抓漏洞、寫修補</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首頁</span></span></a></span><div id="menus"><div id="search-button" title="Ctrl+K / Cmd+K"><span class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜尋</span></span></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首頁-Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 時間軸-archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 標籤-tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分類-Categories</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-list"></i><span> 其他列表</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音樂-Music</span></a></li><li><a class="site-page child" href="/gallery/"><i class="fa-fw fas fa-images"></i><span> 畫館-Gallery</span></a></li></ul></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">Claude Security 完整教學 — 讓 AI 幫你抓漏洞、寫修補</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">發表於</span><time class="post-meta-date-created" datetime="2026-05-06T00:30:00.000Z" title="發表於 2026-05-06 08:30:00">2026-05-06</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新於</span><time class="post-meta-date-updated" datetime="2026-05-06T12:45:10.847Z" title="更新於 2026-05-06 20:45:10">2026-05-06</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Claude-Code/">Claude Code</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">總字數:</span><span class="word-count">2.4k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">閱讀時間:</span><span>8分鐘</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">瀏覽量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><p>PR review 看到 1,200 行變更。你花了兩小時逐行看，覺得沒問題，按了 approve。三天後 staging 炸了——有一個 SQL injection 藏在第 847 行，user input 經過三個函式轉手之後直接進了 query builder，中間沒有任何消毒。</p>
+<p>你為什麼沒抓到？因為第一個函式在 <code>utils/transform.ts</code>，第二個在 <code>services/order.ts</code>，第三個在 <code>repositories/query.ts</code>。三個檔案，三個不同的人寫的。每個檔案單獨看都很正常。但串起來就是一條從使用者輸入直通資料庫的高速公路。</p>
+<p>這種跨檔案、跨模組的邏輯漏洞，是傳統掃描器的盲區。Snyk 看 dependency、SonarQube 看 pattern——它們都不會「讀懂」你的業務邏輯。</p>
+<p>Claude Security 做的事情不一樣。它用 Opus 4.7 的推理能力，像一個資安研究員一樣追蹤資料流、理解上下文、跨檔案分析。然後告訴你：「這裡有問題，這是為什麼，這是怎麼修。」</p>
+<hr>
+<h2 id="Claude-Security-是什麼"><a href="#Claude-Security-是什麼" class="headerlink" title="Claude Security 是什麼"></a>Claude Security 是什麼</h2><p>想像你請了一個資安顧問。這個顧問不只會看你的程式碼有沒有用到已知有問題的 library——他會真的讀你的 code，理解每一個函式在做什麼，追蹤資料從 API endpoint 流到資料庫的每一步，然後跟你說：「你這個 middleware 有一個路徑可以繞過驗證，攻擊者只要在 header 裡塞一個特定格式的 token 就能直接存取管理員 API。」</p>
+<p>Claude Security 就是這個顧問的 AI 版本。</p>
+<p>它是 Anthropic 直接整合在 claude.ai 裡的功能，用 Opus 4.7（目前最強的 coding model）掃描你的 GitHub repo，找出安全漏洞，然後生成修補建議。不是 regex 比對，不是規則引擎——是推理。</p>
+<p>目前在 public beta 階段，Claude Enterprise 方案可以使用。Team 和 Max 方案的支援即將開放。</p>
+<hr>
+<h2 id="前置條件"><a href="#前置條件" class="headerlink" title="前置條件"></a>前置條件</h2><p>在開始掃描之前，需要三件事到位：</p>
+<p><strong>第一，Enterprise 方案。</strong> Claude Security 目前只開放給 Enterprise 使用者。如果你是 Team 或 Max 方案，暫時只能等。</p>
+<p><strong>第二，Extra Usage 啟用。</strong> 到 Organization Billing 設定裡確認 Extra Usage 已經打開。Claude Security 的掃描會消耗額外的 token，不算在基本配額裡。</p>
+<p><strong>第三，GitHub App 安裝。</strong> 到你的 GitHub organization 安裝 Anthropic 的 GitHub App，授權要掃描的 repository 存取權。這步很關鍵——沒裝 App 的話，Claude Security 連你的 code 都看不到。</p>
+<p>設定路徑：<code>claude.ai/admin-settings/claude-code</code> → 啟用 Claude Security。</p>
+<hr>
+<h2 id="第一次掃描"><a href="#第一次掃描" class="headerlink" title="第一次掃描"></a>第一次掃描</h2><p>打開 <code>claude.ai/security</code>，或者從 claude.ai 側邊欄找到 Security 入口。</p>
+<p>掃描表單有五個欄位：</p>
+<ol>
+<li><strong>Repository</strong>：下拉選單，列出你授權的 GitHub repo</li>
+<li><strong>Branch</strong>：選要掃描哪個 branch（通常是 <code>main</code> 或 <code>develop</code>）</li>
+<li><strong>Scan scope</strong>：可選。留空掃整個 repo，或輸入目錄路徑（例如 <code>src/api/</code>）聚焦特定模組</li>
+<li><strong>Model</strong>：目前固定為 Claude Opus 4.7</li>
+<li><strong>Effort</strong>：兩個選項——Standard（快速掃描）和 Extended（深度掃描，時間較長但更徹底）</li>
+</ol>
+<p>按下掃描，Claude 就開始工作了。</p>
+<p>Standard 掃描適合日常 PR review 後的快速確認。Extended 適合季度安全稽核或新專案上線前的全面體檢。大型 repo（50,000+ 行）跑 Extended 可能需要十幾分鐘，但值得等。</p>
+<hr>
+<h2 id="看懂掃描結果"><a href="#看懂掃描結果" class="headerlink" title="看懂掃描結果"></a>看懂掃描結果</h2><p>掃描完成後，每個發現都有一張結構化的卡片：</p>
+<p><strong>信心指數</strong>——Claude 對這個發現的確信程度。高信心代表「幾乎確定是真的漏洞」，中等信心代表「有風險但需要人工確認上下文」。這是 Claude Security 跟傳統掃描器最大的差異之一——它不只告訴你有問題，還告訴你它有多確定。</p>
+<p><strong>嚴重等級</strong>——Critical、High、Medium、Low。定義跟 CVSS 類似，但 Claude 會根據你的程式碼上下文調整。同一種 SQL injection，如果只能存取到公開資料就是 Medium，如果能碰到用戶個資就是 Critical。</p>
+<p><strong>影響分析</strong>——這個漏洞被利用的話會發生什麼。不是泛泛的「可能導致資料外洩」，而是具體的：「攻擊者可以透過 <code>/api/orders</code> endpoint 的 <code>filter</code> 參數注入 SQL，存取 <code>users</code> 表的 <code>email</code> 和 <code>password_hash</code> 欄位。」</p>
+<p><strong>重現步驟</strong>——怎麼觸發這個漏洞。通常會包含一個 curl 指令或程式碼片段，讓你直接驗證。</p>
+<p><strong>修補建議</strong>——Claude 建議怎麼修。可以點「Open in Claude Code」直接在程式碼上下文裡開始修改。</p>
+<p>有一個很實用的功能：<strong>dismiss with reason</strong>。如果某個發現是誤報或已接受的風險，你可以標記 dismiss 並寫原因。這些 dismiss 紀錄會保留，下次掃描同一個 repo 時 Claude 會參考。</p>
+<hr>
+<h2 id="對抗性驗證：AI-自己挑戰自己"><a href="#對抗性驗證：AI-自己挑戰自己" class="headerlink" title="對抗性驗證：AI 自己挑戰自己"></a>對抗性驗證：AI 自己挑戰自己</h2><p>Claude Security 有一層很少被提到但非常重要的機制——<strong>adversarial verification</strong>。</p>
+<p>每一個 Claude 找到的疑似漏洞，在呈現給你之前，會先經過一輪「自我挑戰」。Claude 會嘗試反駁自己的發現：「這真的是漏洞嗎？有沒有我漏看的防護機制？這個 input 在到達危險函式之前，有沒有在某個 middleware 裡被消毒過？」</p>
+<p>通過挑戰的才會呈現。沒通過的會被內部過濾掉。</p>
+<p>這是 Anthropic 處理 AI 幻覺問題的一個工程解法。你不能讓安全掃描器大量吐 false positive——資安團隊追查每一個 false positive 都是成本。用 AI 先自己過濾一輪，留下來的發現品質會高很多。</p>
+<p>不完美，但比什麼都不過濾好太多。</p>
+<hr>
+<h2 id="在-Claude-Code-裡掃描"><a href="#在-Claude-Code-裡掃描" class="headerlink" title="在 Claude Code 裡掃描"></a>在 Claude Code 裡掃描</h2><p>除了 Web 介面，Claude Code 也有內建的安全掃描。</p>
+<p>在終端機裡打：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/security-review</span><br></pre></td></tr></table></figure>
+
+<p>這個 slash command 會對你目前的 pending changes（還沒 commit 的修改）做安全審查。適合在 <code>git commit</code> 之前跑一次，確認新寫的 code 沒有帶入漏洞。</p>
+<p>它跟 Web 版的 Claude Security 有什麼差別？</p>
+<p>Web 版掃描的是整個 repo 或指定目錄，適合全面體檢。<code>/security-review</code> 掃描的是你剛寫的 diff，適合開發中的即時確認。兩者互補，不是二選一。</p>
+<p>另外，Anthropic 在 GitHub 上也開源了 <code>claude-code-security-review</code> GitHub Action。把它加進你的 CI&#x2F;CD pipeline，每次 PR 都會自動跑一輪安全掃描，結果直接留在 PR 的 comment 裡。</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># .github/workflows/security-review.yml</span></span><br><span class="line"><span class="attr">name:</span> <span class="string">Claude</span> <span class="string">Security</span> <span class="string">Review</span></span><br><span class="line"><span class="attr">on:</span></span><br><span class="line">  <span class="attr">pull_request:</span></span><br><span class="line">    <span class="attr">types:</span> [<span class="string">opened</span>, <span class="string">synchronize</span>]</span><br><span class="line"></span><br><span class="line"><span class="attr">jobs:</span></span><br><span class="line">  <span class="attr">security-review:</span></span><br><span class="line">    <span class="attr">runs-on:</span> <span class="string">ubuntu-latest</span></span><br><span class="line">    <span class="attr">steps:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">uses:</span> <span class="string">actions/checkout@v4</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">uses:</span> <span class="string">anthropics/claude-code-security-review@v1</span></span><br><span class="line">        <span class="attr">with:</span></span><br><span class="line">          <span class="attr">anthropic_api_key:</span> <span class="string">$&#123;&#123;</span> <span class="string">secrets.ANTHROPIC_API_KEY</span> <span class="string">&#125;&#125;</span></span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="整合到現有工作流"><a href="#整合到現有工作流" class="headerlink" title="整合到現有工作流"></a>整合到現有工作流</h2><p>掃描結果如果只能在 claude.ai 上看，對大型團隊來說不夠用。</p>
+<p>Claude Security 支援三種匯出方式：</p>
+<p><strong>Webhook</strong>——掃描完成後自動 POST 結果到你指定的 URL。可以接 Slack（即時通知）、Jira（自動建立 ticket）、或任何接受 HTTP POST 的系統。</p>
+<p><strong>CSV 匯出</strong>——給需要跑報表或匯入其他工具的場景。每一行是一個 finding，欄位包含嚴重等級、信心指數、檔案路徑、行數、描述。</p>
+<p><strong>Markdown 匯出</strong>——給稽核報告或知識管理。格式化好的文件，可以直接貼進 Notion 或 Confluence。</p>
+<p>已經有五家主流資安平台整合了 Opus 4.7 的能力：CrowdStrike、Microsoft Security、Palo Alto Networks、SentinelOne、Wiz。如果你的團隊已經在用這些工具，Claude Security 的發現可以直接匯入。</p>
+<hr>
+<h2 id="跟-Snyk、SonarQube-比：什麼時候該用誰"><a href="#跟-Snyk、SonarQube-比：什麼時候該用誰" class="headerlink" title="跟 Snyk、SonarQube 比：什麼時候該用誰"></a>跟 Snyk、SonarQube 比：什麼時候該用誰</h2><p>三個工具解決不同層次的問題。</p>
+<p><strong>Snyk</strong> 擅長 dependency 層。你用的 npm package 有沒有已知漏洞？Docker image 的 base image 安不安全？license 有沒有合規問題？Snyk 是這一層的標準答案。</p>
+<p><strong>SonarQube</strong> 擅長 code quality 和 pattern 層。重複的程式碼、過長的函式、已知的不安全 pattern（hardcoded password、不安全的 random）。規則引擎驅動，穩定可靠，但只能抓到「長得像漏洞」的東西。</p>
+<p><strong>Claude Security</strong> 擅長 logic 層。跨檔案的資料流追蹤、業務邏輯漏洞、複雜的認證繞過路徑。需要「理解」程式碼才能抓到的東西。</p>
+<p>一個成熟的 DevSecOps pipeline 應該三個都有。Snyk 守住 dependency、SonarQube 守住 pattern、Claude Security 守住 logic。它們的覆蓋範圍幾乎不重疊。</p>
+<hr>
+<h2 id="使用建議"><a href="#使用建議" class="headerlink" title="使用建議"></a>使用建議</h2><p><strong>開發階段</strong>：每次 commit 前跑 <code>/security-review</code>。成本低、回饋快。</p>
+<p><strong>PR 階段</strong>：用 GitHub Action 自動掃描每個 PR。強制要求 Critical 和 High 的 finding 必須在 merge 前處理。</p>
+<p><strong>Release 階段</strong>：用 Web 版跑 Extended 掃描。涵蓋整個 repo，確保沒有跨模組的邏輯漏洞被遺漏。</p>
+<p><strong>季度稽核</strong>：跑完整掃描，匯出 Markdown 報告，附在稽核文件裡。</p>
+<hr>
+<p>掃描工具從來不是銀彈。Snyk 抓不到邏輯漏洞。SonarQube 抓不到零日。Claude Security 也會有漏網之魚——它畢竟是一個 AI 模型，不是一個全知的存在。</p>
+<p>但它改變了一件事：以前找邏輯層漏洞只能靠資深工程師花時間做 code review，或者花錢請滲透測試。現在有了一個可以 24 小時跑、不會累、而且每次掃描都是全量分析的選項。</p>
+<p>不是取代人工 code review。是讓人工 code review 可以專注在更高層次的問題——架構決策、設計取捨、業務邏輯的正確性——而不是花時間追蹤某個 user input 有沒有被正確消毒。</p>
+<p>把髒活交給 AI，把判斷留給人。這大概是 2026 年 DevSecOps 最務實的一句話。</p>
+<blockquote>
+<p>參考來源：<a target="_blank" rel="noopener" href="https://claude.com/blog/claude-security-public-beta">Claude Security is now in public beta — Claude Blog</a><br>參考來源：<a target="_blank" rel="noopener" href="https://claude.com/resources/tutorials/getting-started-with-claude-security">Getting started with Claude Security — Claude Tutorials</a><br>參考來源：<a target="_blank" rel="noopener" href="https://support.claude.com/en/articles/14661296-use-claude-security">Use Claude Security — Claude Help Center</a><br>參考來源：<a target="_blank" rel="noopener" href="https://github.com/anthropics/claude-code-security-review">claude-code-security-review GitHub Action — GitHub</a></p>
+</blockquote>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://mark22013333.github.io">Cheng®</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章連結: </span><span class="post-copyright-info"><a href="https://mark22013333.github.io/2026/05/06/Claude-Security-%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8-%E8%AE%93-AI-%E5%B9%AB%E4%BD%A0%E6%8A%93%E6%BC%8F%E6%B4%9E%E5%AF%AB%E4%BF%AE%E8%A3%9C/">https://mark22013333.github.io/2026/05/06/Claude-Security-完整教學-讓-AI-幫你抓漏洞寫修補/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版權聲明: </span><span class="post-copyright-info">本部落格所有文章除特別聲明外，均採用<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 授權協議。轉載請註明來源 <a href="https://mark22013333.github.io" target="_blank">Cheng's Tech & Life</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Anthropic/">Anthropic</a><a class="post-meta__tags" href="/tags/Claude-Code/">Claude Code</a><a class="post-meta__tags" href="/tags/Claude-Security/">Claude Security</a><a class="post-meta__tags" href="/tags/DevSecOps/">DevSecOps</a></div><div class="post-share"><div class="social-share" data-image="/img/20260506-03.webp" data-sites="facebook,x"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><div class="post-reward"><div class="reward-badges"><a class="sponsor-glow-btn" href="https://www.buymeacoffee.com/mark22013333" target="_blank" rel="noopener noreferrer" title="Buy Me A Coffee"><img src="https://img.shields.io/badge/Buy_Me_A_Coffee-FFDD00?style=for-the-badge&amp;logo=buy-me-a-coffee&amp;logoColor=black" alt="Buy Me A Coffee"/></a><a class="sponsor-glow-btn" href="https://p.ecpay.com.tw/EFC3F8F" target="_blank" rel="noopener noreferrer" title="綠界贊助"><img src="https://img.shields.io/badge/☕_%E8%AB%8B%E6%88%91%E5%96%9D%E6%9D%AF%E5%92%96%E5%95%A1-Donate-11998e?style=for-the-badge&amp;logo=coffee&amp;logoColor=white" alt="綠界贊助"/></a><a class="sponsor-glow-btn" href="https://calendly.com/markcheng00806-intumit/15min" target="_blank" rel="noopener noreferrer" title="預約時間"><img src="https://img.shields.io/badge/📅_%E9%A0%90%E7%B4%84_15_%E5%88%86%E9%90%98-Book_Time-0072ff?style=for-the-badge" alt="預約時間"/></a><p class="reward-badges-note">你的鼓勵將被轉換為我明天繼續加班的動力（真的）。 ❤️</p></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2026/05/06/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260506/" title="AI 與科技新聞摘要 - 2026/05/06"><img class="cover" src="/img/20260506-02.webp" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">AI 與科技新聞摘要 - 2026/05/06</div></div><div class="info-2"><div class="info-item-1">負七天。 不是「漏洞被發現後七天內被利用」——是漏洞被利用的時間點，比修補程式釋出還早七天。攻擊者在你知道門壞了之前，就已經走進來了。 Mandiant 的 M-Trends 2026 報告把這個數字攤在所有人面前。45 萬小時的事件回應數據，結論是：補丁的概念正在過期。你以為防禦是「發現漏洞 → 安裝修補 → 安全」的線性流程。現實是攻擊者跑得比修補快，而且每年都更快。 同一天，Cerebras 準備以 266 億美金估值 IPO，挑戰 NVIDIA 的 AI 晶片霸權。鴻海的 AI 伺服器營收首度超越 iPhone。Anthropic 開放 Claude Security 讓企業掃描程式碼漏洞。GPT-5.5 在英國 AISI 的安全測試裡反超了被限制存取的 Mythos。 速度是這五條新聞的共同語言。問題是，加速的不只是建設——攻擊也在加速。  Cerebras IPO：266 億美金估值，AI 晶片市場終於有人敢舉手35 億美金。這是 Cerebras 打算在這次 IPO 募集的金額——2026 年到目前為止最大的科技 IPO。 Cerebras 的晶片跟 NVIDIA ...</div></div></div></a><a class="pagination-related" href="/2026/05/06/Elasticsearch-%E6%AD%A3%E5%BC%8F%E4%B8%8A%E7%B7%9A-%E7%87%9F%E9%81%8B%E8%88%87%E6%95%88%E8%83%BD%E5%84%AA%E5%8C%96-Production-%E7%94%9F%E5%AD%98%E6%8C%87%E5%8D%97/" title="Elasticsearch 正式上線、營運與效能優化 — Production 生存指南"><img class="cover" src="/img/20260506-01.webp" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">Elasticsearch 正式上線、營運與效能優化 — Production 生存指南</div></div><div class="info-2"><div class="info-item-1">你蓋了一棟房子。牆壁漂亮、格局合理、水電也通了。然後你搬進去住，第一個冬天就發現：暖氣不夠、水管會凍裂、電線負載不了所有家電同時開。 蓋房子跟住房子是兩回事。寫 Elasticsearch 跟跑 Elasticsearch 也是。 這篇是 Elasticsearch 系列的最後一塊拼圖——把你在開發機上「能跑」的東西，變成在 Production 上「跑得穩、跑得快、掛不了」的東西。  兩個設定檔決定生死elasticsearch.yml——叢集的身分證1234567891011121314151617181920212223cluster.name: my-production-clusternode.name: node-1node.roles: [master, data_content]network.host: 0.0.0.0http.port: 9200transport.port: 9300discovery.seed_hosts:  - node-1:9300  - node-2:9300  - node-3:9300cluster.initial_master_...</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相關推薦</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2026/04/23/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260423/" title="AI 與科技新聞摘要 - 2026&#x2F;04&#x2F;23"><img class="cover" src="/img/20260423-02.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-04-23</div><div class="info-item-2">AI 與科技新聞摘要 - 2026&#x2F;04&#x2F;23</div></div><div class="info-2"><div class="info-item-1">$1,000,000,000,000。 這不是 Anthropic 的融資額，是它在二級市場的估值。4 月 23 日，Anthropic 在 Forge Global 等二級市場交易平台的隱含估值越過了兆美元門檻，同時間 OpenAI 停在 $8,800 億，低於它自己去年底 $8,520 億的官方估值。 這個數字的荒謬感在於，Anthropic 連 IPO 都還沒有。公開市場對它完全無從定價。但機構投資人搶得如此激烈，把二級流通股票的要價推到了傳統估值方法難以支撐的位置。這不是理性定價，是稀缺性恐慌——害怕現在不買，以後根本買不到。 同一週，Google Cloud Next 2026 在拉斯維加斯展示了一套重新架構的 agent 基礎設施，A2A 協定正式量產，支援者從六個框架變成幾乎整個生態系。 有些事情正在同時改變，它們之間有關聯。  Google Cloud Next 2026 — Vertex AI 不見了，Gemini Enterprise 接手4 月 22 日 Google Cloud Next 2026 最大的一個動作，不是發布新功能，是改名。 Vertex A...</div></div></div></a><a class="pagination-related" href="/2026/04/22/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260422/" title="AI 與科技新聞摘要 - 2026&#x2F;04&#x2F;22"><img class="cover" src="/img/20260422-02.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-04-22</div><div class="info-item-2">AI 與科技新聞摘要 - 2026&#x2F;04&#x2F;22</div></div><div class="info-2"><div class="info-item-1">77%。 去年這個數字是 20%。這不是某個廠商的行銷數字，是 Stanford AI Index 2026 剛剛公布的 Terminal-Bench 基準——測試 AI agent 處理真實世界任務的成功率。一年之間，從五題答一題，到十題答八題。 同一份報告裡還有一個數字：280%。這是「Agentic AI」技能需求在職缺描述中的年增幅，從 0.06% 到 0.23%，絕對數字是美國約 9 萬個職缺。兩個數字放在一起看，AI agent 的進步曲線和市場需求曲線，幾乎是同步加速的。 這週的幾條新聞，放在這個背景下讀會有不同的感受。  Stanford AI Index 2026 — AI agent 成功率翻了將近四倍Stanford HAI 今年的 AI Index 報告裡，數字最驚人的一塊是 agent 能力的進步速度。 OSWorld benchmark 測試 AI agent 在真實作業系統上執行任務的能力。一年前，成功率是 12%；現在是 66%。Terminal-Bench 的數字更極端，從 20% 跳到 77.3%。網路安全方面，AI agent 解決 CTF ...</div></div></div></a><a class="pagination-related" href="/2026/04/20/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260420/" title="AI 與科技新聞摘要 - 2026&#x2F;04&#x2F;20"><img class="cover" src="/img/20260420-02.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-04-20</div><div class="info-item-2">AI 與科技新聞摘要 - 2026&#x2F;04&#x2F;20</div></div><div class="info-2"><div class="info-item-1">658 倍。這是一個惡意 MCP 伺服器可以把你的 LLM 帳單灌到幾倍——而且標準防禦的偵測率不到 3%。這不是假設性攻擊，是本週剛被學界證實的攻擊技術。同一週，OpenAI 寫了一份內部備忘錄批 Anthropic 的收入造假、Windsurf 在被 Google 挖角後以 2.5 億被 Cognition 救援式收購、Claude Code Game Studios 把 49 個 agent 組成一家虛擬遊戲公司。 這幾條新聞放在一起看，你會看到一個共同模式：AI 的基礎設施跑得比風險管控快。 商業結構、攻擊面、agent 編排這三塊都在同一個時間軸上加速，但「怎麼守住」的答案集體還沒跟上。過去兩年大家在談「AI 怎麼改變我的工作」，今年開始變成「AI 怎麼攻破我的系統」。 Claude Code Game Studios — 49 個 agent 組一家虛擬遊戲公司4 月 19 日，GitHub 開發者 Donchitos 開源了 Claude Code Game Studios，一個把 Claude Code 單一 session 變成完整遊戲開發工作室的專案。不是把幾...</div></div></div></a><a class="pagination-related" href="/2026/04/25/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260425/" title="AI 與科技新聞摘要 - 2026&#x2F;04&#x2F;25"><img class="cover" src="/img/20260425-02.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-04-25</div><div class="info-item-2">AI 與科技新聞摘要 - 2026&#x2F;04&#x2F;25</div></div><div class="info-2"><div class="info-item-1">300 萬。 這是 OpenAI Codex 的週活躍開發者數字，截至 2026 年 4 月。兩個月前，這個數字是 160 萬。翻倍，用了不到 60 天。 同一週，Anthropic 在沒有太多預告的情況下，一口氣推出了兩個新產品方向，並且更新了 Claude Code 的核心設定架構。技術圈在消化 GPT-5.5 的同時，後面還有一堆東西在安靜地落地。  Claude Code 2.1.119 — config 設定終於持久化了這個更新聽起來不大，但對每天用 Claude Code 的開發者來說，它解決了一個每次新開 session 都要重設的痛點。 從 2.1.119 開始，/config 指令的設定（主題、editor mode、verbose 輸出等）會自動寫入 ~/.claude/settings.json，並且參與 project&#x2F;local&#x2F;policy 的 override 優先序。換句話說，你設定一次，下次開 Claude Code 就是你的環境，不用每次重來。 同一版本還加了 prUrlTemplate 設定，讓你把 PR URL 的格式綁...</div></div></div></a><a class="pagination-related" href="/2026/04/01/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260401/" title="AI 與科技新聞摘要 — 2026&#x2F;04&#x2F;01"><img class="cover" src="/img/20260401-02.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-04-01</div><div class="info-item-2">AI 與科技新聞摘要 — 2026&#x2F;04&#x2F;01</div></div><div class="info-2"><div class="info-item-1">512,000 行 TypeScript 原始碼，一個 .npmignore 沒設好就全部公開了。Anthropic 五天內第二次洩漏，這次是 Claude Code 的完整 codebase。同一週，MCP 的第一屆開發者峰會在紐約登場，Linux Foundation 正式成立 Agentic AI Foundation。Citrix 爆了一個 CVSS 9.3 的漏洞，NVIDIA 在 GTC 發布了 Rubin 世代的六款新晶片。  1. Claude Code 原始碼洩漏 — 59.8MB 的 source map 讓 1,900 個檔案全部曝光3 月 31 日凌晨，Anthropic 推送 @anthropic-ai/claude-code v2.1.88 到 npm 時，包裹裡多了一個不該存在的東西：一個 59.8MB 的 JavaScript source map 檔案。這個 .map 能完整還原壓縮前的原始碼——512,000 行 TypeScript，橫跨 1,900 個檔案。 研究者 Chaofan Shou 在凌晨 4:23 把下載連結貼到 X 上，16 ...</div></div></div></a><a class="pagination-related" href="/2026/04/08/Claude-Code-buddy-%E5%AF%B5%E7%89%A9%E9%87%8D-Roll-%E5%AE%8C%E6%95%B4%E6%94%BB%E7%95%A5-%E5%88%B7%E5%88%B0%E4%BD%A0%E7%9A%84%E5%A4%A2%E5%B9%BB-Legendary-Shiny/" title="Claude Code &#x2F;buddy 寵物重 Roll 完整攻略 - 刷到你的夢幻 Legendary Shiny"><img class="cover" src="/img/20260408-buddy.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-04-08</div><div class="info-item-2">Claude Code &#x2F;buddy 寵物重 Roll 完整攻略 - 刷到你的夢幻 Legendary Shiny</div></div><div class="info-2"><div class="info-item-1">/buddy 敲下去，跳出一隻 common 的 snail。你盯著那隻蝸牛三秒鐘，心想：我想要的是 legendary shiny dragon，不是這個。 問題是，官方沒有給重新 Roll 的入口。寵物的外觀、物種、稀有度全部由 hash(userID + SALT) 確定性生成——同一個 userID 永遠會得到同一隻寵物。想換？得從底層動手。 這篇把整個寵物系統的原理拆給你看，然後教你怎麼用腳本暴力搜尋到你想要的組合，最後寫進設定檔完成替換。手動派和懶人派的方法都有。 寵物系統長什麼樣兩層架構：骨架跟靈魂寵物分成兩層，儲存方式完全不同： Bones（骨架）——外觀、物種、稀有度、屬性值。不存在任何檔案裡，每次都是由 hash(userID + SALT) 即時計算出來的。換句話說，只要 userID 一樣，骨架就永遠一樣。 Soul（靈魂）——名字和性格。存在 ~/.claude.json 的 companion 欄位裡。這部分可以隨便改。 1234567// src/buddy/companion.tsconst SALT = &#x27;friend-2026-401...</div></div></div></a></div></div><hr class="custom-hr"/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 評論</span></div></div><div class="comment-wrap"><div><div id="giscus-wrap"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="https://lh3.googleusercontent.com/pw/ABLVV87_po8nBc6F_tXcoYDmtzMGWxHuhhrbguYILCjmjWKLOS8DTpubm0YoQLKgjyjRIZyV5TjYe7XVEz_YU4squfr37GTZqPZP1hlMVZ_MIgXpTxWu73M=w1200" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">Cheng®</div><div class="author-info-description">Backend Developer / 技術筆記 & AI 新聞分享</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">204</div></a><a href="/tags/"><div class="headline">標籤</div><div class="length-num">261</div></a><a href="/categories/"><div class="headline">分類</div><div class="length-num">14</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/mark22013333"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons"><a class="social-icon" href="https://github.com/mark22013333" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:mark22013333@gmail.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a></div><div class="card-info-sponsor"><a class="sponsor-glow-btn" href="https://www.buymeacoffee.com/mark22013333" target="_blank" rel="noopener noreferrer" title="Buy Me A Coffee"><img src="https://img.shields.io/badge/Buy_Me_A_Coffee-FFDD00?style=for-the-badge&amp;logo=buy-me-a-coffee&amp;logoColor=black" alt="Buy Me A Coffee"/></a><a class="sponsor-glow-btn" href="https://p.ecpay.com.tw/EFC3F8F" target="_blank" rel="noopener noreferrer" title="綠界贊助"><img src="https://img.shields.io/badge/☕_%E8%AB%8B%E6%88%91%E5%96%9D%E6%9D%AF%E5%92%96%E5%95%A1-Donate-11998e?style=for-the-badge&amp;logo=coffee&amp;logoColor=white" alt="綠界贊助"/></a><a class="sponsor-glow-btn" href="https://calendly.com/markcheng00806-intumit/15min" target="_blank" rel="noopener noreferrer" title="預約時間"><img src="https://img.shields.io/badge/📅_%E9%A0%90%E7%B4%84_15_%E5%88%86%E9%90%98-Book_Time-0072ff?style=for-the-badge" alt="預約時間"/></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">這裡記錄我在後端開發路上踩過的坑、學到的東西，也會分享每日 AI 與科技新聞觀點。歡迎一起交流！</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目錄</span><span class="toc-percentage"></span></div><div class="toc-content is-expand"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Claude-Security-%E6%98%AF%E4%BB%80%E9%BA%BC"><span class="toc-number">1.</span> <span class="toc-text">Claude Security 是什麼</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E7%BD%AE%E6%A2%9D%E4%BB%B6"><span class="toc-number">2.</span> <span class="toc-text">前置條件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%B8%80%E6%AC%A1%E6%8E%83%E6%8F%8F"><span class="toc-number">3.</span> <span class="toc-text">第一次掃描</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%9C%8B%E6%87%82%E6%8E%83%E6%8F%8F%E7%B5%90%E6%9E%9C"><span class="toc-number">4.</span> <span class="toc-text">看懂掃描結果</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B0%8D%E6%8A%97%E6%80%A7%E9%A9%97%E8%AD%89%EF%BC%9AAI-%E8%87%AA%E5%B7%B1%E6%8C%91%E6%88%B0%E8%87%AA%E5%B7%B1"><span class="toc-number">5.</span> <span class="toc-text">對抗性驗證：AI 自己挑戰自己</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9C%A8-Claude-Code-%E8%A3%A1%E6%8E%83%E6%8F%8F"><span class="toc-number">6.</span> <span class="toc-text">在 Claude Code 裡掃描</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%95%B4%E5%90%88%E5%88%B0%E7%8F%BE%E6%9C%89%E5%B7%A5%E4%BD%9C%E6%B5%81"><span class="toc-number">7.</span> <span class="toc-text">整合到現有工作流</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%B7%9F-Snyk%E3%80%81SonarQube-%E6%AF%94%EF%BC%9A%E4%BB%80%E9%BA%BC%E6%99%82%E5%80%99%E8%A9%B2%E7%94%A8%E8%AA%B0"><span class="toc-number">8.</span> <span class="toc-text">跟 Snyk、SonarQube 比：什麼時候該用誰</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8%E5%BB%BA%E8%AD%B0"><span class="toc-number">9.</span> <span class="toc-text">使用建議</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2026/05/06/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260506/" title="AI 與科技新聞摘要 - 2026/05/06"><img src="/img/20260506-02.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="AI 與科技新聞摘要 - 2026/05/06"/></a><div class="content"><a class="title" href="/2026/05/06/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260506/" title="AI 與科技新聞摘要 - 2026/05/06">AI 與科技新聞摘要 - 2026/05/06</a><time datetime="2026-05-06T00:30:00.000Z" title="發表於 2026-05-06 08:30:00">2026-05-06</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/05/06/Claude-Security-%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8-%E8%AE%93-AI-%E5%B9%AB%E4%BD%A0%E6%8A%93%E6%BC%8F%E6%B4%9E%E5%AF%AB%E4%BF%AE%E8%A3%9C/" title="Claude Security 完整教學 — 讓 AI 幫你抓漏洞、寫修補"><img src="/img/20260506-03.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Claude Security 完整教學 — 讓 AI 幫你抓漏洞、寫修補"/></a><div class="content"><a class="title" href="/2026/05/06/Claude-Security-%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8-%E8%AE%93-AI-%E5%B9%AB%E4%BD%A0%E6%8A%93%E6%BC%8F%E6%B4%9E%E5%AF%AB%E4%BF%AE%E8%A3%9C/" title="Claude Security 完整教學 — 讓 AI 幫你抓漏洞、寫修補">Claude Security 完整教學 — 讓 AI 幫你抓漏洞、寫修補</a><time datetime="2026-05-06T00:30:00.000Z" title="發表於 2026-05-06 08:30:00">2026-05-06</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/05/06/Elasticsearch-%E6%AD%A3%E5%BC%8F%E4%B8%8A%E7%B7%9A-%E7%87%9F%E9%81%8B%E8%88%87%E6%95%88%E8%83%BD%E5%84%AA%E5%8C%96-Production-%E7%94%9F%E5%AD%98%E6%8C%87%E5%8D%97/" title="Elasticsearch 正式上線、營運與效能優化 — Production 生存指南"><img src="/img/20260506-01.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Elasticsearch 正式上線、營運與效能優化 — Production 生存指南"/></a><div class="content"><a class="title" href="/2026/05/06/Elasticsearch-%E6%AD%A3%E5%BC%8F%E4%B8%8A%E7%B7%9A-%E7%87%9F%E9%81%8B%E8%88%87%E6%95%88%E8%83%BD%E5%84%AA%E5%8C%96-Production-%E7%94%9F%E5%AD%98%E6%8C%87%E5%8D%97/" title="Elasticsearch 正式上線、營運與效能優化 — Production 生存指南">Elasticsearch 正式上線、營運與效能優化 — Production 生存指南</a><time datetime="2026-05-06T00:30:00.000Z" title="發表於 2026-05-06 08:30:00">2026-05-06</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/05/05/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260505/" title="AI 與科技新聞摘要 - 2026/05/05"><img src="/img/20260505-02.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="AI 與科技新聞摘要 - 2026/05/05"/></a><div class="content"><a class="title" href="/2026/05/05/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260505/" title="AI 與科技新聞摘要 - 2026/05/05">AI 與科技新聞摘要 - 2026/05/05</a><time datetime="2026-05-05T00:30:00.000Z" title="發表於 2026-05-05 08:30:00">2026-05-05</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/05/05/Claude-API-Prompt-Caching-%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8-%E8%AE%93%E6%AF%8F%E6%AC%A1-API-%E5%91%BC%E5%8F%AB%E7%9C%81%E4%B8%8B-90-%E7%9A%84-Token-%E8%B2%BB%E7%94%A8/" title="Claude API Prompt Caching 完整教學 — 讓每次 API 呼叫省下 90% 的 Token 費用"><img src="/img/20260505-03.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Claude API Prompt Caching 完整教學 — 讓每次 API 呼叫省下 90% 的 Token 費用"/></a><div class="content"><a class="title" href="/2026/05/05/Claude-API-Prompt-Caching-%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8-%E8%AE%93%E6%AF%8F%E6%AC%A1-API-%E5%91%BC%E5%8F%AB%E7%9C%81%E4%B8%8B-90-%E7%9A%84-Token-%E8%B2%BB%E7%94%A8/" title="Claude API Prompt Caching 完整教學 — 讓每次 API 呼叫省下 90% 的 Token 費用">Claude API Prompt Caching 完整教學 — 讓每次 API 呼叫省下 90% 的 Token 費用</a><time datetime="2026-05-05T00:30:00.000Z" title="發表於 2026-05-05 08:30:00">2026-05-05</time></div></div></div></div></div></div></main><footer id="footer" style="background-image: url(/img/20260506-03.webp);"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2024 - 2026 By Cheng®</span></div><div class="footer_custom_text">Written by Cheng® — 自律，從當下的一念開始。</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="閱讀模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日夜模式切換"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="單欄和雙欄切換"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="設定"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目錄"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="前往評論"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到頂端"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.umd.min.js"></script><script src="https://cdn.jsdelivr.net/npm/instant.page/instantpage.min.js" type="module"></script><script src="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.js"></script><div class="js-pjax"><script>(() => {
+  const isShuoshuo = GLOBAL_CONFIG_SITE.pageType === 'shuoshuo'
+  const option = {"mapping":"pathname","strict":0,"reactionsEnabled":1,"emitMetadata":0,"inputPosition":"bottom","lang":"zh-TW"}
+
+  const getGiscusTheme = theme => theme === 'dark' ? 'dark' : 'light'
+
+  const createScriptElement = config => {
+    const ele = document.createElement('script')
+    Object.entries(config).forEach(([key, value]) => {
+      ele.setAttribute(key, value)
+    })
+    return ele
+  }
+
+  const loadGiscus = (el = document, key) => {
+    const mappingConfig = isShuoshuo
+      ? { 'data-mapping': 'specific', 'data-term': key }
+      : { 'data-mapping': (option && option['data-mapping']) || 'pathname' }
+
+    const giscusConfig = {
+      src: 'https://giscus.app/client.js',
+      'data-repo': 'mark22013333/mark22013333.github.io',
+      'data-repo-id': 'R_kgDOLAxa6A',
+      'data-category-id': 'DIC_kwDOLAxa6M4C5eO9',
+      'data-theme': getGiscusTheme(document.documentElement.getAttribute('data-theme')),
+      'data-reactions-enabled': '1',
+      crossorigin: 'anonymous',
+      async: true,
+      ...option,
+      ...mappingConfig
+    }
+
+    const scriptElement = createScriptElement(giscusConfig)
+
+    el.querySelector('#giscus-wrap').appendChild(scriptElement)
+
+    if (isShuoshuo) {
+      window.shuoshuoComment.destroyGiscus = () => {
+        if (el.children.length) {
+          el.innerHTML = ''
+          el.classList.add('no-comment')
+        }
+      }
+    }
+  }
+
+  const changeGiscusTheme = theme => {
+    const iframe = document.querySelector('#giscus-wrap iframe')
+    if (iframe) {
+      const message = {
+        giscus: {
+          setConfig: {
+            theme: getGiscusTheme(theme)
+          }
+        }
+      }
+      iframe.contentWindow.postMessage(message, 'https://giscus.app')
+    }
+  }
+
+  btf.addGlobalFn('themeChange', changeGiscusTheme, 'giscus')
+
+  if (isShuoshuo) {
+    'Giscus' === 'Giscus'
+      ? window.shuoshuoComment = { loadComment: loadGiscus }
+      : window.loadOtherComment = loadGiscus
+    return
+  }
+
+  if ('Giscus' === 'Giscus' || !true) {
+    if (true) btf.loadComment(document.getElementById('giscus-wrap'), loadGiscus)
+    else loadGiscus()
+  } else {
+    window.loadOtherComment = loadGiscus
+  }
+})()</script></div><script src="/js/kkbox-player.js"></script><script src="/js/archives-pagination.js"></script><script src="/js/font-resize.js"></script><script src="/js/dark-palette.js"></script><script defer="defer" id="fluttering_ribbon" mobile="false" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/canvas-fluttering-ribbon.min.js"></script><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/activate-power-mode.min.js"></script><script>POWERMODE.colorful = true;
+POWERMODE.shake = true;
+POWERMODE.mobile = true;
+document.body.addEventListener('input', POWERMODE);
+</script><script src="https://cdn.jsdelivr.net/npm/pjax/pjax.min.js" defer="defer"></script><script>document.addEventListener('DOMContentLoaded', () => {
+  const pjaxSelectors = ["meta[property=\"og:image\"]","meta[property=\"og:title\"]","meta[property=\"og:url\"]","meta[property=\"og:description\"]","link[rel=\"canonical\"]","head > title","#config-diff","#body-wrap","#rightside-config-hide","#rightside-config-show",".js-pjax"]
+
+  window.pjax = new Pjax({
+    elements: 'a:not([target="_blank"])',
+    selectors: pjaxSelectors,
+    cacheBust: false,
+    analytics: true,
+    scrollRestoration: false
+  })
+
+  const triggerPjaxFn = (val) => {
+    if (!val) return
+    Object.values(val).forEach(fn => {
+      try {
+        fn()
+      } catch (err) {
+        console.debug('Pjax callback failed:', err)
+      }
+    })
+  }
+
+  document.addEventListener('pjax:send', () => {
+    // removeEventListener
+    btf.removeGlobalFnEvent('pjaxSendOnce')
+    btf.removeGlobalFnEvent('themeChange')
+
+    // reset readmode
+    const $bodyClassList = document.body.classList
+    if ($bodyClassList.contains('read-mode')) $bodyClassList.remove('read-mode')
+
+    triggerPjaxFn(window.globalFn.pjaxSend)
+  })
+
+  document.addEventListener('pjax:complete', () => {
+    btf.removeGlobalFnEvent('pjaxCompleteOnce')
+    document.querySelectorAll('script[data-pjax]').forEach(item => {
+      const newScript = document.createElement('script')
+      const content = item.text || item.textContent || item.innerHTML || ""
+      Array.from(item.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value))
+      newScript.appendChild(document.createTextNode(content))
+      item.parentNode.replaceChild(newScript, item)
+    })
+
+    triggerPjaxFn(window.globalFn.pjaxComplete)
+  })
+
+  document.addEventListener('pjax:error', e => {
+    if (e.request.status === 404) {
+      true
+        ? pjax.loadUrl('/404.html')
+        : window.location.href = e.request.responseURL
+    }
+  })
+})</script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜尋</span><i class="fas fa-spinner fa-pulse" id="loading-status" hidden="hidden"></i><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="text-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  資料載入中</span></div><div class="local-search-input"><input placeholder="搜尋文章" type="text"/></div><hr/><div id="local-search-results"></div><div class="ais-Pagination" id="local-search-pagination" style="display:none;"><ul class="ais-Pagination-list"></ul></div><div id="local-search-stats"></div></div><div id="search-mask"></div><script src="/js/search/local-search.js"></script></div></div></body></html>
