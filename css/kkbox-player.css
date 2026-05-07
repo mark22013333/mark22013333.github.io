@@ -28,20 +28,48 @@
   background: #111;
 }
 
+/* Tab bar */
+#music-tab-bar {
+  display: flex;
+  height: 36px;
+  background: #1a1a2e;
+  flex-shrink: 0;
+}
+
+#music-tab-bar button {
+  flex: 1;
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: #888;
+  font-size: 13px;
+  cursor: pointer;
+  transition: color 0.2s, border-color 0.2s;
+}
+
+#music-tab-bar button:hover {
+  color: #ccc;
+}
+
+#music-tab-bar button.active {
+  color: #fff;
+  border-bottom-color: #6c5ce7;
+}
+
 /* Shuffle / next button inside panel */
 #music-shuffle {
   position: absolute;
   bottom: 10px;
-  right: 10px;
+  left: 10px;
   z-index: 10001;
-  width: 42px;
-  height: 42px;
+  width: 30px;
+  height: 30px;
   border-radius: 50%;
   background: linear-gradient(135deg, #6c5ce7, #a29bfe);
   color: #fff;
   border: none;
   cursor: pointer;
-  font-size: 20px;
+  font-size: 14px;
   display: flex;
   align-items: center;
   justify-content: center;

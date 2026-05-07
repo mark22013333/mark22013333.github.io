@@ -115,9 +115,9 @@
       
         <tags>
             
-            <tag> Anthropic </tag>
-            
             <tag> Apple </tag>
+            
+            <tag> Anthropic </tag>
             
             <tag> Sierra </tag>
             
@@ -212,9 +212,9 @@
             
             <tag> MCP </tag>
             
-            <tag> IBM </tag>
-            
             <tag> Pentagon </tag>
+            
+            <tag> IBM </tag>
             
             <tag> Semantic Kernel </tag>
             
@@ -338,11 +338,11 @@
             
             <tag> OpenAI </tag>
             
-            <tag> Mistral </tag>
-            
             <tag> NVIDIA </tag>
             
             <tag> Gemini </tag>
+            
+            <tag> Mistral </tag>
             
             <tag> Copy Fail </tag>
             
@@ -848,9 +848,9 @@
       
         <tags>
             
-            <tag> MCP </tag>
-            
             <tag> AI Agent </tag>
+            
+            <tag> MCP </tag>
             
             <tag> Claude Code </tag>
             
@@ -1157,9 +1157,9 @@
             
             <tag> Claude Code </tag>
             
-            <tag> 自動化 </tag>
-            
             <tag> Hooks </tag>
+            
+            <tag> 自動化 </tag>
             
             <tag> 教學 </tag>
             
@@ -1258,9 +1258,9 @@
             
             <tag> Claude Code </tag>
             
-            <tag> OpenAI Codex </tag>
-            
             <tag> Windsurf </tag>
+            
+            <tag> OpenAI Codex </tag>
             
             <tag> Claude Design </tag>
             
@@ -1551,17 +1551,17 @@
       
         <tags>
             
-            <tag> Anthropic </tag>
-            
             <tag> AI Agent </tag>
+            
+            <tag> Anthropic </tag>
             
             <tag> Claude Code </tag>
             
             <tag> Kiro </tag>
             
-            <tag> Stanford AI Index </tag>
-            
             <tag> GitHub Copilot </tag>
+            
+            <tag> Stanford AI Index </tag>
             
         </tags>
       
@@ -1753,9 +1753,9 @@
             
             <tag> GitHub </tag>
             
-            <tag> SDD </tag>
-            
             <tag> TDD </tag>
+            
+            <tag> SDD </tag>
             
             <tag> GH-300 </tag>
             
@@ -2345,9 +2345,9 @@
       
         <tags>
             
-            <tag> AI </tag>
-            
             <tag> Claude </tag>
+            
+            <tag> AI </tag>
             
             <tag> Anthropic </tag>
             
@@ -2446,9 +2446,9 @@
             
             <tag> 微軟認證 </tag>
             
-            <tag> SDD </tag>
-            
             <tag> TDD </tag>
+            
+            <tag> SDD </tag>
             
         </tags>
       
@@ -2729,9 +2729,9 @@
       
         <tags>
             
-            <tag> Claude </tag>
-            
             <tag> AI Agent </tag>
+            
+            <tag> Claude </tag>
             
             <tag> Multi-Model </tag>
             
@@ -2857,9 +2857,9 @@
             
             <tag> Copilot </tag>
             
-            <tag> 開發工具 </tag>
-            
             <tag> 教學 </tag>
+            
+            <tag> 開發工具 </tag>
             
         </tags>
       
@@ -2934,35 +2934,6 @@
     
     
     <entry>
-      <title>Claude Code Voice Mode 完整教學 - 用嘴巴寫程式的正確姿勢</title>
-      <link href="/2026/04/13/Claude-Code-Voice-Mode-%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8-%E7%94%A8%E5%98%B4%E5%B7%B4%E5%AF%AB%E7%A8%8B%E5%BC%8F%E7%9A%84%E6%AD%A3%E7%A2%BA%E5%A7%BF%E5%8B%A2/"/>
-      <url>/2026/04/13/Claude-Code-Voice-Mode-%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8-%E7%94%A8%E5%98%B4%E5%B7%B4%E5%AF%AB%E7%A8%8B%E5%BC%8F%E7%9A%84%E6%AD%A3%E7%A2%BA%E5%A7%BF%E5%8B%A2/</url>
-      
-        <content type="html"><![CDATA[<p>打了三個小時的 prompt，手指已經不是自己的了。這時候你的同事走過來：「欸你幹嘛不用說的？」</p><p>Claude Code 從 v2.1.69 開始支援 Voice Mode。按住空白鍵說話，放開就變成文字指令。聽起來簡單，但裡面有不少細節值得搞懂。</p><h2 id="啟用方式"><a href="#啟用方式" class="headerlink" title="啟用方式"></a>啟用方式</h2><p>一行指令：</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/voice</span><br></pre></td></tr></table></figure><p>第一次啟用時，Claude Code 會跑一次麥克風檢查。macOS 使用者會看到系統權限彈窗，允許你的終端機存取麥克風就好。</p><p>啟用後，輸入區底部會出現 <code>hold Space to speak</code> 的提示。Voice Mode 是持久設定，關掉終端機下次開還在。要關掉就再打一次 <code>/voice</code>。</p><p>也可以直接寫進設定檔 <code>~/.claude/settings.json</code>：</p><figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;voiceEnabled&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">true</span></span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure><h2 id="按住、說話、放開"><a href="#按住、說話、放開" class="headerlink" title="按住、說話、放開"></a>按住、說話、放開</h2><p>操作流程：</p><ol><li><strong>按住空白鍵</strong> — 底部會先顯示 <code>keep holding...</code>（這是暖機階段，偵測你是長按還是短按）</li><li><strong>開始說話</strong> — 暖機結束後出現波形動畫，語音即時串流到 Anthropic 伺服器做轉錄</li><li><strong>放開空白鍵</strong> — 語音轉文字結束，文字插入游標位置</li></ol><p>暖機期間可能會多打幾個空格到輸入區，Claude Code 會在錄音啟動後自動清掉。短按空白鍵還是正常打空格，不會誤觸。</p><h3 id="跳過暖機的方法"><a href="#跳過暖機的方法" class="headerlink" title="跳過暖機的方法"></a>跳過暖機的方法</h3><p>如果覺得暖機延遲煩人，改綁到修飾鍵組合就好。修飾鍵組合在第一次按下時就開始錄音，不需要等 key-repeat 偵測：</p><figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// ~/.claude/keybindings.json</span></span><br><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;bindings&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">    <span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;context&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Chat&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;bindings&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">        <span class="attr">&quot;meta+k&quot;</span><span class="punctuation">:</span> <span class="string">&quot;voice:pushToTalk&quot;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;space&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">null</span></span></span><br><span class="line">      <span class="punctuation">&#125;</span></span><br><span class="line">    <span class="punctuation">&#125;</span></span><br><span class="line">  <span class="punctuation">]</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure><p><code>&quot;space&quot;: null</code> 是移除預設綁定。如果想兩個鍵都能用，就不要加這行。</p><p>避免綁到一般字母鍵（像 <code>v</code>），因為暖機期間它會打字到輸入區。空白鍵或修飾鍵組合是最穩的選擇。</p><h2 id="混合輸入：說一半打一半"><a href="#混合輸入：說一半打一半" class="headerlink" title="混合輸入：說一半打一半"></a>混合輸入：說一半打一半</h2><p>Voice Mode 最實用的設計是它不會霸佔輸入。語音轉出來的文字會插入游標位置，你可以：</p><ul><li>先打一段文字，再按住空白鍵補充語音</li><li>語音輸入後移動游標，在其他位置繼續打字</li><li>多次按住空白鍵，分段錄製拼成一個完整 prompt</li></ul><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&gt; refactor the auth middleware to ▮</span><br><span class="line">  # 按住空白鍵，說 &quot;use the new token validation helper&quot;</span><br><span class="line">&gt; refactor the auth middleware to use the new token validation helper▮</span><br></pre></td></tr></table></figure><p>這對「大方向用說的、細節用打的」的工作模式很友善。你可以口述要做什麼，然後手動補上檔名、變數名這種打字比較精確的東西。</p><h2 id="程式術語辨識"><a href="#程式術語辨識" class="headerlink" title="程式術語辨識"></a>程式術語辨識</h2><p>轉錄引擎針對程式開發做了調校。常見的開發術語像 <code>regex</code>、<code>OAuth</code>、<code>JSON</code>、<code>localhost</code> 都能正確辨識，不會變成奇怪的同音字。</p><p>更聰明的是，它會自動把你目前的專案名稱和 git branch 名稱加入辨識提示。如果你的 branch 叫 <code>feature/auth-refactor</code>，說出來的時候辨識率會比較高。</p><h2 id="支援-20-種語言"><a href="#支援-20-種語言" class="headerlink" title="支援 20 種語言"></a>支援 20 種語言</h2><p>Voice Mode 的語言設定跟 Claude Code 的 <code>language</code> 設定共用。完整支援清單：</p><p>英文、法文、德文、西班牙文、葡萄牙文、義大利文、荷蘭文、波蘭文、瑞典文、挪威文、丹麥文、捷克文、希臘文、土耳其文、俄文、烏克蘭文、印尼文、日文、韓文、印地文。</p><p>設定方式，在 <code>/config</code> 裡改，或直接寫設定檔：</p><figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;language&quot;</span><span class="punctuation">:</span> <span class="string">&quot;japanese&quot;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure><p>如果你的 <code>language</code> 設定不在支援清單內，<code>/voice</code> 會提醒你並自動 fallback 到英文做語音辨識。Claude 的文字回覆不受影響。</p><p>中文呢？目前語音辨識的支援清單裡沒有中文。不過 Claude 的文字回覆語言不受此限制，你可以用英文語音輸入、然後讓 Claude 用中文回覆。有點繞，但能用。</p><h2 id="哪些環境能用、哪些不行"><a href="#哪些環境能用、哪些不行" class="headerlink" title="哪些環境能用、哪些不行"></a>哪些環境能用、哪些不行</h2><p><strong>能用的：</strong></p><ul><li>macOS（原生模組）</li><li>Linux（原生模組，fallback 到 <code>arecord</code> 或 <code>rec</code>）</li><li>Windows（原生模組）</li><li>WSL2 on Windows 11（透過 WSLg 存取音訊）</li></ul><p><strong>不能用的：</strong></p><ul><li>Claude Code on the Web（雲端版沒有本地麥克風）</li><li>SSH 遠端連線（音訊裝置不在遠端）</li><li>WSL1 或 Windows 10 的 WSL（沒有 WSLg 音訊支援）</li><li>使用 API Key 直接認證時（需要 Claude.ai 帳號）</li><li>Bedrock &#x2F; Vertex AI &#x2F; Foundry 用戶（語音轉文字服務只在 Claude.ai 帳號下可用）</li></ul><p>最後兩點要特別注意——Voice Mode 的語音串流是送到 Anthropic 的伺服器做轉錄，所以只有用 Claude.ai 帳號登入才能用。企業用 Bedrock 或 Vertex 的需要另外 <code>/login</code> 切換帳號。</p><h2 id="常見問題排除"><a href="#常見問題排除" class="headerlink" title="常見問題排除"></a>常見問題排除</h2><p>**<code>Voice mode requires a Claude.ai account</code>**：你是用 API key 或第三方供應商認證的。跑 <code>/login</code> 用 Claude.ai 帳號重新登入。</p><p>**<code>Microphone access is denied</code>**：macOS 到系統設定 → 隱私權與安全性 → 麥克風，開啟你的終端機 app。Windows 到設定 → 隱私與安全性 → 麥克風，開啟桌面應用程式的麥克風存取。</p><p><strong>macOS 找不到終端機 app 的麥克風權限</strong>：跑 <code>tccutil reset Microphone com.apple.Terminal</code>（或 iTerm2 用 <code>com.googlecode.iterm2</code>），然後完全退出終端機再重開，<code>/voice</code> 就會觸發新的權限彈窗。注意不要跑不帶 bundle ID 的 <code>tccutil reset Microphone</code>，那會重設所有 app 的麥克風權限，Zoom 開會中的同事會恨你。</p><p><strong>Linux 找不到錄音工具</strong>：原生音訊模組載入失敗時，裝 SoX 就好：<code>sudo apt-get install sox</code>。</p><p><strong>按住空白鍵沒反應，只是一直打空格</strong>：Voice Mode 沒開，跑 <code>/voice</code> 啟用。如果啟用了但還是沒反應，檢查 OS 層級的按鍵重複（key-repeat）有沒有被關掉——Voice Mode 靠偵測快速重複按鍵事件來判斷長按。</p><h2 id="跟其他工具的語音功能比較"><a href="#跟其他工具的語音功能比較" class="headerlink" title="跟其他工具的語音功能比較"></a>跟其他工具的語音功能比較</h2><table><thead><tr><th>工具</th><th>語音輸入方式</th><th>程式術語最佳化</th><th>混合輸入</th><th>離線辨識</th></tr></thead><tbody><tr><td>Claude Code</td><td>Push-to-Talk</td><td>有（含專案名稱提示）</td><td>有</td><td>無（雲端）</td></tr><tr><td>GitHub Copilot Voice</td><td>VS Code 語音擴充</td><td>有限</td><td>有限</td><td>無</td></tr><tr><td>Cursor</td><td>無原生支援</td><td>-</td><td>-</td><td>-</td></tr><tr><td>Kiro CLI</td><td>無原生支援</td><td>-</td><td>-</td><td>-</td></tr></tbody></table><p>Claude Code 的語音功能定位很明確：它是打字的補充，不是替代。不需要開另一個應用程式或安裝額外擴充，直接在終端機裡按住說話就好。對那些一天要打幾百行 prompt 的重度使用者來說，手指會感謝你的。</p><blockquote><p>原文來源：<a href="https://code.claude.com/docs/en/voice-dictation">Claude Code Voice Dictation 官方文件</a> &#x2F; <a href="https://techcrunch.com/2026/03/03/claude-code-rolls-out-a-voice-mode-capability/">TechCrunch 報導</a><br>參考來源：<a href="https://anthropic.skilljar.com/">Claude Code in Action - Anthropic Academy</a></p></blockquote>]]></content>
-      
-      
-      <categories>
-          
-          <category> Claude Code </category>
-          
-      </categories>
-      
-      
-        <tags>
-            
-            <tag> Claude Code </tag>
-            
-            <tag> Voice Mode </tag>
-            
-            <tag> Push-to-Talk </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    
-    
-    <entry>
       <title>CrewAI - 讓多個 AI Agent 組成團隊協作的 Python 框架</title>
       <link href="/2026/04/13/CrewAI-%E8%AE%93%E5%A4%9A%E5%80%8B-AI-Agent-%E7%B5%84%E6%88%90%E5%9C%98%E9%9A%8A%E5%8D%94%E4%BD%9C%E7%9A%84-Python-%E6%A1%86%E6%9E%B6/"/>
       <url>/2026/04/13/CrewAI-%E8%AE%93%E5%A4%9A%E5%80%8B-AI-Agent-%E7%B5%84%E6%88%90%E5%9C%98%E9%9A%8A%E5%8D%94%E4%BD%9C%E7%9A%84-Python-%E6%A1%86%E6%9E%B6/</url>
@@ -2986,6 +2957,35 @@
             <tag> CrewAI </tag>
             
             <tag> Multi-Agent </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>Claude Code Voice Mode 完整教學 - 用嘴巴寫程式的正確姿勢</title>
+      <link href="/2026/04/13/Claude-Code-Voice-Mode-%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8-%E7%94%A8%E5%98%B4%E5%B7%B4%E5%AF%AB%E7%A8%8B%E5%BC%8F%E7%9A%84%E6%AD%A3%E7%A2%BA%E5%A7%BF%E5%8B%A2/"/>
+      <url>/2026/04/13/Claude-Code-Voice-Mode-%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8-%E7%94%A8%E5%98%B4%E5%B7%B4%E5%AF%AB%E7%A8%8B%E5%BC%8F%E7%9A%84%E6%AD%A3%E7%A2%BA%E5%A7%BF%E5%8B%A2/</url>
+      
+        <content type="html"><![CDATA[<p>打了三個小時的 prompt，手指已經不是自己的了。這時候你的同事走過來：「欸你幹嘛不用說的？」</p><p>Claude Code 從 v2.1.69 開始支援 Voice Mode。按住空白鍵說話，放開就變成文字指令。聽起來簡單，但裡面有不少細節值得搞懂。</p><h2 id="啟用方式"><a href="#啟用方式" class="headerlink" title="啟用方式"></a>啟用方式</h2><p>一行指令：</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/voice</span><br></pre></td></tr></table></figure><p>第一次啟用時，Claude Code 會跑一次麥克風檢查。macOS 使用者會看到系統權限彈窗，允許你的終端機存取麥克風就好。</p><p>啟用後，輸入區底部會出現 <code>hold Space to speak</code> 的提示。Voice Mode 是持久設定，關掉終端機下次開還在。要關掉就再打一次 <code>/voice</code>。</p><p>也可以直接寫進設定檔 <code>~/.claude/settings.json</code>：</p><figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;voiceEnabled&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">true</span></span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure><h2 id="按住、說話、放開"><a href="#按住、說話、放開" class="headerlink" title="按住、說話、放開"></a>按住、說話、放開</h2><p>操作流程：</p><ol><li><strong>按住空白鍵</strong> — 底部會先顯示 <code>keep holding...</code>（這是暖機階段，偵測你是長按還是短按）</li><li><strong>開始說話</strong> — 暖機結束後出現波形動畫，語音即時串流到 Anthropic 伺服器做轉錄</li><li><strong>放開空白鍵</strong> — 語音轉文字結束，文字插入游標位置</li></ol><p>暖機期間可能會多打幾個空格到輸入區，Claude Code 會在錄音啟動後自動清掉。短按空白鍵還是正常打空格，不會誤觸。</p><h3 id="跳過暖機的方法"><a href="#跳過暖機的方法" class="headerlink" title="跳過暖機的方法"></a>跳過暖機的方法</h3><p>如果覺得暖機延遲煩人，改綁到修飾鍵組合就好。修飾鍵組合在第一次按下時就開始錄音，不需要等 key-repeat 偵測：</p><figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// ~/.claude/keybindings.json</span></span><br><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;bindings&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">    <span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;context&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Chat&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;bindings&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">        <span class="attr">&quot;meta+k&quot;</span><span class="punctuation">:</span> <span class="string">&quot;voice:pushToTalk&quot;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;space&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">null</span></span></span><br><span class="line">      <span class="punctuation">&#125;</span></span><br><span class="line">    <span class="punctuation">&#125;</span></span><br><span class="line">  <span class="punctuation">]</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure><p><code>&quot;space&quot;: null</code> 是移除預設綁定。如果想兩個鍵都能用，就不要加這行。</p><p>避免綁到一般字母鍵（像 <code>v</code>），因為暖機期間它會打字到輸入區。空白鍵或修飾鍵組合是最穩的選擇。</p><h2 id="混合輸入：說一半打一半"><a href="#混合輸入：說一半打一半" class="headerlink" title="混合輸入：說一半打一半"></a>混合輸入：說一半打一半</h2><p>Voice Mode 最實用的設計是它不會霸佔輸入。語音轉出來的文字會插入游標位置，你可以：</p><ul><li>先打一段文字，再按住空白鍵補充語音</li><li>語音輸入後移動游標，在其他位置繼續打字</li><li>多次按住空白鍵，分段錄製拼成一個完整 prompt</li></ul><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&gt; refactor the auth middleware to ▮</span><br><span class="line">  # 按住空白鍵，說 &quot;use the new token validation helper&quot;</span><br><span class="line">&gt; refactor the auth middleware to use the new token validation helper▮</span><br></pre></td></tr></table></figure><p>這對「大方向用說的、細節用打的」的工作模式很友善。你可以口述要做什麼，然後手動補上檔名、變數名這種打字比較精確的東西。</p><h2 id="程式術語辨識"><a href="#程式術語辨識" class="headerlink" title="程式術語辨識"></a>程式術語辨識</h2><p>轉錄引擎針對程式開發做了調校。常見的開發術語像 <code>regex</code>、<code>OAuth</code>、<code>JSON</code>、<code>localhost</code> 都能正確辨識，不會變成奇怪的同音字。</p><p>更聰明的是，它會自動把你目前的專案名稱和 git branch 名稱加入辨識提示。如果你的 branch 叫 <code>feature/auth-refactor</code>，說出來的時候辨識率會比較高。</p><h2 id="支援-20-種語言"><a href="#支援-20-種語言" class="headerlink" title="支援 20 種語言"></a>支援 20 種語言</h2><p>Voice Mode 的語言設定跟 Claude Code 的 <code>language</code> 設定共用。完整支援清單：</p><p>英文、法文、德文、西班牙文、葡萄牙文、義大利文、荷蘭文、波蘭文、瑞典文、挪威文、丹麥文、捷克文、希臘文、土耳其文、俄文、烏克蘭文、印尼文、日文、韓文、印地文。</p><p>設定方式，在 <code>/config</code> 裡改，或直接寫設定檔：</p><figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;language&quot;</span><span class="punctuation">:</span> <span class="string">&quot;japanese&quot;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure><p>如果你的 <code>language</code> 設定不在支援清單內，<code>/voice</code> 會提醒你並自動 fallback 到英文做語音辨識。Claude 的文字回覆不受影響。</p><p>中文呢？目前語音辨識的支援清單裡沒有中文。不過 Claude 的文字回覆語言不受此限制，你可以用英文語音輸入、然後讓 Claude 用中文回覆。有點繞，但能用。</p><h2 id="哪些環境能用、哪些不行"><a href="#哪些環境能用、哪些不行" class="headerlink" title="哪些環境能用、哪些不行"></a>哪些環境能用、哪些不行</h2><p><strong>能用的：</strong></p><ul><li>macOS（原生模組）</li><li>Linux（原生模組，fallback 到 <code>arecord</code> 或 <code>rec</code>）</li><li>Windows（原生模組）</li><li>WSL2 on Windows 11（透過 WSLg 存取音訊）</li></ul><p><strong>不能用的：</strong></p><ul><li>Claude Code on the Web（雲端版沒有本地麥克風）</li><li>SSH 遠端連線（音訊裝置不在遠端）</li><li>WSL1 或 Windows 10 的 WSL（沒有 WSLg 音訊支援）</li><li>使用 API Key 直接認證時（需要 Claude.ai 帳號）</li><li>Bedrock &#x2F; Vertex AI &#x2F; Foundry 用戶（語音轉文字服務只在 Claude.ai 帳號下可用）</li></ul><p>最後兩點要特別注意——Voice Mode 的語音串流是送到 Anthropic 的伺服器做轉錄，所以只有用 Claude.ai 帳號登入才能用。企業用 Bedrock 或 Vertex 的需要另外 <code>/login</code> 切換帳號。</p><h2 id="常見問題排除"><a href="#常見問題排除" class="headerlink" title="常見問題排除"></a>常見問題排除</h2><p>**<code>Voice mode requires a Claude.ai account</code>**：你是用 API key 或第三方供應商認證的。跑 <code>/login</code> 用 Claude.ai 帳號重新登入。</p><p>**<code>Microphone access is denied</code>**：macOS 到系統設定 → 隱私權與安全性 → 麥克風，開啟你的終端機 app。Windows 到設定 → 隱私與安全性 → 麥克風，開啟桌面應用程式的麥克風存取。</p><p><strong>macOS 找不到終端機 app 的麥克風權限</strong>：跑 <code>tccutil reset Microphone com.apple.Terminal</code>（或 iTerm2 用 <code>com.googlecode.iterm2</code>），然後完全退出終端機再重開，<code>/voice</code> 就會觸發新的權限彈窗。注意不要跑不帶 bundle ID 的 <code>tccutil reset Microphone</code>，那會重設所有 app 的麥克風權限，Zoom 開會中的同事會恨你。</p><p><strong>Linux 找不到錄音工具</strong>：原生音訊模組載入失敗時，裝 SoX 就好：<code>sudo apt-get install sox</code>。</p><p><strong>按住空白鍵沒反應，只是一直打空格</strong>：Voice Mode 沒開，跑 <code>/voice</code> 啟用。如果啟用了但還是沒反應，檢查 OS 層級的按鍵重複（key-repeat）有沒有被關掉——Voice Mode 靠偵測快速重複按鍵事件來判斷長按。</p><h2 id="跟其他工具的語音功能比較"><a href="#跟其他工具的語音功能比較" class="headerlink" title="跟其他工具的語音功能比較"></a>跟其他工具的語音功能比較</h2><table><thead><tr><th>工具</th><th>語音輸入方式</th><th>程式術語最佳化</th><th>混合輸入</th><th>離線辨識</th></tr></thead><tbody><tr><td>Claude Code</td><td>Push-to-Talk</td><td>有（含專案名稱提示）</td><td>有</td><td>無（雲端）</td></tr><tr><td>GitHub Copilot Voice</td><td>VS Code 語音擴充</td><td>有限</td><td>有限</td><td>無</td></tr><tr><td>Cursor</td><td>無原生支援</td><td>-</td><td>-</td><td>-</td></tr><tr><td>Kiro CLI</td><td>無原生支援</td><td>-</td><td>-</td><td>-</td></tr></tbody></table><p>Claude Code 的語音功能定位很明確：它是打字的補充，不是替代。不需要開另一個應用程式或安裝額外擴充，直接在終端機裡按住說話就好。對那些一天要打幾百行 prompt 的重度使用者來說，手指會感謝你的。</p><blockquote><p>原文來源：<a href="https://code.claude.com/docs/en/voice-dictation">Claude Code Voice Dictation 官方文件</a> &#x2F; <a href="https://techcrunch.com/2026/03/03/claude-code-rolls-out-a-voice-mode-capability/">TechCrunch 報導</a><br>參考來源：<a href="https://anthropic.skilljar.com/">Claude Code in Action - Anthropic Academy</a></p></blockquote>]]></content>
+      
+      
+      <categories>
+          
+          <category> Claude Code </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> Claude Code </tag>
+            
+            <tag> Voice Mode </tag>
+            
+            <tag> Push-to-Talk </tag>
             
         </tags>
       
@@ -3184,13 +3184,13 @@
       
         <tags>
             
+            <tag> AI Agent </tag>
+            
             <tag> Claude </tag>
             
             <tag> OpenAI </tag>
             
             <tag> 資安 </tag>
-            
-            <tag> AI Agent </tag>
             
             <tag> Copilot </tag>
             
@@ -3217,9 +3217,9 @@
       
         <tags>
             
-            <tag> Anthropic </tag>
-            
             <tag> AI Agent </tag>
+            
+            <tag> Anthropic </tag>
             
             <tag> 開發工具 </tag>
             
@@ -3246,9 +3246,9 @@
       
         <tags>
             
-            <tag> MCP </tag>
-            
             <tag> LLM </tag>
+            
+            <tag> MCP </tag>
             
             <tag> Microsoft </tag>
             
@@ -3279,9 +3279,9 @@
             
             <tag> 理財 </tag>
             
-            <tag> Claude Code </tag>
-            
             <tag> Gemini </tag>
+            
+            <tag> Claude Code </tag>
             
         </tags>
       
@@ -3308,9 +3308,9 @@
             
             <tag> DevOps </tag>
             
-            <tag> 開發工具 </tag>
-            
             <tag> 教學 </tag>
+            
+            <tag> 開發工具 </tag>
             
         </tags>
       
@@ -3335,9 +3335,9 @@
       
         <tags>
             
-            <tag> MCP </tag>
-            
             <tag> AI Agent </tag>
+            
+            <tag> MCP </tag>
             
             <tag> Claude Code </tag>
             
@@ -3453,9 +3453,9 @@
             
             <tag> Claude Code </tag>
             
-            <tag> 工程師生活 </tag>
-            
             <tag> 自動化 </tag>
+            
+            <tag> 工程師生活 </tag>
             
         </tags>
       
@@ -3509,9 +3509,9 @@
       
         <tags>
             
-            <tag> 自動化 </tag>
-            
             <tag> DevOps </tag>
+            
+            <tag> 自動化 </tag>
             
             <tag> Code Review </tag>
             
@@ -3623,11 +3623,11 @@
       
         <tags>
             
-            <tag> MCP </tag>
-            
             <tag> LLM </tag>
             
             <tag> AI Agent </tag>
+            
+            <tag> MCP </tag>
             
             <tag> Claude Code </tag>
             
@@ -3681,9 +3681,9 @@
       
         <tags>
             
-            <tag> 資安 </tag>
-            
             <tag> LLM </tag>
+            
+            <tag> 資安 </tag>
             
             <tag> Qwen </tag>
             
@@ -3714,9 +3714,9 @@
             
             <tag> Skills </tag>
             
-            <tag> 開發工具 </tag>
-            
             <tag> 教學 </tag>
+            
+            <tag> 開發工具 </tag>
             
         </tags>
       
@@ -3770,9 +3770,9 @@
       
         <tags>
             
-            <tag> MCP </tag>
-            
             <tag> AI Agent </tag>
+            
+            <tag> MCP </tag>
             
             <tag> Claude Code </tag>
             
@@ -3859,9 +3859,9 @@
             
             <tag> Claude </tag>
             
-            <tag> 自動化 </tag>
-            
             <tag> macOS </tag>
+            
+            <tag> 自動化 </tag>
             
         </tags>
       
@@ -3915,38 +3915,13 @@
       
         <tags>
             
-            <tag> 資安 </tag>
-            
             <tag> 理財 </tag>
             
-            <tag> Gemini </tag>
+            <tag> 資安 </tag>
             
             <tag> Perplexity </tag>
             
-        </tags>
-      
-    </entry>
-    
-    
-    
-    <entry>
-      <title>Claude Code Context 管理攻略 — 為什麼你的 AI 越用越笨，以及怎麼修</title>
-      <link href="/2026/04/02/Claude-Code-Context-%E7%AE%A1%E7%90%86%E6%94%BB%E7%95%A5-%E7%82%BA%E4%BB%80%E9%BA%BC%E4%BD%A0%E7%9A%84-AI-%E8%B6%8A%E7%94%A8%E8%B6%8A%E7%AC%A8%E4%BB%A5%E5%8F%8A%E6%80%8E%E9%BA%BC%E4%BF%AE/"/>
-      <url>/2026/04/02/Claude-Code-Context-%E7%AE%A1%E7%90%86%E6%94%BB%E7%95%A5-%E7%82%BA%E4%BB%80%E9%BA%BC%E4%BD%A0%E7%9A%84-AI-%E8%B6%8A%E7%94%A8%E8%B6%8A%E7%AC%A8%E4%BB%A5%E5%8F%8A%E6%80%8E%E9%BA%BC%E4%BF%AE/</url>
-      
-        <content type="html"><![CDATA[<p>你有沒有遇過這種狀況：用 Claude Code 寫到一半，突然發現它開始忘東忘西，code 質量明顯下降，甚至會重複做已經做過的事情？</p><p>那不是 Claude 變笨了，是<strong>你的 context window 快爆炸了</strong>。</p><p>這篇要聊的就是 Claude Code 最重要但最容易被忽視的東西：context 管理。不懂這個，你再聰明的 AI 助手也會被你用到逐漸失能。</p><h2 id="Context-Window-是你最寶貴的資源"><a href="#Context-Window-是你最寶貴的資源" class="headerlink" title="Context Window 是你最寶貴的資源"></a>Context Window 是你最寶貴的資源</h2><p>先講白一點：Claude 的 context window（你可以理解成 AI 能夠「記住」的東西）是有限的。每一次對話、每個你讀的檔案、每個指令的輸出，全部都會佔用 context。</p><p>當 context 開始滿的時候，Claude 的表現就會下降。它會開始「健忘」，做錯事情的頻率變高。這不是 bug，這是物理限制。</p><p>想像一下你的大腦 RAM，用滿了就會 lag。Claude 也是一樣。</p><p>所以<strong>context 管理就是你在用 Claude Code 時最重要的事</strong>。你可以寫得很完美，但如果 context 一直堆積垃圾，再完美的 code 也救不了。</p><h2 id="給-Claude-驗證的方式"><a href="#給-Claude-驗證的方式" class="headerlink" title="給 Claude 驗證的方式"></a>給 Claude 驗證的方式</h2><p>這是我看官方文件時最驚訝的一個點：<strong>如果你給 Claude 能驗證自己工作的方式，它的表現會暴增</strong>。</p><p>什麼意思？就是不要只叫它「實作一個 email validation function」，而是：</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">寫一個 validateEmail function。測試案例：</span><br><span class="line">- user@example.com 應該是 true</span><br><span class="line">- invalid 應該是 false</span><br><span class="line">- user@.com 應該是 false</span><br><span class="line">實作完之後運行這些測試。</span><br></pre></td></tr></table></figure><p>或者你在改 UI 的時候，不要就說「讓 dashboard 看起來更好看」，而是：</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[貼一張 screenshot]</span><br><span class="line">按照這個設計改。改完之後也拍個 screenshot，比較原本的有什麼差別，然後修復差異。</span><br></pre></td></tr></table></figure><p>有驗證機制，Claude 才能自己抓到自己的錯誤。沒有驗證，你就變成唯一的 feedback loop，每次它出錯都要你來救。真的很吃記憶體吃到爆。</p><h2 id="Explore-→-Plan-→-Code-的工作流"><a href="#Explore-→-Plan-→-Code-的工作流" class="headerlink" title="Explore → Plan → Code 的工作流"></a>Explore → Plan → Code 的工作流</h2><p>關鍵是 Plan Mode。你按 <code>Ctrl+G</code> 就能進去。</p><p>在 Plan Mode 裡，Claude 可以讀檔案、回答問題，但不會動任何東西。這很重要，因為這樣能夠分離「研究」和「實作」。</p><p>一個典型的流程長這樣：</p><p><strong>第一步：Explore</strong></p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">讀 /src/auth 資料夾，了解我們怎麼處理 session 和 login。</span><br><span class="line">也看看我們怎麼管理 environment variables 存密鑰。</span><br></pre></td></tr></table></figure><p><strong>第二步：Plan</strong></p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">我想加 Google OAuth。哪些檔案要改？</span><br><span class="line">session flow 是什麼？給我一份計劃。</span><br></pre></td></tr></table></figure><p>然後你可以按 <code>Ctrl+G</code> 直接在編輯器裡改這份計劃。</p><p><strong>第三步：Implement</strong></p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">按照這份計劃實作 OAuth flow。</span><br><span class="line">為 callback handler 寫測試，運行測試套件，修復任何失敗。</span><br></pre></td></tr></table></figure><p><strong>第四步：Commit</strong></p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">寫一份有意義的 commit 訊息，開一個 PR。</span><br></pre></td></tr></table></figure><p>Plan Mode 有點麻煩，但值得。特別是當你在陌生的 codebase 裡，或是改動涉及很多檔案的時候。</p><p>但如果任務很明確（比如修個 typo、改個變數名稱），就直接做，不用規劃。</p><h2 id="CLAUDE-md-怎麼寫才不會踩坑"><a href="#CLAUDE-md-怎麼寫才不會踩坑" class="headerlink" title="CLAUDE.md 怎麼寫才不會踩坑"></a>CLAUDE.md 怎麼寫才不會踩坑</h2><p>CLAUDE.md 是一個特殊檔案，Claude 在每個新的 session 開始時都會讀它。裡面可以放 Bash command、code style、workflow 規則。</p><p>首先，跑 <code>/init</code> 讓 Claude 自動分析你的專案產生一份基本的 CLAUDE.md。</p><p>然後重點來了：<strong>讓它保持簡短</strong>。</p><p>每一行都問自己：「如果我刪了這一行，Claude 會出錯嗎？」如果不會，就砍掉。太長的 CLAUDE.md 反而會讓 Claude 忽視重要的規則。</p><figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="section"># Code Style</span></span><br><span class="line"><span class="bullet">-</span> Use ES modules (import/export), not CommonJS</span><br><span class="line"><span class="bullet">-</span> Destructure imports when possible</span><br><span class="line"></span><br><span class="line"><span class="section"># Workflow</span></span><br><span class="line"><span class="bullet">-</span> Run typecheck after making code changes</span><br><span class="line"><span class="bullet">-</span> Prefer running single tests instead of full suite</span><br></pre></td></tr></table></figure><p>這樣就夠了。不要把 API 文件、詳細說明、或自明的東西塞進去。那些東西用 link 就好，或者用 skill 檔案處理。</p><h3 id="什麼該放，什麼不該放"><a href="#什麼該放，什麼不該放" class="headerlink" title="什麼該放，什麼不該放"></a>什麼該放，什麼不該放</h3><table><thead><tr><th>✅ 放進去</th><th>❌ 不要放</th></tr></thead><tbody><tr><td>Claude 猜不到的 Bash command</td><td>Claude 能從 code 推出的東西</td></tr><tr><td>跟業界慣例不同的 code style</td><td>標準的語言慣例</td></tr><tr><td>測試指令和偏好的 test runner</td><td>詳細的 API 文件（用 link）</td></tr><tr><td>Repository etiquette</td><td>會經常改的資訊</td></tr><tr><td>專案特有的建築決策</td><td>長篇的解釋或教學</td></tr><tr><td>開發環境的奇怪需求</td><td>自明的最佳實踐</td></tr></tbody></table><h2 id="Context-管理技巧"><a href="#Context-管理技巧" class="headerlink" title="Context 管理技巧"></a>Context 管理技巧</h2><h3 id="用-clear-清空無關的任務"><a href="#用-clear-清空無關的任務" class="headerlink" title="用 &#x2F;clear 清空無關的任務"></a>用 &#x2F;clear 清空無關的任務</h3><p>從檔案 A 切到檔案 B，完全不同的任務？直接 <code>/clear</code>。這會重設 context window。</p><p>不要讓舊的 context 囤積在那邊，它只會讓 Claude 分心。</p><h3 id="使用-compact-和自動壓縮"><a href="#使用-compact-和自動壓縮" class="headerlink" title="使用 &#x2F;compact 和自動壓縮"></a>使用 &#x2F;compact 和自動壓縮</h3><p>當 context 快滿時，Claude 會自動壓縮舊的對話，保留重要的 code 和決策。</p><p>你也可以手動 <code>/compact</code>，告訴它要專注什麼：</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/compact Focus on API changes only</span><br></pre></td></tr></table></figure><p>或是用 <code>Esc</code> 兩次，選一個 checkpoint，然後選「Summarize from here」。這樣能局部壓縮一部分對話。</p><h3 id="用-rewind-回到之前的狀態"><a href="#用-rewind-回到之前的狀態" class="headerlink" title="用 &#x2F;rewind 回到之前的狀態"></a>用 &#x2F;rewind 回到之前的狀態</h3><p>Claude 會自動在每個動作之前建立 checkpoint。如果它搞砸了，按 <code>Esc</code> 兩次或跑 <code>/rewind</code>，可以回復到任何之前的狀態。</p><p>甚至可以跨 session 保存，所以下次用 <code>--continue</code> 回來時，你還能 rewind。</p><h3 id="btw-問快速問題"><a href="#btw-問快速問題" class="headerlink" title="&#x2F;btw 問快速問題"></a>&#x2F;btw 問快速問題</h3><p>你想問一個不相干的快速問題，但不想讓它進入 conversation history？用 <code>/btw</code>：</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/btw 這個 API 的參數什麼意思？</span><br></pre></td></tr></table></figure><p>答案會在一個 dismissible overlay 裡，不會佔用你的 context。</p><h2 id="用-Subagent-進行調查"><a href="#用-Subagent-進行調查" class="headerlink" title="用 Subagent 進行調查"></a>用 Subagent 進行調查</h2><p>這是我最喜歡的技巧。當 Claude 要讀很多檔案研究東西時，整個 codebase exploration 會吃掉超多 context。</p><p>改成用 subagent：</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Use subagents to investigate how our auth system handles token refresh,</span><br><span class="line">and whether we have any existing OAuth utilities I should reuse.</span><br></pre></td></tr></table></figure><p>Subagent 會在自己的 context 裡跑，探索完之後回報給你，你的主 session 保持乾淨。</p><h2 id="Session-管理"><a href="#Session-管理" class="headerlink" title="Session 管理"></a>Session 管理</h2><h3 id="課程修正要快"><a href="#課程修正要快" class="headerlink" title="課程修正要快"></a>課程修正要快</h3><p>發現 Claude 走錯方向？馬上修正。不要等。</p><p>按 <code>Esc</code> 停止它，或用 <code>/rewind</code> 回到之前。如果你已經修正了兩次同一個問題，context 被汙染了，就直接 <code>/clear</code> 重新開始，用更好的 prompt。</p><h3 id="用-–continue-和-–resume-繼續上次的工作"><a href="#用-–continue-和-–resume-繼續上次的工作" class="headerlink" title="用 –continue 和 –resume 繼續上次的工作"></a>用 –continue 和 –resume 繼續上次的工作</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">claude --<span class="built_in">continue</span>    <span class="comment"># 接續最後一個 session</span></span><br><span class="line">claude --resume      <span class="comment"># 選擇最近的 session</span></span><br></pre></td></tr></table></figure><p>任務跨越多個 session 時很有用。用 <code>/rename</code> 給 session 取名字，像 <code>&quot;oauth-migration&quot;</code> 或 <code>&quot;memory-leak-debug&quot;</code>。</p><h2 id="常見的踩坑模式"><a href="#常見的踩坑模式" class="headerlink" title="常見的踩坑模式"></a>常見的踩坑模式</h2><h3 id="廚房水槽-Session"><a href="#廚房水槽-Session" class="headerlink" title="廚房水槽 Session"></a>廚房水槽 Session</h3><p>你開始做一件事，然後問 Claude 不相干的問題，然後又回到第一件事。Context 滿是垃圾。</p><p><strong>修：</strong> <code>/clear</code> 分開任務。</p><h3 id="一直在修正"><a href="#一直在修正" class="headerlink" title="一直在修正"></a>一直在修正</h3><p>Claude 做錯，你修正。它還是做錯，你又修正。對話充滿失敗的嘗試。</p><p><strong>修：</strong> 修正兩次之後，<code>/clear</code> 重新開始，用更精確的 prompt。</p><h3 id="CLAUDE-md-太肥"><a href="#CLAUDE-md-太肥" class="headerlink" title="CLAUDE.md 太肥"></a>CLAUDE.md 太肥</h3><p>檔案太長，Claude 會忽視重要的規則。</p><p><strong>修：</strong> 無情地砍。如果 Claude 已經做對了，刪掉那個指令，或轉成 hook。</p><h3 id="相信但不驗證"><a href="#相信但不驗證" class="headerlink" title="相信但不驗證"></a>相信但不驗證</h3><p>Claude 寫的 code 看起來合理，但其實沒處理邊界情況。</p><p><strong>修：</strong> 一定要給驗證機制。沒有驗證就不要上線。</p><h3 id="無限探索"><a href="#無限探索" class="headerlink" title="無限探索"></a>無限探索</h3><p>你叫 Claude 「調查一下」，沒有限制範圍。它讀了幾百個檔案，context 爆炸。</p><p><strong>修：</strong> 範圍要窄，或用 subagent。</p><h2 id="真香的工作流總結"><a href="#真香的工作流總結" class="headerlink" title="真香的工作流總結"></a>真香的工作流總結</h2><p>總結一下，這就是一個有效的 Claude Code 流程：</p><ol><li><strong>寫好 CLAUDE.md</strong> — 簡短、重點、有 git check-in</li><li><strong>給驗證機制</strong> — 測試、screenshot、預期輸出</li><li><strong>用 Plan Mode</strong> — Explore → Plan → Implement → Commit</li><li><strong>主動清理</strong> — <code>/clear</code> 分開任務，<code>/compact</code> 壓縮舊內容</li><li><strong>快速修正</strong> — Esc 停止，<code>/rewind</code> 回復，不要等</li><li><strong>用 subagent</strong> — 大型調查用獨立的 context</li><li><strong>跨 session 繼續</strong> — <code>--continue</code> 或 <code>--resume</code></li></ol><p>就這樣。你的 Claude 就不會越用越笨。</p><hr><blockquote><p>原文來源：<a href="https://code.claude.com/docs/en/best-practices">Best Practices for Claude Code - Claude Code Docs</a></p></blockquote>]]></content>
-      
-      
-      <categories>
-          
-          <category> Claude Code </category>
-          
-      </categories>
-      
-      
-        <tags>
-            
-            <tag> Claude Code </tag>
+            <tag> Gemini </tag>
             
         </tags>
       
@@ -3988,6 +3963,31 @@
     
     
     <entry>
+      <title>Claude Code Context 管理攻略 — 為什麼你的 AI 越用越笨，以及怎麼修</title>
+      <link href="/2026/04/02/Claude-Code-Context-%E7%AE%A1%E7%90%86%E6%94%BB%E7%95%A5-%E7%82%BA%E4%BB%80%E9%BA%BC%E4%BD%A0%E7%9A%84-AI-%E8%B6%8A%E7%94%A8%E8%B6%8A%E7%AC%A8%E4%BB%A5%E5%8F%8A%E6%80%8E%E9%BA%BC%E4%BF%AE/"/>
+      <url>/2026/04/02/Claude-Code-Context-%E7%AE%A1%E7%90%86%E6%94%BB%E7%95%A5-%E7%82%BA%E4%BB%80%E9%BA%BC%E4%BD%A0%E7%9A%84-AI-%E8%B6%8A%E7%94%A8%E8%B6%8A%E7%AC%A8%E4%BB%A5%E5%8F%8A%E6%80%8E%E9%BA%BC%E4%BF%AE/</url>
+      
+        <content type="html"><![CDATA[<p>你有沒有遇過這種狀況：用 Claude Code 寫到一半，突然發現它開始忘東忘西，code 質量明顯下降，甚至會重複做已經做過的事情？</p><p>那不是 Claude 變笨了，是<strong>你的 context window 快爆炸了</strong>。</p><p>這篇要聊的就是 Claude Code 最重要但最容易被忽視的東西：context 管理。不懂這個，你再聰明的 AI 助手也會被你用到逐漸失能。</p><h2 id="Context-Window-是你最寶貴的資源"><a href="#Context-Window-是你最寶貴的資源" class="headerlink" title="Context Window 是你最寶貴的資源"></a>Context Window 是你最寶貴的資源</h2><p>先講白一點：Claude 的 context window（你可以理解成 AI 能夠「記住」的東西）是有限的。每一次對話、每個你讀的檔案、每個指令的輸出，全部都會佔用 context。</p><p>當 context 開始滿的時候，Claude 的表現就會下降。它會開始「健忘」，做錯事情的頻率變高。這不是 bug，這是物理限制。</p><p>想像一下你的大腦 RAM，用滿了就會 lag。Claude 也是一樣。</p><p>所以<strong>context 管理就是你在用 Claude Code 時最重要的事</strong>。你可以寫得很完美，但如果 context 一直堆積垃圾，再完美的 code 也救不了。</p><h2 id="給-Claude-驗證的方式"><a href="#給-Claude-驗證的方式" class="headerlink" title="給 Claude 驗證的方式"></a>給 Claude 驗證的方式</h2><p>這是我看官方文件時最驚訝的一個點：<strong>如果你給 Claude 能驗證自己工作的方式，它的表現會暴增</strong>。</p><p>什麼意思？就是不要只叫它「實作一個 email validation function」，而是：</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">寫一個 validateEmail function。測試案例：</span><br><span class="line">- user@example.com 應該是 true</span><br><span class="line">- invalid 應該是 false</span><br><span class="line">- user@.com 應該是 false</span><br><span class="line">實作完之後運行這些測試。</span><br></pre></td></tr></table></figure><p>或者你在改 UI 的時候，不要就說「讓 dashboard 看起來更好看」，而是：</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[貼一張 screenshot]</span><br><span class="line">按照這個設計改。改完之後也拍個 screenshot，比較原本的有什麼差別，然後修復差異。</span><br></pre></td></tr></table></figure><p>有驗證機制，Claude 才能自己抓到自己的錯誤。沒有驗證，你就變成唯一的 feedback loop，每次它出錯都要你來救。真的很吃記憶體吃到爆。</p><h2 id="Explore-→-Plan-→-Code-的工作流"><a href="#Explore-→-Plan-→-Code-的工作流" class="headerlink" title="Explore → Plan → Code 的工作流"></a>Explore → Plan → Code 的工作流</h2><p>關鍵是 Plan Mode。你按 <code>Ctrl+G</code> 就能進去。</p><p>在 Plan Mode 裡，Claude 可以讀檔案、回答問題，但不會動任何東西。這很重要，因為這樣能夠分離「研究」和「實作」。</p><p>一個典型的流程長這樣：</p><p><strong>第一步：Explore</strong></p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">讀 /src/auth 資料夾，了解我們怎麼處理 session 和 login。</span><br><span class="line">也看看我們怎麼管理 environment variables 存密鑰。</span><br></pre></td></tr></table></figure><p><strong>第二步：Plan</strong></p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">我想加 Google OAuth。哪些檔案要改？</span><br><span class="line">session flow 是什麼？給我一份計劃。</span><br></pre></td></tr></table></figure><p>然後你可以按 <code>Ctrl+G</code> 直接在編輯器裡改這份計劃。</p><p><strong>第三步：Implement</strong></p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">按照這份計劃實作 OAuth flow。</span><br><span class="line">為 callback handler 寫測試，運行測試套件，修復任何失敗。</span><br></pre></td></tr></table></figure><p><strong>第四步：Commit</strong></p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">寫一份有意義的 commit 訊息，開一個 PR。</span><br></pre></td></tr></table></figure><p>Plan Mode 有點麻煩，但值得。特別是當你在陌生的 codebase 裡，或是改動涉及很多檔案的時候。</p><p>但如果任務很明確（比如修個 typo、改個變數名稱），就直接做，不用規劃。</p><h2 id="CLAUDE-md-怎麼寫才不會踩坑"><a href="#CLAUDE-md-怎麼寫才不會踩坑" class="headerlink" title="CLAUDE.md 怎麼寫才不會踩坑"></a>CLAUDE.md 怎麼寫才不會踩坑</h2><p>CLAUDE.md 是一個特殊檔案，Claude 在每個新的 session 開始時都會讀它。裡面可以放 Bash command、code style、workflow 規則。</p><p>首先，跑 <code>/init</code> 讓 Claude 自動分析你的專案產生一份基本的 CLAUDE.md。</p><p>然後重點來了：<strong>讓它保持簡短</strong>。</p><p>每一行都問自己：「如果我刪了這一行，Claude 會出錯嗎？」如果不會，就砍掉。太長的 CLAUDE.md 反而會讓 Claude 忽視重要的規則。</p><figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="section"># Code Style</span></span><br><span class="line"><span class="bullet">-</span> Use ES modules (import/export), not CommonJS</span><br><span class="line"><span class="bullet">-</span> Destructure imports when possible</span><br><span class="line"></span><br><span class="line"><span class="section"># Workflow</span></span><br><span class="line"><span class="bullet">-</span> Run typecheck after making code changes</span><br><span class="line"><span class="bullet">-</span> Prefer running single tests instead of full suite</span><br></pre></td></tr></table></figure><p>這樣就夠了。不要把 API 文件、詳細說明、或自明的東西塞進去。那些東西用 link 就好，或者用 skill 檔案處理。</p><h3 id="什麼該放，什麼不該放"><a href="#什麼該放，什麼不該放" class="headerlink" title="什麼該放，什麼不該放"></a>什麼該放，什麼不該放</h3><table><thead><tr><th>✅ 放進去</th><th>❌ 不要放</th></tr></thead><tbody><tr><td>Claude 猜不到的 Bash command</td><td>Claude 能從 code 推出的東西</td></tr><tr><td>跟業界慣例不同的 code style</td><td>標準的語言慣例</td></tr><tr><td>測試指令和偏好的 test runner</td><td>詳細的 API 文件（用 link）</td></tr><tr><td>Repository etiquette</td><td>會經常改的資訊</td></tr><tr><td>專案特有的建築決策</td><td>長篇的解釋或教學</td></tr><tr><td>開發環境的奇怪需求</td><td>自明的最佳實踐</td></tr></tbody></table><h2 id="Context-管理技巧"><a href="#Context-管理技巧" class="headerlink" title="Context 管理技巧"></a>Context 管理技巧</h2><h3 id="用-clear-清空無關的任務"><a href="#用-clear-清空無關的任務" class="headerlink" title="用 &#x2F;clear 清空無關的任務"></a>用 &#x2F;clear 清空無關的任務</h3><p>從檔案 A 切到檔案 B，完全不同的任務？直接 <code>/clear</code>。這會重設 context window。</p><p>不要讓舊的 context 囤積在那邊，它只會讓 Claude 分心。</p><h3 id="使用-compact-和自動壓縮"><a href="#使用-compact-和自動壓縮" class="headerlink" title="使用 &#x2F;compact 和自動壓縮"></a>使用 &#x2F;compact 和自動壓縮</h3><p>當 context 快滿時，Claude 會自動壓縮舊的對話，保留重要的 code 和決策。</p><p>你也可以手動 <code>/compact</code>，告訴它要專注什麼：</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/compact Focus on API changes only</span><br></pre></td></tr></table></figure><p>或是用 <code>Esc</code> 兩次，選一個 checkpoint，然後選「Summarize from here」。這樣能局部壓縮一部分對話。</p><h3 id="用-rewind-回到之前的狀態"><a href="#用-rewind-回到之前的狀態" class="headerlink" title="用 &#x2F;rewind 回到之前的狀態"></a>用 &#x2F;rewind 回到之前的狀態</h3><p>Claude 會自動在每個動作之前建立 checkpoint。如果它搞砸了，按 <code>Esc</code> 兩次或跑 <code>/rewind</code>，可以回復到任何之前的狀態。</p><p>甚至可以跨 session 保存，所以下次用 <code>--continue</code> 回來時，你還能 rewind。</p><h3 id="btw-問快速問題"><a href="#btw-問快速問題" class="headerlink" title="&#x2F;btw 問快速問題"></a>&#x2F;btw 問快速問題</h3><p>你想問一個不相干的快速問題，但不想讓它進入 conversation history？用 <code>/btw</code>：</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/btw 這個 API 的參數什麼意思？</span><br></pre></td></tr></table></figure><p>答案會在一個 dismissible overlay 裡，不會佔用你的 context。</p><h2 id="用-Subagent-進行調查"><a href="#用-Subagent-進行調查" class="headerlink" title="用 Subagent 進行調查"></a>用 Subagent 進行調查</h2><p>這是我最喜歡的技巧。當 Claude 要讀很多檔案研究東西時，整個 codebase exploration 會吃掉超多 context。</p><p>改成用 subagent：</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Use subagents to investigate how our auth system handles token refresh,</span><br><span class="line">and whether we have any existing OAuth utilities I should reuse.</span><br></pre></td></tr></table></figure><p>Subagent 會在自己的 context 裡跑，探索完之後回報給你，你的主 session 保持乾淨。</p><h2 id="Session-管理"><a href="#Session-管理" class="headerlink" title="Session 管理"></a>Session 管理</h2><h3 id="課程修正要快"><a href="#課程修正要快" class="headerlink" title="課程修正要快"></a>課程修正要快</h3><p>發現 Claude 走錯方向？馬上修正。不要等。</p><p>按 <code>Esc</code> 停止它，或用 <code>/rewind</code> 回到之前。如果你已經修正了兩次同一個問題，context 被汙染了，就直接 <code>/clear</code> 重新開始，用更好的 prompt。</p><h3 id="用-–continue-和-–resume-繼續上次的工作"><a href="#用-–continue-和-–resume-繼續上次的工作" class="headerlink" title="用 –continue 和 –resume 繼續上次的工作"></a>用 –continue 和 –resume 繼續上次的工作</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">claude --<span class="built_in">continue</span>    <span class="comment"># 接續最後一個 session</span></span><br><span class="line">claude --resume      <span class="comment"># 選擇最近的 session</span></span><br></pre></td></tr></table></figure><p>任務跨越多個 session 時很有用。用 <code>/rename</code> 給 session 取名字，像 <code>&quot;oauth-migration&quot;</code> 或 <code>&quot;memory-leak-debug&quot;</code>。</p><h2 id="常見的踩坑模式"><a href="#常見的踩坑模式" class="headerlink" title="常見的踩坑模式"></a>常見的踩坑模式</h2><h3 id="廚房水槽-Session"><a href="#廚房水槽-Session" class="headerlink" title="廚房水槽 Session"></a>廚房水槽 Session</h3><p>你開始做一件事，然後問 Claude 不相干的問題，然後又回到第一件事。Context 滿是垃圾。</p><p><strong>修：</strong> <code>/clear</code> 分開任務。</p><h3 id="一直在修正"><a href="#一直在修正" class="headerlink" title="一直在修正"></a>一直在修正</h3><p>Claude 做錯，你修正。它還是做錯，你又修正。對話充滿失敗的嘗試。</p><p><strong>修：</strong> 修正兩次之後，<code>/clear</code> 重新開始，用更精確的 prompt。</p><h3 id="CLAUDE-md-太肥"><a href="#CLAUDE-md-太肥" class="headerlink" title="CLAUDE.md 太肥"></a>CLAUDE.md 太肥</h3><p>檔案太長，Claude 會忽視重要的規則。</p><p><strong>修：</strong> 無情地砍。如果 Claude 已經做對了，刪掉那個指令，或轉成 hook。</p><h3 id="相信但不驗證"><a href="#相信但不驗證" class="headerlink" title="相信但不驗證"></a>相信但不驗證</h3><p>Claude 寫的 code 看起來合理，但其實沒處理邊界情況。</p><p><strong>修：</strong> 一定要給驗證機制。沒有驗證就不要上線。</p><h3 id="無限探索"><a href="#無限探索" class="headerlink" title="無限探索"></a>無限探索</h3><p>你叫 Claude 「調查一下」，沒有限制範圍。它讀了幾百個檔案，context 爆炸。</p><p><strong>修：</strong> 範圍要窄，或用 subagent。</p><h2 id="真香的工作流總結"><a href="#真香的工作流總結" class="headerlink" title="真香的工作流總結"></a>真香的工作流總結</h2><p>總結一下，這就是一個有效的 Claude Code 流程：</p><ol><li><strong>寫好 CLAUDE.md</strong> — 簡短、重點、有 git check-in</li><li><strong>給驗證機制</strong> — 測試、screenshot、預期輸出</li><li><strong>用 Plan Mode</strong> — Explore → Plan → Implement → Commit</li><li><strong>主動清理</strong> — <code>/clear</code> 分開任務，<code>/compact</code> 壓縮舊內容</li><li><strong>快速修正</strong> — Esc 停止，<code>/rewind</code> 回復，不要等</li><li><strong>用 subagent</strong> — 大型調查用獨立的 context</li><li><strong>跨 session 繼續</strong> — <code>--continue</code> 或 <code>--resume</code></li></ol><p>就這樣。你的 Claude 就不會越用越笨。</p><hr><blockquote><p>原文來源：<a href="https://code.claude.com/docs/en/best-practices">Best Practices for Claude Code - Claude Code Docs</a></p></blockquote>]]></content>
+      
+      
+      <categories>
+          
+          <category> Claude Code </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> Claude Code </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>Claude Code 原始碼洩漏事件全梳理：從 npm source map 到 claw-code 現象</title>
       <link href="/2026/04/01/Claude-Code-%E5%8E%9F%E5%A7%8B%E7%A2%BC%E6%B4%A9%E6%BC%8F%E4%BA%8B%E4%BB%B6%E5%85%A8%E6%A2%B3%E7%90%86-%E5%BE%9E-npm-source-map-%E5%88%B0-claw-code-%E7%8F%BE%E8%B1%A1/"/>
       <url>/2026/04/01/Claude-Code-%E5%8E%9F%E5%A7%8B%E7%A2%BC%E6%B4%A9%E6%BC%8F%E4%BA%8B%E4%BB%B6%E5%85%A8%E6%A2%B3%E7%90%86-%E5%BE%9E-npm-source-map-%E5%88%B0-claw-code-%E7%8F%BE%E8%B1%A1/</url>
@@ -4004,9 +4004,9 @@
       
         <tags>
             
-            <tag> 資安 </tag>
-            
             <tag> 開源 </tag>
+            
+            <tag> 資安 </tag>
             
             <tag> 開發工具 </tag>
             
@@ -4037,9 +4037,9 @@
             
             <tag> Claude Code </tag>
             
-            <tag> 自動化 </tag>
-            
             <tag> macOS </tag>
+            
+            <tag> 自動化 </tag>
             
             <tag> 教學 </tag>
             
@@ -4072,9 +4072,9 @@
             
             <tag> Anthropic </tag>
             
-            <tag> Claude Code </tag>
-            
             <tag> NVIDIA </tag>
+            
+            <tag> Claude Code </tag>
             
         </tags>
       
@@ -4105,9 +4105,9 @@
             
             <tag> 自動化 </tag>
             
-            <tag> 開發工具 </tag>
-            
             <tag> 教學 </tag>
+            
+            <tag> 開發工具 </tag>
             
         </tags>
       
@@ -4194,9 +4194,9 @@
             
             <tag> MCP </tag>
             
-            <tag> Anthropic </tag>
-            
             <tag> Apple </tag>
+            
+            <tag> Anthropic </tag>
             
             <tag> Mistral </tag>
             
@@ -4683,6 +4683,8 @@
       
         <tags>
             
+            <tag> LLM </tag>
+            
             <tag> AI 新聞 </tag>
             
             <tag> Claude </tag>
@@ -4690,8 +4692,6 @@
             <tag> MCP </tag>
             
             <tag> OpenAI </tag>
-            
-            <tag> LLM </tag>
             
             <tag> Apple </tag>
             
@@ -4915,11 +4915,11 @@
       
         <tags>
             
+            <tag> LLM </tag>
+            
             <tag> AI 新聞 </tag>
             
             <tag> 資安 </tag>
-            
-            <tag> LLM </tag>
             
         </tags>
       
