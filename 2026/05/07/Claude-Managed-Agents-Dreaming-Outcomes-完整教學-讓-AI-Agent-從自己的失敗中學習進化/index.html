@@ -1,0 +1,413 @@
+<!DOCTYPE html><html lang="zh-TW" data-theme="dark"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>Claude Managed Agents Dreaming + Outcomes 完整教學 — 讓 AI Agent 從自己的失敗中學習進化 | Cheng's Tech &amp; Life</title><meta name="author" content="Cheng®"><meta name="copyright" content="Cheng®"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#0d0d0d"><meta name="description" content="2026 Code w&#x2F; Claude 發表會三大新功能：Dreaming 讓 agent 在背景「做夢」整理經驗、Outcomes 用 rubric 自動評分重做、Multi-agent 拆任務並行">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Claude Managed Agents Dreaming + Outcomes 完整教學 — 讓 AI Agent 從自己的失敗中學習進化">
+<meta property="og:url" content="https://mark22013333.github.io/2026/05/07/Claude-Managed-Agents-Dreaming-Outcomes-%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8-%E8%AE%93-AI-Agent-%E5%BE%9E%E8%87%AA%E5%B7%B1%E7%9A%84%E5%A4%B1%E6%95%97%E4%B8%AD%E5%AD%B8%E7%BF%92%E9%80%B2%E5%8C%96/index.html">
+<meta property="og:site_name" content="Cheng&#39;s Tech &amp; Life">
+<meta property="og:description" content="2026 Code w&#x2F; Claude 發表會三大新功能：Dreaming 讓 agent 在背景「做夢」整理經驗、Outcomes 用 rubric 自動評分重做、Multi-agent 拆任務並行">
+<meta property="og:locale" content="zh_TW">
+<meta property="og:image" content="https://mark22013333.github.io/img/20260507-03.webp">
+<meta property="article:published_time" content="2026-05-07T00:30:00.000Z">
+<meta property="article:modified_time" content="2026-05-07T14:21:40.814Z">
+<meta property="article:author" content="Cheng®">
+<meta property="article:tag" content="Claude">
+<meta property="article:tag" content="Managed Agents">
+<meta property="article:tag" content="Dreaming">
+<meta property="article:tag" content="Outcomes">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://mark22013333.github.io/img/20260507-03.webp"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Claude Managed Agents Dreaming + Outcomes 完整教學 — 讓 AI Agent 從自己的失敗中學習進化",
+  "url": "https://mark22013333.github.io/2026/05/07/Claude-Managed-Agents-Dreaming-Outcomes-%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8-%E8%AE%93-AI-Agent-%E5%BE%9E%E8%87%AA%E5%B7%B1%E7%9A%84%E5%A4%B1%E6%95%97%E4%B8%AD%E5%AD%B8%E7%BF%92%E9%80%B2%E5%8C%96/",
+  "image": "https://mark22013333.github.io/img/20260507-03.webp",
+  "datePublished": "2026-05-07T00:30:00.000Z",
+  "dateModified": "2026-05-07T14:21:40.814Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "Cheng®",
+      "url": "https://mark22013333.github.io"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://mark22013333.github.io/2026/05/07/Claude-Managed-Agents-Dreaming-Outcomes-%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8-%E8%AE%93-AI-Agent-%E5%BE%9E%E8%87%AA%E5%B7%B1%E7%9A%84%E5%A4%B1%E6%95%97%E4%B8%AD%E5%AD%B8%E7%BF%92%E9%80%B2%E5%8C%96/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//www.google-analytics.com" crossorigin=""/><link rel="preconnect" href="//fonts.googleapis.com" crossorigin=""/><link rel="preconnect" href="//busuanzi.ibruce.info"/><meta name="google-site-verification" content="6ywUr8k2n_CT1PFYJzlSvI3CZ-JmJ55RYbA39VrFBDs"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!true && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          const hour = new Date().getHours()
+          const isNight = hour <= 9 || hour >= 18
+          if (theme === undefined) isNight ? activateDarkMode() : activateLightMode()
+          else theme === 'light' ? activateLightMode() : activateDarkMode()
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script async="async" src="https://www.googletagmanager.com/gtag/js?id=G-JBV14NRDH3"></script><script>window.dataLayer = window.dataLayer || []
+function gtag(){dataLayer.push(arguments)}
+gtag('js', new Date())
+gtag('config', 'G-JBV14NRDH3')
+btf.addGlobalFn('pjaxComplete', () => {
+  gtag('config', 'G-JBV14NRDH3', {'page_path': window.location.pathname})
+}, 'google_analytics')
+</script><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Titillium+Web&amp;display=swap" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"pagination":{"enable":false,"hitsPerPage":8},"languages":{"hits_empty":"找不到符合您查詢的內容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '複製成功',
+    error: '複製失敗',
+    noSupport: '瀏覽器不支援'
+  },
+  relativeDate: {
+    homepage: false,
+    post: true
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '剛剛',
+    min: '分鐘前',
+    hour: '小時前',
+    day: '天前',
+    month: '個月前'
+  },
+  copyright: {"limitCount":1,"languages":{"author":"作者: Cheng®","link":"連結: ","source":"來源: Cheng's Tech & Life","info":"著作權歸作者所有。如需商業轉載，請聯絡作者獲得授權，非商業轉載請註明出處😁。"}},
+  lightbox: 'fancybox',
+  Snackbar: {"chs_to_cht":"已切換為繁體中文","cht_to_chs":"已切換為簡體中文","day_to_night":"已切換為深色模式","night_to_day":"已切換為淺色模式","bgLight":"#49b1f5","bgDark":"#1f1f1f","position":"top-center"},
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid/dist/infinitegrid.min.js',
+    buttonText: '載入更多'
+  },
+  isPhotoFigcaption: true,
+  islazyloadPlugin: false,
+  isAnchor: true,
+  percent: {
+    toc: true,
+    rightside: true,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Claude Managed Agents Dreaming + Outcomes 完整教學 — 讓 AI Agent 從自己的失敗中學習進化',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><link rel="stylesheet" href="/css/kkbox-player.css"><link rel="stylesheet" href="/css/tag-cloud-fancy.css"><link rel="stylesheet" href="/css/font-resize.css"><link rel="stylesheet" href="/css/dark-palette.css"><link rel="stylesheet" href="/css/loading-override.css"><link rel="alternate" href="/atom.xml" title="Cheng's Tech & Life" type="application/atom+xml">
+</head><body><div id="loading-box"><div class="loading-glass-overlay"></div><div class="loading-indicator"><div class="loading-dot"></div><div class="loading-dot"></div><div class="loading-dot"></div></div></div><script>(()=>{
+  const $loadingBox = document.getElementById('loading-box')
+  const $body = document.body
+  const preloader = {
+    endLoading: () => {
+      if ($loadingBox.classList.contains('loaded')) return
+      $body.style.overflow = ''
+      $loadingBox.classList.add('loaded')
+    },
+    initLoading: () => {
+      $body.style.overflow = 'hidden'
+      $loadingBox.classList.remove('loaded')
+    }
+  }
+
+  preloader.initLoading()
+
+  if (document.readyState === 'complete') {
+    preloader.endLoading()
+  } else {
+    window.addEventListener('load', preloader.endLoading)
+    document.addEventListener('DOMContentLoaded', preloader.endLoading)
+    setTimeout(preloader.endLoading, 7000)
+  }
+
+  if (true) {
+    btf.addGlobalFn('pjaxSend', preloader.initLoading, 'preloader_init')
+    btf.addGlobalFn('pjaxComplete', preloader.endLoading, 'preloader_end')
+  }
+})()</script><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="https://lh3.googleusercontent.com/pw/ABLVV87_po8nBc6F_tXcoYDmtzMGWxHuhhrbguYILCjmjWKLOS8DTpubm0YoQLKgjyjRIZyV5TjYe7XVEz_YU4squfr37GTZqPZP1hlMVZ_MIgXpTxWu73M=w1200" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">207</div></a><a href="/tags/"><div class="headline">標籤</div><div class="length-num">269</div></a><a href="/categories/"><div class="headline">分類</div><div class="length-num">14</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首頁-Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 時間軸-archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 標籤-tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分類-Categories</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-list"></i><span> 其他列表</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音樂-Music</span></a></li><li><a class="site-page child" href="/gallery/"><i class="fa-fw fas fa-images"></i><span> 畫館-Gallery</span></a></li></ul></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg fixed" id="page-header" style="background-image: url(/img/20260507-03.webp);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><img class="site-icon" src="https://lh3.googleusercontent.com/pw/ABLVV87_po8nBc6F_tXcoYDmtzMGWxHuhhrbguYILCjmjWKLOS8DTpubm0YoQLKgjyjRIZyV5TjYe7XVEz_YU4squfr37GTZqPZP1hlMVZ_MIgXpTxWu73M=w1200" alt="Logo"><span class="site-name">Cheng's Tech &amp; Life</span></a><a class="nav-page-title" href="/"><span class="site-name">Claude Managed Agents Dreaming + Outcomes 完整教學 — 讓 AI Agent 從自己的失敗中學習進化</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首頁</span></span></a></span><div id="menus"><div id="search-button" title="Ctrl+K / Cmd+K"><span class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜尋</span></span></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首頁-Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 時間軸-archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 標籤-tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分類-Categories</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-list"></i><span> 其他列表</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音樂-Music</span></a></li><li><a class="site-page child" href="/gallery/"><i class="fa-fw fas fa-images"></i><span> 畫館-Gallery</span></a></li></ul></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">Claude Managed Agents Dreaming + Outcomes 完整教學 — 讓 AI Agent 從自己的失敗中學習進化</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">發表於</span><time class="post-meta-date-created" datetime="2026-05-07T00:30:00.000Z" title="發表於 2026-05-07 08:30:00">2026-05-07</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新於</span><time class="post-meta-date-updated" datetime="2026-05-07T14:21:40.814Z" title="更新於 2026-05-07 22:21:40">2026-05-07</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Claude-Code/">Claude Code</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">總字數:</span><span class="word-count">2.4k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">閱讀時間:</span><span>7分鐘</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">瀏覽量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><p>6 倍。</p>
+<p>Harvey——一家用 AI 處理法律文件的公司——在 Managed Agents 上啟用了一個叫 Dreaming 的功能。他們的 agent 本來每次碰到特定檔案格式都會卡住，換個 session 又忘記上次怎麼繞過去的。啟用 Dreaming 之後，agent 自己記住了 workaround，任務完成率直接翻了六倍。</p>
+<p>這不是 prompt 變強了，也不是模型換代了。是 agent 學會從自己的失敗裡萃取經驗。</p>
+<p>2026 年 5 月 6 日，Anthropic 在舊金山的 Code w&#x2F; Claude 開發者大會上一口氣丟出三個新功能：Dreaming、Outcomes、Multi-agent Orchestration。如果你之前跟著<a href="/2026/04/10/Claude-Managed-Agents-%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8-%E5%BE%9E%E9%9B%B6%E6%89%93%E9%80%A0%E9%9B%B2%E7%AB%AF-AI-Agent/">基礎篇</a>設定好了 Managed Agents，這三個功能是讓它從「能跑」變成「能自己變強」的關鍵升級。</p>
+<hr>
+<h2 id="Dreaming：讓-agent-在背景「做夢」"><a href="#Dreaming：讓-agent-在背景「做夢」" class="headerlink" title="Dreaming：讓 agent 在背景「做夢」"></a>Dreaming：讓 agent 在背景「做夢」</h2><p>你睡覺的時候，大腦在幹嘛？</p>
+<p>神經科學有個詞叫「記憶鞏固」——白天的經驗在睡眠期間被重新播放、篩選、壓縮，重要的存進長期記憶，不重要的丟掉。你不會記得今天午餐第三口飯的味道，但你會記得第一次 deploy 到 production 然後服務炸了的那個下午。</p>
+<p>Dreaming 做的事情一模一樣，只是對象換成了 AI agent。</p>
+<p>它是一個排程背景程序。你設定好之後，Claude 會在 agent 閒置時自動回頭檢視過去的 sessions——哪些任務成功了、哪些失敗了、失敗的 pattern 是什麼、成功的捷徑長什麼樣。然後它把這些發現整理成一份策展過的記憶庫（curated memory store），下次 agent 醒來工作的時候自動載入。</p>
+<h3 id="技術層面怎麼運作"><a href="#技術層面怎麼運作" class="headerlink" title="技術層面怎麼運作"></a>技術層面怎麼運作</h3><p>Dreaming 不是讓 agent 把所有 session log 塞進 context window——那樣 token 爆炸，而且噪訊太多。它的流程比較像這樣：</p>
+<ol>
+<li><strong>回顧</strong>：排程觸發後，一個獨立的 Claude 實例讀取過去 N 個 sessions 的執行紀錄</li>
+<li><strong>萃取</strong>：從失敗的 sessions 裡找出重複出現的問題模式，從成功的 sessions 裡找出有效的解法</li>
+<li><strong>策展</strong>：把萃取結果壓縮成結構化的記憶條目——不是原始 log，是「遇到 X 問題時用 Y 方法」的精煉知識</li>
+<li><strong>載入</strong>：下次 agent 開工時，這些記憶條目被注入 context，agent 直接帶著經驗上場</li>
+</ol>
+<p>等等，這跟 CLAUDE.md 有什麼不同？</p>
+<p>差別在於 CLAUDE.md 是你寫的，Dreaming 記憶是 agent 自己從實戰中萃取的。你寫的規則是「不要用 rm -rf」，agent 自己學到的是「這個客戶的 PDF 檔頭有非標準 BOM，要先 strip 再解析」。前者是通用知識，後者是特定任務的踩坑經驗——你根本不會知道要寫這條規則，直到 agent 自己撞上去。</p>
+<h3 id="Harvey-的案例"><a href="#Harvey-的案例" class="headerlink" title="Harvey 的案例"></a>Harvey 的案例</h3><p>Harvey 是最早採用 Dreaming 的企業用戶之一。他們的 Managed Agents 負責處理大量法律文件——合約審閱、條款比對、合規檢查。問題是法律文件的格式千奇百怪：有的 PDF 是掃描檔、有的 Word 文件用了自訂字型、有的 Excel 表格裡混著嵌入式圖片。</p>
+<p>每次 agent 碰到新的格式怪癖，它會花時間找出 workaround。但下個 session 開始時，這個經驗就消失了——又要重新踩一次坑。</p>
+<p>啟用 Dreaming 之後，agent 把「.docx 檔案如果包含 ActiveX 控制項要先 sanitize」「這家事務所的 PDF 是 PDF&#x2F;A-1b 標準，用標準解析器會丟失 annotation」這類 pattern 記進記憶庫。內部測試結果：任務完成率提升約 6 倍。</p>
+<p>六倍不是模型變聰明了。是同樣的模型，但不再每次都從零開始。</p>
+<hr>
+<h2 id="Outcomes：用評分標準讓-agent-自我修正"><a href="#Outcomes：用評分標準讓-agent-自我修正" class="headerlink" title="Outcomes：用評分標準讓 agent 自我修正"></a>Outcomes：用評分標準讓 agent 自我修正</h2><p>你寫了一個 prompt，agent 跑完了，輸出看起來… 還行？但「還行」到底是 70 分還是 90 分？你說不準，agent 也說不準。</p>
+<p>Outcomes 解決的就是這個問題。它在 5 月 6 日進入公開測試。</p>
+<p>概念很簡單。你曾經改過作文嗎？不是寫作文，是<strong>改</strong>作文。老師手上有一份評分標準：結構佔 20%、論點佔 30%、文法佔 20%、創意佔 30%。學生交卷，老師對著標準逐項打分，不及格的打回去重寫。</p>
+<p>Outcomes 的架構一模一樣：</p>
+<ol>
+<li><strong>你寫 rubric</strong>：用自然語言描述「成功長什麼樣」。不是 prompt，是評分標準——比如「輸出必須包含完整的錯誤處理」「程式碼必須通過所有測試」「報告必須引用至少三個原始資料來源」</li>
+<li><strong>agent 執行任務</strong>：跟平常一樣跑</li>
+<li><strong>grader 評分</strong>：一個獨立的 Claude 實例（不是執行任務的那個）拿著你的 rubric 逐項檢查 agent 的輸出。它有自己的 context window，不受 agent 的偏見影響</li>
+<li><strong>不及格就重來</strong>：grader 指出哪些項目沒過、具體要改什麼，agent 拿著反饋再跑一輪</li>
+<li><strong>循環直到通過</strong>：或者達到你設定的最大重試次數</li>
+</ol>
+<p>這件事有趣的地方在於：grader 和 agent 是兩個不同的 Claude 實例。agent 可能覺得自己做得不錯，但 grader 用你的標準一看——「你漏了邊界條件的測試」。這種分離很重要，因為自我評估有盲點，讓另一個實例用明確標準來判定，準確度高很多。</p>
+<h3 id="實際效果"><a href="#實際效果" class="headerlink" title="實際效果"></a>實際效果</h3><p>Anthropic 的內部測試和早期採用者的數據顯示，使用 Outcomes 比單純用 prompt 指令，任務成功率平均提升 10 個百分點。</p>
+<p>10 個百分點聽起來不多？換個角度想。如果你的 agent 每天跑 100 個任務，成功率從 75% 提升到 85%，等於每天多搞定 10 個任務。一個月多 300 個。而你只是多寫了一份 rubric。</p>
+<h3 id="Rubric-怎麼寫"><a href="#Rubric-怎麼寫" class="headerlink" title="Rubric 怎麼寫"></a>Rubric 怎麼寫</h3><p>Rubric 不是 prompt engineering——它不是在教 agent 怎麼做，是在定義什麼算「做好了」。好的 rubric 長這樣：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">成功標準：</span><br><span class="line">1. 生成的程式碼必須通過所有現有測試（零失敗）</span><br><span class="line">2. 新增功能必須有對應的單元測試，覆蓋率 &gt; 80%</span><br><span class="line">3. 不得引入新的 lint 警告</span><br><span class="line">4. commit message 必須符合 conventional commits 格式</span><br><span class="line">5. 如果修改了 API 介面，必須更新對應的文件</span><br></pre></td></tr></table></figure>
+
+<p>關鍵在於每一條都是<strong>可驗證的</strong>——grader 能明確判定「過」或「沒過」，不是「程式碼品質要好」這種模糊標準。</p>
+<hr>
+<h2 id="Multi-agent-Orchestration：一個主管帶一群工程師"><a href="#Multi-agent-Orchestration：一個主管帶一群工程師" class="headerlink" title="Multi-agent Orchestration：一個主管帶一群工程師"></a>Multi-agent Orchestration：一個主管帶一群工程師</h2><p>你有一個複雜任務，拆成五個子任務。以前你要自己拆、自己分配、自己追進度。現在可以讓一個 lead agent 來做這件事。</p>
+<p>Multi-agent Orchestration 讓 Managed Agents 具備「主管」能力：</p>
+<ul>
+<li><strong>任務拆解</strong>：lead agent 分析你的需求，判斷需要幾個子任務、每個子任務的範圍</li>
+<li><strong>分配執行</strong>：每個子任務派給一個獨立的 sub-agent，並行跑</li>
+<li><strong>結果彙整</strong>：sub-agents 完成後，lead agent 收集所有結果，合併輸出</li>
+</ul>
+<p>這跟你在公司裡看到的沒什麼不同。工程主管拿到一個大 feature，拆成五張 ticket，分配給五個工程師，每天 standup 追進度，最後 merge 成一個 release。差別只是主管和工程師都是 Claude。</p>
+<p>什麼時候該用 Multi-agent？當你的任務有明顯的平行性——比如「同時分析五個不同市場的數據」、「同時把十份文件翻譯成不同語言」、「同時在五個不同的 repo 裡搜尋某個 pattern」。如果任務是線性的（B 依賴 A 的結果），single agent 就夠了。</p>
+<hr>
+<h2 id="三個功能怎麼搭配"><a href="#三個功能怎麼搭配" class="headerlink" title="三個功能怎麼搭配"></a>三個功能怎麼搭配</h2><p>最強的組合是三個一起用：</p>
+<p><strong>Dreaming</strong> 讓 agent 帶著歷史經驗上場，不從零開始。<strong>Outcomes</strong> 確保每次輸出都有品質保證，不合格就重做。<strong>Multi-agent</strong> 讓複雜任務可以拆開並行，不用排隊等。</p>
+<p>一個實際的場景：你的 Managed Agent 負責每天生成一份市場研究報告。</p>
+<ol>
+<li>Lead agent 收到任務，拆成「蒐集數據」「分析趨勢」「撰寫摘要」「格式化輸出」四個子任務（Multi-agent）</li>
+<li>每個 sub-agent 帶著 Dreaming 記憶上場——記得上次蒐集數據時哪個 API 回傳格式變了、記得分析趨勢時哪個指標的計算方式要調整</li>
+<li>最終報告交給 grader，用 rubric 檢查「數據來源是否都有引用」「趨勢分析是否包含風險評估」「格式是否符合模板」（Outcomes）</li>
+<li>不及格的部分重做，直到全部通過</li>
+</ol>
+<p>這整套跑完，你只定義了一份 rubric 和一個任務描述。剩下的是 agent 自己搞定的。</p>
+<hr>
+<h2 id="接下來學什麼"><a href="#接下來學什麼" class="headerlink" title="接下來學什麼"></a>接下來學什麼</h2><p>如果你還沒設定過 Managed Agents，先回去看<a href="/2026/04/10/Claude-Managed-Agents-%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8-%E5%BE%9E%E9%9B%B6%E6%89%93%E9%80%A0%E9%9B%B2%E7%AB%AF-AI-Agent/">基礎篇</a>。</p>
+<p>設定好之後，建議的學習路徑：</p>
+<ol>
+<li><strong>先開 Outcomes</strong>——寫一份簡單的 rubric，觀察 grader 怎麼評分、agent 怎麼修正。這是最快看到效果的功能</li>
+<li><strong>再開 Dreaming</strong>——讓 agent 跑幾天累積 session 紀錄，然後觀察記憶庫裡萃取出什麼。第一週的效果可能不明顯，但隨著記憶累積，你會開始注意到 agent 不再重複犯同樣的錯</li>
+<li><strong>最後試 Multi-agent</strong>——等你對單一 agent 的行為夠熟了，再引入多 agent 協作。一次管太多 agent 比一次管太多工程師還混亂</li>
+</ol>
+<p>背後就兩條線：一條是「agent 的輸出品質怎麼保證」（Outcomes），另一條是「agent 怎麼隨時間變強」（Dreaming）。Multi-agent 是規模化的手段，但規模化的前提是單一 agent 先夠可靠。</p>
+<p>先把一個 agent 調到你滿意，再複製。</p>
+<blockquote>
+<p>參考來源：<a target="_blank" rel="noopener" href="https://siliconangle.com/2026/05/06/anthropic-letting-claude-agents-dream-dont-sleep-job/">Anthropic is letting Claude agents ‘dream’ so they don’t sleep on the job — SiliconANGLE</a><br>參考來源：<a target="_blank" rel="noopener" href="https://claude.com/code-with-claude/san-francisco">Code w&#x2F; Claude 2026 — Anthropic</a><br>參考來源：<a target="_blank" rel="noopener" href="https://www.buildfastwithai.com/blogs/claude-managed-agents-dreaming-explained">Claude Managed Agents Dreaming Explained — BuildFastWithAI</a></p>
+</blockquote>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://mark22013333.github.io">Cheng®</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章連結: </span><span class="post-copyright-info"><a href="https://mark22013333.github.io/2026/05/07/Claude-Managed-Agents-Dreaming-Outcomes-%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8-%E8%AE%93-AI-Agent-%E5%BE%9E%E8%87%AA%E5%B7%B1%E7%9A%84%E5%A4%B1%E6%95%97%E4%B8%AD%E5%AD%B8%E7%BF%92%E9%80%B2%E5%8C%96/">https://mark22013333.github.io/2026/05/07/Claude-Managed-Agents-Dreaming-Outcomes-完整教學-讓-AI-Agent-從自己的失敗中學習進化/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版權聲明: </span><span class="post-copyright-info">本部落格所有文章除特別聲明外，均採用<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 授權協議。轉載請註明來源 <a href="https://mark22013333.github.io" target="_blank">Cheng's Tech & Life</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Claude/">Claude</a><a class="post-meta__tags" href="/tags/Managed-Agents/">Managed Agents</a><a class="post-meta__tags" href="/tags/Dreaming/">Dreaming</a><a class="post-meta__tags" href="/tags/Outcomes/">Outcomes</a></div><div class="post-share"><div class="social-share" data-image="/img/20260507-03.webp" data-sites="facebook,x"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><div class="post-reward"><div class="reward-badges"><a class="sponsor-glow-btn" href="https://www.buymeacoffee.com/mark22013333" target="_blank" rel="noopener noreferrer" title="Buy Me A Coffee"><img src="https://img.shields.io/badge/Buy_Me_A_Coffee-FFDD00?style=for-the-badge&amp;logo=buy-me-a-coffee&amp;logoColor=black" alt="Buy Me A Coffee"/></a><a class="sponsor-glow-btn" href="https://p.ecpay.com.tw/EFC3F8F" target="_blank" rel="noopener noreferrer" title="綠界贊助"><img src="https://img.shields.io/badge/☕_%E8%AB%8B%E6%88%91%E5%96%9D%E6%9D%AF%E5%92%96%E5%95%A1-Donate-11998e?style=for-the-badge&amp;logo=coffee&amp;logoColor=white" alt="綠界贊助"/></a><a class="sponsor-glow-btn" href="https://calendly.com/markcheng00806-intumit/15min" target="_blank" rel="noopener noreferrer" title="預約時間"><img src="https://img.shields.io/badge/📅_%E9%A0%90%E7%B4%84_15_%E5%88%86%E9%90%98-Book_Time-0072ff?style=for-the-badge" alt="預約時間"/></a><p class="reward-badges-note">你的鼓勵將被轉換為我明天繼續加班的動力（真的）。 ❤️</p></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2026/05/07/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260507/" title="AI 與科技新聞摘要 - 2026/05/07"><img class="cover" src="/img/20260507-02.webp" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">AI 與科技新聞摘要 - 2026/05/07</div></div><div class="info-2"><div class="info-item-1">220,000 顆 GPU。 Anthropic 昨天簽下 SpaceX Colossus 1 資料中心的全部算力——300 百萬瓦、超過 22 萬顆 GPU，一個月內全面上線。同一天的開發者大會上，他們讓 AI agent 學會「做夢」：回顧過去的失敗，自己修正自己。 這兩件事要放在一起看。 算力是油門，自我修正是方向盤。光踩油門會撞牆，光有方向盤走不快。但兩個同時到位——你得認真想一下這台車會開到哪裡去。同一時間，企業防火牆被打穿、Copilot 開始限縮用戶、OpenAI 終於認真做帳號安全。加速和失控，永遠是一體兩面。  Anthropic Code w&#x2F; Claude 2026 SF — AI Agent 學會做夢「做夢」這個詞不是行銷話術，是功能名稱。 Anthropic 在 5 月 6 日舊金山開發者大會上發表了 Managed Agents 的三個新能力：Dreaming、Outcomes、Multi-agent orchestration。其中 Dreaming 最值得仔細看。 運作方式是這樣的：agent 跑完任務之後，不是直接歸零。一個排程背景程序...</div></div></div></a><a class="pagination-related" href="/2026/05/07/insanely-fast-whisper-%E8%AE%93-Whisper-%E8%AA%9E%E9%9F%B3%E8%BD%89%E6%96%87%E5%AD%97%E5%BF%AB-20-%E5%80%8D%E7%9A%84-CLI-%E5%B7%A5%E5%85%B7/" title="insanely-fast-whisper — 讓 Whisper 語音轉文字快 20 倍的 CLI 工具"><img class="cover" src="/img/20260507-01.webp" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">insanely-fast-whisper — 讓 Whisper 語音轉文字快 20 倍的 CLI 工具</div></div><div class="info-2"><div class="info-item-1">150 分鐘的音訊。原版 Whisper 跑完要半小時。 換一個 CLI 工具，不到 2 分鐘。 不是換了更大的 GPU，不是換了更新的模型，甚至底層用的還是同一個 Whisper large-v3。差別只在一件事：原版 Whisper 處理音訊的方式，從一開始就是錯的。  問題不在模型，在排隊OpenAI 的 Whisper 是語音轉文字的標竿。準確度夠高、多語言支援完整、開源。但它有一個設計決定讓推論速度被鎖死——逐段處理。 你丟一段 150 分鐘的 podcast 給 Whisper，它會先切成 30 秒的小段，然後一段一段餵進模型。處理完第一段，才處理第二段。300 段音訊，排成一條直線，乖乖等。 這就像超市只開了一個結帳櫃台。不管後面排了多少人，一次只能結一個。你的 A100 GPU 有 80GB 的顯示記憶體，但每次只塞 30 秒的音訊進去——剩下的算力全部閒置。 insanely-fast-whisper 做的事情很直觀：把 24 個櫃台同時打開。  三個加速的疊加速度不是來自某個神奇的演算法突破，而是三件已經存在的技術正確地疊在一起。每一個都不新，但組合起來效果是...</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相關推薦</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2026/03/27/Claude-Dispatch-%E7%94%A8%E6%89%8B%E6%A9%9F%E6%8C%87%E6%8F%AE%E6%A1%8C%E6%A9%9F%E8%AE%93-AI-%E8%87%AA%E5%B7%B1%E5%B9%B9%E6%B4%BB/" title="Claude Dispatch 完整指南 — 用手機指揮桌機，讓 AI 在你電腦上自己幹活"><img class="cover" src="/img/20260327-03.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-03-27</div><div class="info-item-2">Claude Dispatch 完整指南 — 用手機指揮桌機，讓 AI 在你電腦上自己幹活</div></div><div class="info-2"><div class="info-item-1">3 月 17 日，Anthropic 發佈了 Dispatch。一週後，3 月 24 日，Computer Use 跟著上線。 這兩個功能合在一起，讓 Claude 可以接受你手機丟過來的任務，然後自己在你的桌機上開 App、點按鈕、填表單、查瀏覽器、存檔案——你不用守在電腦前面。  Dispatch 是什麼最直白的類比：對講機。你的手機是按鍵發話端，桌機是執行端。 你在外面（或者躺在床上），用 Claude 手機 app 發訊息：「幫我把今天的 PR review 整理成摘要，寄給我」。Dispatch 把這個任務送到你的 Mac，Claude Cowork 開始幹活——開 GitHub、讀 PR、整理、寄信。跑完通知你。 不是把任務雲端化，是真的在你的電腦上執行，用的是你電腦上已經設定好的連接器、工具、帳號。  Computer Use 是什麼Claude 優先使用有直接整合的工具（Slack connector、Google Calendar 之類的 MCP 工具）。但如果工具不夠用呢？ 這時候 Computer Use 上場。Claude 用截圖看你的螢幕，然後控制滑鼠和...</div></div></div></a><a class="pagination-related" href="/2026/04/14/Claude-Cowork-Plugin-%E5%BE%9E%E9%9B%B6%E6%89%93%E9%80%A0%E4%BD%A0%E8%87%AA%E5%B7%B1%E7%9A%84%E5%B7%A5%E4%BD%9C%E6%B5%81%E5%A4%96%E6%8E%9B/" title="Claude Cowork Plugin 從零打造你自己的工作流外掛"><img class="cover" src="/img/20260414-03.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-04-14</div><div class="info-item-2">Claude Cowork Plugin 從零打造你自己的工作流外掛</div></div><div class="info-2"><div class="info-item-1">「每次寫月結報告都要開四個工具、對三份表格、套同一個格式。」如果你有類似的重複工作流，Claude Cowork 的 Plugin 系統就是為這種場景設計的。 跟 Claude Code 的 Skill 不同（那比較偏程式碼層面的擴充），Cowork Plugin 面向的是工作流程本身。它把你團隊的制度知識、工具連接、審核標準封裝成一個可重複使用的外掛，讓 Claude 每次執行都像一個懂你們規矩的老同事。 Plugin 的三個核心元件一個 Cowork Plugin 由三塊東西組成，不一定每個都要有，看你的需求而定： Skills 是方法論的容器。它可以是一份格式偏好、一套審核框架、或是一個完整的工作流程。Skills 可以用 slash command 觸發（像 /monthly-close），也可以被語意自動匹配。重點是它能參考外部文件、接受輸入參數，有彈性但又有結構。 Connectors 負責串接你的工具。讓 Claude 在工作流裡面直接從 Slack 撈訊息、往 Notion 寫東西、查 Jira ticket，不用你手動上傳下載。底層走的是 MCP 協定，所以只要...</div></div></div></a><a class="pagination-related" href="/2026/04/15/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260415/" title="AI 與科技新聞摘要 - 2026&#x2F;04&#x2F;15"><img class="cover" src="/img/20260415-02.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-04-15</div><div class="info-item-2">AI 與科技新聞摘要 - 2026&#x2F;04&#x2F;15</div></div><div class="info-2"><div class="info-item-1">用戶發現 Claude 變笨了，Fortune 一篇報導把 Anthropic 推上風口浪尖。同一時間，AI coding 工具的軍備競賽繼續加速：Kiro CLI 2.0 進 headless 和 Windows、Gemini CLI 玩出 Chapters 新概念、OpenAI Codex 的 MCP 整合終於像樣了、Claude Cowork 悄悄 GA。週三早上的重點整理。 Anthropic 被抓包偷降 Claude 運算量 - 用戶信任危機Fortune 昨天（4&#x2F;14）發了一篇長文，標題很直接：Anthropic 正面臨用戶反彈潮。 事情的起因是越來越多重度用戶反映 Claude 的表現變差了——不遵守指令、走捷徑、複雜任務的錯誤率明顯上升。社群開始挖原因，有人丟出了一個數據聲稱效能下降 67%，雖然方法論有爭議，但引爆了大量共鳴。 VentureBeat 跟進報導揭露了核心問題：Anthropic 悄悄調低了 Claude 的預設「effort」層級來節省 token 消耗。翻譯成白話就是——為了省運算成本，讓模型預設用比較少的算力回應。Anthropi...</div></div></div></a><a class="pagination-related" href="/2026/04/16/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260416/" title="AI 與科技新聞摘要 - 2026&#x2F;04&#x2F;16"><img class="cover" src="/img/20260416-02.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-04-16</div><div class="info-item-2">AI 與科技新聞摘要 - 2026&#x2F;04&#x2F;16</div></div><div class="info-2"><div class="info-item-1">1,300 個 PR。一週。零行人手寫的程式碼。 這是 Stripe 內部 AI Agent「Minions」的實際產出數字。同一個禮拜，Anthropic 把 Claude Code Desktop 從底層翻掉重寫，Microsoft 砸出 163 個 CVE 補丁，GitHub 對 Copilot CLI 四天內連推四版，OpenAI 則悄悄上了新的 GPT-5.3 Instant Mini。AI coding 工具的軍備競賽，這週進入了白熱化。 Stripe Minions — AI Agent 進生產線長什麼樣先講 Stripe 那個數字，因為它代表的不是 demo，是真正跑在生產環境裡的東西。 Minions 的運作方式像極了工廠的自動化產線：工程師在 Slack 丟個 emoji，Agent 就自動拉起一台隔離的雲端機器（devbox），讀文件、寫程式、跑 linter、推上 CI——全程沒人碰鍵盤。底層是基於 Block 開源的 Goose agent 改造的版本。 但真正恐怖的是它背後接了什麼。Stripe 內部有個工具系統叫 Toolshed，本質上是一台巨型 ...</div></div></div></a><a class="pagination-related" href="/2026/04/10/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260410/" title="AI 與科技新聞摘要 - 2026&#x2F;04&#x2F;10"><img class="cover" src="/img/20260410-02.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-04-10</div><div class="info-item-2">AI 與科技新聞摘要 - 2026&#x2F;04&#x2F;10</div></div><div class="info-2"><div class="info-item-1">Anthropic 把 AI agent 的基礎設施直接打包成代管服務、OpenAI 推出 $100 中間價位搶 Claude 的客群、GitHub Copilot 在 VS Code 加入全自主 Autopilot 模式、又一個 AI 框架被打穿 CVSS 9.9，然後 Cowork 終於從 research preview 畢業了。 Claude Managed Agents：Anthropic 幫你跑 AI Agent 的代管服務4&#x2F;8 Anthropic 推出 Claude Managed Agents 公開測試版。核心概念：你定義 agent 要做什麼（system prompt、工具、模型），Anthropic 負責跑起來——沙箱執行、狀態管理、agent loop、工具呼叫全部代管。 用法分四步：建立 Agent 定義 → 設定 Environment（預裝套件、網路規則、掛載檔案）→ 啟動 Session → 透過 SSE 串流互動。內建工具包含 bash、檔案操作、網頁搜尋、程式碼執行。整個流程可以用 Claude Console 操作，也可以用新推出...</div></div></div></a><a class="pagination-related" href="/2026/03/29/Claude-Desktop-%E4%B8%89%E7%A8%AE%E6%A8%A1%E5%BC%8F%E6%80%8E%E9%BA%BC%E5%88%87-Chat-Cowork-Code-%E5%AE%8C%E6%95%B4%E5%B0%8E%E8%A6%BD/" title="Claude Desktop 三種模式怎麼切？Chat、Cowork、Code 完整導覽"><img class="cover" src="/img/20260329-03.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-03-29</div><div class="info-item-2">Claude Desktop 三種模式怎麼切？Chat、Cowork、Code 完整導覽</div></div><div class="info-2"><div class="info-item-1">打開 Claude Desktop，上面三個 tab 寫著 Chat、Cowork、Code。第一次看到的人大概會問：這三個到底差在哪？什麼時候該用哪個？ 答案比想像中簡單——它們不是三個不同的 AI，是同一個 Claude 的三種工作模式，各自對應不同的使用場景和權限範圍。 Chat：快問快答的主場Chat 是最輕量的模式。問問題、腦力激盪、幫你改改文案、翻譯一段文字——這些不需要動到檔案系統、不需要跑程式的事情，Chat 就夠了。 有兩個功能值得記住。第一個是 Quick Entry：在 Mac 上連按兩下 Option 鍵，會跳出一個浮動對話框，不用切到 Claude 視窗就能丟問題。會議之間的三十秒空檔，打開來問一句「剛才那個 dashboard 上的 DAU 數字怎麼算的」剛好。 第二個是截圖分享。直接把螢幕畫面丟給 Claude 看，省去「那個按鈕在左邊第三排…不對，是第四排」的來回描述。 Chat 也能串 Desktop Connector，接上 Apple Notes 之類的本機工具。但整體來說，它的定位就是快速對話，不是拿來做大型專案的。 Cowork：需要動手...</div></div></div></a></div></div><hr class="custom-hr"/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 評論</span></div></div><div class="comment-wrap"><div><div id="giscus-wrap"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="https://lh3.googleusercontent.com/pw/ABLVV87_po8nBc6F_tXcoYDmtzMGWxHuhhrbguYILCjmjWKLOS8DTpubm0YoQLKgjyjRIZyV5TjYe7XVEz_YU4squfr37GTZqPZP1hlMVZ_MIgXpTxWu73M=w1200" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">Cheng®</div><div class="author-info-description">Backend Developer / 技術筆記 & AI 新聞分享</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">207</div></a><a href="/tags/"><div class="headline">標籤</div><div class="length-num">269</div></a><a href="/categories/"><div class="headline">分類</div><div class="length-num">14</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/mark22013333"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons"><a class="social-icon" href="https://github.com/mark22013333" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:mark22013333@gmail.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a></div><div class="card-info-sponsor"><a class="sponsor-glow-btn" href="https://www.buymeacoffee.com/mark22013333" target="_blank" rel="noopener noreferrer" title="Buy Me A Coffee"><img src="https://img.shields.io/badge/Buy_Me_A_Coffee-FFDD00?style=for-the-badge&amp;logo=buy-me-a-coffee&amp;logoColor=black" alt="Buy Me A Coffee"/></a><a class="sponsor-glow-btn" href="https://p.ecpay.com.tw/EFC3F8F" target="_blank" rel="noopener noreferrer" title="綠界贊助"><img src="https://img.shields.io/badge/☕_%E8%AB%8B%E6%88%91%E5%96%9D%E6%9D%AF%E5%92%96%E5%95%A1-Donate-11998e?style=for-the-badge&amp;logo=coffee&amp;logoColor=white" alt="綠界贊助"/></a><a class="sponsor-glow-btn" href="https://calendly.com/markcheng00806-intumit/15min" target="_blank" rel="noopener noreferrer" title="預約時間"><img src="https://img.shields.io/badge/📅_%E9%A0%90%E7%B4%84_15_%E5%88%86%E9%90%98-Book_Time-0072ff?style=for-the-badge" alt="預約時間"/></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">這裡記錄我在後端開發路上踩過的坑、學到的東西，也會分享每日 AI 與科技新聞觀點。歡迎一起交流！</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目錄</span><span class="toc-percentage"></span></div><div class="toc-content is-expand"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Dreaming%EF%BC%9A%E8%AE%93-agent-%E5%9C%A8%E8%83%8C%E6%99%AF%E3%80%8C%E5%81%9A%E5%A4%A2%E3%80%8D"><span class="toc-number">1.</span> <span class="toc-text">Dreaming：讓 agent 在背景「做夢」</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8A%80%E8%A1%93%E5%B1%A4%E9%9D%A2%E6%80%8E%E9%BA%BC%E9%81%8B%E4%BD%9C"><span class="toc-number">1.1.</span> <span class="toc-text">技術層面怎麼運作</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Harvey-%E7%9A%84%E6%A1%88%E4%BE%8B"><span class="toc-number">1.2.</span> <span class="toc-text">Harvey 的案例</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Outcomes%EF%BC%9A%E7%94%A8%E8%A9%95%E5%88%86%E6%A8%99%E6%BA%96%E8%AE%93-agent-%E8%87%AA%E6%88%91%E4%BF%AE%E6%AD%A3"><span class="toc-number">2.</span> <span class="toc-text">Outcomes：用評分標準讓 agent 自我修正</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AF%A6%E9%9A%9B%E6%95%88%E6%9E%9C"><span class="toc-number">2.1.</span> <span class="toc-text">實際效果</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Rubric-%E6%80%8E%E9%BA%BC%E5%AF%AB"><span class="toc-number">2.2.</span> <span class="toc-text">Rubric 怎麼寫</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Multi-agent-Orchestration%EF%BC%9A%E4%B8%80%E5%80%8B%E4%B8%BB%E7%AE%A1%E5%B8%B6%E4%B8%80%E7%BE%A4%E5%B7%A5%E7%A8%8B%E5%B8%AB"><span class="toc-number">3.</span> <span class="toc-text">Multi-agent Orchestration：一個主管帶一群工程師</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89%E5%80%8B%E5%8A%9F%E8%83%BD%E6%80%8E%E9%BA%BC%E6%90%AD%E9%85%8D"><span class="toc-number">4.</span> <span class="toc-text">三個功能怎麼搭配</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%8E%A5%E4%B8%8B%E4%BE%86%E5%AD%B8%E4%BB%80%E9%BA%BC"><span class="toc-number">5.</span> <span class="toc-text">接下來學什麼</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2026/05/07/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260507/" title="AI 與科技新聞摘要 - 2026/05/07"><img src="/img/20260507-02.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="AI 與科技新聞摘要 - 2026/05/07"/></a><div class="content"><a class="title" href="/2026/05/07/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260507/" title="AI 與科技新聞摘要 - 2026/05/07">AI 與科技新聞摘要 - 2026/05/07</a><time datetime="2026-05-07T00:30:00.000Z" title="發表於 2026-05-07 08:30:00">2026-05-07</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/05/07/Claude-Managed-Agents-Dreaming-Outcomes-%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8-%E8%AE%93-AI-Agent-%E5%BE%9E%E8%87%AA%E5%B7%B1%E7%9A%84%E5%A4%B1%E6%95%97%E4%B8%AD%E5%AD%B8%E7%BF%92%E9%80%B2%E5%8C%96/" title="Claude Managed Agents Dreaming + Outcomes 完整教學 — 讓 AI Agent 從自己的失敗中學習進化"><img src="/img/20260507-03.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Claude Managed Agents Dreaming + Outcomes 完整教學 — 讓 AI Agent 從自己的失敗中學習進化"/></a><div class="content"><a class="title" href="/2026/05/07/Claude-Managed-Agents-Dreaming-Outcomes-%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8-%E8%AE%93-AI-Agent-%E5%BE%9E%E8%87%AA%E5%B7%B1%E7%9A%84%E5%A4%B1%E6%95%97%E4%B8%AD%E5%AD%B8%E7%BF%92%E9%80%B2%E5%8C%96/" title="Claude Managed Agents Dreaming + Outcomes 完整教學 — 讓 AI Agent 從自己的失敗中學習進化">Claude Managed Agents Dreaming + Outcomes 完整教學 — 讓 AI Agent 從自己的失敗中學習進化</a><time datetime="2026-05-07T00:30:00.000Z" title="發表於 2026-05-07 08:30:00">2026-05-07</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/05/07/insanely-fast-whisper-%E8%AE%93-Whisper-%E8%AA%9E%E9%9F%B3%E8%BD%89%E6%96%87%E5%AD%97%E5%BF%AB-20-%E5%80%8D%E7%9A%84-CLI-%E5%B7%A5%E5%85%B7/" title="insanely-fast-whisper — 讓 Whisper 語音轉文字快 20 倍的 CLI 工具"><img src="/img/20260507-01.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="insanely-fast-whisper — 讓 Whisper 語音轉文字快 20 倍的 CLI 工具"/></a><div class="content"><a class="title" href="/2026/05/07/insanely-fast-whisper-%E8%AE%93-Whisper-%E8%AA%9E%E9%9F%B3%E8%BD%89%E6%96%87%E5%AD%97%E5%BF%AB-20-%E5%80%8D%E7%9A%84-CLI-%E5%B7%A5%E5%85%B7/" title="insanely-fast-whisper — 讓 Whisper 語音轉文字快 20 倍的 CLI 工具">insanely-fast-whisper — 讓 Whisper 語音轉文字快 20 倍的 CLI 工具</a><time datetime="2026-05-07T00:30:00.000Z" title="發表於 2026-05-07 08:30:00">2026-05-07</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/05/06/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260506/" title="AI 與科技新聞摘要 - 2026/05/06"><img src="/img/20260506-02.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="AI 與科技新聞摘要 - 2026/05/06"/></a><div class="content"><a class="title" href="/2026/05/06/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260506/" title="AI 與科技新聞摘要 - 2026/05/06">AI 與科技新聞摘要 - 2026/05/06</a><time datetime="2026-05-06T00:30:00.000Z" title="發表於 2026-05-06 08:30:00">2026-05-06</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/05/06/Claude-Security-%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8-%E8%AE%93-AI-%E5%B9%AB%E4%BD%A0%E6%8A%93%E6%BC%8F%E6%B4%9E%E5%AF%AB%E4%BF%AE%E8%A3%9C/" title="Claude Security 完整教學 — 讓 AI 幫你抓漏洞、寫修補"><img src="/img/20260506-03.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Claude Security 完整教學 — 讓 AI 幫你抓漏洞、寫修補"/></a><div class="content"><a class="title" href="/2026/05/06/Claude-Security-%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8-%E8%AE%93-AI-%E5%B9%AB%E4%BD%A0%E6%8A%93%E6%BC%8F%E6%B4%9E%E5%AF%AB%E4%BF%AE%E8%A3%9C/" title="Claude Security 完整教學 — 讓 AI 幫你抓漏洞、寫修補">Claude Security 完整教學 — 讓 AI 幫你抓漏洞、寫修補</a><time datetime="2026-05-06T00:30:00.000Z" title="發表於 2026-05-06 08:30:00">2026-05-06</time></div></div></div></div></div></div></main><footer id="footer" style="background-image: url(/img/20260507-03.webp);"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2024 - 2026 By Cheng®</span></div><div class="footer_custom_text">Written by Cheng® — 自律，從當下的一念開始。</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="閱讀模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日夜模式切換"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="單欄和雙欄切換"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="設定"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目錄"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="前往評論"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到頂端"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.umd.min.js"></script><script src="https://cdn.jsdelivr.net/npm/instant.page/instantpage.min.js" type="module"></script><script src="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.js"></script><div class="js-pjax"><script>(() => {
+  const isShuoshuo = GLOBAL_CONFIG_SITE.pageType === 'shuoshuo'
+  const option = {"mapping":"pathname","strict":0,"reactionsEnabled":1,"emitMetadata":0,"inputPosition":"bottom","lang":"zh-TW"}
+
+  const getGiscusTheme = theme => theme === 'dark' ? 'dark' : 'light'
+
+  const createScriptElement = config => {
+    const ele = document.createElement('script')
+    Object.entries(config).forEach(([key, value]) => {
+      ele.setAttribute(key, value)
+    })
+    return ele
+  }
+
+  const loadGiscus = (el = document, key) => {
+    const mappingConfig = isShuoshuo
+      ? { 'data-mapping': 'specific', 'data-term': key }
+      : { 'data-mapping': (option && option['data-mapping']) || 'pathname' }
+
+    const giscusConfig = {
+      src: 'https://giscus.app/client.js',
+      'data-repo': 'mark22013333/mark22013333.github.io',
+      'data-repo-id': 'R_kgDOLAxa6A',
+      'data-category-id': 'DIC_kwDOLAxa6M4C5eO9',
+      'data-theme': getGiscusTheme(document.documentElement.getAttribute('data-theme')),
+      'data-reactions-enabled': '1',
+      crossorigin: 'anonymous',
+      async: true,
+      ...option,
+      ...mappingConfig
+    }
+
+    const scriptElement = createScriptElement(giscusConfig)
+
+    el.querySelector('#giscus-wrap').appendChild(scriptElement)
+
+    if (isShuoshuo) {
+      window.shuoshuoComment.destroyGiscus = () => {
+        if (el.children.length) {
+          el.innerHTML = ''
+          el.classList.add('no-comment')
+        }
+      }
+    }
+  }
+
+  const changeGiscusTheme = theme => {
+    const iframe = document.querySelector('#giscus-wrap iframe')
+    if (iframe) {
+      const message = {
+        giscus: {
+          setConfig: {
+            theme: getGiscusTheme(theme)
+          }
+        }
+      }
+      iframe.contentWindow.postMessage(message, 'https://giscus.app')
+    }
+  }
+
+  btf.addGlobalFn('themeChange', changeGiscusTheme, 'giscus')
+
+  if (isShuoshuo) {
+    'Giscus' === 'Giscus'
+      ? window.shuoshuoComment = { loadComment: loadGiscus }
+      : window.loadOtherComment = loadGiscus
+    return
+  }
+
+  if ('Giscus' === 'Giscus' || !true) {
+    if (true) btf.loadComment(document.getElementById('giscus-wrap'), loadGiscus)
+    else loadGiscus()
+  } else {
+    window.loadOtherComment = loadGiscus
+  }
+})()</script></div><script src="/js/kkbox-player.js"></script><script src="/js/archives-pagination.js"></script><script src="/js/font-resize.js"></script><script src="/js/dark-palette.js"></script><script defer="defer" id="fluttering_ribbon" mobile="false" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/canvas-fluttering-ribbon.min.js"></script><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/activate-power-mode.min.js"></script><script>POWERMODE.colorful = true;
+POWERMODE.shake = true;
+POWERMODE.mobile = true;
+document.body.addEventListener('input', POWERMODE);
+</script><script src="https://cdn.jsdelivr.net/npm/pjax/pjax.min.js" defer="defer"></script><script>document.addEventListener('DOMContentLoaded', () => {
+  const pjaxSelectors = ["meta[property=\"og:image\"]","meta[property=\"og:title\"]","meta[property=\"og:url\"]","meta[property=\"og:description\"]","link[rel=\"canonical\"]","head > title","#config-diff","#body-wrap","#rightside-config-hide","#rightside-config-show",".js-pjax"]
+
+  window.pjax = new Pjax({
+    elements: 'a:not([target="_blank"])',
+    selectors: pjaxSelectors,
+    cacheBust: false,
+    analytics: true,
+    scrollRestoration: false
+  })
+
+  const triggerPjaxFn = (val) => {
+    if (!val) return
+    Object.values(val).forEach(fn => {
+      try {
+        fn()
+      } catch (err) {
+        console.debug('Pjax callback failed:', err)
+      }
+    })
+  }
+
+  document.addEventListener('pjax:send', () => {
+    // removeEventListener
+    btf.removeGlobalFnEvent('pjaxSendOnce')
+    btf.removeGlobalFnEvent('themeChange')
+
+    // reset readmode
+    const $bodyClassList = document.body.classList
+    if ($bodyClassList.contains('read-mode')) $bodyClassList.remove('read-mode')
+
+    triggerPjaxFn(window.globalFn.pjaxSend)
+  })
+
+  document.addEventListener('pjax:complete', () => {
+    btf.removeGlobalFnEvent('pjaxCompleteOnce')
+    document.querySelectorAll('script[data-pjax]').forEach(item => {
+      const newScript = document.createElement('script')
+      const content = item.text || item.textContent || item.innerHTML || ""
+      Array.from(item.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value))
+      newScript.appendChild(document.createTextNode(content))
+      item.parentNode.replaceChild(newScript, item)
+    })
+
+    triggerPjaxFn(window.globalFn.pjaxComplete)
+  })
+
+  document.addEventListener('pjax:error', e => {
+    if (e.request.status === 404) {
+      true
+        ? pjax.loadUrl('/404.html')
+        : window.location.href = e.request.responseURL
+    }
+  })
+})</script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜尋</span><i class="fas fa-spinner fa-pulse" id="loading-status" hidden="hidden"></i><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="text-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  資料載入中</span></div><div class="local-search-input"><input placeholder="搜尋文章" type="text"/></div><hr/><div id="local-search-results"></div><div class="ais-Pagination" id="local-search-pagination" style="display:none;"><ul class="ais-Pagination-list"></ul></div><div id="local-search-stats"></div></div><div id="search-mask"></div><script src="/js/search/local-search.js"></script></div></div></body></html>
