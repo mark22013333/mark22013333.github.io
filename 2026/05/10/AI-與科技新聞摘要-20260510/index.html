@@ -1,0 +1,408 @@
+<!DOCTYPE html><html lang="zh-TW" data-theme="dark"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>AI 與科技新聞摘要 - 2026/05/10 | Cheng's Tech &amp; Life</title><meta name="author" content="Cheng®"><meta name="copyright" content="Cheng®"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#0d0d0d"><meta name="description" content="Subquadratic 四人團隊做出 1,200 萬 token 上下文窗口、OpenAI 發布首個能推理的即時語音模型、Cursor 3.3 用 React Canvas 重新定義 IDE、JPMorgan 把 AI 列為核心基礎設施、AWS MCP Server 正式 GA。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="AI 與科技新聞摘要 - 2026&#x2F;05&#x2F;10">
+<meta property="og:url" content="https://mark22013333.github.io/2026/05/10/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260510/index.html">
+<meta property="og:site_name" content="Cheng&#39;s Tech &amp; Life">
+<meta property="og:description" content="Subquadratic 四人團隊做出 1,200 萬 token 上下文窗口、OpenAI 發布首個能推理的即時語音模型、Cursor 3.3 用 React Canvas 重新定義 IDE、JPMorgan 把 AI 列為核心基礎設施、AWS MCP Server 正式 GA。">
+<meta property="og:locale" content="zh_TW">
+<meta property="og:image" content="https://mark22013333.github.io/img/20260510-02.webp">
+<meta property="article:published_time" content="2026-05-10T01:00:00.000Z">
+<meta property="article:modified_time" content="2026-05-10T14:55:22.814Z">
+<meta property="article:author" content="Cheng®">
+<meta property="article:tag" content="OpenAI">
+<meta property="article:tag" content="Cursor">
+<meta property="article:tag" content="Subquadratic">
+<meta property="article:tag" content="JPMorgan">
+<meta property="article:tag" content="AWS">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://mark22013333.github.io/img/20260510-02.webp"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "AI 與科技新聞摘要 - 2026/05/10",
+  "url": "https://mark22013333.github.io/2026/05/10/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260510/",
+  "image": "https://mark22013333.github.io/img/20260510-02.webp",
+  "datePublished": "2026-05-10T01:00:00.000Z",
+  "dateModified": "2026-05-10T14:55:22.814Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "Cheng®",
+      "url": "https://mark22013333.github.io"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://mark22013333.github.io/2026/05/10/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260510/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//www.google-analytics.com" crossorigin=""/><link rel="preconnect" href="//fonts.googleapis.com" crossorigin=""/><link rel="preconnect" href="//busuanzi.ibruce.info"/><meta name="google-site-verification" content="6ywUr8k2n_CT1PFYJzlSvI3CZ-JmJ55RYbA39VrFBDs"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!true && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          const hour = new Date().getHours()
+          const isNight = hour <= 9 || hour >= 18
+          if (theme === undefined) isNight ? activateDarkMode() : activateLightMode()
+          else theme === 'light' ? activateLightMode() : activateDarkMode()
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script async="async" src="https://www.googletagmanager.com/gtag/js?id=G-JBV14NRDH3"></script><script>window.dataLayer = window.dataLayer || []
+function gtag(){dataLayer.push(arguments)}
+gtag('js', new Date())
+gtag('config', 'G-JBV14NRDH3')
+btf.addGlobalFn('pjaxComplete', () => {
+  gtag('config', 'G-JBV14NRDH3', {'page_path': window.location.pathname})
+}, 'google_analytics')
+</script><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Titillium+Web&amp;display=swap" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"pagination":{"enable":false,"hitsPerPage":8},"languages":{"hits_empty":"找不到符合您查詢的內容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '複製成功',
+    error: '複製失敗',
+    noSupport: '瀏覽器不支援'
+  },
+  relativeDate: {
+    homepage: false,
+    post: true
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '剛剛',
+    min: '分鐘前',
+    hour: '小時前',
+    day: '天前',
+    month: '個月前'
+  },
+  copyright: {"limitCount":1,"languages":{"author":"作者: Cheng®","link":"連結: ","source":"來源: Cheng's Tech & Life","info":"著作權歸作者所有。如需商業轉載，請聯絡作者獲得授權，非商業轉載請註明出處😁。"}},
+  lightbox: 'fancybox',
+  Snackbar: {"chs_to_cht":"已切換為繁體中文","cht_to_chs":"已切換為簡體中文","day_to_night":"已切換為深色模式","night_to_day":"已切換為淺色模式","bgLight":"#49b1f5","bgDark":"#1f1f1f","position":"top-center"},
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid/dist/infinitegrid.min.js',
+    buttonText: '載入更多'
+  },
+  isPhotoFigcaption: true,
+  islazyloadPlugin: false,
+  isAnchor: true,
+  percent: {
+    toc: true,
+    rightside: true,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'AI 與科技新聞摘要 - 2026/05/10',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><link rel="stylesheet" href="/css/kkbox-player.css"><link rel="stylesheet" href="/css/tag-cloud-fancy.css"><link rel="stylesheet" href="/css/font-resize.css"><link rel="stylesheet" href="/css/dark-palette.css"><link rel="stylesheet" href="/css/loading-override.css"><link rel="alternate" href="/atom.xml" title="Cheng's Tech & Life" type="application/atom+xml">
+</head><body><div id="loading-box"><div class="loading-glass-overlay"></div><div class="loading-indicator"><div class="loading-dot"></div><div class="loading-dot"></div><div class="loading-dot"></div></div></div><script>(()=>{
+  const $loadingBox = document.getElementById('loading-box')
+  const $body = document.body
+  const preloader = {
+    endLoading: () => {
+      if ($loadingBox.classList.contains('loaded')) return
+      $body.style.overflow = ''
+      $loadingBox.classList.add('loaded')
+    },
+    initLoading: () => {
+      $body.style.overflow = 'hidden'
+      $loadingBox.classList.remove('loaded')
+    }
+  }
+
+  preloader.initLoading()
+
+  if (document.readyState === 'complete') {
+    preloader.endLoading()
+  } else {
+    window.addEventListener('load', preloader.endLoading)
+    document.addEventListener('DOMContentLoaded', preloader.endLoading)
+    setTimeout(preloader.endLoading, 7000)
+  }
+
+  if (true) {
+    btf.addGlobalFn('pjaxSend', preloader.initLoading, 'preloader_init')
+    btf.addGlobalFn('pjaxComplete', preloader.endLoading, 'preloader_end')
+  }
+})()</script><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="https://lh3.googleusercontent.com/pw/ABLVV87_po8nBc6F_tXcoYDmtzMGWxHuhhrbguYILCjmjWKLOS8DTpubm0YoQLKgjyjRIZyV5TjYe7XVEz_YU4squfr37GTZqPZP1hlMVZ_MIgXpTxWu73M=w1200" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">216</div></a><a href="/tags/"><div class="headline">標籤</div><div class="length-num">295</div></a><a href="/categories/"><div class="headline">分類</div><div class="length-num">14</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首頁-Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 時間軸-archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 標籤-tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分類-Categories</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-list"></i><span> 其他列表</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音樂-Music</span></a></li><li><a class="site-page child" href="/gallery/"><i class="fa-fw fas fa-images"></i><span> 畫館-Gallery</span></a></li></ul></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg fixed" id="page-header" style="background-image: url(/img/20260510-02.webp);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><img class="site-icon" src="https://lh3.googleusercontent.com/pw/ABLVV87_po8nBc6F_tXcoYDmtzMGWxHuhhrbguYILCjmjWKLOS8DTpubm0YoQLKgjyjRIZyV5TjYe7XVEz_YU4squfr37GTZqPZP1hlMVZ_MIgXpTxWu73M=w1200" alt="Logo"><span class="site-name">Cheng's Tech &amp; Life</span></a><a class="nav-page-title" href="/"><span class="site-name">AI 與科技新聞摘要 - 2026/05/10</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首頁</span></span></a></span><div id="menus"><div id="search-button" title="Ctrl+K / Cmd+K"><span class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜尋</span></span></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首頁-Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 時間軸-archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 標籤-tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分類-Categories</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-list"></i><span> 其他列表</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音樂-Music</span></a></li><li><a class="site-page child" href="/gallery/"><i class="fa-fw fas fa-images"></i><span> 畫館-Gallery</span></a></li></ul></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">AI 與科技新聞摘要 - 2026/05/10</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">發表於</span><time class="post-meta-date-created" datetime="2026-05-10T01:00:00.000Z" title="發表於 2026-05-10 09:00:00">2026-05-10</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新於</span><time class="post-meta-date-updated" datetime="2026-05-10T14:55:22.814Z" title="更新於 2026-05-10 22:55:22">2026-05-10</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/AI%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E/">AI與科技新聞</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">總字數:</span><span class="word-count">3k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">閱讀時間:</span><span>9分鐘</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">瀏覽量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><p>1,200 萬 tokens。</p>
+<p>這是一個只有四個人的邁阿密新創宣稱可以在單次對話中處理的上下文長度。目前最大的公開模型——Gemini 3.1 Ultra——是 200 萬。1,200 萬是它的六倍。如果這個數字是真的，目前所有 LLM 的注意力機制都在浪費大量算力。如果是假的，那就是 2026 年最大膽的技術行銷。</p>
+<p>同一週，OpenAI 做出了第一個能邊聽邊想的語音模型。Cursor 把 IDE 的輸出從純文字變成互動式 React 介面。全球最大銀行把 AI 從實驗預算搬進基礎設施預算。AWS 的 MCP Server 從 beta 進入正式 GA。</p>
+<p>一個共同的訊號：AI 正在從「能做什麼」轉向「怎麼嵌進既有系統裡」。前者是技術問題，後者是組織問題。而組織問題，向來比技術問題難解得多。</p>
+<hr>
+<h2 id="Subquadratic：四個人、-2-900-萬、1-200-萬-token-的豪賭"><a href="#Subquadratic：四個人、-2-900-萬、1-200-萬-token-的豪賭" class="headerlink" title="Subquadratic：四個人、$2,900 萬、1,200 萬 token 的豪賭"></a>Subquadratic：四個人、$2,900 萬、1,200 萬 token 的豪賭</h2><p>五月五日，邁阿密新創 Subquadratic 公開亮相。$2,900 萬種子輪，$5 億估值，團隊只有四個人。CTO 是前 Meta 生成式 AI 負責人 Alex Whedon。</p>
+<p>他們發布的東西叫 SubQ——一個基於全新架構 SSA（Subquadratic Selective Attention）的語言模型。標準 Transformer 的注意力機制是 O(n²)——上下文長度翻倍，計算量翻四倍。SSA 打破了這個限制，做到次二次方複雜度。</p>
+<p>數字很驚人。在 100 萬 token 上下文長度時，SubQ 的推論速度比 FlashAttention 快 52 倍。成本大約是 Claude Opus 的五分之一。原生支援 1,200 萬 token 窗口，Q4 目標是 5,000 萬。</p>
+<p>驚人到讓人懷疑。</p>
+<p>VentureBeat 的報導標題用了「researchers demand independent proof」。研究社群的反應不是興奮，是觀望。原因很簡單：宣稱打破二次方瓶頸的論文不是沒出現過。Mamba、RWKV、RetNet 都嘗試過次二次方架構，但在長距離推理品質上始終無法完全取代 Transformer。SSA 的「selective」如何選擇哪些 token 需要完整注意力、哪些可以跳過，論文裡的細節還不夠充分。</p>
+<p>逆向問一下：怎樣做 Subquadratic 一定會失敗？答案是——宣稱的性能數字無法在獨立評測中複現。在 AI 領域，benchmark 數字和實際使用之間的落差從來不小。$5 億估值買的不是一個已證明的技術，是一個可能改變整個產業的假設。如果假設成立，所有人都會轉向次二次方。如果不成立，$2,900 萬和四個人的時間就是學費。</p>
+<p>不管結果如何，1,200 萬 token 的原生上下文窗口如果是真的，意味著什麼？意味著你可以把整個大型 codebase 塞進一次對話裡。不用 RAG，不用 chunking，不用 retrieval pipeline——直接全部放進去。那些因為上下文窗口限制而存在的整個工具鏈，瞬間變成多餘的。</p>
+<blockquote>
+<p>原文來源：<a target="_blank" rel="noopener" href="https://siliconangle.com/2026/05/05/subquadratic-launches-29m-bring-12m-token-context-windows-ai/">Subquadratic launches with $29M to bring 12M-token context windows to AI — SiliconANGLE</a><br>原文來源：<a target="_blank" rel="noopener" href="https://venturebeat.com/technology/miami-startup-subquadratic-claims-1-000x-ai-efficiency-gain-with-subq-model-researchers-demand-independent-proof">Miami startup Subquadratic claims 1,000x AI efficiency gain — VentureBeat</a></p>
+</blockquote>
+<hr>
+<p>語音 AI 一直有個尷尬的定位：聽得見，但聽不懂。GPT-Realtime-2 試圖改變這件事。</p>
+<hr>
+<h2 id="GPT-Realtime-2：第一個能邊聽邊想的語音模型"><a href="#GPT-Realtime-2：第一個能邊聽邊想的語音模型" class="headerlink" title="GPT-Realtime-2：第一個能邊聽邊想的語音模型"></a>GPT-Realtime-2：第一個能邊聽邊想的語音模型</h2><p>五月七日，OpenAI 一次發了三款即時語音模型。</p>
+<p>GPT-Realtime-2 是主角——它是第一個具備 GPT-5 級推理能力的即時語音模型。不是「語音轉文字 → LLM 推理 → 文字轉語音」的串接管線，是原生在音訊層就能推理的端到端模型。上下文窗口從前代的 32K 擴展到 128K。</p>
+<p>另外兩個是配角。GPT-Realtime-Translate 做即時翻譯——70 種以上的輸入語言轉成 13 種輸出語言，延遲低到可以用在即時通話裡。GPT-Realtime-Whisper 做串流語音轉文字，取代之前的非串流 Whisper API。</p>
+<p>Zillow 是早期測試者之一，他們的數字很具體：用 GPT-Realtime-2 處理房地產諮詢電話，通話成功率從 69% 提升到 95%，足足多了 26 個百分點。</p>
+<p>定價不便宜。音訊輸入 $32&#x2F;M token，音訊輸出 $200&#x2F;M token。不過 OpenAI 做了個聰明的設計：每一段音訊都會附帶對應的文字 transcript，你可以選擇在後續處理中用文字 token（便宜）取代音訊 token（貴），把成本壓下來。</p>
+<p>這件事的上行很清楚。語音 AI 代理——客服、銷售、諮詢——從「能接電話」進化到「能想事情再接電話」。你打去問「我該買固定利率還是浮動利率的房貸？」，以前的語音 AI 只能複誦話術腳本。GPT-Realtime-2 可以根據你給的條件即時推算。</p>
+<p>下行呢？推理能力加上即時語音，意味著這個模型可以在電話裡即興說謊，而且說得很自然。語音 deepfake 的門檻又降了一層。</p>
+<blockquote>
+<p>原文來源：<a target="_blank" rel="noopener" href="https://openai.com/index/advancing-voice-intelligence-with-new-models-in-the-api/">Advancing voice intelligence with new models in the API — OpenAI</a><br>原文來源：<a target="_blank" rel="noopener" href="https://9to5mac.com/2026/05/07/openai-has-new-voice-models-that-reason-translate-and-transcribe-as-you-speak/">OpenAI has new voice models that reason, translate, and transcribe — 9to5Mac</a></p>
+</blockquote>
+<hr>
+<h2 id="Cursor-3-3：當你的-IDE-開始長出眼睛"><a href="#Cursor-3-3：當你的-IDE-開始長出眼睛" class="headerlink" title="Cursor 3.3：當你的 IDE 開始長出眼睛"></a>Cursor 3.3：當你的 IDE 開始長出眼睛</h2><p>五月七日，Cursor 發布 3.3 版本。三個新功能，但只有一個真正改變了遊戲。</p>
+<p>Canvas。</p>
+<p>以前你請 AI coding agent 做事，它的輸出是什麼？文字。Markdown、程式碼區塊、ASCII 圖表。不管你問的是「畫個架構圖」還是「做個表格比較這三個方案」，回來的都是文字。</p>
+<p>Cursor 3.3 的 Canvas 讓 AI agent 可以建立互動式 React 元件作為輸出。agent 不再只是吐文字，它可以產生一個你能點擊、拖拉、互動的視覺介面。你問「比較這三個方案」，回來的不是 Markdown 表格，是一個有排序、有篩選、有高亮的互動表格。你問「畫個流程圖」，回來的是一個可以拖動節點的真實圖表。</p>
+<p>另外兩個功能：平行代理加速方案執行（多個 agent 同時處理不同子任務），以及 Bugbot 學會從真實 PR 回饋中學習規則（你修了什麼 bug、怎麼修的，Bugbot 記下來，下次自動檢查類似問題）。</p>
+<p>平行代理不稀奇——Claude Code 的 Agent Teams 已經做了。Bugbot 的學習能力更有意思，但需要時間驗證效果。Canvas 才是那個讓人停下來想的功能。</p>
+<p>為什麼？因為 IDE 從發明到現在，輸出介面始終是文字。程式碼編輯器、終端機、log 視窗——全是文字。Canvas 第一次讓 IDE 的輸出層變成視覺化的。這不只是 UX 的改進，是認知介面的改變。人類處理視覺資訊的頻寬遠高於處理文字的頻寬。讓 agent 用視覺表達，等於解鎖了一個更寬的溝通通道。</p>
+<blockquote>
+<p>原文來源：<a target="_blank" rel="noopener" href="https://cursor.com/changelog">Cursor 3.3 — Cursor Changelog</a></p>
+</blockquote>
+<hr>
+<p>全球最大銀行剛做了一個很安靜但很重大的決定。</p>
+<hr>
+<h2 id="JPMorgan-Chase：AI-從實驗預算搬進基礎設施預算"><a href="#JPMorgan-Chase：AI-從實驗預算搬進基礎設施預算" class="headerlink" title="JPMorgan Chase：AI 從實驗預算搬進基礎設施預算"></a>JPMorgan Chase：AI 從實驗預算搬進基礎設施預算</h2><p>這不是產品發布，不是融資消息，不是技術突破。這是一個會計分類的改變。但它可能比上面三條新聞加起來都重要。</p>
+<p>JPMorgan Chase 正式將 AI 投資從「實驗性研發」重新歸類為「核心基礎設施」。</p>
+<p>2026 年科技預算約 $198 億美元。2,000 名員工專職 AI 開發。AI 預計年產值 $25 億。這些數字本身不算新聞——大銀行砸錢在科技上不是第一天的事。</p>
+<p>新聞是「分類」。</p>
+<p>在企業會計裡，「實驗性研發」和「核心基礎設施」是兩種完全不同的預算邏輯。實驗性研發可以隨時砍——市場不好？砍。CEO 換人？砍。季度財報不好看？先砍再說。核心基礎設施不能砍。你不會因為季度不好就把伺服器關掉，不會因為 CEO 換人就把網路拆掉。</p>
+<p>JPMorgan 把 AI 從前者搬到後者，意味著他們認為 AI 已經不是「可能有用的新東西」，而是「沒有不行的東西」。跟電力、網路、資料庫同一個等級。這個分類一旦確定，就很難逆轉——組織慣性會確保這筆預算持續存在。</p>
+<p>反過來想：怎樣做一定會在 AI 投資上虧大錢？答案是把它永遠放在「實驗性」的分類裡。實驗可以失敗。基礎設施不行。當你把一個東西定義為基礎設施，你會用完全不同的標準來評估它——不是 ROI，是可靠性、可擴展性、合規性。</p>
+<p>全球最大銀行做了這個決定。其他金融機構會跟。不是因為 AI 已經證明了 ROI——$25 億的預估年產值對 $198 億的科技預算來說不算特別亮眼。是因為在金融業，「別人已經做了而我沒做」的風險，比「我做了但效果不好」的風險更大。</p>
+<blockquote>
+<p>原文來源：<a target="_blank" rel="noopener" href="https://www.cnn.com/2026/05/10/tech/ai-taking-jobs">JPMorgan Chase Reclassifies AI Investments as Core Infrastructure — CNN Business</a></p>
+</blockquote>
+<hr>
+<h2 id="AWS-MCP-Server-正式-GA：MCP-從實驗走進生產環境"><a href="#AWS-MCP-Server-正式-GA：MCP-從實驗走進生產環境" class="headerlink" title="AWS MCP Server 正式 GA：MCP 從實驗走進生產環境"></a>AWS MCP Server 正式 GA：MCP 從實驗走進生產環境</h2><p>五月六日，AWS 宣布 AWS MCP Server 正式 GA（一般可用）。</p>
+<p>GA 三個字看起來不性感，但它代表的承諾是：穩定性、向後相容、SLA、企業級支援。Beta 可以壞，GA 不行。AWS 把 GA 的戳記蓋上去，等於告訴企業客戶：「你可以在正式環境裡用這個東西了，出事我們負責。」</p>
+<p>這個 MCP Server 讓 AI coding agent 透過一個統一的工具呼叫存取所有 AWS 服務。不是每個服務一個 MCP tool——是一個萬用工具，根據你的指令動態組裝 AWS API 呼叫。支援檔案上傳、長時間執行的操作、以及沙箱化的 Python 腳本執行。</p>
+<p>從更大的圖來看，這是雲端三巨頭中第一個正式 GA 的 MCP Server。Google 有 Gemini 的 tool use，Microsoft 有 Copilot 的 plugins，但都還沒有走到「把整個雲端平台包成一個 MCP Server 給你用」這一步。AWS 先到了。</p>
+<p>對開發者來說，這意味著你的 Claude Code（或任何支援 MCP 的 agent）現在可以直接操作 AWS——開 EC2、查 CloudWatch、跑 Lambda、讀 S3——不需要寫任何膠水程式碼。agent 說「幫我看一下 production 的 CPU 使用率」，MCP Server 直接去 CloudWatch 拿數據回來。</p>
+<p>整合的摩擦越低，agent 的行動能力就越強。這是好事，也是風險。一個能操作整個 AWS 帳戶的 agent，它的爆炸半徑跟傳統的 CLI 工具完全不在同一個量級。AWS 在 GA 公告裡強調了 IAM 整合和稽核日誌——聰明的做法，但最終還是取決於使用者怎麼設定權限。</p>
+<blockquote>
+<p>原文來源：<a target="_blank" rel="noopener" href="https://aws.amazon.com/about-aws/whats-new/2026/05/aws-mcp-server/">AWS MCP Server Is Now Generally Available — AWS</a></p>
+</blockquote>
+<hr>
+<p>五條新聞，一條暗線。</p>
+<p>Subquadratic 想用次二次方注意力重寫 LLM 的成本方程式。OpenAI 想讓語音 AI 從複誦進化到推理。Cursor 想讓 IDE 從文字介面變成視覺介面。JPMorgan 想把 AI 嵌進組織的骨架裡。AWS 想把整個雲端變成 agent 的工具箱。</p>
+<p>表面上看，五個不同的方向。底下呢？同一個趨勢：AI 正在被嵌入既有系統的結構裡——不是當作附加功能，而是當作基礎設施。次二次方注意力讓長上下文變成預設而非奢侈品。即時語音推理讓 AI agent 能直接取代電話線另一端的人類。Canvas 讓 agent 的輸出能被人類用視覺直覺理解。會計分類的改變讓 AI 預算變成砍不掉的固定支出。MCP GA 讓 agent 能直接操作雲端基礎設施。</p>
+<p>每一步都在降低摩擦。每一步降低的摩擦，都在擴大 agent 的行動半徑。而行動半徑越大，出事時的爆炸半徑也越大。</p>
+<p>這不是要你害怕。是要你在享受摩擦降低帶來的效率提升時，確認安全機制也跟著擴展了。因為基礎設施的特性就是——等你發現它壞了的時候，通常已經來不及修了。</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://mark22013333.github.io">Cheng®</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章連結: </span><span class="post-copyright-info"><a href="https://mark22013333.github.io/2026/05/10/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260510/">https://mark22013333.github.io/2026/05/10/AI-與科技新聞摘要-20260510/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版權聲明: </span><span class="post-copyright-info">本部落格所有文章除特別聲明外，均採用<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 授權協議。轉載請註明來源 <a href="https://mark22013333.github.io" target="_blank">Cheng's Tech & Life</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/OpenAI/">OpenAI</a><a class="post-meta__tags" href="/tags/Cursor/">Cursor</a><a class="post-meta__tags" href="/tags/Subquadratic/">Subquadratic</a><a class="post-meta__tags" href="/tags/JPMorgan/">JPMorgan</a><a class="post-meta__tags" href="/tags/AWS/">AWS</a></div><div class="post-share"><div class="social-share" data-image="/img/20260510-02.webp" data-sites="facebook,x"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><div class="post-reward"><div class="reward-badges"><a class="sponsor-glow-btn" href="https://www.buymeacoffee.com/mark22013333" target="_blank" rel="noopener noreferrer" title="Buy Me A Coffee"><img src="https://img.shields.io/badge/Buy_Me_A_Coffee-FFDD00?style=for-the-badge&amp;logo=buy-me-a-coffee&amp;logoColor=black" alt="Buy Me A Coffee"/></a><a class="sponsor-glow-btn" href="https://p.ecpay.com.tw/EFC3F8F" target="_blank" rel="noopener noreferrer" title="綠界贊助"><img src="https://img.shields.io/badge/☕_%E8%AB%8B%E6%88%91%E5%96%9D%E6%9D%AF%E5%92%96%E5%95%A1-Donate-11998e?style=for-the-badge&amp;logo=coffee&amp;logoColor=white" alt="綠界贊助"/></a><a class="sponsor-glow-btn" href="https://calendly.com/markcheng00806-intumit/15min" target="_blank" rel="noopener noreferrer" title="預約時間"><img src="https://img.shields.io/badge/📅_%E9%A0%90%E7%B4%84_15_%E5%88%86%E9%90%98-Book_Time-0072ff?style=for-the-badge" alt="預約時間"/></a><p class="reward-badges-note">你的鼓勵將被轉換為我明天繼續加班的動力（真的）。 ❤️</p></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2026/05/10/claude-receipts-%E6%8A%8A-Claude-Code-%E7%9A%84%E8%8A%B1%E8%B2%BB%E5%8D%B0%E6%88%90%E4%B8%80%E5%BC%B5%E6%94%B6%E6%93%9A/" title="claude-receipts — 把 Claude Code 的花費印成一張收據"><img class="cover" src="/img/20260510-01.webp" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">claude-receipts — 把 Claude Code 的花費印成一張收據</div></div><div class="info-2"><div class="info-item-1">你不知道你每天在 AI 上花多少錢。 這句話聽起來很誇張，但仔細想一下：你每天開幾次 Claude Code session？每次對話大概用多少 token？Opus 和 Sonnet 的價差有多大？cache hit 率怎麼樣？如果你回答不出其中任何一個問題，你其實是矇著眼睛在燒錢。 不是因為你不在意花費。是因為花費對你來說是不可見的。  超商收據哲學claude-receipts 做的事情很簡單：每次你結束一個 Claude Code session，它自動幫你印一張「收據」。 不是比喻。是真的收據——長得跟超商結帳的那張長長的紙一模一樣。上面列著你用了哪些模型、吃了多少 input &#x2F; output &#x2F; cache tokens、每個模型花了多少錢、session 總花費。你可以在瀏覽器看 HTML 版、在終端看 ASCII art 版，或者接上一台 Epson TM-T88V 熱感應印表機，真的把它印出來貼在牆上。 為什麼選收據這個形式？因為收據是人類已經建立了數十年的「消費認知介面」。你在超商看到收據上寫 $87，你立刻知道這代表什麼。但你看到「Op...</div></div></div></a><a class="pagination-related" href="/2026/05/10/%E6%B7%A1%E6%B1%9F%E5%A4%A7%E6%A9%8B%E9%80%9A%E8%BB%8A%E4%BA%86-%E4%B8%80%E5%80%8B%E8%BB%9F%E9%AB%94%E5%B7%A5%E7%A8%8B%E5%B8%AB%E7%9A%84%E5%BB%BA%E7%AF%89%E5%B7%A5%E7%A8%8B%E5%B7%A1%E7%A6%AE/" title="淡江大橋通車了 — 一個軟體工程師的建築工程巡禮"><img class="cover" src="/img/20260510-03.webp" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">淡江大橋通車了 — 一個軟體工程師的建築工程巡禮</div></div><div class="info-2"><div class="info-item-1">124.9 億新台幣。七度流標。從最初的構想到通車，整整超過三十年。 淡江大橋在這週一（5&#x2F;12）正式通車。 如果你是那種「橋就是從 A 到 B 的通道」的人，這篇可以跳過。但如果你寫過的程式有超過三年生命週期的話，你大概能理解一件事花三十年完成是什麼感覺。  一座橋的體檢報告主橋段 920 公尺。橋塔高 211 公尺。主跨距 450 公尺，背跨距 175 公尺。橋面最寬處約 70 公尺。 這些數字放在一起代表一件事：全球跨度最大的單塔不對稱斜張橋。不是台灣最大，是世界最大。CNN 在 2025 年初把它評選為年度全球重要建築，跟倫敦、巴黎、紐約的地標排在一起。 設計者是 Zaha Hadid——建築界少數拿過普立茲克獎的女性建築師。她在 2016 年驟逝，享年 65 歲。淡江大橋是她的遺作之一，由 Zaha Hadid Architects 團隊繼續完成。那個 211 公尺高的弧形橋塔，靈感來自雲門舞者跳躍向上的姿態——雙手合十，向天伸展。 你平常走的橋不會讓你抬頭看。這座會。  七度流標是什麼概念這才是有意思的部分。 淡江大橋的構想最早可以追溯到 1990 年代。規...</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相關推薦</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2026/04/19/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260419/" title="AI 與科技新聞摘要 - 2026&#x2F;04&#x2F;19"><img class="cover" src="/img/20260419-02.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-04-19</div><div class="info-item-2">AI 與科技新聞摘要 - 2026&#x2F;04&#x2F;19</div></div><div class="info-2"><div class="info-item-1">130,000 位審計員。這不是 EY 有多少客戶，是 EY 這週正式交給 agentic AI 輔助執行工作的人數。同一個禮拜，Cursor 3 把自己的自研編碼模型推到前線，Canva 做了它十三年來最大的一次改版，Microsoft 修了兩個已經被武器化的零日，Novo Nordisk 決定把 OpenAI 的能力嵌進整個藥廠的工作流。 把這五條新聞擺在一起，你看到的不是五件小事，是企業級 agentic AI 的「基礎設施化」正在同一個月落地。過去三年各家公司在試水溫、在 POC、在找用例。這個月開始，POC 結束了，directed deployment 正在發生。 Cursor 3 + Composer 2 — Anysphere 自己訓了一個編碼模型Cursor 這個四月丟了一顆比較冷的震撼彈：Composer 2，它們自己從零訓練的 frontier 編碼模型，直接塞進 Cursor 3 的新介面當預設模型。 Composer 2 在 CursorBench 拿到 61.3 分，前一代 Composer 1.5 是 44.2——跳了將近四成。在自家的 GPU ke...</div></div></div></a><a class="pagination-related" href="/2026/04/24/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260424/" title="AI 與科技新聞摘要 - 2026&#x2F;04&#x2F;24"><img class="cover" src="/img/20260424-02.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-04-24</div><div class="info-item-2">AI 與科技新聞摘要 - 2026&#x2F;04&#x2F;24</div></div><div class="info-2"><div class="info-item-1">六週。GPT-5.4 到 GPT-5.5，就是六週。 上個月還在討論 GPT-5.4 夠不夠用，這週 GPT-5.5 已經在 ChatGPT 和 Codex 上線。AI 模型的發布週期現在短到讓人懷疑：這些版本之間的差距到底是「真進化」還是「讓人有理由繼續訂閱的節奏感」？ 同一天，DeepSeek 在台灣上午發布了 V4-Pro 和 V4-Flash。定價讓人有點沉默。  OpenAI GPT-5.5 — 「Spud」上線，主打 Agentic 能力4 月 23 日，OpenAI 推出 GPT-5.5，內部代號 Spud，向 Plus、Pro、Business、Enterprise 用戶全面開放，同時升級了 Codex 的底層模型。 API 定價：$5&#x2F;百萬 input tokens，$30&#x2F;百萬 output tokens，context window 1M。跟 GPT-5.4 相比，token 延遲持平，但能力更強——OpenAI 的說法是「更少 tokens 做更多事的思考者」。 重點能力是多步驟工作流的自主性：GPT-5.5 設計上可以在更少用戶介入的...</div></div></div></a><a class="pagination-related" href="/2026/05/01/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260501/" title="AI 與科技新聞摘要 - 2026&#x2F;05&#x2F;01"><img class="cover" src="/img/20260501-02.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-05-01</div><div class="info-item-2">AI 與科技新聞摘要 - 2026&#x2F;05&#x2F;01</div></div><div class="info-2"><div class="info-item-1">supply chain risk。 五角大廈今天把 Anthropic 貼上這個標籤，正式禁止國防部和所有承包商使用 Claude。同一天，另外七家 AI 公司——SpaceX、OpenAI、Google、NVIDIA、Reflection、Microsoft、AWS——拿到了機密網路的通行證。 一家公司因為堅持底線被踢出去。七家公司因為配合條件被放進來。市場不會管你的底線有多崇高——它只看你有沒有拿到合約。 同一週，Mag-7 財報全部出爐：Amazon、Alphabet、Meta 三家在同一個晚上交卷，四家合計營收超過 $430B，全部上調 AI 資本支出。OpenAI 找了 MediaTek 和 Qualcomm 做一支「沒有 App」的 AI 手機。中國的電動車不打價格戰了，改打 AI 功能戰——700 萬台車已經跑著 ByteDance 的模型。Amazon 則讓你對著商品頁面開口問問題，AI 即時回答。 今天這五條新聞的共同主題：規則正在被重新談判，而談判的籌碼不是技術，是配合度。  五角大廈 7 家 AI 合約：Anthropic 被列供應鏈風險七家進來，一家被趕...</div></div></div></a><a class="pagination-related" href="/2026/05/09/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260509/" title="AI 與科技新聞摘要 - 2026&#x2F;05&#x2F;09"><img class="cover" src="/img/20260509-02.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-05-09</div><div class="info-item-2">AI 與科技新聞摘要 - 2026&#x2F;05&#x2F;09</div></div><div class="info-2"><div class="info-item-1">三個月前值 $380B 的公司，現在有人出價 $900B。 不是股票市場的瘋狂——股票至少有流動性和公開揭露的義務。這是私募市場。一間還沒上市的公司，三個月翻了 2.4 倍。投資者的配額截止只給 48 小時，你連做 due diligence 的時間都沒有。在一個理性的世界裡，這叫做泡沫。在 2026 年，這叫做 AI 融資。 同一週，OpenAI 把預設模型換成幻覺減半的 GPT-5.5 Instant。聽起來是好消息？翻過來看：之前那個模型的幻覺率高到需要「減少 52.5%」才算夠好。而在前線，AI 寫的程式碼正在以每月六倍的速度製造新的 CVE。AI 平台自己也在被打穿。更深層的位移是——AI 正在改變漏洞發現的經濟學，攻擊者五年後可能找到超過一半的零日漏洞。 加速和破口，不是平行線。它們是同一條線的兩面。  Anthropic $900B 估值：當 ARR 從 $9B 跳到 $30B，估值公式還成立嗎？$50B 的融資輪。$850B 到 $900B 的估值。如果成案，Anthropic 將超越 OpenAI 在今年初的 $852B 估值，成為全球最高估值的 AI 公司。 ...</div></div></div></a><a class="pagination-related" href="/2026/04/21/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260421/" title="AI 與科技新聞摘要 - 2026&#x2F;04&#x2F;21"><img class="cover" src="/img/20260421-02.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-04-21</div><div class="info-item-2">AI 與科技新聞摘要 - 2026&#x2F;04&#x2F;21</div></div><div class="info-2"><div class="info-item-1">一行指令，五個工具，同一個技能包。 4 月 16 日 GitHub 推出 gh skill 命令，讓 GitHub Copilot、Claude Code、Cursor、Codex、Gemini CLI 共用同一套技能安裝標準。這不是一個小更新。這是整個 AI coding 工具生態系第一次在「如何安裝技能」這件事上達成共識——而且是用 Claude Code 那邊流出去的 SKILL.md 格式當基礎。 把這件事和同一週的其他幾條新聞擺在一起看，你會看到一個還沒被廣泛討論的系統性趨勢：AI 工具市場正在跑一場「誰的基礎設施先成為業界標準」的賽局——不是誰的模型最強，是誰的規格先被其他人採用。先成為標準的那個，接下來的每一個新工具都得跟它相容。  Claude Code v2.1.116 — resume 快了 67%，MCP 工具結果可以不被截斷4 月 20 日釋出的 v2.1.116，有兩個更新值得注意。 第一個：/resume 在大型 session（40MB+）上快了 67%。這個改善針對的是長期使用者——session 積累愈久、dead-fork 愈多，之前 resu...</div></div></div></a><a class="pagination-related" href="/2026/05/02/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260502/" title="AI 與科技新聞摘要 - 2026&#x2F;05&#x2F;02"><img class="cover" src="/img/20260502-02.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-05-02</div><div class="info-item-2">AI 與科技新聞摘要 - 2026&#x2F;05&#x2F;02</div></div><div class="info-2"><div class="info-item-1">$1.1B。 這不是某家獨角獸的 Series D，不是某個收購案的溢價——這是一筆 Seed Round。史上最大的種子輪。 拿到這筆錢的人叫 David Silver。你可能不認識這個名字，但你一定知道他的作品：AlphaGo、AlphaZero——那個不需要人類棋譜就自學成為地球最強棋手的 AI。 Silver 離開 DeepMind 創了 Ineffable Intelligence，拿了 Sequoia、Lightspeed、NVIDIA、Google 的錢。他要做的事只有一件：造一個完全不依賴人類數據的 AI。 同一週，KKR 砸了 $100 億請前 AWS CEO 來蓋 AI 電廠。Google DeepMind 用一個「香蕉」模型打趴了所有專用視覺 AI。Cursor 被挖出一個 clone repo 就能 RCE 的漏洞。微軟的 AI Agent 框架被證實可以被完全劫持。 今天這五條新聞的共同結構：每個人都在加速蓋樓，但地基的裂縫正在同步擴大。  Ineffable Intelligence：AlphaGo 之父拿 $1.1B 賭強化學習所有人都在堆人類數據訓...</div></div></div></a></div></div><hr class="custom-hr"/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 評論</span></div></div><div class="comment-wrap"><div><div id="giscus-wrap"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="https://lh3.googleusercontent.com/pw/ABLVV87_po8nBc6F_tXcoYDmtzMGWxHuhhrbguYILCjmjWKLOS8DTpubm0YoQLKgjyjRIZyV5TjYe7XVEz_YU4squfr37GTZqPZP1hlMVZ_MIgXpTxWu73M=w1200" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">Cheng®</div><div class="author-info-description">Backend Developer / 技術筆記 & AI 新聞分享</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">216</div></a><a href="/tags/"><div class="headline">標籤</div><div class="length-num">295</div></a><a href="/categories/"><div class="headline">分類</div><div class="length-num">14</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/mark22013333"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons"><a class="social-icon" href="https://github.com/mark22013333" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:mark22013333@gmail.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a></div><div class="card-info-sponsor"><a class="sponsor-glow-btn" href="https://www.buymeacoffee.com/mark22013333" target="_blank" rel="noopener noreferrer" title="Buy Me A Coffee"><img src="https://img.shields.io/badge/Buy_Me_A_Coffee-FFDD00?style=for-the-badge&amp;logo=buy-me-a-coffee&amp;logoColor=black" alt="Buy Me A Coffee"/></a><a class="sponsor-glow-btn" href="https://p.ecpay.com.tw/EFC3F8F" target="_blank" rel="noopener noreferrer" title="綠界贊助"><img src="https://img.shields.io/badge/☕_%E8%AB%8B%E6%88%91%E5%96%9D%E6%9D%AF%E5%92%96%E5%95%A1-Donate-11998e?style=for-the-badge&amp;logo=coffee&amp;logoColor=white" alt="綠界贊助"/></a><a class="sponsor-glow-btn" href="https://calendly.com/markcheng00806-intumit/15min" target="_blank" rel="noopener noreferrer" title="預約時間"><img src="https://img.shields.io/badge/📅_%E9%A0%90%E7%B4%84_15_%E5%88%86%E9%90%98-Book_Time-0072ff?style=for-the-badge" alt="預約時間"/></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">這裡記錄我在後端開發路上踩過的坑、學到的東西，也會分享每日 AI 與科技新聞觀點。歡迎一起交流！</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目錄</span><span class="toc-percentage"></span></div><div class="toc-content is-expand"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Subquadratic%EF%BC%9A%E5%9B%9B%E5%80%8B%E4%BA%BA%E3%80%81-2-900-%E8%90%AC%E3%80%811-200-%E8%90%AC-token-%E7%9A%84%E8%B1%AA%E8%B3%AD"><span class="toc-number">1.</span> <span class="toc-text">Subquadratic：四個人、$2,900 萬、1,200 萬 token 的豪賭</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#GPT-Realtime-2%EF%BC%9A%E7%AC%AC%E4%B8%80%E5%80%8B%E8%83%BD%E9%82%8A%E8%81%BD%E9%82%8A%E6%83%B3%E7%9A%84%E8%AA%9E%E9%9F%B3%E6%A8%A1%E5%9E%8B"><span class="toc-number">2.</span> <span class="toc-text">GPT-Realtime-2：第一個能邊聽邊想的語音模型</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Cursor-3-3%EF%BC%9A%E7%95%B6%E4%BD%A0%E7%9A%84-IDE-%E9%96%8B%E5%A7%8B%E9%95%B7%E5%87%BA%E7%9C%BC%E7%9D%9B"><span class="toc-number">3.</span> <span class="toc-text">Cursor 3.3：當你的 IDE 開始長出眼睛</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#JPMorgan-Chase%EF%BC%9AAI-%E5%BE%9E%E5%AF%A6%E9%A9%97%E9%A0%90%E7%AE%97%E6%90%AC%E9%80%B2%E5%9F%BA%E7%A4%8E%E8%A8%AD%E6%96%BD%E9%A0%90%E7%AE%97"><span class="toc-number">4.</span> <span class="toc-text">JPMorgan Chase：AI 從實驗預算搬進基礎設施預算</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#AWS-MCP-Server-%E6%AD%A3%E5%BC%8F-GA%EF%BC%9AMCP-%E5%BE%9E%E5%AF%A6%E9%A9%97%E8%B5%B0%E9%80%B2%E7%94%9F%E7%94%A2%E7%92%B0%E5%A2%83"><span class="toc-number">5.</span> <span class="toc-text">AWS MCP Server 正式 GA：MCP 從實驗走進生產環境</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2026/05/10/%E6%B7%A1%E6%B1%9F%E5%A4%A7%E6%A9%8B%E9%80%9A%E8%BB%8A%E4%BA%86-%E4%B8%80%E5%80%8B%E8%BB%9F%E9%AB%94%E5%B7%A5%E7%A8%8B%E5%B8%AB%E7%9A%84%E5%BB%BA%E7%AF%89%E5%B7%A5%E7%A8%8B%E5%B7%A1%E7%A6%AE/" title="淡江大橋通車了 — 一個軟體工程師的建築工程巡禮"><img src="/img/20260510-03.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="淡江大橋通車了 — 一個軟體工程師的建築工程巡禮"/></a><div class="content"><a class="title" href="/2026/05/10/%E6%B7%A1%E6%B1%9F%E5%A4%A7%E6%A9%8B%E9%80%9A%E8%BB%8A%E4%BA%86-%E4%B8%80%E5%80%8B%E8%BB%9F%E9%AB%94%E5%B7%A5%E7%A8%8B%E5%B8%AB%E7%9A%84%E5%BB%BA%E7%AF%89%E5%B7%A5%E7%A8%8B%E5%B7%A1%E7%A6%AE/" title="淡江大橋通車了 — 一個軟體工程師的建築工程巡禮">淡江大橋通車了 — 一個軟體工程師的建築工程巡禮</a><time datetime="2026-05-10T02:00:00.000Z" title="發表於 2026-05-10 10:00:00">2026-05-10</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/05/10/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260510/" title="AI 與科技新聞摘要 - 2026/05/10"><img src="/img/20260510-02.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="AI 與科技新聞摘要 - 2026/05/10"/></a><div class="content"><a class="title" href="/2026/05/10/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260510/" title="AI 與科技新聞摘要 - 2026/05/10">AI 與科技新聞摘要 - 2026/05/10</a><time datetime="2026-05-10T01:00:00.000Z" title="發表於 2026-05-10 09:00:00">2026-05-10</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/05/10/claude-receipts-%E6%8A%8A-Claude-Code-%E7%9A%84%E8%8A%B1%E8%B2%BB%E5%8D%B0%E6%88%90%E4%B8%80%E5%BC%B5%E6%94%B6%E6%93%9A/" title="claude-receipts — 把 Claude Code 的花費印成一張收據"><img src="/img/20260510-01.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="claude-receipts — 把 Claude Code 的花費印成一張收據"/></a><div class="content"><a class="title" href="/2026/05/10/claude-receipts-%E6%8A%8A-Claude-Code-%E7%9A%84%E8%8A%B1%E8%B2%BB%E5%8D%B0%E6%88%90%E4%B8%80%E5%BC%B5%E6%94%B6%E6%93%9A/" title="claude-receipts — 把 Claude Code 的花費印成一張收據">claude-receipts — 把 Claude Code 的花費印成一張收據</a><time datetime="2026-05-10T00:30:00.000Z" title="發表於 2026-05-10 08:30:00">2026-05-10</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/05/09/%E4%B8%AD%E9%83%A8%E5%8C%85%E6%A3%9F%E6%B0%91%E5%AE%BF%E5%AF%A6%E6%88%B0%E6%8C%87%E5%8D%97-%E4%B8%80%E5%80%8B%E5%B7%A5%E7%A8%8B%E5%B8%AB%E7%9A%84%E5%87%BA%E9%81%8A%E9%81%B8%E6%88%BF%E6%94%BB%E7%95%A5/" title="中部包棟民宿實戰指南 — 一個工程師的出遊選房攻略"><img src="/img/20260509-03.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="中部包棟民宿實戰指南 — 一個工程師的出遊選房攻略"/></a><div class="content"><a class="title" href="/2026/05/09/%E4%B8%AD%E9%83%A8%E5%8C%85%E6%A3%9F%E6%B0%91%E5%AE%BF%E5%AF%A6%E6%88%B0%E6%8C%87%E5%8D%97-%E4%B8%80%E5%80%8B%E5%B7%A5%E7%A8%8B%E5%B8%AB%E7%9A%84%E5%87%BA%E9%81%8A%E9%81%B8%E6%88%BF%E6%94%BB%E7%95%A5/" title="中部包棟民宿實戰指南 — 一個工程師的出遊選房攻略">中部包棟民宿實戰指南 — 一個工程師的出遊選房攻略</a><time datetime="2026-05-09T01:00:00.000Z" title="發表於 2026-05-09 09:00:00">2026-05-09</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/05/09/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260509/" title="AI 與科技新聞摘要 - 2026/05/09"><img src="/img/20260509-02.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="AI 與科技新聞摘要 - 2026/05/09"/></a><div class="content"><a class="title" href="/2026/05/09/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260509/" title="AI 與科技新聞摘要 - 2026/05/09">AI 與科技新聞摘要 - 2026/05/09</a><time datetime="2026-05-09T00:30:00.000Z" title="發表於 2026-05-09 08:30:00">2026-05-09</time></div></div></div></div></div></div></main><footer id="footer" style="background-image: url(/img/20260510-02.webp);"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2024 - 2026 By Cheng®</span></div><div class="footer_custom_text">Written by Cheng® — 自律，從當下的一念開始。</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="閱讀模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日夜模式切換"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="單欄和雙欄切換"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="設定"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目錄"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="前往評論"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到頂端"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.umd.min.js"></script><script src="https://cdn.jsdelivr.net/npm/instant.page/instantpage.min.js" type="module"></script><script src="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.js"></script><div class="js-pjax"><script>(() => {
+  const isShuoshuo = GLOBAL_CONFIG_SITE.pageType === 'shuoshuo'
+  const option = {"mapping":"pathname","strict":0,"reactionsEnabled":1,"emitMetadata":0,"inputPosition":"bottom","lang":"zh-TW"}
+
+  const getGiscusTheme = theme => theme === 'dark' ? 'dark' : 'light'
+
+  const createScriptElement = config => {
+    const ele = document.createElement('script')
+    Object.entries(config).forEach(([key, value]) => {
+      ele.setAttribute(key, value)
+    })
+    return ele
+  }
+
+  const loadGiscus = (el = document, key) => {
+    const mappingConfig = isShuoshuo
+      ? { 'data-mapping': 'specific', 'data-term': key }
+      : { 'data-mapping': (option && option['data-mapping']) || 'pathname' }
+
+    const giscusConfig = {
+      src: 'https://giscus.app/client.js',
+      'data-repo': 'mark22013333/mark22013333.github.io',
+      'data-repo-id': 'R_kgDOLAxa6A',
+      'data-category-id': 'DIC_kwDOLAxa6M4C5eO9',
+      'data-theme': getGiscusTheme(document.documentElement.getAttribute('data-theme')),
+      'data-reactions-enabled': '1',
+      crossorigin: 'anonymous',
+      async: true,
+      ...option,
+      ...mappingConfig
+    }
+
+    const scriptElement = createScriptElement(giscusConfig)
+
+    el.querySelector('#giscus-wrap').appendChild(scriptElement)
+
+    if (isShuoshuo) {
+      window.shuoshuoComment.destroyGiscus = () => {
+        if (el.children.length) {
+          el.innerHTML = ''
+          el.classList.add('no-comment')
+        }
+      }
+    }
+  }
+
+  const changeGiscusTheme = theme => {
+    const iframe = document.querySelector('#giscus-wrap iframe')
+    if (iframe) {
+      const message = {
+        giscus: {
+          setConfig: {
+            theme: getGiscusTheme(theme)
+          }
+        }
+      }
+      iframe.contentWindow.postMessage(message, 'https://giscus.app')
+    }
+  }
+
+  btf.addGlobalFn('themeChange', changeGiscusTheme, 'giscus')
+
+  if (isShuoshuo) {
+    'Giscus' === 'Giscus'
+      ? window.shuoshuoComment = { loadComment: loadGiscus }
+      : window.loadOtherComment = loadGiscus
+    return
+  }
+
+  if ('Giscus' === 'Giscus' || !true) {
+    if (true) btf.loadComment(document.getElementById('giscus-wrap'), loadGiscus)
+    else loadGiscus()
+  } else {
+    window.loadOtherComment = loadGiscus
+  }
+})()</script></div><script src="/js/kkbox-player.js"></script><script src="/js/archives-pagination.js"></script><script src="/js/font-resize.js"></script><script src="/js/dark-palette.js"></script><script defer="defer" id="fluttering_ribbon" mobile="false" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/canvas-fluttering-ribbon.min.js"></script><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/activate-power-mode.min.js"></script><script>POWERMODE.colorful = true;
+POWERMODE.shake = true;
+POWERMODE.mobile = true;
+document.body.addEventListener('input', POWERMODE);
+</script><script src="https://cdn.jsdelivr.net/npm/pjax/pjax.min.js" defer="defer"></script><script>document.addEventListener('DOMContentLoaded', () => {
+  const pjaxSelectors = ["meta[property=\"og:image\"]","meta[property=\"og:title\"]","meta[property=\"og:url\"]","meta[property=\"og:description\"]","link[rel=\"canonical\"]","head > title","#config-diff","#body-wrap","#rightside-config-hide","#rightside-config-show",".js-pjax"]
+
+  window.pjax = new Pjax({
+    elements: 'a:not([target="_blank"])',
+    selectors: pjaxSelectors,
+    cacheBust: false,
+    analytics: true,
+    scrollRestoration: false
+  })
+
+  const triggerPjaxFn = (val) => {
+    if (!val) return
+    Object.values(val).forEach(fn => {
+      try {
+        fn()
+      } catch (err) {
+        console.debug('Pjax callback failed:', err)
+      }
+    })
+  }
+
+  document.addEventListener('pjax:send', () => {
+    // removeEventListener
+    btf.removeGlobalFnEvent('pjaxSendOnce')
+    btf.removeGlobalFnEvent('themeChange')
+
+    // reset readmode
+    const $bodyClassList = document.body.classList
+    if ($bodyClassList.contains('read-mode')) $bodyClassList.remove('read-mode')
+
+    triggerPjaxFn(window.globalFn.pjaxSend)
+  })
+
+  document.addEventListener('pjax:complete', () => {
+    btf.removeGlobalFnEvent('pjaxCompleteOnce')
+    document.querySelectorAll('script[data-pjax]').forEach(item => {
+      const newScript = document.createElement('script')
+      const content = item.text || item.textContent || item.innerHTML || ""
+      Array.from(item.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value))
+      newScript.appendChild(document.createTextNode(content))
+      item.parentNode.replaceChild(newScript, item)
+    })
+
+    triggerPjaxFn(window.globalFn.pjaxComplete)
+  })
+
+  document.addEventListener('pjax:error', e => {
+    if (e.request.status === 404) {
+      true
+        ? pjax.loadUrl('/404.html')
+        : window.location.href = e.request.responseURL
+    }
+  })
+})</script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜尋</span><i class="fas fa-spinner fa-pulse" id="loading-status" hidden="hidden"></i><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="text-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  資料載入中</span></div><div class="local-search-input"><input placeholder="搜尋文章" type="text"/></div><hr/><div id="local-search-results"></div><div class="ais-Pagination" id="local-search-pagination" style="display:none;"><ul class="ais-Pagination-list"></ul></div><div id="local-search-stats"></div></div><div id="search-mask"></div><script src="/js/search/local-search.js"></script></div></div></body></html>
