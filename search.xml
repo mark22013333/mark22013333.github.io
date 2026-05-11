@@ -24,10 +24,6 @@
             
             <tag> 教學 </tag>
             
-            <tag> 效率 </tag>
-            
-            <tag> 隱藏功能 </tag>
-            
         </tags>
       
     </entry>
@@ -55,11 +51,9 @@
             
             <tag> OpenAI </tag>
             
+            <tag> 資安 </tag>
+            
             <tag> Anthropic </tag>
-            
-            <tag> SpaceX </tag>
-            
-            <tag> AI 安全 </tag>
             
         </tags>
       
@@ -84,13 +78,11 @@
       
         <tags>
             
+            <tag> AI Agent </tag>
+            
             <tag> Claude Code </tag>
             
             <tag> GitHub </tag>
-            
-            <tag> AI 創業 </tag>
-            
-            <tag> ClaudeBusiness </tag>
             
         </tags>
       
