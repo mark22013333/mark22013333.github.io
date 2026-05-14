@@ -1,0 +1,424 @@
+<!DOCTYPE html><html lang="zh-TW" data-theme="dark"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>系列文章總覽 | Cheng's Tech &amp; Life</title><meta name="author" content="Cheng®"><meta name="copyright" content="Cheng®"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#0d0d0d"><meta name="description" content="台灣工程師的技術筆記 — Claude Code 教學、AI 與科技新聞、Java Spring 實戰、開發工具推薦">
+<meta property="og:type" content="website">
+<meta property="og:title" content="系列文章總覽">
+<meta property="og:url" content="https://mark22013333.github.io/series/index.html">
+<meta property="og:site_name" content="Cheng&#39;s Tech &amp; Life">
+<meta property="og:description" content="台灣工程師的技術筆記 — Claude Code 教學、AI 與科技新聞、Java Spring 實戰、開發工具推薦">
+<meta property="og:locale" content="zh_TW">
+<meta property="og:image" content="https://lh3.googleusercontent.com/pw/ABLVV87_po8nBc6F_tXcoYDmtzMGWxHuhhrbguYILCjmjWKLOS8DTpubm0YoQLKgjyjRIZyV5TjYe7XVEz_YU4squfr37GTZqPZP1hlMVZ_MIgXpTxWu73M=w1200">
+<meta property="article:published_time" content="2026-05-14T11:52:17.120Z">
+<meta property="article:modified_time" content="2026-05-14T11:52:17.120Z">
+<meta property="article:author" content="Cheng®">
+<meta property="article:tag" content="Claude Code, AI 新聞, Java, Spring, MCP, 技術筆記, 工程師, 開發工具">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://lh3.googleusercontent.com/pw/ABLVV87_po8nBc6F_tXcoYDmtzMGWxHuhhrbguYILCjmjWKLOS8DTpubm0YoQLKgjyjRIZyV5TjYe7XVEz_YU4squfr37GTZqPZP1hlMVZ_MIgXpTxWu73M=w1200"><script type="application/ld+json"></script><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://mark22013333.github.io/series/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//www.google-analytics.com" crossorigin=""/><link rel="preconnect" href="//fonts.googleapis.com" crossorigin=""/><link rel="preconnect" href="//busuanzi.ibruce.info"/><meta name="google-site-verification" content="6ywUr8k2n_CT1PFYJzlSvI3CZ-JmJ55RYbA39VrFBDs"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!true && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          const hour = new Date().getHours()
+          const isNight = hour <= 9 || hour >= 18
+          if (theme === undefined) isNight ? activateDarkMode() : activateLightMode()
+          else theme === 'light' ? activateLightMode() : activateDarkMode()
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script async="async" src="https://www.googletagmanager.com/gtag/js?id=G-JBV14NRDH3"></script><script>window.dataLayer = window.dataLayer || []
+function gtag(){dataLayer.push(arguments)}
+gtag('js', new Date())
+gtag('config', 'G-JBV14NRDH3')
+btf.addGlobalFn('pjaxComplete', () => {
+  gtag('config', 'G-JBV14NRDH3', {'page_path': window.location.pathname})
+}, 'google_analytics')
+</script><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Titillium+Web&amp;display=swap" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"pagination":{"enable":false,"hitsPerPage":8},"languages":{"hits_empty":"找不到符合您查詢的內容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '複製成功',
+    error: '複製失敗',
+    noSupport: '瀏覽器不支援'
+  },
+  relativeDate: {
+    homepage: false,
+    post: true
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '剛剛',
+    min: '分鐘前',
+    hour: '小時前',
+    day: '天前',
+    month: '個月前'
+  },
+  copyright: {"limitCount":1,"languages":{"author":"作者: Cheng®","link":"連結: ","source":"來源: Cheng's Tech & Life","info":"著作權歸作者所有。如需商業轉載，請聯絡作者獲得授權，非商業轉載請註明出處😁。"}},
+  lightbox: 'fancybox',
+  Snackbar: {"chs_to_cht":"已切換為繁體中文","cht_to_chs":"已切換為簡體中文","day_to_night":"已切換為深色模式","night_to_day":"已切換為淺色模式","bgLight":"#49b1f5","bgDark":"#1f1f1f","position":"top-center"},
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid/dist/infinitegrid.min.js',
+    buttonText: '載入更多'
+  },
+  isPhotoFigcaption: true,
+  islazyloadPlugin: false,
+  isAnchor: true,
+  percent: {
+    toc: true,
+    rightside: true,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '系列文章總覽',
+  isHighlightShrink: false,
+  isToc: false,
+  pageType: 'page'
+}</script><link rel="stylesheet" href="/css/kkbox-player.css"><link rel="stylesheet" href="/css/tag-cloud-fancy.css"><link rel="stylesheet" href="/css/font-resize.css"><link rel="stylesheet" href="/css/dark-palette.css"><link rel="stylesheet" href="/css/loading-override.css"><link rel="stylesheet" href="/css/series-showcase.css"><link rel="alternate" href="/atom.xml" title="Cheng's Tech & Life" type="application/atom+xml">
+</head><body><div id="loading-box"><div class="loading-glass-overlay"></div><div class="loading-indicator"><div class="loading-dot"></div><div class="loading-dot"></div><div class="loading-dot"></div></div></div><script>(()=>{
+  const $loadingBox = document.getElementById('loading-box')
+  const $body = document.body
+  const preloader = {
+    endLoading: () => {
+      if ($loadingBox.classList.contains('loaded')) return
+      $body.style.overflow = ''
+      $loadingBox.classList.add('loaded')
+    },
+    initLoading: () => {
+      $body.style.overflow = 'hidden'
+      $loadingBox.classList.remove('loaded')
+    }
+  }
+
+  preloader.initLoading()
+
+  if (document.readyState === 'complete') {
+    preloader.endLoading()
+  } else {
+    window.addEventListener('load', preloader.endLoading)
+    document.addEventListener('DOMContentLoaded', preloader.endLoading)
+    setTimeout(preloader.endLoading, 7000)
+  }
+
+  if (true) {
+    btf.addGlobalFn('pjaxSend', preloader.initLoading, 'preloader_init')
+    btf.addGlobalFn('pjaxComplete', preloader.endLoading, 'preloader_end')
+  }
+})()</script><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="https://lh3.googleusercontent.com/pw/ABLVV87_po8nBc6F_tXcoYDmtzMGWxHuhhrbguYILCjmjWKLOS8DTpubm0YoQLKgjyjRIZyV5TjYe7XVEz_YU4squfr37GTZqPZP1hlMVZ_MIgXpTxWu73M=w1200" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">225</div></a><a href="/tags/"><div class="headline">標籤</div><div class="length-num">304</div></a><a href="/categories/"><div class="headline">分類</div><div class="length-num">15</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首頁-Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 時間軸-archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 標籤-tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分類-Categories</span></a></div><div class="menus_item"><a class="site-page" href="/series/"><i class="fa-fw fas fa-layer-group"></i><span> 系列-Series</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-list"></i><span> 其他列表</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音樂-Music</span></a></li><li><a class="site-page child" href="/gallery/"><i class="fa-fw fas fa-images"></i><span> 畫館-Gallery</span></a></li></ul></div></div></div></div><div class="page type-series" id="body-wrap"><header class="not-home-page fixed" id="page-header" style="background-image: url(https://lh3.googleusercontent.com/pw/ABLVV853NQFWL4WeSSrWk5muVHD0zrcrFPpWIUUavM_Whrk2S6MxmPC6IZTRkUrg4ibCJsO0mFugBuJvMdwQu5_kpa9M08ZXqLsNmJa62GuQJ1zVZrXrMBg=w2400);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><img class="site-icon" src="https://lh3.googleusercontent.com/pw/ABLVV87_po8nBc6F_tXcoYDmtzMGWxHuhhrbguYILCjmjWKLOS8DTpubm0YoQLKgjyjRIZyV5TjYe7XVEz_YU4squfr37GTZqPZP1hlMVZ_MIgXpTxWu73M=w1200" alt="Logo"><span class="site-name">Cheng's Tech &amp; Life</span></a></span><div id="menus"><div id="search-button" title="Ctrl+K / Cmd+K"><span class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜尋</span></span></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首頁-Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 時間軸-archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 標籤-tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分類-Categories</span></a></div><div class="menus_item"><a class="site-page" href="/series/"><i class="fa-fw fas fa-layer-group"></i><span> 系列-Series</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-list"></i><span> 其他列表</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音樂-Music</span></a></li><li><a class="site-page child" href="/gallery/"><i class="fa-fw fas fa-images"></i><span> 畫館-Gallery</span></a></li></ul></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="page-site-info"><h1 id="site-title">系列文章總覽</h1></div></header><main class="layout hide-aside" id="content-inner"><div id="page"><div class="container" id="article-container">
+<div class="series-page" id="series-page">
+  <div class="series-page-stats">
+    <span><i class="fas fa-layer-group"></i> 6 個系列</span>
+    <span class="series-stat-sep">·</span>
+    <span><i class="fas fa-file-alt"></i> 82 篇文章</span>
+  </div>
+
+  <section class="series-section" id="elasticsearch">
+    <div class="series-section-header">
+      <div class="series-section-icon" style="--series-color: #00BFB3">
+        <i class="fas fa-search"></i>
+      </div>
+      <div class="series-section-info">
+        <h2 class="series-section-name">Elasticsearch 完整指南</h2>
+        <p class="series-section-desc">從零開始學 Elasticsearch — 環境建置到生產環境優化</p>
+        <div class="series-section-meta">
+          <span>8 篇文章</span>
+          <span class="series-card-status series-status-completed">已完結</span>
+        </div>
+      </div>
+    </div>
+    <ol class="series-article-list">
+      <li class="series-article-item" style="--series-color: #00BFB3"><a href="/2026/04/29/Elasticsearch-快速上手與環境建置-Hello-Elastic/">Elasticsearch 快速上手與環境建置 — Hello Elastic</a><time datetime="2026-04-29">2026-04-29</time></li>
+      <li class="series-article-item" style="--series-color: #00BFB3"><a href="/2026/04/30/Elasticsearch-核心架構與資料儲存大揭秘-Node-Shard-Lucene/">Elasticsearch 核心架構與資料儲存大揭秘 — Node, Shard, Lucene</a><time datetime="2026-04-30">2026-04-30</time></li>
+      <li class="series-article-item" style="--series-color: #00BFB3"><a href="/2026/05/01/Elasticsearch-資料的進與出-Data-In-Out-與-REST-API-大補帖/">Elasticsearch 資料的進與出 — Data In/Out 與 REST API 大補帖</a><time datetime="2026-05-01">2026-05-01</time></li>
+      <li class="series-article-item" style="--series-color: #00BFB3"><a href="/2026/05/02/Elasticsearch-駭客級的底層運作原理-Indexing-Searching-Translog-Segment/">Elasticsearch 駭客級的底層運作原理 — Indexing, Searching, Translog, Segment</a><time datetime="2026-05-02">2026-05-02</time></li>
+      <li class="series-article-item" style="--series-color: #00BFB3"><a href="/2026/05/03/Elasticsearch-文字分析與多語系魔法-Analyzer-IK-中文搜尋/">Elasticsearch 文字分析與多語系魔法 — Analyzer, IK, 中文搜尋</a><time datetime="2026-05-03">2026-05-03</time></li>
+      <li class="series-article-item" style="--series-color: #00BFB3"><a href="/2026/05/04/Elasticsearch-資料塑型-Mapping-Template-Component-Template/">Elasticsearch 資料塑型 — Mapping, Template, Component Template</a><time datetime="2026-05-04">2026-05-04</time></li>
+      <li class="series-article-item" style="--series-color: #00BFB3"><a href="/2026/05/05/Elasticsearch-進階搜尋-聚合分析與效能透視-Search-Aggregation-Profiler/">Elasticsearch 進階搜尋、聚合分析與效能透視 — Search, Aggregation, Profiler</a><time datetime="2026-05-05">2026-05-05</time></li>
+      <li class="series-article-item" style="--series-color: #00BFB3"><a href="/2026/05/06/Elasticsearch-正式上線-營運與效能優化-Production-生存指南/">Elasticsearch 正式上線、營運與效能優化 — Production 生存指南</a><time datetime="2026-05-06">2026-05-06</time></li>
+    </ol>
+    
+    
+  </section>
+
+  <section class="series-section" id="claude-code">
+    <div class="series-section-header">
+      <div class="series-section-icon" style="--series-color: #D97706">
+        <i class="fas fa-robot"></i>
+      </div>
+      <div class="series-section-info">
+        <h2 class="series-section-name">Claude Code 完整教學</h2>
+        <p class="series-section-desc">從入門到進階 — Hooks、Sub-agents、MCP、Skills 開發全攻略</p>
+        <div class="series-section-meta">
+          <span>35 篇文章</span>
+          <span class="series-card-status series-status-in-progress">連載中</span>
+        </div>
+      </div>
+    </div>
+    <ol class="series-article-list">
+      <li class="series-article-item" style="--series-color: #D97706"><a href="/2026/03/24/Claude-Code-Remote-Control-用手機遙控你的終端機/">Claude Code Remote Control：用手機遙控你的終端機</a><time datetime="2026-03-24">2026-03-24</time></li>
+      <li class="series-article-item" style="--series-color: #D97706"><a href="/2026/03/24/Claude-Code-Bypass-模式安全防護-PreToolUse-Hook-攔截危險指令/">Claude Code Bypass 模式安全防護 — 用 PreToolUse Hook 攔截危險指令</a><time datetime="2026-03-24">2026-03-24</time></li>
+      <li class="series-article-item" style="--series-color: #D97706"><a href="/2026/03/24/Claude-Code-Hooks-完整指南-讓-AI-自動化不再靠運氣/">Claude Code Hooks 完整指南 — 讓 AI 自動化不再靠運氣</a><time datetime="2026-03-24">2026-03-24</time></li>
+      <li class="series-article-item" style="--series-color: #D97706"><a href="/2026/03/25/Claude-Cowork-入門指南-讓-AI-在你電腦上自己幹活/">Claude Cowork 入門指南 — 讓 AI 在你電腦上自己幹活</a><time datetime="2026-03-25">2026-03-25</time></li>
+      <li class="series-article-item" style="--series-color: #D97706"><a href="/2026/03/26/Claude-Code-Skill-開發標準與-Plugin-Marketplace-完整攻略/">Claude Code Skill 開發標準與 Plugin Marketplace 完整攻略</a><time datetime="2026-03-26">2026-03-26</time></li>
+    </ol>
+    
+    <a href="/2026/04/13/Claude-Code-完整教學索引-從入門到進階的所有文章整理/" class="series-show-all">查看全部 35 篇 →</a>
+  </section>
+
+  <section class="series-section" id="azure-az305">
+    <div class="series-section-header">
+      <div class="series-section-icon" style="--series-color: #0078D4">
+        <i class="fas fa-cloud"></i>
+      </div>
+      <div class="series-section-info">
+        <h2 class="series-section-name">AZ-305 Azure 架構師認證</h2>
+        <p class="series-section-desc">Azure 解決方案架構設計師五日課程筆記</p>
+        <div class="series-section-meta">
+          <span>5 篇文章</span>
+          <span class="series-card-status series-status-completed">已完結</span>
+        </div>
+      </div>
+    </div>
+    <ol class="series-article-list">
+      <li class="series-article-item" style="--series-color: #0078D4"><a href="/2026/04/13/AZ-305-Azure-解決方案架構師-第一天課程筆記/">AZ-305 Azure 解決方案架構師 — 第一天課程筆記</a><time datetime="2026-04-13">2026-04-13</time></li>
+      <li class="series-article-item" style="--series-color: #0078D4"><a href="/2026/04/14/AZ-305-Azure-解決方案架構師-第二天課程筆記/">AZ-305 Azure 解決方案架構師 — 第二天課程筆記</a><time datetime="2026-04-14">2026-04-14</time></li>
+      <li class="series-article-item" style="--series-color: #0078D4"><a href="/2026/04/15/AZ-305-Azure-架構設計師-第三天課程筆記/">AZ-305 Azure 架構設計師 - 第三天課程筆記</a><time datetime="2026-04-15">2026-04-15</time></li>
+      <li class="series-article-item" style="--series-color: #0078D4"><a href="/2026/04/16/AZ-305-Azure-架構師認證-第四天課程筆記/">AZ-305 Azure 架構師認證 - 第四天課程筆記</a><time datetime="2026-04-16">2026-04-16</time></li>
+      <li class="series-article-item" style="--series-color: #0078D4"><a href="/2026/04/20/AZ-305-Azure-架構師認證-第五天課程筆記/">AZ-305 Azure 架構師認證 - 第五天課程筆記</a><time datetime="2026-04-20">2026-04-20</time></li>
+    </ol>
+    
+    
+  </section>
+
+  <section class="series-section" id="java-spring">
+    <div class="series-section-header">
+      <div class="series-section-icon" style="--series-color: #E76F00">
+        <i class="fab fa-java"></i>
+      </div>
+      <div class="series-section-info">
+        <h2 class="series-section-name">Java / Spring 學習筆記</h2>
+        <p class="series-section-desc">Java 核心語法、Stream API、併發控制、Spring Boot 實戰</p>
+        <div class="series-section-meta">
+          <span>25 篇文章</span>
+          <span class="series-card-status series-status-in-progress">連載中</span>
+        </div>
+      </div>
+    </div>
+    <ol class="series-article-list">
+      <li class="series-article-item" style="--series-color: #E76F00"><a href="/2026/03/14/Java-併發控制-Semaphore-與-volatile/">Java 併發控制 - Semaphore 與 volatile</a><time datetime="2026-03-14">2026-03-14</time></li>
+      <li class="series-article-item" style="--series-color: #E76F00"><a href="/2026/03/03/Java-集合操作-List-差集與-Stream-分割-JsonArray/">Java 集合操作 - List 差集與 Stream 分割 JsonArray</a><time datetime="2026-03-03">2026-03-03</time></li>
+      <li class="series-article-item" style="--series-color: #E76F00"><a href="/2026/02/20/Java-8-時間-API-與-LinkedHashMap-筆記/">Java 8 時間 API 與 LinkedHashMap 使用筆記</a><time datetime="2026-02-20">2026-02-20</time></li>
+      <li class="series-article-item" style="--series-color: #E76F00"><a href="/2026/01/18/Java-Stream-操作集錦-合併Map-List轉Map-排序/">Java Stream 操作集錦 - 合併 Map、List 轉 Map、物件排序</a><time datetime="2026-01-18">2026-01-18</time></li>
+      <li class="series-article-item" style="--series-color: #E76F00"><a href="/2026/01/07/Java-Stream-過濾-List-JSON-重複資料/">Java Stream 過濾 List&lt;JSON&gt; 重複資料</a><time datetime="2026-01-07">2026-01-07</time></li>
+    </ol>
+    <div class="series-article-hidden" style="display:none"><ol class="series-article-list" start="6"><li class="series-article-item" style="--series-color: #E76F00"><a href="/2025/12/16/Java-Retry-重試機制-指數退避模版/">Java Retry 重試機制 - 指數退避模版</a><time datetime="2025-12-16">2025-12-16</time></li>
+        <li class="series-article-item" style="--series-color: #E76F00"><a href="/2025/12/05/Java-Optional-完整用法指南/">Java Optional 完整用法指南</a><time datetime="2025-12-05">2025-12-05</time></li>
+        <li class="series-article-item" style="--series-color: #E76F00"><a href="/2025/11/24/Java-實體類物件比較-equals-與-hashCode-正確實作/">Java 實體類物件比較 - equals 與 hashCode 正確實作</a><time datetime="2025-11-24">2025-11-24</time></li>
+        <li class="series-article-item" style="--series-color: #E76F00"><a href="/2025/11/13/HashMap-轉-JSON-的三種方式/">HashMap 轉 JSON 的三種方式</a><time datetime="2025-11-13">2025-11-13</time></li>
+        <li class="series-article-item" style="--series-color: #E76F00"><a href="/2025/11/02/Java-8-Stream-forEach-與傳統迭代的差異/">Java 8 Stream forEach 與傳統迭代的差異</a><time datetime="2025-11-02">2025-11-02</time></li>
+        <li class="series-article-item" style="--series-color: #E76F00"><a href="/2025/10/11/Java-Synchronized-六種同步模式完整解析/">Java Synchronized 六種同步模式完整解析</a><time datetime="2025-10-11">2025-10-11</time></li>
+        <li class="series-article-item" style="--series-color: #E76F00"><a href="/2025/09/30/CGLIB-動態代理原理與使用/">CGLIB 動態代理原理與使用</a><time datetime="2025-09-30">2025-09-30</time></li>
+        <li class="series-article-item" style="--series-color: #E76F00"><a href="/2025/09/19/Java-Supplier-函式介面用途與延遲執行/">Java Supplier 函式介面用途與延遲執行</a><time datetime="2025-09-19">2025-09-19</time></li>
+        <li class="series-article-item" style="--series-color: #E76F00"><a href="/2025/08/28/Spring-TransactionTemplate-程式化交易管理/">Spring TransactionTemplate 程式化交易管理與 Rollback</a><time datetime="2025-08-28">2025-08-28</time></li>
+        <li class="series-article-item" style="--series-color: #E76F00"><a href="/2025/08/17/Spring-Transactional-類別層級效果與-CGLIB-Proxy/">Spring @Transactional 類別層級效果與 CGLIB Proxy</a><time datetime="2025-08-17">2025-08-17</time></li>
+        <li class="series-article-item" style="--series-color: #E76F00"><a href="/2025/08/06/Spring-Batch-Partitioner-分區處理流程/">Spring Batch Partitioner 分區處理流程</a><time datetime="2025-08-06">2025-08-06</time></li>
+        <li class="series-article-item" style="--series-color: #E76F00"><a href="/2025/07/26/Spring-Boot-REST-API-檔案下載實作/">Spring Boot REST API 檔案下載實作</a><time datetime="2025-07-26">2025-07-26</time></li>
+        <li class="series-article-item" style="--series-color: #E76F00"><a href="/2025/07/15/Spring-MVC-Redirect-傳遞參數完整指南/">Spring MVC Redirect 傳遞參數完整指南</a><time datetime="2025-07-15">2025-07-15</time></li>
+        <li class="series-article-item" style="--series-color: #E76F00"><a href="/2025/06/28/Spring-Cloud-Config-Client-設定與-ConfigurationProperties/">Spring Cloud Config Client 設定與 @ConfigurationProperties</a><time datetime="2025-06-28">2025-06-28</time></li>
+        <li class="series-article-item" style="--series-color: #E76F00"><a href="/2025/06/28/Spring-Cloud-Config-Server-本地檔案模式/">Spring Cloud Config Server 本地檔案模式設定</a><time datetime="2025-06-28">2025-06-28</time></li>
+        <li class="series-article-item" style="--series-color: #E76F00"><a href="/2025/06/01/Spring-MVC-AOP-設定與-AspectJ-用法/">Spring MVC AOP 設定與 AspectJ 用法</a><time datetime="2025-06-01">2025-06-01</time></li>
+        <li class="series-article-item" style="--series-color: #E76F00"><a href="/2025/05/21/Spring-Bean-Scope-六種作用域/">Spring Bean Scope 六種作用域完整解析</a><time datetime="2025-05-21">2025-05-21</time></li>
+        <li class="series-article-item" style="--series-color: #E76F00"><a href="/2025/05/10/Spring-Bean-與-ComponentScan-的差異/">Spring @Bean 與 @ComponentScan 的差異</a><time datetime="2025-05-10">2025-05-10</time></li>
+        <li class="series-article-item" style="--series-color: #E76F00"><a href="/2024/03/21/HashMap-→-computeIfAbsent/">HashMap → computeIfAbsent()</a><time datetime="2024-03-21">2024-03-21</time></li>
+        <li class="series-article-item" style="--series-color: #E76F00"><a href="/2024/03/20/HashMap-→-putIfAbsent/">HashMap → putIfAbsent()</a><time datetime="2024-03-20">2024-03-20</time></li></ol></div>
+    <button class="series-toggle-btn" data-series="java-spring">展開全部 25 篇 ↓</button>
+  </section>
+
+  <section class="series-section" id="azure-dp300">
+    <div class="series-section-header">
+      <div class="series-section-icon" style="--series-color: #0078D4">
+        <i class="fas fa-database"></i>
+      </div>
+      <div class="series-section-info">
+        <h2 class="series-section-name">DP-300 Azure 資料庫管理員</h2>
+        <p class="series-section-desc">Azure 資料庫管理員四日課程筆記</p>
+        <div class="series-section-meta">
+          <span>4 篇文章</span>
+          <span class="series-card-status series-status-completed">已完結</span>
+        </div>
+      </div>
+    </div>
+    <ol class="series-article-list">
+      <li class="series-article-item" style="--series-color: #0078D4"><a href="/2026/04/13/DP-300-Azure-資料庫管理員-第一天課程筆記/">DP-300 Azure 資料庫管理員 — 第一天課程筆記</a><time datetime="2026-04-13">2026-04-13</time></li>
+      <li class="series-article-item" style="--series-color: #0078D4"><a href="/2026/04/14/DP-300-Azure-資料庫管理員-第二天課程筆記/">DP-300 Azure 資料庫管理員 — 第二天課程筆記</a><time datetime="2026-04-14">2026-04-14</time></li>
+      <li class="series-article-item" style="--series-color: #0078D4"><a href="/2026/04/15/DP-300-Azure-資料庫管理員-第三天課程筆記/">DP-300 Azure 資料庫管理員 - 第三天課程筆記</a><time datetime="2026-04-15">2026-04-15</time></li>
+      <li class="series-article-item" style="--series-color: #0078D4"><a href="/2026/04/16/DP-300-Azure-資料庫管理員-第四天課程筆記/">DP-300 Azure 資料庫管理員 - 第四天課程筆記</a><time datetime="2026-04-16">2026-04-16</time></li>
+    </ol>
+    
+    
+  </section>
+
+  <section class="series-section" id="azure-gh300">
+    <div class="series-section-header">
+      <div class="series-section-icon" style="--series-color: #24292E">
+        <i class="fab fa-github"></i>
+      </div>
+      <div class="series-section-info">
+        <h2 class="series-section-name">GH-300 GitHub Copilot 認證</h2>
+        <p class="series-section-desc">GitHub Copilot 認證五日課程筆記</p>
+        <div class="series-section-meta">
+          <span>5 篇文章</span>
+          <span class="series-card-status series-status-completed">已完結</span>
+        </div>
+      </div>
+    </div>
+    <ol class="series-article-list">
+      <li class="series-article-item" style="--series-color: #24292E"><a href="/2026/04/13/GH-300-GitHub-Copilot-認證-第一天課程筆記/">GH-300 GitHub Copilot 認證 — 第一天課程筆記</a><time datetime="2026-04-13">2026-04-13</time></li>
+      <li class="series-article-item" style="--series-color: #24292E"><a href="/2026/04/14/GH-300-GitHub-Copilot-認證-第二天課程筆記/">GH-300 GitHub Copilot 認證 — 第二天課程筆記（進階工程化實踐）</a><time datetime="2026-04-14">2026-04-14</time></li>
+      <li class="series-article-item" style="--series-color: #24292E"><a href="/2026/04/15/GH-300-GitHub-Copilot-認證-第三天課程筆記/">GH-300 GitHub Copilot 認證 - 第三天課程筆記</a><time datetime="2026-04-15">2026-04-15</time></li>
+      <li class="series-article-item" style="--series-color: #24292E"><a href="/2026/04/16/GH-300-GitHub-Copilot-認證-第四天課程筆記/">GH-300 GitHub Copilot 認證 - 第四天課程筆記</a><time datetime="2026-04-16">2026-04-16</time></li>
+      <li class="series-article-item" style="--series-color: #24292E"><a href="/2026/04/20/GH-300-GitHub-Copilot-認證-第五天課程筆記/">GH-300 GitHub Copilot 認證 - 第五天課程筆記</a><time datetime="2026-04-20">2026-04-20</time></li>
+    </ol>
+    
+    
+  </section>
+</div>
+</div></div></main><footer id="footer" style="background-image: url(https://lh3.googleusercontent.com/pw/ABLVV853NQFWL4WeSSrWk5muVHD0zrcrFPpWIUUavM_Whrk2S6MxmPC6IZTRkUrg4ibCJsO0mFugBuJvMdwQu5_kpa9M08ZXqLsNmJa62GuQJ1zVZrXrMBg=w2400);"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2024 - 2026 By Cheng®</span></div><div class="footer_custom_text">Written by Cheng® — 自律，從當下的一念開始。</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="darkmode" type="button" title="日夜模式切換"><i class="fas fa-adjust"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="設定"><i class="fas fa-cog fa-spin"></i></button><button id="go-up" type="button" title="回到頂端"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.umd.min.js"></script><script src="https://cdn.jsdelivr.net/npm/instant.page/instantpage.min.js" type="module"></script><script src="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.js"></script><div class="js-pjax"></div><script src="/js/kkbox-player.js"></script><script src="/js/archives-pagination.js"></script><script src="/js/font-resize.js"></script><script src="/js/dark-palette.js"></script><script src="/js/series-showcase.js"></script><script defer="defer" id="fluttering_ribbon" mobile="false" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/canvas-fluttering-ribbon.min.js"></script><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/activate-power-mode.min.js"></script><script>POWERMODE.colorful = true;
+POWERMODE.shake = true;
+POWERMODE.mobile = true;
+document.body.addEventListener('input', POWERMODE);
+</script><script src="https://cdn.jsdelivr.net/npm/pjax/pjax.min.js" defer="defer"></script><script>document.addEventListener('DOMContentLoaded', () => {
+  const pjaxSelectors = ["meta[property=\"og:image\"]","meta[property=\"og:title\"]","meta[property=\"og:url\"]","meta[property=\"og:description\"]","link[rel=\"canonical\"]","head > title","#config-diff","#body-wrap","#rightside-config-hide","#rightside-config-show",".js-pjax"]
+
+  window.pjax = new Pjax({
+    elements: 'a:not([target="_blank"])',
+    selectors: pjaxSelectors,
+    cacheBust: false,
+    analytics: true,
+    scrollRestoration: false
+  })
+
+  const triggerPjaxFn = (val) => {
+    if (!val) return
+    Object.values(val).forEach(fn => {
+      try {
+        fn()
+      } catch (err) {
+        console.debug('Pjax callback failed:', err)
+      }
+    })
+  }
+
+  document.addEventListener('pjax:send', () => {
+    // removeEventListener
+    btf.removeGlobalFnEvent('pjaxSendOnce')
+    btf.removeGlobalFnEvent('themeChange')
+
+    // reset readmode
+    const $bodyClassList = document.body.classList
+    if ($bodyClassList.contains('read-mode')) $bodyClassList.remove('read-mode')
+
+    triggerPjaxFn(window.globalFn.pjaxSend)
+  })
+
+  document.addEventListener('pjax:complete', () => {
+    btf.removeGlobalFnEvent('pjaxCompleteOnce')
+    document.querySelectorAll('script[data-pjax]').forEach(item => {
+      const newScript = document.createElement('script')
+      const content = item.text || item.textContent || item.innerHTML || ""
+      Array.from(item.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value))
+      newScript.appendChild(document.createTextNode(content))
+      item.parentNode.replaceChild(newScript, item)
+    })
+
+    triggerPjaxFn(window.globalFn.pjaxComplete)
+  })
+
+  document.addEventListener('pjax:error', e => {
+    if (e.request.status === 404) {
+      true
+        ? pjax.loadUrl('/404.html')
+        : window.location.href = e.request.responseURL
+    }
+  })
+})</script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜尋</span><i class="fas fa-spinner fa-pulse" id="loading-status" hidden="hidden"></i><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="text-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  資料載入中</span></div><div class="local-search-input"><input placeholder="搜尋文章" type="text"/></div><hr/><div id="local-search-results"></div><div class="ais-Pagination" id="local-search-pagination" style="display:none;"><ul class="ais-Pagination-list"></ul></div><div id="local-search-stats"></div></div><div id="search-mask"></div><script src="/js/search/local-search.js"></script></div></div></body></html>

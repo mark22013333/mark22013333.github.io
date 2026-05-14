@@ -121,9 +121,9 @@
             
             <tag> AI Coding </tag>
             
-            <tag> Automation </tag>
-            
             <tag> /goal </tag>
+            
+            <tag> Automation </tag>
             
         </tags>
       
@@ -239,11 +239,11 @@
       
         <tags>
             
-            <tag> MCP </tag>
+            <tag> 資安 </tag>
             
             <tag> OpenAI </tag>
             
-            <tag> 資安 </tag>
+            <tag> MCP </tag>
             
             <tag> Anthropic </tag>
             
@@ -270,9 +270,9 @@
       
         <tags>
             
-            <tag> Claude Code </tag>
-            
             <tag> AI Agent </tag>
+            
+            <tag> Claude Code </tag>
             
             <tag> GitHub </tag>
             
@@ -995,9 +995,9 @@
             
             <tag> NVIDIA </tag>
             
-            <tag> Gemini </tag>
-            
             <tag> Mistral </tag>
+            
+            <tag> Gemini </tag>
             
             <tag> Copy Fail </tag>
             
@@ -1251,9 +1251,9 @@
       
         <tags>
             
-            <tag> NVIDIA </tag>
-            
             <tag> Google </tag>
+            
+            <tag> NVIDIA </tag>
             
             <tag> Microsoft </tag>
             
@@ -1288,9 +1288,9 @@
             
             <tag> Claude Code </tag>
             
-            <tag> Routines </tag>
-            
             <tag> Automation </tag>
+            
+            <tag> Routines </tag>
             
         </tags>
       
@@ -1379,9 +1379,9 @@
             
             <tag> Claude Code </tag>
             
-            <tag> JetBrains </tag>
-            
             <tag> VS Code </tag>
+            
+            <tag> JetBrains </tag>
             
             <tag> IDE </tag>
             
@@ -1470,9 +1470,9 @@
       
         <tags>
             
-            <tag> MCP </tag>
-            
             <tag> 資安 </tag>
+            
+            <tag> MCP </tag>
             
             <tag> Cursor </tag>
             
@@ -1503,11 +1503,11 @@
       
         <tags>
             
+            <tag> AI Agent </tag>
+            
             <tag> MCP </tag>
             
             <tag> Claude Code </tag>
-            
-            <tag> AI Agent </tag>
             
             <tag> 教學 </tag>
             
@@ -1658,41 +1658,6 @@
     
     
     <entry>
-      <title>AI 與科技新聞摘要 - 2026/04/27</title>
-      <link href="/2026/04/27/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260427/"/>
-      <url>/2026/04/27/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260427/</url>
-      
-        <content type="html"><![CDATA[<p>1,000 份解僱通知。同一份公告裡寫著：AI 現在寫了 65% 的新 code。</p><p>Snap 在 4 月 15 日裁掉 16% 的員工。CEO Evan Spiegel 說這是「AI 帶來的新工作方式」，預計下半年省下超過 $5 億美元營運成本。股價？當天上漲。</p><p>這不是效率故事。這是一面鏡子——照出來的是整個軟體產業正在經歷的結構性位移。同一週，JetBrains 的萬人調查說 74% 開發者已經在用 AI coding 工具，Kiro CLI 推出 2.0 正式支援 headless 模式，而 Stanford 的年度報告寫著：AI agent 在真實電腦任務的成功率從 12% 跳到 66%。</p><p>每一條單獨看都是一則新聞。放在一起看，是一整個系統在加速重組。</p><hr><h2 id="Snap-裁員-1-000-人：AI-寫-65-的-code，人寫剩下的"><a href="#Snap-裁員-1-000-人：AI-寫-65-的-code，人寫剩下的" class="headerlink" title="Snap 裁員 1,000 人：AI 寫 65% 的 code，人寫剩下的"></a>Snap 裁員 1,000 人：AI 寫 65% 的 code，人寫剩下的</h2><p>4 月 15 日早上，大約 1,000 名 Snap 員工收到了解僱信。</p><p>Spiegel 的內部信很直白：AI 讓更小的團隊能做更多事。Snap 把更多「非核心」的 coding 工作丟給 AI agent，保留的人力集中在高判斷力的任務——架構決策、使用者體驗、系統設計。</p><p>65% 這個數字本身不是重點。重點是一家 $200 億市值的上市公司，對外公開說「AI 取代了我們一大塊工程產能」，而市場的反應是正面的。這跟兩年前的敘事完全不同——2024 年如果有公司說「AI 寫我們的 code」，分析師的第一反應是質疑品質。2026 年，分析師的反應是「你們 AI 化得還不夠快嗎？」</p><p>逆向問：如果 AI 寫了 65% 的 code 就能裁 16% 的人，那 AI 寫到 85% 的時候呢？數學不是線性的——65% 到 85% 裡面包含的是越來越高判斷力的任務。但壓力方向很清楚。</p><blockquote><p>原文來源：<a href="https://allwork.space/2026/04/snap-to-cut-1000-jobs-have-ai-take-on-65-of-coding/">Snap to Cut 1,000 Jobs, Have AI Take On 65% of Coding</a><br>原文來源：<a href="https://techcrunch.com/2026/04/15/snap-is-cutting-1000-jobs-16-of-its-workforce/">Snap is cutting 1,000 jobs, 16% of its workforce | TechCrunch</a></p></blockquote><hr><h2 id="JetBrains-調查：74-開發者已在用-AI-coding-工具"><a href="#JetBrains-調查：74-開發者已在用-AI-coding-工具" class="headerlink" title="JetBrains 調查：74% 開發者已在用 AI coding 工具"></a>JetBrains 調查：74% 開發者已在用 AI coding 工具</h2><p>JetBrains 在 2026 年 1 月跑了第二波 AI Pulse 調查，8 種語言、超過 10,000 名職業開發者。</p><p>核心數字：74% 的開發者已經在工作中使用 AI coding 工具。不是 ChatGPT 這種通用聊天機器人，是專門設計給開發者的——AI coding assistant、AI-native 編輯器、coding agent。</p><p>工具知名度排行：GitHub Copilot 76% 的開發者聽過，29% 在用。Claude Code 57% 聽過，18% 在用（比六個月前增加了 50%）。Google Antigravity 在 2025 年 11 月上線後，兩個月內衝到 6% 使用率。</p><p>這組數字讓人在意的不是誰領先——Copilot 先發優勢明擺著在那裡。在意的是增速。Claude Code 半年內使用率增加 50%，代表的是什麼？是 terminal-native 的開發者偏好正在從邊緣走向主流。六個月前，「在 terminal 裡用 AI 寫 code」還是少數人的玩法；現在快兩成開發者把它當日常工具。</p><p>如果 Snap 的裁員是供給面的訊號（公司端在導入 AI），JetBrains 的調查就是需求面的訊號（開發者端也在主動擁抱 AI）。供需同時加速，轉折點過了。</p><blockquote><p>原文來源：<a href="https://blog.jetbrains.com/research/2026/04/which-ai-coding-tools-do-developers-actually-use-at-work/">Which AI Coding Tools Do Developers Actually Use at Work? | JetBrains</a></p></blockquote><hr><h2 id="Kiro-CLI-2-0：headless-模式、Windows-支援、任務面板"><a href="#Kiro-CLI-2-0：headless-模式、Windows-支援、任務面板" class="headerlink" title="Kiro CLI 2.0：headless 模式、Windows 支援、任務面板"></a>Kiro CLI 2.0：headless 模式、Windows 支援、任務面板</h2><p>AWS 的 Kiro 團隊在 4 月 13 日推出 CLI 2.0，三個主要功能：headless 模式、Windows 原生支援、重新設計的 Terminal UI。</p><p>headless 模式讓 Kiro 可以跑在 CI&#x2F;CD pipeline 裡——用 <code>KIRO_API_KEY</code> 認證，加 <code>--no-interactive</code> 參數，Kiro 就會端到端執行你的 prompt，不需要人盯著。配合 <code>--trust-all-tools</code> 或 <code>--trust-tools</code> 可以預先授權工具權限。</p><p>這是什麼意思？AI coding agent 正在從「interactive 工具」走向「infrastructure 元件」。當你可以在 GitHub Actions 裡跑一個 Kiro headless 任務，它就不再是「輔助你寫 code 的工具」，它是「pipeline 裡的一個自動化節點」。跟 Claude Code 的 <code>--headless</code> 和 <code>--allowedTools</code> 是同一個方向。</p><p>Windows 支援是另一個值得注意的訊號。之前 Kiro CLI 只跑在 macOS 和 Linux 上，Windows 開發者——全球最大的開發者群體——被排除在外。現在 Windows 11 完整支援 Terminal UI、headless mode、MCP server、custom agent，等於 Kiro 的潛在用戶池瞬間翻倍。</p><p>怎樣做一定失敗？只支援一個平台、只支援 interactive 模式。Kiro 2.0 同時補了這兩個短板。</p><blockquote><p>原文來源：<a href="https://kiro.dev/blog/cli-2-0/">Kiro CLI 2.0: a new look and feel, headless CI&#x2F;CD pipelines, and Windows support</a></p></blockquote><hr><h2 id="Shield-AI-1-5B-Series-G：國防-AI-估值-12-7B"><a href="#Shield-AI-1-5B-Series-G：國防-AI-估值-12-7B" class="headerlink" title="Shield AI $1.5B Series G：國防 AI 估值 $12.7B"></a>Shield AI $1.5B Series G：國防 AI 估值 $12.7B</h2><p>Shield AI 拿了 $1.5B 的 Series G，整個資本包（含債務）是 $2.25B，估值 $12.7B——比一年前翻了 1.4 倍。</p><p>Shield AI 做的是 Hivemind 自主飛行平台，已經被美國空軍選為 Collaborative Combat Aircraft（CCA）計劃的技術提供商。白話翻譯：讓無人機自己飛、自己判斷、自己做戰術決策。</p><p>為什麼一個國防 AI 公司的估值在一年內翻倍？因為全球軍事預算正在系統性地往 AI 移動。不只是美國——歐洲、亞太、中東都在追。AI 國防的投資節奏跟 AI 商用軟體不同：一旦簽了合約，通常是 5-10 年的承諾，不會因為一季財報不好就砍預算。</p><p>風險在哪裡？自主武器系統的監管壓力才剛開始。歐盟 AI Act 的高風險系統分類裡，軍事應用是最敏感的區塊之一。Shield AI 的估值假設是「市場持續擴張」，但如果國際監管收緊，擴張的速度可能比預期慢。</p><p>$12.7B 估值的底層假設是：各國政府會持續加碼 AI 軍事預算，而且 Shield AI 能守住技術領先。這兩個假設在今天都成立。問題是五年後呢？</p><blockquote><p>原文來源：<a href="https://asanify.com/blog/news/ai-defense-funding-april-26-2026/">AI News Digest, April 26, 2026: Defense AI Hits $12.7B as Funding Gravity Shifts</a></p></blockquote><hr><h2 id="Stanford-AI-Index：AI-Agent-成功率從-12-跳到-66"><a href="#Stanford-AI-Index：AI-Agent-成功率從-12-跳到-66" class="headerlink" title="Stanford AI Index：AI Agent 成功率從 12% 跳到 66%"></a>Stanford AI Index：AI Agent 成功率從 12% 跳到 66%</h2><p>Stanford 的 2026 AI Index 報告出了。其中一個數據特別值得拿出來看：AI agent 在真實電腦任務上的成功率，一年之內從 12% 跳到 66%。</p><p>「真實電腦任務」是什麼意思？是讓 AI agent 操作軟體、瀏覽網頁、管理檔案——不是 benchmark 上的受控測試，是實際的日常電腦操作。一年前只有 12% 能完成，現在接近七成。</p><p>這個增速如果持續，12 個月後的數字會是什麼？不要做精確預測——精確預測本身就是一種傲慢。但方向很清楚：AI agent 離「完成人類日常電腦操作」這件事，已經從「不太行」走到「大部分時候可以」。</p><p>把這個數字跟 Snap 的 65% AI coding、JetBrains 的 74% 採用率放在一起看：供給端（AI 能力）和需求端（人類採用意願）同時在加速。去年的 AI agent 還在「展示可能性」的階段，今年已經進入「處理實際工作流」的階段。</p><p>這不是漸進式改良。從 12% 到 66% 是相變——物質的狀態改變了，不是溫度升高了一點。</p><blockquote><p>原文來源：<a href="https://aiagentssimplified.substack.com/p/2026s-q1-ai-updates">2026’s Q1 AI Updates - AI Agents Simplified</a></p></blockquote><hr><h2 id="GitHub-啟動-Token-格式遷移：4-27-今天開始"><a href="#GitHub-啟動-Token-格式遷移：4-27-今天開始" class="headerlink" title="GitHub 啟動 Token 格式遷移：4&#x2F;27 今天開始"></a>GitHub 啟動 Token 格式遷移：4&#x2F;27 今天開始</h2><p>從今天（4 月 27 日）開始，GitHub 開始分階段更新 GitHub App installation token 的格式。新格式更長、無狀態、效能更好。</p><p>影響範圍：GitHub Actions 的 <code>GITHUB_TOKEN</code>、Dependabot、Slack、Teams 等一方整合的 token 都在這波。完整的第三方 App installation token 遷移預計 5 月中到 6 月底完成。</p><p>如果你的 CI&#x2F;CD pipeline 或自動化腳本有硬編碼 token 長度檢查（例如「token 必須剛好 40 個字元」），今天開始可能會壞掉。GitHub 說大部分工作流不受影響，但如果你遇到問題可以暫時 opt-out。</p><p>這是一個「小概率但高影響」的變更。99% 的人不會受影響，但那 1% 如果剛好是你，你的整條 CI&#x2F;CD 管線可能突然斷掉，而且錯誤訊息可能不會直接告訴你是 token 格式的問題。</p><blockquote><p>原文來源：<a href="https://github.blog/changelog/2026-04-24-notice-about-upcoming-new-format-for-github-app-installation-tokens/">Notice about upcoming new format for GitHub App installation tokens - GitHub Changelog</a></p></blockquote><hr><p>這六條新聞的底層結構有一個共同的特徵：<strong>不可逆性</strong>。</p><p>Snap 不會把裁掉的 1,000 人再請回來。74% 的開發者不會回頭用純手寫 code。AI agent 的成功率不會從 66% 掉回 12%。GitHub 的 token 格式不會改回去。</p><p>可逆的變化是波動。不可逆的變化是趨勢。波動讓你興奮或焦慮，趨勢讓你調整位置。</p><p>現在要問的問題不是「AI 會不會改變軟體工程」——那個問題已經被回答了。現在的問題是「你在這個結構性位移裡站在哪裡」。</p>]]></content>
-      
-      
-      <categories>
-          
-          <category> AI與科技新聞 </category>
-          
-      </categories>
-      
-      
-        <tags>
-            
-            <tag> GitHub </tag>
-            
-            <tag> Stanford AI Index </tag>
-            
-            <tag> Snap </tag>
-            
-            <tag> JetBrains </tag>
-            
-            <tag> Kiro CLI </tag>
-            
-            <tag> Shield AI </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    
-    
-    <entry>
       <title>Claude Design 完整教學 - 用對話做設計從 Prototype 到 Claude Code 交接</title>
       <link href="/2026/04/27/Claude-Design-%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8-%E7%94%A8%E5%B0%8D%E8%A9%B1%E5%81%9A%E8%A8%AD%E8%A8%88%E5%BE%9E-Prototype-%E5%88%B0-Claude-Code-%E4%BA%A4%E6%8E%A5/"/>
       <url>/2026/04/27/Claude-Design-%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8-%E7%94%A8%E5%B0%8D%E8%A9%B1%E5%81%9A%E8%A8%AD%E8%A8%88%E5%BE%9E-Prototype-%E5%88%B0-Claude-Code-%E4%BA%A4%E6%8E%A5/</url>
@@ -1742,15 +1707,50 @@
       
         <tags>
             
-            <tag> MCP </tag>
-            
             <tag> 資安 </tag>
+            
+            <tag> MCP </tag>
             
             <tag> AI Coding </tag>
             
             <tag> Sonatype Guide </tag>
             
             <tag> 依賴管理 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>AI 與科技新聞摘要 - 2026/04/27</title>
+      <link href="/2026/04/27/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260427/"/>
+      <url>/2026/04/27/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260427/</url>
+      
+        <content type="html"><![CDATA[<p>1,000 份解僱通知。同一份公告裡寫著：AI 現在寫了 65% 的新 code。</p><p>Snap 在 4 月 15 日裁掉 16% 的員工。CEO Evan Spiegel 說這是「AI 帶來的新工作方式」，預計下半年省下超過 $5 億美元營運成本。股價？當天上漲。</p><p>這不是效率故事。這是一面鏡子——照出來的是整個軟體產業正在經歷的結構性位移。同一週，JetBrains 的萬人調查說 74% 開發者已經在用 AI coding 工具，Kiro CLI 推出 2.0 正式支援 headless 模式，而 Stanford 的年度報告寫著：AI agent 在真實電腦任務的成功率從 12% 跳到 66%。</p><p>每一條單獨看都是一則新聞。放在一起看，是一整個系統在加速重組。</p><hr><h2 id="Snap-裁員-1-000-人：AI-寫-65-的-code，人寫剩下的"><a href="#Snap-裁員-1-000-人：AI-寫-65-的-code，人寫剩下的" class="headerlink" title="Snap 裁員 1,000 人：AI 寫 65% 的 code，人寫剩下的"></a>Snap 裁員 1,000 人：AI 寫 65% 的 code，人寫剩下的</h2><p>4 月 15 日早上，大約 1,000 名 Snap 員工收到了解僱信。</p><p>Spiegel 的內部信很直白：AI 讓更小的團隊能做更多事。Snap 把更多「非核心」的 coding 工作丟給 AI agent，保留的人力集中在高判斷力的任務——架構決策、使用者體驗、系統設計。</p><p>65% 這個數字本身不是重點。重點是一家 $200 億市值的上市公司，對外公開說「AI 取代了我們一大塊工程產能」，而市場的反應是正面的。這跟兩年前的敘事完全不同——2024 年如果有公司說「AI 寫我們的 code」，分析師的第一反應是質疑品質。2026 年，分析師的反應是「你們 AI 化得還不夠快嗎？」</p><p>逆向問：如果 AI 寫了 65% 的 code 就能裁 16% 的人，那 AI 寫到 85% 的時候呢？數學不是線性的——65% 到 85% 裡面包含的是越來越高判斷力的任務。但壓力方向很清楚。</p><blockquote><p>原文來源：<a href="https://allwork.space/2026/04/snap-to-cut-1000-jobs-have-ai-take-on-65-of-coding/">Snap to Cut 1,000 Jobs, Have AI Take On 65% of Coding</a><br>原文來源：<a href="https://techcrunch.com/2026/04/15/snap-is-cutting-1000-jobs-16-of-its-workforce/">Snap is cutting 1,000 jobs, 16% of its workforce | TechCrunch</a></p></blockquote><hr><h2 id="JetBrains-調查：74-開發者已在用-AI-coding-工具"><a href="#JetBrains-調查：74-開發者已在用-AI-coding-工具" class="headerlink" title="JetBrains 調查：74% 開發者已在用 AI coding 工具"></a>JetBrains 調查：74% 開發者已在用 AI coding 工具</h2><p>JetBrains 在 2026 年 1 月跑了第二波 AI Pulse 調查，8 種語言、超過 10,000 名職業開發者。</p><p>核心數字：74% 的開發者已經在工作中使用 AI coding 工具。不是 ChatGPT 這種通用聊天機器人，是專門設計給開發者的——AI coding assistant、AI-native 編輯器、coding agent。</p><p>工具知名度排行：GitHub Copilot 76% 的開發者聽過，29% 在用。Claude Code 57% 聽過，18% 在用（比六個月前增加了 50%）。Google Antigravity 在 2025 年 11 月上線後，兩個月內衝到 6% 使用率。</p><p>這組數字讓人在意的不是誰領先——Copilot 先發優勢明擺著在那裡。在意的是增速。Claude Code 半年內使用率增加 50%，代表的是什麼？是 terminal-native 的開發者偏好正在從邊緣走向主流。六個月前，「在 terminal 裡用 AI 寫 code」還是少數人的玩法；現在快兩成開發者把它當日常工具。</p><p>如果 Snap 的裁員是供給面的訊號（公司端在導入 AI），JetBrains 的調查就是需求面的訊號（開發者端也在主動擁抱 AI）。供需同時加速，轉折點過了。</p><blockquote><p>原文來源：<a href="https://blog.jetbrains.com/research/2026/04/which-ai-coding-tools-do-developers-actually-use-at-work/">Which AI Coding Tools Do Developers Actually Use at Work? | JetBrains</a></p></blockquote><hr><h2 id="Kiro-CLI-2-0：headless-模式、Windows-支援、任務面板"><a href="#Kiro-CLI-2-0：headless-模式、Windows-支援、任務面板" class="headerlink" title="Kiro CLI 2.0：headless 模式、Windows 支援、任務面板"></a>Kiro CLI 2.0：headless 模式、Windows 支援、任務面板</h2><p>AWS 的 Kiro 團隊在 4 月 13 日推出 CLI 2.0，三個主要功能：headless 模式、Windows 原生支援、重新設計的 Terminal UI。</p><p>headless 模式讓 Kiro 可以跑在 CI&#x2F;CD pipeline 裡——用 <code>KIRO_API_KEY</code> 認證，加 <code>--no-interactive</code> 參數，Kiro 就會端到端執行你的 prompt，不需要人盯著。配合 <code>--trust-all-tools</code> 或 <code>--trust-tools</code> 可以預先授權工具權限。</p><p>這是什麼意思？AI coding agent 正在從「interactive 工具」走向「infrastructure 元件」。當你可以在 GitHub Actions 裡跑一個 Kiro headless 任務，它就不再是「輔助你寫 code 的工具」，它是「pipeline 裡的一個自動化節點」。跟 Claude Code 的 <code>--headless</code> 和 <code>--allowedTools</code> 是同一個方向。</p><p>Windows 支援是另一個值得注意的訊號。之前 Kiro CLI 只跑在 macOS 和 Linux 上，Windows 開發者——全球最大的開發者群體——被排除在外。現在 Windows 11 完整支援 Terminal UI、headless mode、MCP server、custom agent，等於 Kiro 的潛在用戶池瞬間翻倍。</p><p>怎樣做一定失敗？只支援一個平台、只支援 interactive 模式。Kiro 2.0 同時補了這兩個短板。</p><blockquote><p>原文來源：<a href="https://kiro.dev/blog/cli-2-0/">Kiro CLI 2.0: a new look and feel, headless CI&#x2F;CD pipelines, and Windows support</a></p></blockquote><hr><h2 id="Shield-AI-1-5B-Series-G：國防-AI-估值-12-7B"><a href="#Shield-AI-1-5B-Series-G：國防-AI-估值-12-7B" class="headerlink" title="Shield AI $1.5B Series G：國防 AI 估值 $12.7B"></a>Shield AI $1.5B Series G：國防 AI 估值 $12.7B</h2><p>Shield AI 拿了 $1.5B 的 Series G，整個資本包（含債務）是 $2.25B，估值 $12.7B——比一年前翻了 1.4 倍。</p><p>Shield AI 做的是 Hivemind 自主飛行平台，已經被美國空軍選為 Collaborative Combat Aircraft（CCA）計劃的技術提供商。白話翻譯：讓無人機自己飛、自己判斷、自己做戰術決策。</p><p>為什麼一個國防 AI 公司的估值在一年內翻倍？因為全球軍事預算正在系統性地往 AI 移動。不只是美國——歐洲、亞太、中東都在追。AI 國防的投資節奏跟 AI 商用軟體不同：一旦簽了合約，通常是 5-10 年的承諾，不會因為一季財報不好就砍預算。</p><p>風險在哪裡？自主武器系統的監管壓力才剛開始。歐盟 AI Act 的高風險系統分類裡，軍事應用是最敏感的區塊之一。Shield AI 的估值假設是「市場持續擴張」，但如果國際監管收緊，擴張的速度可能比預期慢。</p><p>$12.7B 估值的底層假設是：各國政府會持續加碼 AI 軍事預算，而且 Shield AI 能守住技術領先。這兩個假設在今天都成立。問題是五年後呢？</p><blockquote><p>原文來源：<a href="https://asanify.com/blog/news/ai-defense-funding-april-26-2026/">AI News Digest, April 26, 2026: Defense AI Hits $12.7B as Funding Gravity Shifts</a></p></blockquote><hr><h2 id="Stanford-AI-Index：AI-Agent-成功率從-12-跳到-66"><a href="#Stanford-AI-Index：AI-Agent-成功率從-12-跳到-66" class="headerlink" title="Stanford AI Index：AI Agent 成功率從 12% 跳到 66%"></a>Stanford AI Index：AI Agent 成功率從 12% 跳到 66%</h2><p>Stanford 的 2026 AI Index 報告出了。其中一個數據特別值得拿出來看：AI agent 在真實電腦任務上的成功率，一年之內從 12% 跳到 66%。</p><p>「真實電腦任務」是什麼意思？是讓 AI agent 操作軟體、瀏覽網頁、管理檔案——不是 benchmark 上的受控測試，是實際的日常電腦操作。一年前只有 12% 能完成，現在接近七成。</p><p>這個增速如果持續，12 個月後的數字會是什麼？不要做精確預測——精確預測本身就是一種傲慢。但方向很清楚：AI agent 離「完成人類日常電腦操作」這件事，已經從「不太行」走到「大部分時候可以」。</p><p>把這個數字跟 Snap 的 65% AI coding、JetBrains 的 74% 採用率放在一起看：供給端（AI 能力）和需求端（人類採用意願）同時在加速。去年的 AI agent 還在「展示可能性」的階段，今年已經進入「處理實際工作流」的階段。</p><p>這不是漸進式改良。從 12% 到 66% 是相變——物質的狀態改變了，不是溫度升高了一點。</p><blockquote><p>原文來源：<a href="https://aiagentssimplified.substack.com/p/2026s-q1-ai-updates">2026’s Q1 AI Updates - AI Agents Simplified</a></p></blockquote><hr><h2 id="GitHub-啟動-Token-格式遷移：4-27-今天開始"><a href="#GitHub-啟動-Token-格式遷移：4-27-今天開始" class="headerlink" title="GitHub 啟動 Token 格式遷移：4&#x2F;27 今天開始"></a>GitHub 啟動 Token 格式遷移：4&#x2F;27 今天開始</h2><p>從今天（4 月 27 日）開始，GitHub 開始分階段更新 GitHub App installation token 的格式。新格式更長、無狀態、效能更好。</p><p>影響範圍：GitHub Actions 的 <code>GITHUB_TOKEN</code>、Dependabot、Slack、Teams 等一方整合的 token 都在這波。完整的第三方 App installation token 遷移預計 5 月中到 6 月底完成。</p><p>如果你的 CI&#x2F;CD pipeline 或自動化腳本有硬編碼 token 長度檢查（例如「token 必須剛好 40 個字元」），今天開始可能會壞掉。GitHub 說大部分工作流不受影響，但如果你遇到問題可以暫時 opt-out。</p><p>這是一個「小概率但高影響」的變更。99% 的人不會受影響，但那 1% 如果剛好是你，你的整條 CI&#x2F;CD 管線可能突然斷掉，而且錯誤訊息可能不會直接告訴你是 token 格式的問題。</p><blockquote><p>原文來源：<a href="https://github.blog/changelog/2026-04-24-notice-about-upcoming-new-format-for-github-app-installation-tokens/">Notice about upcoming new format for GitHub App installation tokens - GitHub Changelog</a></p></blockquote><hr><p>這六條新聞的底層結構有一個共同的特徵：<strong>不可逆性</strong>。</p><p>Snap 不會把裁掉的 1,000 人再請回來。74% 的開發者不會回頭用純手寫 code。AI agent 的成功率不會從 66% 掉回 12%。GitHub 的 token 格式不會改回去。</p><p>可逆的變化是波動。不可逆的變化是趨勢。波動讓你興奮或焦慮，趨勢讓你調整位置。</p><p>現在要問的問題不是「AI 會不會改變軟體工程」——那個問題已經被回答了。現在的問題是「你在這個結構性位移裡站在哪裡」。</p>]]></content>
+      
+      
+      <categories>
+          
+          <category> AI與科技新聞 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> GitHub </tag>
+            
+            <tag> Stanford AI Index </tag>
+            
+            <tag> JetBrains </tag>
+            
+            <tag> Snap </tag>
+            
+            <tag> Kiro CLI </tag>
+            
+            <tag> Shield AI </tag>
             
         </tags>
       
@@ -1777,9 +1777,9 @@
             
             <tag> 資安 </tag>
             
-            <tag> Google </tag>
-            
             <tag> Anthropic </tag>
+            
+            <tag> Google </tag>
             
             <tag> Claude Mythos </tag>
             
@@ -1812,11 +1812,11 @@
             
             <tag> Claude Code </tag>
             
-            <tag> Hooks </tag>
-            
             <tag> 自動化 </tag>
             
             <tag> 教學 </tag>
+            
+            <tag> Hooks </tag>
             
         </tags>
       
@@ -2006,9 +2006,9 @@
       
         <tags>
             
-            <tag> MCP </tag>
-            
             <tag> OpenAI </tag>
+            
+            <tag> MCP </tag>
             
             <tag> GPT-5.5 </tag>
             
@@ -2206,17 +2206,17 @@
       
         <tags>
             
+            <tag> AI Agent </tag>
+            
             <tag> Anthropic </tag>
             
             <tag> Claude Code </tag>
             
-            <tag> AI Agent </tag>
-            
             <tag> Kiro </tag>
             
-            <tag> GitHub Copilot </tag>
-            
             <tag> Stanford AI Index </tag>
+            
+            <tag> GitHub Copilot </tag>
             
         </tags>
       
@@ -2241,9 +2241,9 @@
       
         <tags>
             
-            <tag> Claude Code </tag>
-            
             <tag> AI Agent </tag>
+            
+            <tag> Claude Code </tag>
             
             <tag> Prompt Engineering </tag>
             
@@ -2305,11 +2305,11 @@
       
         <tags>
             
-            <tag> MCP </tag>
+            <tag> 資安 </tag>
             
             <tag> OpenAI </tag>
             
-            <tag> 資安 </tag>
+            <tag> MCP </tag>
             
             <tag> Claude Code </tag>
             
@@ -2439,50 +2439,17 @@
       
         <tags>
             
-            <tag> MCP </tag>
+            <tag> 資安 </tag>
             
             <tag> OpenAI </tag>
             
-            <tag> 資安 </tag>
+            <tag> MCP </tag>
             
             <tag> Anthropic </tag>
             
             <tag> Claude Code </tag>
             
             <tag> Windsurf </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    
-    
-    <entry>
-      <title>Buddi — 住在 MacBook 瀏海裡的 Claude Code 寵物伴侶</title>
-      <link href="/2026/04/20/Buddi-%E4%BD%8F%E5%9C%A8-MacBook-%E7%80%8F%E6%B5%B7%E8%A3%A1%E7%9A%84-Claude-Code-%E5%AF%B5%E7%89%A9%E4%BC%B4%E4%BE%B6/"/>
-      <url>/2026/04/20/Buddi-%E4%BD%8F%E5%9C%A8-MacBook-%E7%80%8F%E6%B5%B7%E8%A3%A1%E7%9A%84-Claude-Code-%E5%AF%B5%E7%89%A9%E4%BC%B4%E4%BE%B6/</url>
-      
-        <content type="html"><![CDATA[<p>Claude Code 的 <code>/buddy</code> 被官方刪掉那一週，GitHub 上有一則 issue 滾到 #45596——<strong>社群請願把寵物帶回來</strong>。三天後 <code>talkvalue</code> 這個人丟出 Swift 寫的 <code>Buddi</code>，比官方版還多了權限审批、session 監控、API 配額追蹤，順便把它塞進 MacBook 瀏海那塊一般人覺得「設計缺陷」的黑色區域。</p><p>反直覺的地方不是寵物被救回來，是<strong>瀏海原來可以當控制台</strong>。</p><p>那塊 130 像素高、橫過螢幕正中央的黑色區域，自從 2021 年 iPhone 把瀏海搬到 Mac 之後，就是工業設計上的爭論焦點。大部分 app 把它當成要躲開的障礙物——選單列往兩邊擠、全螢幕時硬切掉那段。Buddi 走相反方向：既然這塊黑色永遠都在，乾脆拿它做 Claude Code 的儀表板。ASCII 寵物在裡面走來走去，狀態切換就切換動畫，Claude 要權限就從瀏海裡展開 Allow&#x2F;Deny 按鈕。</p><p>先把角色定位講清楚：它不是 Anthropic 出的官方工具。Anthropic 把 <code>/buddy</code> 當成愚人節彩蛋做了一版，社群上頭之後被砍掉，然後就有人自己用 Swift 把它放大重寫。Buddi 目前還在 v0.1.0，macOS 15+ 專屬，GPLv3 授權。</p><h2 id="它到底在做什麼"><a href="#它到底在做什麼" class="headerlink" title="它到底在做什麼"></a>它到底在做什麼</h2><p>ASCII 寵物看起來像玩具，但資料流其實很嚴肅。Claude Code 的 hooks 系統每觸發一個事件——<code>UserPromptSubmit</code>、<code>PreToolUse</code>、<code>PostToolUse</code>、<code>PermissionRequest</code>、<code>SessionStart</code> 這些——都會執行一個 Python hook 腳本，把事件資料透過 Unix Socket（<code>/tmp/buddi.sock</code>）傳給 Buddi app，Buddi 再用 SwiftUI 更新 UI。</p><figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">Claude Code</span><br><span class="line">    │  Hook Events (UserPromptSubmit / PreToolUse / ...)</span><br><span class="line">    ▼</span><br><span class="line">buddi-hook.py     ← Python 腳本</span><br><span class="line">    │  JSON payload</span><br><span class="line">    ▼</span><br><span class="line">Unix Socket       ← /tmp/buddi.sock，permission 0600</span><br><span class="line">    │</span><br><span class="line">    ▼</span><br><span class="line">HookSocketServer  ← Swift actor，常駐 app 內</span><br><span class="line">    │</span><br><span class="line">    ▼</span><br><span class="line">SessionStore      ← 中央狀態機（Swift Actor，thread-safe）</span><br><span class="line">    │</span><br><span class="line">    ▼</span><br><span class="line">SwiftUI Notch UI  ← 你看到的 ASCII 寵物與按鈕</span><br></pre></td></tr></table></figure><p>比較聰明的設計在權限审批這段。一般 hook 跑完就結束，但 Buddi 的權限 hook 會把 socket 連線保持住，等使用者在 UI 上點 Allow 或 Deny，結果回傳給 hook，hook 再 stdout 給 Claude Code——整段流程你沒離開 IDE 也沒切到 terminal。</p><p>類比一下：這很像電話總機。Claude Code 是打電話進來的客戶，hook 是總機小姐，Buddi 是董事長。總機不會直接掛客戶電話，而是 hold 住線路等董事長決定，董事長回答後總機再轉回去。Unix Socket 就是那條不會掉的電話線。</p><h2 id="安裝走一次"><a href="#安裝走一次" class="headerlink" title="安裝走一次"></a>安裝走一次</h2><p>Homebrew 最快：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">brew install --cask talkvalue/buddi/buddi</span><br></pre></td></tr></table></figure><p>不用 Homebrew 就去 <a href="https://github.com/talkvalue/Buddi/releases/latest">Releases</a> 下載 DMG。</p><p>首次啟動會跑一段 onboarding，授權輔助使用（偵測視窗焦點）和通知（session 狀態提醒），選一個音樂控制器（Apple Music &#x2F; Spotify &#x2F; YouTube Music），完成後瀏海就會長出一隻 ASCII 生物。</p><p>這段過程它會自動幫你安裝 Claude Code 的 hooks。驗證兩條指令：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">ls</span> -la ~/.claude/hooks/buddi-hook.py</span><br><span class="line">grep -c <span class="string">&quot;buddi-hook&quot;</span> ~/.claude/settings.json</span><br></pre></td></tr></table></figure><p>兩個都有輸出就搞定了。如果你已經有其他 hooks，Buddi 是 append 不是 overwrite——不會覆蓋你的設定，但會在既有 hooks 後面追加。這個行為值得注意，因為如果你手動維護過 <code>settings.json</code>，要去看一下它加了什麼進去。</p><h2 id="瀏海能幹嘛"><a href="#瀏海能幹嘛" class="headerlink" title="瀏海能幹嘛"></a>瀏海能幹嘛</h2><p>用起來最有感的是<strong>權限审批不用離開 IDE</strong>。以前 Claude Code 要跑 bash 指令，你得切到 terminal 按 y；現在瀏海直接展開 Allow &#x2F; Deny，點一下就好。工作流沒中斷是關鍵——每多一次 context switch，你腦袋的 L1 cache 就被 evict 一輪。</p><p>寫 code 時瞄一眼瀏海看 Claude 狀態是第二個實用點。Buddy 有六個狀態動畫：</p><table><thead><tr><th>狀態</th><th>情境</th><th>動畫效果</th></tr></thead><tbody><tr><td>idle</td><td>閒置</td><td>偶爾眨眼</td></tr><tr><td>working</td><td>Claude 處理中</td><td>游標閃爍 &#96;</td></tr><tr><td>reading</td><td>讀取檔案</td><td>眼睛左右移動</td></tr><tr><td>waiting</td><td>等待权限审批</td><td>漸進圓點 <code>...</code></td></tr><tr><td>compacting</td><td>Context 壓縮中</td><td>波浪 <code>~</code> <code>~~</code></td></tr><tr><td>sleeping</td><td>睡眠狀態</td><td><code>zzz</code> 閉眼</td></tr></tbody></table><p>這個設計有點像老式機械停車場的標示燈。你不用知道停車場裡發生什麼事，看燈號就知道「有位」「沒位」「快滿」。同樣的，你不用切到 terminal 看日誌，看瀏海的動畫就知道 Claude 現在在幹嘛。</p><p>同時跑多個 Claude Code session 的人會喜歡 <code>ClaudeSessionMonitor</code>。它從 <code>~/.claude/projects/*/conversations/*.jsonl</code> 解析每個 session 的完整聊天歷史、工具呼叫狀態、當前階段，然後在同一個面板裡排序——processing 和 approval 排最上面，idle 排最下面。需要你注意的永遠浮到頂端。</p><h2 id="物種系統其實藏著確定性雜湊"><a href="#物種系統其實藏著確定性雜湊" class="headerlink" title="物種系統其實藏著確定性雜湊"></a>物種系統其實藏著確定性雜湊</h2><p>跟原版 <code>/buddy</code> 一樣，Buddi 讀 <code>~/.claude.json</code> 裡的 <code>userId</code>，用 Wyhash + Mulberry32 PRNG roll 出你的 buddy——<strong>同一個帳號永遠得到同一隻</strong>。18 種物種、5 個稀有度，機率是這樣：</p><table><thead><tr><th>稀有度</th><th>機率權重</th><th>屬性下限</th></tr></thead><tbody><tr><td>Common ★</td><td>60</td><td>5</td></tr><tr><td>Uncommon ★★</td><td>25</td><td>15</td></tr><tr><td>Rare ★★★</td><td>10</td><td>25</td></tr><tr><td>Epic ★★★★</td><td>4</td><td>35</td></tr><tr><td>Legendary ★★★★★</td><td>1</td><td>50</td></tr></tbody></table><p>原版 <code>/buddy</code> 想刷 Legendary 要繞開 accountUuid 優先權、改環境變數、重設 userId，社群甚至寫了暴力搜尋 salt 的工具。Buddi 把這套全部省掉——直接在 Settings 裡手動覆寫 species、eye、hat、rarity 就好，不動 userId，不破壞原始 roll 結果。</p><p>這個設計細節很 Paul Graham 風格：原版把 <code>userId</code> 當成 roll 的隨機源是為了「每個人有自己獨一無二的寵物」，聽起來很浪漫。但實際結果是人人都想要 Legendary Shiny，所以寫了一堆繞圈子的工具。Buddi 的解法是<strong>承認需求本身</strong>——你就是想要自己挑——然後提供一個不破壞系統的出口。</p><h2 id="API-用量追蹤這塊有個條件"><a href="#API-用量追蹤這塊有個條件" class="headerlink" title="API 用量追蹤這塊有個條件"></a>API 用量追蹤這塊有個條件</h2><p><code>UsageService</code> 用 Anthropic OAuth API 輪詢配額，顯示 5 小時和 7 天的使用率，輪詢間隔 5 分鐘，遇到 rate limit 指數退避到 30 分鐘。本地快取在 <code>~/Library/Application Support/Buddi/usage-cache.json</code>，token 從 macOS Keychain 讀。</p><p>但這個功能<strong>需要 OAuth 登入</strong>。如果你用 API key 而不是 OAuth 登入 Claude Code，這段直接不會生效——因為 <code>https://api.anthropic.com/api/oauth/usage</code> 這個 endpoint 只吃 OAuth token。這是個容易踩的坑：你看不到配額數字的時候，先檢查自己是哪種登入方式，不是 Buddi 壞了。</p><h2 id="背後的設計選擇"><a href="#背後的設計選擇" class="headerlink" title="背後的設計選擇"></a>背後的設計選擇</h2><p>Buddi 不是從零開始寫的。它組合了兩個開源專案：</p><ul><li><a href="https://github.com/TheBoredTeam/boring.notch"><strong>boring.notch</strong></a> 提供 notch UI 框架（音樂控制、行事曆、電池、音量 HUD、檔案暫存架）</li><li><a href="https://github.com/farouqaldori/claude-island"><strong>Claude Island</strong></a> 提供 Claude Code session 監控和 buddy 角色系統</li></ul><p>這個組合方式有意思。如果你看過 SICP，會覺得這很像 Scheme 的 composition——兩個獨立的抽象用簡單的介面接起來，變出一個新東西。boring.notch 負責「怎麼把東西顯示在瀏海上」，Claude Island 負責「Claude Code 在幹嘛」，Buddi 把前者當畫布、後者當顏料，不自己重造輪子。</p><p>程式碼核心是 4 個 Singleton：</p><ul><li><code>BuddyManager.shared</code> — buddy 身份與動畫</li><li><code>HookSocketServer.shared</code> — Unix Socket 伺服器</li><li><code>SessionStore.shared</code> — 狀態中心，用 Swift Actor 保證 thread-safe</li><li><code>UsageService.shared</code> — 用量追蹤</li></ul><p>Swift Actor 是這段程式碼的點睛之筆。多個 hook event 可能同時進來，多個 SwiftUI view 可能同時讀狀態，用 Actor 包起來就不用手寫 lock。寫 Objective-C 的人看到這個會嫉妒。</p><h2 id="幾個要留意的限制"><a href="#幾個要留意的限制" class="headerlink" title="幾個要留意的限制"></a>幾個要留意的限制</h2><p>專案才 2026 年 4 月 8 日建立，目前只有 v0.1.0 一個 release。穩定性還沒有大樣本驗證，功能完整但不要在關鍵開發日程裡才第一次裝它。</p><p>macOS 15 Sequoia 以上才能用。Windows 和 Linux 使用者暫時沒戲——畢竟 Windows 筆電沒瀏海這個概念。</p><p>Socket 路徑硬編碼在 <code>/tmp/buddi.sock</code>，權限 0600，跟其他類似工具不會衝突但也沒辦法改。這個設計在單人 Mac 沒問題，多使用者系統（理論上 macOS 也支援）要小心同名衝突。</p><p>cmux 使用者要在 cmux 設定中打開 “Automation mode”，不然 Tmux&#x2F;cmux 按鍵模擬的權限审批會失效。這個設定跟 Buddi 沒關係，是 cmux 自己的 autopilot 開關。</p><p>GPLv3 授權。你可以 fork 改 code，但改完分發出去必須以相同授權公開原始碼。商用團隊要注意這條。</p><h2 id="這個專案真正有趣的地方"><a href="#這個專案真正有趣的地方" class="headerlink" title="這個專案真正有趣的地方"></a>這個專案真正有趣的地方</h2><p>回到開頭那個反直覺——<strong>瀏海可以當控制台</strong>。</p><p>Buddi 背後的命題其實不是「給 Claude Code 加個寵物」，是「<strong>工具應該塞進使用者本來就盯著的地方，而不是讓使用者切換到工具的地方</strong>」。寫 code 的時候你本來就盯著 IDE 和螢幕正中央，瀏海就在你的視野正中心偏上，不用轉頭不用開新視窗。這比把功能塞進 menu bar icon、dock badge、或彈出式通知都更符合你的實際視線。</p><p>這件事真正的問題其實不是瀏海該不該用，是<strong>你願意讓多少「環境細節」被你的 AI 工具用來溝通</strong>。過去十年的開發工具一直在把訊號往外推——桌面通知、Dock 跳動、menu bar 閃爍、聲音提示——但都是「中斷你」的模式。Buddi 試的是另一條路：<strong>把資訊融進你本來就不會看的地方</strong>，有狀態變化時才抓你眼角餘光。</p><p>背後就兩條線——工具該在你視線裡當背景常駐，還是在你注意力外當通知彈出？選前者，你就會開始研究瀏海能做什麼、menu bar 能做什麼、狀態列能做什麼。選後者，你會繼續被 desktop notification 轟炸。Buddi 選了前者，而且做得不只是裝飾。</p><p>如果你用 Claude Code 又剛好有一台 MacBook，花 5 分鐘裝它跑一下。你會發現<strong>瀏海不是設計缺陷，是一塊沒人認真用的螢幕不動產</strong>。</p><hr><h2 id="相關連結"><a href="#相關連結" class="headerlink" title="相關連結"></a>相關連結</h2><ul><li><a href="https://github.com/talkvalue/Buddi">Buddi GitHub Repo</a></li><li><a href="https://github.com/TheBoredTeam/boring.notch">boring.notch — 原始 notch UI 框架</a></li><li><a href="https://github.com/farouqaldori/claude-island">Claude Island — Claude Code session manager</a></li><li><a href="https://docs.anthropic.com/en/docs/claude-code/hooks">Claude Code Hooks 文件</a></li><li><a href="https://github.com/anthropics/claude-code/issues/45596">Issue #45596 — Bring Back Buddy 社群請願</a></li></ul>]]></content>
-      
-      
-      <categories>
-          
-          <category> Claude Code </category>
-          
-      </categories>
-      
-      
-        <tags>
-            
-            <tag> Claude Code </tag>
-            
-            <tag> macOS </tag>
-            
-            <tag> Hooks </tag>
-            
-            <tag> Buddi </tag>
-            
-            <tag> notch </tag>
             
         </tags>
       
@@ -2509,11 +2476,44 @@
             
             <tag> Claude Code </tag>
             
-            <tag> Hooks </tag>
-            
             <tag> 教學 </tag>
             
+            <tag> Hooks </tag>
+            
             <tag> Monitor Tool </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>Buddi — 住在 MacBook 瀏海裡的 Claude Code 寵物伴侶</title>
+      <link href="/2026/04/20/Buddi-%E4%BD%8F%E5%9C%A8-MacBook-%E7%80%8F%E6%B5%B7%E8%A3%A1%E7%9A%84-Claude-Code-%E5%AF%B5%E7%89%A9%E4%BC%B4%E4%BE%B6/"/>
+      <url>/2026/04/20/Buddi-%E4%BD%8F%E5%9C%A8-MacBook-%E7%80%8F%E6%B5%B7%E8%A3%A1%E7%9A%84-Claude-Code-%E5%AF%B5%E7%89%A9%E4%BC%B4%E4%BE%B6/</url>
+      
+        <content type="html"><![CDATA[<p>Claude Code 的 <code>/buddy</code> 被官方刪掉那一週，GitHub 上有一則 issue 滾到 #45596——<strong>社群請願把寵物帶回來</strong>。三天後 <code>talkvalue</code> 這個人丟出 Swift 寫的 <code>Buddi</code>，比官方版還多了權限审批、session 監控、API 配額追蹤，順便把它塞進 MacBook 瀏海那塊一般人覺得「設計缺陷」的黑色區域。</p><p>反直覺的地方不是寵物被救回來，是<strong>瀏海原來可以當控制台</strong>。</p><p>那塊 130 像素高、橫過螢幕正中央的黑色區域，自從 2021 年 iPhone 把瀏海搬到 Mac 之後，就是工業設計上的爭論焦點。大部分 app 把它當成要躲開的障礙物——選單列往兩邊擠、全螢幕時硬切掉那段。Buddi 走相反方向：既然這塊黑色永遠都在，乾脆拿它做 Claude Code 的儀表板。ASCII 寵物在裡面走來走去，狀態切換就切換動畫，Claude 要權限就從瀏海裡展開 Allow&#x2F;Deny 按鈕。</p><p>先把角色定位講清楚：它不是 Anthropic 出的官方工具。Anthropic 把 <code>/buddy</code> 當成愚人節彩蛋做了一版，社群上頭之後被砍掉，然後就有人自己用 Swift 把它放大重寫。Buddi 目前還在 v0.1.0，macOS 15+ 專屬，GPLv3 授權。</p><h2 id="它到底在做什麼"><a href="#它到底在做什麼" class="headerlink" title="它到底在做什麼"></a>它到底在做什麼</h2><p>ASCII 寵物看起來像玩具，但資料流其實很嚴肅。Claude Code 的 hooks 系統每觸發一個事件——<code>UserPromptSubmit</code>、<code>PreToolUse</code>、<code>PostToolUse</code>、<code>PermissionRequest</code>、<code>SessionStart</code> 這些——都會執行一個 Python hook 腳本，把事件資料透過 Unix Socket（<code>/tmp/buddi.sock</code>）傳給 Buddi app，Buddi 再用 SwiftUI 更新 UI。</p><figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">Claude Code</span><br><span class="line">    │  Hook Events (UserPromptSubmit / PreToolUse / ...)</span><br><span class="line">    ▼</span><br><span class="line">buddi-hook.py     ← Python 腳本</span><br><span class="line">    │  JSON payload</span><br><span class="line">    ▼</span><br><span class="line">Unix Socket       ← /tmp/buddi.sock，permission 0600</span><br><span class="line">    │</span><br><span class="line">    ▼</span><br><span class="line">HookSocketServer  ← Swift actor，常駐 app 內</span><br><span class="line">    │</span><br><span class="line">    ▼</span><br><span class="line">SessionStore      ← 中央狀態機（Swift Actor，thread-safe）</span><br><span class="line">    │</span><br><span class="line">    ▼</span><br><span class="line">SwiftUI Notch UI  ← 你看到的 ASCII 寵物與按鈕</span><br></pre></td></tr></table></figure><p>比較聰明的設計在權限审批這段。一般 hook 跑完就結束，但 Buddi 的權限 hook 會把 socket 連線保持住，等使用者在 UI 上點 Allow 或 Deny，結果回傳給 hook，hook 再 stdout 給 Claude Code——整段流程你沒離開 IDE 也沒切到 terminal。</p><p>類比一下：這很像電話總機。Claude Code 是打電話進來的客戶，hook 是總機小姐，Buddi 是董事長。總機不會直接掛客戶電話，而是 hold 住線路等董事長決定，董事長回答後總機再轉回去。Unix Socket 就是那條不會掉的電話線。</p><h2 id="安裝走一次"><a href="#安裝走一次" class="headerlink" title="安裝走一次"></a>安裝走一次</h2><p>Homebrew 最快：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">brew install --cask talkvalue/buddi/buddi</span><br></pre></td></tr></table></figure><p>不用 Homebrew 就去 <a href="https://github.com/talkvalue/Buddi/releases/latest">Releases</a> 下載 DMG。</p><p>首次啟動會跑一段 onboarding，授權輔助使用（偵測視窗焦點）和通知（session 狀態提醒），選一個音樂控制器（Apple Music &#x2F; Spotify &#x2F; YouTube Music），完成後瀏海就會長出一隻 ASCII 生物。</p><p>這段過程它會自動幫你安裝 Claude Code 的 hooks。驗證兩條指令：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">ls</span> -la ~/.claude/hooks/buddi-hook.py</span><br><span class="line">grep -c <span class="string">&quot;buddi-hook&quot;</span> ~/.claude/settings.json</span><br></pre></td></tr></table></figure><p>兩個都有輸出就搞定了。如果你已經有其他 hooks，Buddi 是 append 不是 overwrite——不會覆蓋你的設定，但會在既有 hooks 後面追加。這個行為值得注意，因為如果你手動維護過 <code>settings.json</code>，要去看一下它加了什麼進去。</p><h2 id="瀏海能幹嘛"><a href="#瀏海能幹嘛" class="headerlink" title="瀏海能幹嘛"></a>瀏海能幹嘛</h2><p>用起來最有感的是<strong>權限审批不用離開 IDE</strong>。以前 Claude Code 要跑 bash 指令，你得切到 terminal 按 y；現在瀏海直接展開 Allow &#x2F; Deny，點一下就好。工作流沒中斷是關鍵——每多一次 context switch，你腦袋的 L1 cache 就被 evict 一輪。</p><p>寫 code 時瞄一眼瀏海看 Claude 狀態是第二個實用點。Buddy 有六個狀態動畫：</p><table><thead><tr><th>狀態</th><th>情境</th><th>動畫效果</th></tr></thead><tbody><tr><td>idle</td><td>閒置</td><td>偶爾眨眼</td></tr><tr><td>working</td><td>Claude 處理中</td><td>游標閃爍 &#96;</td></tr><tr><td>reading</td><td>讀取檔案</td><td>眼睛左右移動</td></tr><tr><td>waiting</td><td>等待权限审批</td><td>漸進圓點 <code>...</code></td></tr><tr><td>compacting</td><td>Context 壓縮中</td><td>波浪 <code>~</code> <code>~~</code></td></tr><tr><td>sleeping</td><td>睡眠狀態</td><td><code>zzz</code> 閉眼</td></tr></tbody></table><p>這個設計有點像老式機械停車場的標示燈。你不用知道停車場裡發生什麼事，看燈號就知道「有位」「沒位」「快滿」。同樣的，你不用切到 terminal 看日誌，看瀏海的動畫就知道 Claude 現在在幹嘛。</p><p>同時跑多個 Claude Code session 的人會喜歡 <code>ClaudeSessionMonitor</code>。它從 <code>~/.claude/projects/*/conversations/*.jsonl</code> 解析每個 session 的完整聊天歷史、工具呼叫狀態、當前階段，然後在同一個面板裡排序——processing 和 approval 排最上面，idle 排最下面。需要你注意的永遠浮到頂端。</p><h2 id="物種系統其實藏著確定性雜湊"><a href="#物種系統其實藏著確定性雜湊" class="headerlink" title="物種系統其實藏著確定性雜湊"></a>物種系統其實藏著確定性雜湊</h2><p>跟原版 <code>/buddy</code> 一樣，Buddi 讀 <code>~/.claude.json</code> 裡的 <code>userId</code>，用 Wyhash + Mulberry32 PRNG roll 出你的 buddy——<strong>同一個帳號永遠得到同一隻</strong>。18 種物種、5 個稀有度，機率是這樣：</p><table><thead><tr><th>稀有度</th><th>機率權重</th><th>屬性下限</th></tr></thead><tbody><tr><td>Common ★</td><td>60</td><td>5</td></tr><tr><td>Uncommon ★★</td><td>25</td><td>15</td></tr><tr><td>Rare ★★★</td><td>10</td><td>25</td></tr><tr><td>Epic ★★★★</td><td>4</td><td>35</td></tr><tr><td>Legendary ★★★★★</td><td>1</td><td>50</td></tr></tbody></table><p>原版 <code>/buddy</code> 想刷 Legendary 要繞開 accountUuid 優先權、改環境變數、重設 userId，社群甚至寫了暴力搜尋 salt 的工具。Buddi 把這套全部省掉——直接在 Settings 裡手動覆寫 species、eye、hat、rarity 就好，不動 userId，不破壞原始 roll 結果。</p><p>這個設計細節很 Paul Graham 風格：原版把 <code>userId</code> 當成 roll 的隨機源是為了「每個人有自己獨一無二的寵物」，聽起來很浪漫。但實際結果是人人都想要 Legendary Shiny，所以寫了一堆繞圈子的工具。Buddi 的解法是<strong>承認需求本身</strong>——你就是想要自己挑——然後提供一個不破壞系統的出口。</p><h2 id="API-用量追蹤這塊有個條件"><a href="#API-用量追蹤這塊有個條件" class="headerlink" title="API 用量追蹤這塊有個條件"></a>API 用量追蹤這塊有個條件</h2><p><code>UsageService</code> 用 Anthropic OAuth API 輪詢配額，顯示 5 小時和 7 天的使用率，輪詢間隔 5 分鐘，遇到 rate limit 指數退避到 30 分鐘。本地快取在 <code>~/Library/Application Support/Buddi/usage-cache.json</code>，token 從 macOS Keychain 讀。</p><p>但這個功能<strong>需要 OAuth 登入</strong>。如果你用 API key 而不是 OAuth 登入 Claude Code，這段直接不會生效——因為 <code>https://api.anthropic.com/api/oauth/usage</code> 這個 endpoint 只吃 OAuth token。這是個容易踩的坑：你看不到配額數字的時候，先檢查自己是哪種登入方式，不是 Buddi 壞了。</p><h2 id="背後的設計選擇"><a href="#背後的設計選擇" class="headerlink" title="背後的設計選擇"></a>背後的設計選擇</h2><p>Buddi 不是從零開始寫的。它組合了兩個開源專案：</p><ul><li><a href="https://github.com/TheBoredTeam/boring.notch"><strong>boring.notch</strong></a> 提供 notch UI 框架（音樂控制、行事曆、電池、音量 HUD、檔案暫存架）</li><li><a href="https://github.com/farouqaldori/claude-island"><strong>Claude Island</strong></a> 提供 Claude Code session 監控和 buddy 角色系統</li></ul><p>這個組合方式有意思。如果你看過 SICP，會覺得這很像 Scheme 的 composition——兩個獨立的抽象用簡單的介面接起來，變出一個新東西。boring.notch 負責「怎麼把東西顯示在瀏海上」，Claude Island 負責「Claude Code 在幹嘛」，Buddi 把前者當畫布、後者當顏料，不自己重造輪子。</p><p>程式碼核心是 4 個 Singleton：</p><ul><li><code>BuddyManager.shared</code> — buddy 身份與動畫</li><li><code>HookSocketServer.shared</code> — Unix Socket 伺服器</li><li><code>SessionStore.shared</code> — 狀態中心，用 Swift Actor 保證 thread-safe</li><li><code>UsageService.shared</code> — 用量追蹤</li></ul><p>Swift Actor 是這段程式碼的點睛之筆。多個 hook event 可能同時進來，多個 SwiftUI view 可能同時讀狀態，用 Actor 包起來就不用手寫 lock。寫 Objective-C 的人看到這個會嫉妒。</p><h2 id="幾個要留意的限制"><a href="#幾個要留意的限制" class="headerlink" title="幾個要留意的限制"></a>幾個要留意的限制</h2><p>專案才 2026 年 4 月 8 日建立，目前只有 v0.1.0 一個 release。穩定性還沒有大樣本驗證，功能完整但不要在關鍵開發日程裡才第一次裝它。</p><p>macOS 15 Sequoia 以上才能用。Windows 和 Linux 使用者暫時沒戲——畢竟 Windows 筆電沒瀏海這個概念。</p><p>Socket 路徑硬編碼在 <code>/tmp/buddi.sock</code>，權限 0600，跟其他類似工具不會衝突但也沒辦法改。這個設計在單人 Mac 沒問題，多使用者系統（理論上 macOS 也支援）要小心同名衝突。</p><p>cmux 使用者要在 cmux 設定中打開 “Automation mode”，不然 Tmux&#x2F;cmux 按鍵模擬的權限审批會失效。這個設定跟 Buddi 沒關係，是 cmux 自己的 autopilot 開關。</p><p>GPLv3 授權。你可以 fork 改 code，但改完分發出去必須以相同授權公開原始碼。商用團隊要注意這條。</p><h2 id="這個專案真正有趣的地方"><a href="#這個專案真正有趣的地方" class="headerlink" title="這個專案真正有趣的地方"></a>這個專案真正有趣的地方</h2><p>回到開頭那個反直覺——<strong>瀏海可以當控制台</strong>。</p><p>Buddi 背後的命題其實不是「給 Claude Code 加個寵物」，是「<strong>工具應該塞進使用者本來就盯著的地方，而不是讓使用者切換到工具的地方</strong>」。寫 code 的時候你本來就盯著 IDE 和螢幕正中央，瀏海就在你的視野正中心偏上，不用轉頭不用開新視窗。這比把功能塞進 menu bar icon、dock badge、或彈出式通知都更符合你的實際視線。</p><p>這件事真正的問題其實不是瀏海該不該用，是<strong>你願意讓多少「環境細節」被你的 AI 工具用來溝通</strong>。過去十年的開發工具一直在把訊號往外推——桌面通知、Dock 跳動、menu bar 閃爍、聲音提示——但都是「中斷你」的模式。Buddi 試的是另一條路：<strong>把資訊融進你本來就不會看的地方</strong>，有狀態變化時才抓你眼角餘光。</p><p>背後就兩條線——工具該在你視線裡當背景常駐，還是在你注意力外當通知彈出？選前者，你就會開始研究瀏海能做什麼、menu bar 能做什麼、狀態列能做什麼。選後者，你會繼續被 desktop notification 轟炸。Buddi 選了前者，而且做得不只是裝飾。</p><p>如果你用 Claude Code 又剛好有一台 MacBook，花 5 分鐘裝它跑一下。你會發現<strong>瀏海不是設計缺陷，是一塊沒人認真用的螢幕不動產</strong>。</p><hr><h2 id="相關連結"><a href="#相關連結" class="headerlink" title="相關連結"></a>相關連結</h2><ul><li><a href="https://github.com/talkvalue/Buddi">Buddi GitHub Repo</a></li><li><a href="https://github.com/TheBoredTeam/boring.notch">boring.notch — 原始 notch UI 框架</a></li><li><a href="https://github.com/farouqaldori/claude-island">Claude Island — Claude Code session manager</a></li><li><a href="https://docs.anthropic.com/en/docs/claude-code/hooks">Claude Code Hooks 文件</a></li><li><a href="https://github.com/anthropics/claude-code/issues/45596">Issue #45596 — Bring Back Buddy 社群請願</a></li></ul>]]></content>
+      
+      
+      <categories>
+          
+          <category> Claude Code </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> Claude Code </tag>
+            
+            <tag> Hooks </tag>
+            
+            <tag> macOS </tag>
+            
+            <tag> Buddi </tag>
+            
+            <tag> notch </tag>
             
         </tags>
       
@@ -2569,9 +2569,9 @@
       
         <tags>
             
-            <tag> OpenAI </tag>
-            
             <tag> 資安 </tag>
+            
+            <tag> OpenAI </tag>
             
             <tag> Cursor </tag>
             
@@ -2606,9 +2606,9 @@
       
         <tags>
             
-            <tag> Claude Code </tag>
-            
             <tag> AI Agent </tag>
+            
+            <tag> Claude Code </tag>
             
             <tag> Skills </tag>
             
@@ -2701,9 +2701,9 @@
       
         <tags>
             
-            <tag> OpenAI </tag>
-            
             <tag> 資安 </tag>
+            
+            <tag> OpenAI </tag>
             
             <tag> Google </tag>
             
@@ -2800,11 +2800,11 @@
       
         <tags>
             
+            <tag> 資安 </tag>
+            
             <tag> Claude </tag>
             
             <tag> OpenAI </tag>
-            
-            <tag> 資安 </tag>
             
             <tag> Anthropic </tag>
             
@@ -2940,9 +2940,9 @@
             
             <tag> Microsoft </tag>
             
-            <tag> GitHub </tag>
-            
             <tag> Stripe </tag>
+            
+            <tag> GitHub </tag>
             
         </tags>
       
@@ -3000,9 +3000,9 @@
       
         <tags>
             
-            <tag> Claude </tag>
-            
             <tag> AI </tag>
+            
+            <tag> Claude </tag>
             
             <tag> Anthropic </tag>
             
@@ -3318,15 +3318,15 @@
             
             <tag> MCP </tag>
             
-            <tag> Google </tag>
-            
             <tag> Anthropic </tag>
+            
+            <tag> Google </tag>
             
             <tag> Copilot </tag>
             
-            <tag> Mythos </tag>
-            
             <tag> Kiro </tag>
+            
+            <tag> Mythos </tag>
             
         </tags>
       
@@ -3384,9 +3384,9 @@
       
         <tags>
             
-            <tag> Claude </tag>
-            
             <tag> AI Agent </tag>
+            
+            <tag> Claude </tag>
             
             <tag> Multi-Model </tag>
             
@@ -3839,13 +3839,13 @@
       
         <tags>
             
-            <tag> Claude </tag>
-            
-            <tag> OpenAI </tag>
+            <tag> AI Agent </tag>
             
             <tag> 資安 </tag>
             
-            <tag> AI Agent </tag>
+            <tag> Claude </tag>
+            
+            <tag> OpenAI </tag>
             
             <tag> Copilot </tag>
             
@@ -3872,9 +3872,9 @@
       
         <tags>
             
-            <tag> Anthropic </tag>
-            
             <tag> AI Agent </tag>
+            
+            <tag> Anthropic </tag>
             
             <tag> 開發工具 </tag>
             
@@ -3901,9 +3901,9 @@
       
         <tags>
             
-            <tag> MCP </tag>
-            
             <tag> LLM </tag>
+            
+            <tag> MCP </tag>
             
             <tag> Microsoft </tag>
             
@@ -3932,9 +3932,9 @@
       
         <tags>
             
-            <tag> Claude Code </tag>
-            
             <tag> 理財 </tag>
+            
+            <tag> Claude Code </tag>
             
             <tag> Gemini </tag>
             
@@ -3990,11 +3990,11 @@
       
         <tags>
             
+            <tag> AI Agent </tag>
+            
             <tag> MCP </tag>
             
             <tag> Claude Code </tag>
-            
-            <tag> AI Agent </tag>
             
         </tags>
       
@@ -4048,9 +4048,9 @@
       
         <tags>
             
-            <tag> Claude </tag>
-            
             <tag> 資安 </tag>
+            
+            <tag> Claude </tag>
             
             <tag> Copilot </tag>
             
@@ -4193,9 +4193,9 @@
       
         <tags>
             
-            <tag> Claude Code </tag>
-            
             <tag> AI Agent </tag>
+            
+            <tag> Claude Code </tag>
             
             <tag> Code Review </tag>
             
@@ -4222,9 +4222,9 @@
       
         <tags>
             
-            <tag> OpenAI </tag>
-            
             <tag> 資安 </tag>
+            
+            <tag> OpenAI </tag>
             
             <tag> NVIDIA </tag>
             
@@ -4278,13 +4278,13 @@
       
         <tags>
             
-            <tag> MCP </tag>
-            
             <tag> LLM </tag>
             
-            <tag> Claude Code </tag>
-            
             <tag> AI Agent </tag>
+            
+            <tag> MCP </tag>
+            
+            <tag> Claude Code </tag>
             
         </tags>
       
@@ -4336,9 +4336,9 @@
       
         <tags>
             
-            <tag> 資安 </tag>
-            
             <tag> LLM </tag>
+            
+            <tag> 資安 </tag>
             
             <tag> Qwen </tag>
             
@@ -4425,11 +4425,11 @@
       
         <tags>
             
+            <tag> AI Agent </tag>
+            
             <tag> MCP </tag>
             
             <tag> Claude Code </tag>
-            
-            <tag> AI Agent </tag>
             
             <tag> Rust </tag>
             
@@ -4483,11 +4483,11 @@
       
         <tags>
             
-            <tag> MCP </tag>
+            <tag> 資安 </tag>
             
             <tag> OpenAI </tag>
             
-            <tag> 資安 </tag>
+            <tag> MCP </tag>
             
         </tags>
       
@@ -4514,9 +4514,9 @@
             
             <tag> Claude </tag>
             
-            <tag> macOS </tag>
-            
             <tag> 自動化 </tag>
+            
+            <tag> macOS </tag>
             
         </tags>
       
@@ -4570,9 +4570,9 @@
       
         <tags>
             
-            <tag> 資安 </tag>
-            
             <tag> 理財 </tag>
+            
+            <tag> 資安 </tag>
             
             <tag> Perplexity </tag>
             
@@ -4659,9 +4659,9 @@
       
         <tags>
             
-            <tag> 資安 </tag>
-            
             <tag> 開源 </tag>
+            
+            <tag> 資安 </tag>
             
             <tag> 開發工具 </tag>
             
@@ -4692,11 +4692,11 @@
             
             <tag> Claude Code </tag>
             
-            <tag> macOS </tag>
-            
             <tag> 自動化 </tag>
             
             <tag> 教學 </tag>
+            
+            <tag> macOS </tag>
             
         </tags>
       
@@ -4721,13 +4721,13 @@
       
         <tags>
             
-            <tag> MCP </tag>
-            
             <tag> 資安 </tag>
             
-            <tag> NVIDIA </tag>
+            <tag> MCP </tag>
             
             <tag> Anthropic </tag>
+            
+            <tag> NVIDIA </tag>
             
             <tag> Claude Code </tag>
             
@@ -4847,9 +4847,9 @@
             
             <tag> AI 新聞 </tag>
             
-            <tag> MCP </tag>
-            
             <tag> Apple </tag>
+            
+            <tag> MCP </tag>
             
             <tag> Anthropic </tag>
             
@@ -4990,9 +4990,9 @@
             
             <tag> OpenAI </tag>
             
-            <tag> Google </tag>
-            
             <tag> Anthropic </tag>
+            
+            <tag> Google </tag>
             
         </tags>
       
@@ -5077,13 +5077,13 @@
             
             <tag> AI 新聞 </tag>
             
-            <tag> MCP </tag>
-            
             <tag> 資安 </tag>
             
-            <tag> NVIDIA </tag>
+            <tag> MCP </tag>
             
             <tag> Google </tag>
+            
+            <tag> NVIDIA </tag>
             
         </tags>
       
@@ -5139,13 +5139,13 @@
             
             <tag> AI 新聞 </tag>
             
-            <tag> MCP </tag>
-            
             <tag> 資安 </tag>
             
-            <tag> Google </tag>
+            <tag> MCP </tag>
             
             <tag> Anthropic </tag>
+            
+            <tag> Google </tag>
             
         </tags>
       
@@ -5197,9 +5197,9 @@
       
         <tags>
             
-            <tag> Claude Code </tag>
-            
             <tag> AI Agent </tag>
+            
+            <tag> Claude Code </tag>
             
             <tag> Skills </tag>
             
@@ -5255,9 +5255,9 @@
             
             <tag> AI 新聞 </tag>
             
-            <tag> OpenAI </tag>
-            
             <tag> 資安 </tag>
+            
+            <tag> OpenAI </tag>
             
         </tags>
       
@@ -5309,9 +5309,9 @@
       
         <tags>
             
-            <tag> Claude Code </tag>
-            
             <tag> AI Agent </tag>
+            
+            <tag> Claude Code </tag>
             
             <tag> 自動化 </tag>
             
@@ -5338,17 +5338,17 @@
       
         <tags>
             
+            <tag> LLM </tag>
+            
             <tag> AI 新聞 </tag>
             
             <tag> Claude </tag>
             
-            <tag> MCP </tag>
-            
             <tag> OpenAI </tag>
             
-            <tag> LLM </tag>
-            
             <tag> Apple </tag>
+            
+            <tag> MCP </tag>
             
         </tags>
       
@@ -5431,13 +5431,13 @@
             
             <tag> AI 新聞 </tag>
             
-            <tag> Claude </tag>
+            <tag> 資安 </tag>
             
-            <tag> MCP </tag>
+            <tag> Claude </tag>
             
             <tag> OpenAI </tag>
             
-            <tag> 資安 </tag>
+            <tag> MCP </tag>
             
         </tags>
       
@@ -5570,11 +5570,11 @@
       
         <tags>
             
+            <tag> LLM </tag>
+            
             <tag> AI 新聞 </tag>
             
             <tag> 資安 </tag>
-            
-            <tag> LLM </tag>
             
         </tags>
       
@@ -5680,9 +5680,9 @@
       
         <tags>
             
-            <tag> Collections </tag>
-            
             <tag> Java </tag>
+            
+            <tag> Collections </tag>
             
             <tag> Stream </tag>
             
@@ -5709,9 +5709,9 @@
       
         <tags>
             
-            <tag> Collections </tag>
-            
             <tag> Java </tag>
+            
+            <tag> Collections </tag>
             
         </tags>
       
@@ -5786,9 +5786,9 @@
       
         <tags>
             
-            <tag> Collections </tag>
-            
             <tag> Java </tag>
+            
+            <tag> Collections </tag>
             
             <tag> Stream </tag>
             
@@ -5815,9 +5815,9 @@
       
         <tags>
             
-            <tag> JSON </tag>
-            
             <tag> Java </tag>
+            
+            <tag> JSON </tag>
             
             <tag> Stream </tag>
             
@@ -6234,11 +6234,11 @@
     
     
     <entry>
-      <title>Spring Cloud Config Server 本地檔案模式設定</title>
-      <link href="/2025/06/28/Spring-Cloud-Config-Server-%E6%9C%AC%E5%9C%B0%E6%AA%94%E6%A1%88%E6%A8%A1%E5%BC%8F/"/>
-      <url>/2025/06/28/Spring-Cloud-Config-Server-%E6%9C%AC%E5%9C%B0%E6%AA%94%E6%A1%88%E6%A8%A1%E5%BC%8F/</url>
+      <title>Spring Cloud Config Client 設定與 @ConfigurationProperties</title>
+      <link href="/2025/06/28/Spring-Cloud-Config-Client-%E8%A8%AD%E5%AE%9A%E8%88%87-ConfigurationProperties/"/>
+      <url>/2025/06/28/Spring-Cloud-Config-Client-%E8%A8%AD%E5%AE%9A%E8%88%87-ConfigurationProperties/</url>
       
-        <content type="html"><![CDATA[<p>Spring Cloud Config 是用來集中管理應用設定的利器，但預設用 Git backend，在開發時有時候有點麻煩。我就來介紹怎麼用本地檔案模式搞定開發環境的設定管理。</p><h2 id="為什麼要用本地檔案模式？"><a href="#為什麼要用本地檔案模式？" class="headerlink" title="為什麼要用本地檔案模式？"></a>為什麼要用本地檔案模式？</h2><p>預設的 Config Server 是用 Git repository 當後端，這對生產環境來說很棒，但開發時有點費事：</p><ul><li>要維護一個 Git repo</li><li>改設定要 push、pull</li><li>不方便快速迭代</li></ul><p>用本地檔案模式就簡單多了，直接在電腦上改檔案，重新整理一下就行。</p><h2 id="Config-Server-的設定"><a href="#Config-Server-的設定" class="headerlink" title="Config Server 的設定"></a>Config Server 的設定</h2><p>首先建立一個 Spring Boot application 當 Config Server。</p><h3 id="1-加依賴"><a href="#1-加依賴" class="headerlink" title="1. 加依賴"></a>1. 加依賴</h3><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.cloud<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-cloud-config-server<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure><h3 id="2-啟動類別標注-EnableConfigServer"><a href="#2-啟動類別標注-EnableConfigServer" class="headerlink" title="2. 啟動類別標注 @EnableConfigServer"></a>2. 啟動類別標注 @EnableConfigServer</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@SpringBootApplication</span></span><br><span class="line"><span class="meta">@EnableConfigServer</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">ConfigServerApplication</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        SpringApplication.run(ConfigServerApplication.class, args);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><h3 id="3-application-yml-設定"><a href="#3-application-yml-設定" class="headerlink" title="3. application.yml 設定"></a>3. application.yml 設定</h3><p>這是重點。用 native profile 來啟用本地檔案模式：</p><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">spring:</span></span><br><span class="line">  <span class="attr">profiles:</span></span><br><span class="line">    <span class="attr">active:</span> <span class="string">native</span></span><br><span class="line">  <span class="attr">cloud:</span></span><br><span class="line">    <span class="attr">config:</span></span><br><span class="line">      <span class="attr">server:</span></span><br><span class="line">        <span class="attr">native:</span></span><br><span class="line">          <span class="attr">searchLocations:</span> <span class="string">file:///Users/cheng/config/</span></span><br></pre></td></tr></table></figure><p>或者用環境變數：</p><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">spring:</span></span><br><span class="line">  <span class="attr">profiles:</span></span><br><span class="line">    <span class="attr">active:</span> <span class="string">native</span></span><br><span class="line">  <span class="attr">cloud:</span></span><br><span class="line">    <span class="attr">config:</span></span><br><span class="line">      <span class="attr">server:</span></span><br><span class="line">        <span class="attr">native:</span></span><br><span class="line">          <span class="attr">searchLocations:</span> <span class="string">file://$&#123;user.home&#125;/config/</span></span><br></pre></td></tr></table></figure><h4 id="幾個重點"><a href="#幾個重點" class="headerlink" title="幾個重點"></a>幾個重點</h4><ul><li><code>file:///</code> 是本地檔案路徑（三個 slash）</li><li>路徑最後要加 <code>/</code></li><li>可以指定多個路徑，用逗號分隔：<code>file:///path1/,file:///path2/</code></li></ul><p>如果你想要更簡潔的設定，也可以這樣：</p><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">spring:</span></span><br><span class="line">  <span class="attr">profiles:</span></span><br><span class="line">    <span class="attr">active:</span> <span class="string">native</span></span><br><span class="line">  <span class="attr">config:</span></span><br><span class="line">    <span class="attr">import: configserver:</span></span><br><span class="line">  <span class="attr">cloud:</span></span><br><span class="line">    <span class="attr">config:</span></span><br><span class="line">      <span class="attr">server:</span></span><br><span class="line">        <span class="attr">native:</span></span><br><span class="line">          <span class="attr">searchLocations:</span> <span class="string">classpath:/config/</span></span><br></pre></td></tr></table></figure><p>用 <code>classpath:/</code> 的話設定檔會放在 JAR 裡面（通常是 <code>src/main/resources/config/</code>）。</p><h2 id="設定檔的命名和組織"><a href="#設定檔的命名和組織" class="headerlink" title="設定檔的命名和組織"></a>設定檔的命名和組織</h2><p>Config Server 預期的設定檔名稱有特定格式。假設 client 端的 application name 是 <code>user-service</code>，profiles 是 <code>dev</code>，那麼 Config Server 會依序查找：</p><ol><li><code>user-service-dev.yml</code> 或 <code>user-service-dev.properties</code></li><li><code>user-service.yml</code> 或 <code>user-service.properties</code></li></ol><p>所以假設你的設定檔目錄結構是這樣：</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">config/</span><br><span class="line">├── user-service-dev.yml</span><br><span class="line">├── user-service-prod.yml</span><br><span class="line">├── user-service.yml</span><br><span class="line">├── order-service-dev.yml</span><br><span class="line">├── order-service-prod.yml</span><br><span class="line">└── order-service.yml</span><br></pre></td></tr></table></figure><p>然後你有個檔案在 <code>/Users/cheng/config/user-service-dev.yml</code>：</p><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">server:</span></span><br><span class="line">  <span class="attr">port:</span> <span class="number">8001</span></span><br><span class="line"></span><br><span class="line"><span class="attr">app:</span></span><br><span class="line">  <span class="attr">database:</span></span><br><span class="line">    <span class="attr">url:</span> <span class="string">jdbc:mysql://localhost:3306/user_db_dev</span></span><br><span class="line">    <span class="attr">username:</span> <span class="string">root</span></span><br><span class="line">    <span class="attr">password:</span> <span class="string">password</span></span><br></pre></td></tr></table></figure><h2 id="Config-Server-的-Endpoint"><a href="#Config-Server-的-Endpoint" class="headerlink" title="Config Server 的 Endpoint"></a>Config Server 的 Endpoint</h2><p>Config Server 提供了一些 REST endpoint 來取得設定。格式是：</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/&#123;application&#125;/&#123;profile&#125;[/&#123;label&#125;]</span><br></pre></td></tr></table></figure><p>比如：</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"># 取得 user-service 在 dev profile 的設定</span><br><span class="line">GET http://localhost:8888/user-service/dev</span><br><span class="line"></span><br><span class="line"># 取得 user-service 預設 profile 的設定</span><br><span class="line">GET http://localhost:8888/user-service/default</span><br><span class="line"></span><br><span class="line"># 如果用 Git backend，&#123;label&#125; 就是 branch 名稱</span><br><span class="line"># 本地模式通常不用 &#123;label&#125;</span><br><span class="line">GET http://localhost:8888/user-service/dev/master</span><br></pre></td></tr></table></figure><h2 id="實際運作"><a href="#實際運作" class="headerlink" title="實際運作"></a>實際運作</h2><p>假設 Config Server 跑在 <code>http://localhost:8888</code>，我們用 curl 試試：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl http://localhost:8888/user-service/dev</span><br></pre></td></tr></table></figure><p>會回傳類似這樣的 JSON：</p><figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;user-service&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;profiles&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span><span class="string">&quot;dev&quot;</span><span class="punctuation">]</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;label&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">null</span></span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;version&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">null</span></span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;state&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">null</span></span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;propertySources&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">    <span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;file:///Users/cheng/config/user-service-dev.yml&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;source&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">        <span class="attr">&quot;server.port&quot;</span><span class="punctuation">:</span> <span class="number">8001</span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;app.database.url&quot;</span><span class="punctuation">:</span> <span class="string">&quot;jdbc:mysql://localhost:3306/user_db_dev&quot;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;app.database.username&quot;</span><span class="punctuation">:</span> <span class="string">&quot;root&quot;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;app.database.password&quot;</span><span class="punctuation">:</span> <span class="string">&quot;password&quot;</span></span><br><span class="line">      <span class="punctuation">&#125;</span></span><br><span class="line">    <span class="punctuation">&#125;</span></span><br><span class="line">  <span class="punctuation">]</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure><h2 id="Client-端的設定"><a href="#Client-端的設定" class="headerlink" title="Client 端的設定"></a>Client 端的設定</h2><p>現在來設定 Config Client。假設你的應用叫 <code>user-service</code>，想要讀 dev 的設定。</p><p>在 <code>bootstrap.yml</code> 裡面設定（不是 <code>application.yml</code>！重要）：</p><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">spring:</span></span><br><span class="line">  <span class="attr">application:</span></span><br><span class="line">    <span class="attr">name:</span> <span class="string">user-service</span></span><br><span class="line">  <span class="attr">profiles:</span></span><br><span class="line">    <span class="attr">active:</span> <span class="string">dev</span></span><br><span class="line">  <span class="attr">cloud:</span></span><br><span class="line">    <span class="attr">config:</span></span><br><span class="line">      <span class="attr">uri:</span> <span class="string">http://localhost:8888</span></span><br></pre></td></tr></table></figure><p>然後在 <code>application.yml</code> 就可以這樣用：</p><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 這些是預設值，如果 Config Server 有就會被覆蓋</span></span><br><span class="line"><span class="attr">server:</span></span><br><span class="line">  <span class="attr">port:</span> <span class="number">8080</span></span><br><span class="line"></span><br><span class="line"><span class="attr">app:</span></span><br><span class="line">  <span class="attr">version:</span> <span class="number">1.0</span><span class="number">.0</span></span><br></pre></td></tr></table></figure><h2 id="用-Value-取得設定"><a href="#用-Value-取得設定" class="headerlink" title="用 @Value 取得設定"></a>用 @Value 取得設定</h2><p>在程式裡面用 <code>@Value</code> 取得設定值：</p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Service</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">UserService</span> &#123;</span><br><span class="line">    </span><br><span class="line">    <span class="meta">@Value(&quot;$&#123;app.database.url&#125;&quot;)</span></span><br><span class="line">    <span class="keyword">private</span> String databaseUrl;</span><br><span class="line">    </span><br><span class="line">    <span class="meta">@Value(&quot;$&#123;app.database.username&#125;&quot;)</span></span><br><span class="line">    <span class="keyword">private</span> String username;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">connect</span><span class="params">()</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;Connecting to: &quot;</span> + databaseUrl);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p>或者用 <code>@ConfigurationProperties</code> 綁定整個設定物件（這個我在另外一篇文章講過了）。</p><h2 id="本地模式的限制"><a href="#本地模式的限制" class="headerlink" title="本地模式的限制"></a>本地模式的限制</h2><p>要注意本地模式有些限制：</p><ol><li><strong>沒有版本控制</strong> - native 模式不支援 Git 的 label（branch）概念</li><li><strong>不適合生產</strong> - 生產環境還是要用 Git backend，確保可追蹤和回滾</li><li><strong>熱重載有限制</strong> - Config Server 本身改了設定檔，client 端要呼叫 refresh endpoint 才能更新</li></ol><h2 id="從-Git-轉到本地模式"><a href="#從-Git-轉到本地模式" class="headerlink" title="從 Git 轉到本地模式"></a>從 Git 轉到本地模式</h2><p>開發時用本地模式，生產時切回 Git，可以這樣設定：</p><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">spring:</span></span><br><span class="line">  <span class="attr">profiles:</span></span><br><span class="line">    <span class="attr">active:</span> <span class="string">$&#123;CONFIG_PROFILE:native&#125;</span></span><br><span class="line">  <span class="attr">cloud:</span></span><br><span class="line">    <span class="attr">config:</span></span><br><span class="line">      <span class="attr">server:</span></span><br><span class="line">        <span class="comment"># native profile 設定</span></span><br><span class="line">        <span class="attr">native:</span></span><br><span class="line">          <span class="attr">searchLocations:</span> <span class="string">file://$&#123;CONFIG_PATH:~/config&#125;/</span></span><br><span class="line">        </span><br><span class="line">        <span class="comment"># git profile 設定</span></span><br><span class="line">        <span class="attr">git:</span></span><br><span class="line">          <span class="attr">uri:</span> <span class="string">https://github.com/myorg/config-repo</span></span><br><span class="line">          <span class="attr">searchPaths:</span> <span class="string">&quot;config/&#123;application&#125;&quot;</span></span><br></pre></td></tr></table></figure><p>然後用環境變數決定用哪個：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 開發環境</span></span><br><span class="line"><span class="built_in">export</span> CONFIG_PROFILE=native</span><br><span class="line"><span class="built_in">export</span> CONFIG_PATH=/Users/cheng/config/</span><br><span class="line"></span><br><span class="line"><span class="comment"># 生產環境</span></span><br><span class="line"><span class="built_in">export</span> CONFIG_PROFILE=git</span><br></pre></td></tr></table></figure><h2 id="完整例子"><a href="#完整例子" class="headerlink" title="完整例子"></a>完整例子</h2><p>一個完整的開發設定流程：</p><ol><li>建立設定檔目錄 <code>/Users/cheng/config/</code></li><li>建立 <code>user-service-dev.yml</code></li><li>Config Server 的 <code>application.yml</code>：</li></ol><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">server:</span></span><br><span class="line">  <span class="attr">port:</span> <span class="number">8888</span></span><br><span class="line"></span><br><span class="line"><span class="attr">spring:</span></span><br><span class="line">  <span class="attr">profiles:</span></span><br><span class="line">    <span class="attr">active:</span> <span class="string">native</span></span><br><span class="line">  <span class="attr">cloud:</span></span><br><span class="line">    <span class="attr">config:</span></span><br><span class="line">      <span class="attr">server:</span></span><br><span class="line">        <span class="attr">native:</span></span><br><span class="line">          <span class="attr">searchLocations:</span> <span class="string">file:///Users/cheng/config/</span></span><br></pre></td></tr></table></figure><ol start="4"><li>Client 的 <code>bootstrap.yml</code>：</li></ol><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">spring:</span></span><br><span class="line">  <span class="attr">application:</span></span><br><span class="line">    <span class="attr">name:</span> <span class="string">user-service</span></span><br><span class="line">  <span class="attr">profiles:</span></span><br><span class="line">    <span class="attr">active:</span> <span class="string">dev</span></span><br><span class="line">  <span class="attr">cloud:</span></span><br><span class="line">    <span class="attr">config:</span></span><br><span class="line">      <span class="attr">uri:</span> <span class="string">http://localhost:8888</span></span><br></pre></td></tr></table></figure><ol start="5"><li>啟動 Config Server，然後啟動 client 應用</li><li>Client 應用會自動從 Config Server 拉設定</li></ol><h2 id="重點整理"><a href="#重點整理" class="headerlink" title="重點整理"></a>重點整理</h2><ul><li>開發用 native profile + 本地檔案很方便</li><li>設定檔命名：<code>&#123;application&#125;-&#123;profile&#125;.yml</code></li><li>設定要在 <code>bootstrap.yml</code>，不是 <code>application.yml</code></li><li>Config Server endpoint 是 <code>/&#123;application&#125;/&#123;profile&#125;</code></li><li>生產環境還是建議用 Git backend</li><li>native 模式沒有版本控制，只適合開發</li></ul><p>下次要快速調整開發設定，就用本地檔案模式，爽度直接升天。</p>]]></content>
+        <content type="html"><![CDATA[<p>上一篇文章講了 Config Server 的設定，這篇就來講怎麼在 client 端正確地拉和使用這些設定。有不少人在這邊踩過坑，主要都是因為搞不清楚 <code>bootstrap.yml</code> 和 <code>application.yml</code> 的區別。</p><h2 id="bootstrap-yml-vs-application-yml"><a href="#bootstrap-yml-vs-application-yml" class="headerlink" title="bootstrap.yml vs application.yml"></a>bootstrap.yml vs application.yml</h2><p>這是最關鍵的一點，千萬別搞反了。</p><ul><li><strong>bootstrap.yml</strong> - 用來設定 Spring Cloud 相關的東西，比如 Config Server 的位置。它的載入優先序比 application.yml 更高</li><li><strong>application.yml</strong> - 普通的應用設定</li></ul><p>如果你把 Config Server 的設定寫在 application.yml，Spring 會先載入 application.yml，但這時候還沒有連到 Config Server，所以設定會不全。一定要寫在 bootstrap.yml。</p><h2 id="Config-Client-的基本設定"><a href="#Config-Client-的基本設定" class="headerlink" title="Config Client 的基本設定"></a>Config Client 的基本設定</h2><p>在你的 Spring Boot 應用裡，先加依賴：</p><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.cloud<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-cloud-config-client<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure><p>然後在 <code>bootstrap.yml</code> 裡面設定：</p><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">spring:</span></span><br><span class="line">  <span class="attr">application:</span></span><br><span class="line">    <span class="attr">name:</span> <span class="string">user-service</span></span><br><span class="line">  <span class="attr">profiles:</span></span><br><span class="line">    <span class="attr">active:</span> <span class="string">dev</span></span><br><span class="line">  <span class="attr">cloud:</span></span><br><span class="line">    <span class="attr">config:</span></span><br><span class="line">      <span class="attr">uri:</span> <span class="string">http://localhost:8888</span></span><br></pre></td></tr></table></figure><h3 id="各個設定項目的含義"><a href="#各個設定項目的含義" class="headerlink" title="各個設定項目的含義"></a>各個設定項目的含義</h3><ul><li><code>spring.application.name</code> - 應用的名稱，Config Server 會用這個名稱去找對應的設定檔</li><li><code>spring.profiles.active</code> - 啟用的 profile，比如 dev、prod</li><li><code>spring.cloud.config.uri</code> - Config Server 的位址</li></ul><p>如果你想要 Config Server 的路徑更複雜，可以這樣設定：</p><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">spring:</span></span><br><span class="line">  <span class="attr">cloud:</span></span><br><span class="line">    <span class="attr">config:</span></span><br><span class="line">      <span class="attr">uri:</span> <span class="string">http://config-server.example.com:8888</span></span><br><span class="line">      <span class="attr">name:</span> <span class="string">user-service</span></span><br><span class="line">      <span class="attr">profile:</span> <span class="string">dev</span></span><br><span class="line">      <span class="attr">label:</span> <span class="string">main</span>  <span class="comment"># 如果 Config Server 用 Git，這就是 branch 名稱</span></span><br></pre></td></tr></table></figure><h2 id="用-ConfigurationProperties-綁定設定"><a href="#用-ConfigurationProperties-綁定設定" class="headerlink" title="用 @ConfigurationProperties 綁定設定"></a>用 @ConfigurationProperties 綁定設定</h2><p>與其用 <code>@Value</code> 逐個注入，不如用 <code>@ConfigurationProperties</code> 把相關的設定綁在一個 POJO class 上面。假設 Config Server 有這樣的設定：</p><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># user-service-dev.yml</span></span><br><span class="line"><span class="attr">app:</span></span><br><span class="line">  <span class="attr">database:</span></span><br><span class="line">    <span class="attr">url:</span> <span class="string">jdbc:mysql://localhost:3306/user_db</span></span><br><span class="line">    <span class="attr">username:</span> <span class="string">root</span></span><br><span class="line">    <span class="attr">password:</span> <span class="string">password</span></span><br><span class="line">  <span class="attr">cache:</span></span><br><span class="line">    <span class="attr">type:</span> <span class="string">redis</span></span><br><span class="line">    <span class="attr">host:</span> <span class="string">localhost</span></span><br><span class="line">    <span class="attr">port:</span> <span class="number">6379</span></span><br></pre></td></tr></table></figure><p>你可以建立一個設定 class：</p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="meta">@ConfigurationProperties(prefix = &quot;app&quot;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">AppProperties</span> &#123;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">private</span> DatabaseProperties database;</span><br><span class="line">    <span class="keyword">private</span> CacheProperties cache;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// getter/setter</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">class</span> <span class="title class_">DatabaseProperties</span> &#123;</span><br><span class="line">        <span class="keyword">private</span> String url;</span><br><span class="line">        <span class="keyword">private</span> String username;</span><br><span class="line">        <span class="keyword">private</span> String password;</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// getter/setter</span></span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">class</span> <span class="title class_">CacheProperties</span> &#123;</span><br><span class="line">        <span class="keyword">private</span> String type;</span><br><span class="line">        <span class="keyword">private</span> String host;</span><br><span class="line">        <span class="keyword">private</span> <span class="type">int</span> port;</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// getter/setter</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p>然後在 service 裡面就可以注入：</p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Service</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">UserService</span> &#123;</span><br><span class="line">    </span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> AppProperties appProperties;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">connect</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="type">String</span> <span class="variable">url</span> <span class="operator">=</span> appProperties.getDatabase().getUrl();</span><br><span class="line">        <span class="type">String</span> <span class="variable">host</span> <span class="operator">=</span> appProperties.getCache().getHost();</span><br><span class="line">        System.out.println(<span class="string">&quot;DB: &quot;</span> + url + <span class="string">&quot;, Cache: &quot;</span> + host);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><h2 id="ConfigurationProperties-和-Value-的區別"><a href="#ConfigurationProperties-和-Value-的區別" class="headerlink" title="@ConfigurationProperties 和 @Value 的區別"></a>@ConfigurationProperties 和 @Value 的區別</h2><table><thead><tr><th>特性</th><th>@ConfigurationProperties</th><th>@Value</th></tr></thead><tbody><tr><td>適合用途</td><td>多個相關設定的綁定</td><td>單個設定值</td></tr><tr><td>前綴支援</td><td>支援，整個 prefix 下的都會綁定</td><td>不支援</td></tr><tr><td>複雜物件</td><td>支援巢狀物件</td><td>只能用 SpEL</td></tr><tr><td>驗證</td><td>可以加 @Validated</td><td>不支援</td></tr><tr><td>設定來源</td><td>environment + Config Server</td><td>environment</td></tr></tbody></table><p>用 SpEL 的例子：</p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Service</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">UserService</span> &#123;</span><br><span class="line">    </span><br><span class="line">    <span class="meta">@Value(&quot;$&#123;app.database.url&#125;&quot;)</span></span><br><span class="line">    <span class="keyword">private</span> String dbUrl;</span><br><span class="line">    </span><br><span class="line">    <span class="meta">@Value(&quot;$&#123;app.cache.host:localhost&#125;&quot;)</span>  <span class="comment">// 預設值是 localhost</span></span><br><span class="line">    <span class="keyword">private</span> String cacheHost;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><h2 id="動態更新設定（不重啟應用）"><a href="#動態更新設定（不重啟應用）" class="headerlink" title="動態更新設定（不重啟應用）"></a>動態更新設定（不重啟應用）</h2><p>有時候你想要改設定不重啟應用。Spring Cloud Config 提供了一個功能——用 <code>@RefreshScope</code> + POST <code>/actuator/refresh</code> 來做這個。</p><p>首先加 actuator 依賴：</p><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-actuator<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure><p>然後在 Config Client 的 <code>application.yml</code> 裡面開啟 refresh endpoint：</p><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">management:</span></span><br><span class="line">  <span class="attr">endpoints:</span></span><br><span class="line">    <span class="attr">web:</span></span><br><span class="line">      <span class="attr">exposure:</span></span><br><span class="line">        <span class="attr">include:</span> <span class="string">refresh</span></span><br></pre></td></tr></table></figure><p>在你想要支援熱更新的 Bean 上加 <code>@RefreshScope</code>：</p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="meta">@RefreshScope</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">FeatureFlagService</span> &#123;</span><br><span class="line">    </span><br><span class="line">    <span class="meta">@Value(&quot;$&#123;features.new-ui:false&#125;&quot;)</span></span><br><span class="line">    <span class="keyword">private</span> <span class="type">boolean</span> newUiEnabled;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">public</span> <span class="type">boolean</span> <span class="title function_">isNewUiEnabled</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> newUiEnabled;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p>改完設定檔後，呼叫這個 endpoint 就能更新：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl -X POST http://localhost:8080/actuator/refresh</span><br></pre></td></tr></table></figure><p>應用就會從 Config Server 重新拉設定，不用重啟。</p><h2 id="用-ConfigurationProperties-RefreshScope"><a href="#用-ConfigurationProperties-RefreshScope" class="headerlink" title="用 @ConfigurationProperties + @RefreshScope"></a>用 @ConfigurationProperties + @RefreshScope</h2><p>如果你用 <code>@ConfigurationProperties</code> 和 <code>@RefreshScope</code> 組合，會更方便：</p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="meta">@ConfigurationProperties(prefix = &quot;features&quot;)</span></span><br><span class="line"><span class="meta">@RefreshScope</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">FeatureProperties</span> &#123;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">private</span> <span class="type">boolean</span> newUiEnabled;</span><br><span class="line">    <span class="keyword">private</span> <span class="type">boolean</span> betaFeatureEnabled;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// getter/setter</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Service</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">UserService</span> &#123;</span><br><span class="line">    </span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> FeatureProperties featureProperties;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">doSomething</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (featureProperties.isNewUiEnabled()) &#123;</span><br><span class="line">            <span class="comment">// 新的邏輯</span></span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="comment">// 舊的邏輯</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><h2 id="開發-vs-生產的設定切換"><a href="#開發-vs-生產的設定切換" class="headerlink" title="開發 vs 生產的設定切換"></a>開發 vs 生產的設定切換</h2><p>通常開發和生產會有不同的 Config Server。在 <code>bootstrap.yml</code> 裡面用環境變數切換：</p><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">spring:</span></span><br><span class="line">  <span class="attr">application:</span></span><br><span class="line">    <span class="attr">name:</span> <span class="string">user-service</span></span><br><span class="line">  <span class="attr">profiles:</span></span><br><span class="line">    <span class="attr">active:</span> <span class="string">$&#123;PROFILE:dev&#125;</span></span><br><span class="line">  <span class="attr">cloud:</span></span><br><span class="line">    <span class="attr">config:</span></span><br><span class="line">      <span class="attr">uri:</span> <span class="string">$&#123;CONFIG_SERVER_URI:http://localhost:8888&#125;</span></span><br></pre></td></tr></table></figure><p>然後啟動應用時傳入環境變數：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 開發環境</span></span><br><span class="line"><span class="built_in">export</span> PROFILE=dev</span><br><span class="line"><span class="built_in">export</span> CONFIG_SERVER_URI=http://localhost:8888</span><br><span class="line"></span><br><span class="line"><span class="comment"># 生產環境</span></span><br><span class="line"><span class="built_in">export</span> PROFILE=prod</span><br><span class="line"><span class="built_in">export</span> CONFIG_SERVER_URI=http://config.production.com:8888</span><br><span class="line"></span><br><span class="line">java -jar user-service.jar</span><br></pre></td></tr></table></figure><h2 id="設定載入的優先順序"><a href="#設定載入的優先順序" class="headerlink" title="設定載入的優先順序"></a>設定載入的優先順序</h2><p>Spring Cloud Config Client 的設定載入優先順序是這樣的（高到低）：</p><ol><li>環境變數</li><li>Config Server 的設定</li><li><code>application.yml</code> &#x2F; <code>application-&#123;profile&#125;.yml</code></li><li><code>bootstrap.yml</code> &#x2F; <code>bootstrap-&#123;profile&#125;.yml</code></li><li>預設值</li></ol><p>也就是說，如果你在環境變數裡設定了某個值，它會覆蓋 Config Server 的值。</p><h2 id="常見的坑"><a href="#常見的坑" class="headerlink" title="常見的坑"></a>常見的坑</h2><h3 id="1-把設定寫在-application-yml-而不是-bootstrap-yml"><a href="#1-把設定寫在-application-yml-而不是-bootstrap-yml" class="headerlink" title="1. 把設定寫在 application.yml 而不是 bootstrap.yml"></a>1. 把設定寫在 application.yml 而不是 bootstrap.yml</h3><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 錯誤：application.yml</span></span><br><span class="line"><span class="attr">spring:</span></span><br><span class="line">  <span class="attr">cloud:</span></span><br><span class="line">    <span class="attr">config:</span></span><br><span class="line">      <span class="attr">uri:</span> <span class="string">http://localhost:8888</span></span><br></pre></td></tr></table></figure><p>Config Server 的設定一定要在 bootstrap.yml。</p><h3 id="2-忘記加-spring-cloud-config-client-依賴"><a href="#2-忘記加-spring-cloud-config-client-依賴" class="headerlink" title="2. 忘記加 spring-cloud-config-client 依賴"></a>2. 忘記加 spring-cloud-config-client 依賴</h3><p>沒有這個依賴，Spring 根本不會去連 Config Server。</p><h3 id="3-ConfigurationProperties-沒有指定-prefix"><a href="#3-ConfigurationProperties-沒有指定-prefix" class="headerlink" title="3. @ConfigurationProperties 沒有指定 prefix"></a>3. @ConfigurationProperties 沒有指定 prefix</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 錯誤</span></span><br><span class="line"><span class="meta">@ConfigurationProperties</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">AppProperties</span> &#123;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 正確</span></span><br><span class="line"><span class="meta">@ConfigurationProperties(prefix = &quot;app&quot;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">AppProperties</span> &#123;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><h3 id="4-熱更新時忘記加-RefreshScope"><a href="#4-熱更新時忘記加-RefreshScope" class="headerlink" title="4. 熱更新時忘記加 @RefreshScope"></a>4. 熱更新時忘記加 @RefreshScope</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 錯誤：改設定後不會生效</span></span><br><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">FeatureService</span> &#123;</span><br><span class="line">    <span class="meta">@Value(&quot;$&#123;feature.enabled&#125;&quot;)</span></span><br><span class="line">    <span class="keyword">private</span> <span class="type">boolean</span> enabled;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 正確</span></span><br><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="meta">@RefreshScope</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">FeatureService</span> &#123;</span><br><span class="line">    <span class="meta">@Value(&quot;$&#123;feature.enabled&#125;&quot;)</span></span><br><span class="line">    <span class="keyword">private</span> <span class="type">boolean</span> enabled;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><h2 id="完整例子"><a href="#完整例子" class="headerlink" title="完整例子"></a>完整例子</h2><p>Config Server 的 <code>user-service-dev.yml</code>：</p><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">server:</span></span><br><span class="line">  <span class="attr">port:</span> <span class="number">8001</span></span><br><span class="line"></span><br><span class="line"><span class="attr">app:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">user-service</span></span><br><span class="line">  <span class="attr">database:</span></span><br><span class="line">    <span class="attr">url:</span> <span class="string">jdbc:mysql://localhost:3306/user_db</span></span><br><span class="line">    <span class="attr">username:</span> <span class="string">root</span></span><br><span class="line">    <span class="attr">password:</span> <span class="string">password</span></span><br></pre></td></tr></table></figure><p>Client 的 <code>bootstrap.yml</code>：</p><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">spring:</span></span><br><span class="line">  <span class="attr">application:</span></span><br><span class="line">    <span class="attr">name:</span> <span class="string">user-service</span></span><br><span class="line">  <span class="attr">profiles:</span></span><br><span class="line">    <span class="attr">active:</span> <span class="string">dev</span></span><br><span class="line">  <span class="attr">cloud:</span></span><br><span class="line">    <span class="attr">config:</span></span><br><span class="line">      <span class="attr">uri:</span> <span class="string">http://localhost:8888</span></span><br></pre></td></tr></table></figure><p>Client 的 <code>application.yml</code>：</p><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">logging:</span></span><br><span class="line">  <span class="attr">level:</span></span><br><span class="line">    <span class="attr">root:</span> <span class="string">INFO</span></span><br></pre></td></tr></table></figure><p>Client 的設定 class：</p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="meta">@ConfigurationProperties(prefix = &quot;app&quot;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">AppConfig</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> String name;</span><br><span class="line">    <span class="keyword">private</span> DatabaseConfig database;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// getter/setter</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p>Client 啟動時，Spring 會：</p><ol><li>讀 bootstrap.yml，知道要去連 Config Server</li><li>連到 Config Server，拉 <code>user-service-dev.yml</code></li><li>合併兩份設定</li><li>初始化 Bean</li></ol><h2 id="重點整理"><a href="#重點整理" class="headerlink" title="重點整理"></a>重點整理</h2><ul><li>設定一定要在 <code>bootstrap.yml</code>，不是 <code>application.yml</code></li><li>用 <code>@ConfigurationProperties</code> 綁定相關設定，更整潔</li><li>用 <code>@RefreshScope</code> + <code>/actuator/refresh</code> 可以不重啟更新設定</li><li>Config Server 的設定優先序比本地設定高</li><li>環境變數優先序最高</li></ul><p>搞清楚這些概念後，就能輕鬆管理各個環境的設定了。</p>]]></content>
       
       
       <categories>
@@ -6259,11 +6259,11 @@
     
     
     <entry>
-      <title>Spring Cloud Config Client 設定與 @ConfigurationProperties</title>
-      <link href="/2025/06/28/Spring-Cloud-Config-Client-%E8%A8%AD%E5%AE%9A%E8%88%87-ConfigurationProperties/"/>
-      <url>/2025/06/28/Spring-Cloud-Config-Client-%E8%A8%AD%E5%AE%9A%E8%88%87-ConfigurationProperties/</url>
+      <title>Spring Cloud Config Server 本地檔案模式設定</title>
+      <link href="/2025/06/28/Spring-Cloud-Config-Server-%E6%9C%AC%E5%9C%B0%E6%AA%94%E6%A1%88%E6%A8%A1%E5%BC%8F/"/>
+      <url>/2025/06/28/Spring-Cloud-Config-Server-%E6%9C%AC%E5%9C%B0%E6%AA%94%E6%A1%88%E6%A8%A1%E5%BC%8F/</url>
       
-        <content type="html"><![CDATA[<p>上一篇文章講了 Config Server 的設定，這篇就來講怎麼在 client 端正確地拉和使用這些設定。有不少人在這邊踩過坑，主要都是因為搞不清楚 <code>bootstrap.yml</code> 和 <code>application.yml</code> 的區別。</p><h2 id="bootstrap-yml-vs-application-yml"><a href="#bootstrap-yml-vs-application-yml" class="headerlink" title="bootstrap.yml vs application.yml"></a>bootstrap.yml vs application.yml</h2><p>這是最關鍵的一點，千萬別搞反了。</p><ul><li><strong>bootstrap.yml</strong> - 用來設定 Spring Cloud 相關的東西，比如 Config Server 的位置。它的載入優先序比 application.yml 更高</li><li><strong>application.yml</strong> - 普通的應用設定</li></ul><p>如果你把 Config Server 的設定寫在 application.yml，Spring 會先載入 application.yml，但這時候還沒有連到 Config Server，所以設定會不全。一定要寫在 bootstrap.yml。</p><h2 id="Config-Client-的基本設定"><a href="#Config-Client-的基本設定" class="headerlink" title="Config Client 的基本設定"></a>Config Client 的基本設定</h2><p>在你的 Spring Boot 應用裡，先加依賴：</p><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.cloud<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-cloud-config-client<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure><p>然後在 <code>bootstrap.yml</code> 裡面設定：</p><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">spring:</span></span><br><span class="line">  <span class="attr">application:</span></span><br><span class="line">    <span class="attr">name:</span> <span class="string">user-service</span></span><br><span class="line">  <span class="attr">profiles:</span></span><br><span class="line">    <span class="attr">active:</span> <span class="string">dev</span></span><br><span class="line">  <span class="attr">cloud:</span></span><br><span class="line">    <span class="attr">config:</span></span><br><span class="line">      <span class="attr">uri:</span> <span class="string">http://localhost:8888</span></span><br></pre></td></tr></table></figure><h3 id="各個設定項目的含義"><a href="#各個設定項目的含義" class="headerlink" title="各個設定項目的含義"></a>各個設定項目的含義</h3><ul><li><code>spring.application.name</code> - 應用的名稱，Config Server 會用這個名稱去找對應的設定檔</li><li><code>spring.profiles.active</code> - 啟用的 profile，比如 dev、prod</li><li><code>spring.cloud.config.uri</code> - Config Server 的位址</li></ul><p>如果你想要 Config Server 的路徑更複雜，可以這樣設定：</p><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">spring:</span></span><br><span class="line">  <span class="attr">cloud:</span></span><br><span class="line">    <span class="attr">config:</span></span><br><span class="line">      <span class="attr">uri:</span> <span class="string">http://config-server.example.com:8888</span></span><br><span class="line">      <span class="attr">name:</span> <span class="string">user-service</span></span><br><span class="line">      <span class="attr">profile:</span> <span class="string">dev</span></span><br><span class="line">      <span class="attr">label:</span> <span class="string">main</span>  <span class="comment"># 如果 Config Server 用 Git，這就是 branch 名稱</span></span><br></pre></td></tr></table></figure><h2 id="用-ConfigurationProperties-綁定設定"><a href="#用-ConfigurationProperties-綁定設定" class="headerlink" title="用 @ConfigurationProperties 綁定設定"></a>用 @ConfigurationProperties 綁定設定</h2><p>與其用 <code>@Value</code> 逐個注入，不如用 <code>@ConfigurationProperties</code> 把相關的設定綁在一個 POJO class 上面。假設 Config Server 有這樣的設定：</p><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># user-service-dev.yml</span></span><br><span class="line"><span class="attr">app:</span></span><br><span class="line">  <span class="attr">database:</span></span><br><span class="line">    <span class="attr">url:</span> <span class="string">jdbc:mysql://localhost:3306/user_db</span></span><br><span class="line">    <span class="attr">username:</span> <span class="string">root</span></span><br><span class="line">    <span class="attr">password:</span> <span class="string">password</span></span><br><span class="line">  <span class="attr">cache:</span></span><br><span class="line">    <span class="attr">type:</span> <span class="string">redis</span></span><br><span class="line">    <span class="attr">host:</span> <span class="string">localhost</span></span><br><span class="line">    <span class="attr">port:</span> <span class="number">6379</span></span><br></pre></td></tr></table></figure><p>你可以建立一個設定 class：</p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="meta">@ConfigurationProperties(prefix = &quot;app&quot;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">AppProperties</span> &#123;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">private</span> DatabaseProperties database;</span><br><span class="line">    <span class="keyword">private</span> CacheProperties cache;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// getter/setter</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">class</span> <span class="title class_">DatabaseProperties</span> &#123;</span><br><span class="line">        <span class="keyword">private</span> String url;</span><br><span class="line">        <span class="keyword">private</span> String username;</span><br><span class="line">        <span class="keyword">private</span> String password;</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// getter/setter</span></span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">class</span> <span class="title class_">CacheProperties</span> &#123;</span><br><span class="line">        <span class="keyword">private</span> String type;</span><br><span class="line">        <span class="keyword">private</span> String host;</span><br><span class="line">        <span class="keyword">private</span> <span class="type">int</span> port;</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// getter/setter</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p>然後在 service 裡面就可以注入：</p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Service</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">UserService</span> &#123;</span><br><span class="line">    </span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> AppProperties appProperties;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">connect</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="type">String</span> <span class="variable">url</span> <span class="operator">=</span> appProperties.getDatabase().getUrl();</span><br><span class="line">        <span class="type">String</span> <span class="variable">host</span> <span class="operator">=</span> appProperties.getCache().getHost();</span><br><span class="line">        System.out.println(<span class="string">&quot;DB: &quot;</span> + url + <span class="string">&quot;, Cache: &quot;</span> + host);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><h2 id="ConfigurationProperties-和-Value-的區別"><a href="#ConfigurationProperties-和-Value-的區別" class="headerlink" title="@ConfigurationProperties 和 @Value 的區別"></a>@ConfigurationProperties 和 @Value 的區別</h2><table><thead><tr><th>特性</th><th>@ConfigurationProperties</th><th>@Value</th></tr></thead><tbody><tr><td>適合用途</td><td>多個相關設定的綁定</td><td>單個設定值</td></tr><tr><td>前綴支援</td><td>支援，整個 prefix 下的都會綁定</td><td>不支援</td></tr><tr><td>複雜物件</td><td>支援巢狀物件</td><td>只能用 SpEL</td></tr><tr><td>驗證</td><td>可以加 @Validated</td><td>不支援</td></tr><tr><td>設定來源</td><td>environment + Config Server</td><td>environment</td></tr></tbody></table><p>用 SpEL 的例子：</p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Service</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">UserService</span> &#123;</span><br><span class="line">    </span><br><span class="line">    <span class="meta">@Value(&quot;$&#123;app.database.url&#125;&quot;)</span></span><br><span class="line">    <span class="keyword">private</span> String dbUrl;</span><br><span class="line">    </span><br><span class="line">    <span class="meta">@Value(&quot;$&#123;app.cache.host:localhost&#125;&quot;)</span>  <span class="comment">// 預設值是 localhost</span></span><br><span class="line">    <span class="keyword">private</span> String cacheHost;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><h2 id="動態更新設定（不重啟應用）"><a href="#動態更新設定（不重啟應用）" class="headerlink" title="動態更新設定（不重啟應用）"></a>動態更新設定（不重啟應用）</h2><p>有時候你想要改設定不重啟應用。Spring Cloud Config 提供了一個功能——用 <code>@RefreshScope</code> + POST <code>/actuator/refresh</code> 來做這個。</p><p>首先加 actuator 依賴：</p><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-actuator<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure><p>然後在 Config Client 的 <code>application.yml</code> 裡面開啟 refresh endpoint：</p><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">management:</span></span><br><span class="line">  <span class="attr">endpoints:</span></span><br><span class="line">    <span class="attr">web:</span></span><br><span class="line">      <span class="attr">exposure:</span></span><br><span class="line">        <span class="attr">include:</span> <span class="string">refresh</span></span><br></pre></td></tr></table></figure><p>在你想要支援熱更新的 Bean 上加 <code>@RefreshScope</code>：</p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="meta">@RefreshScope</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">FeatureFlagService</span> &#123;</span><br><span class="line">    </span><br><span class="line">    <span class="meta">@Value(&quot;$&#123;features.new-ui:false&#125;&quot;)</span></span><br><span class="line">    <span class="keyword">private</span> <span class="type">boolean</span> newUiEnabled;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">public</span> <span class="type">boolean</span> <span class="title function_">isNewUiEnabled</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> newUiEnabled;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p>改完設定檔後，呼叫這個 endpoint 就能更新：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl -X POST http://localhost:8080/actuator/refresh</span><br></pre></td></tr></table></figure><p>應用就會從 Config Server 重新拉設定，不用重啟。</p><h2 id="用-ConfigurationProperties-RefreshScope"><a href="#用-ConfigurationProperties-RefreshScope" class="headerlink" title="用 @ConfigurationProperties + @RefreshScope"></a>用 @ConfigurationProperties + @RefreshScope</h2><p>如果你用 <code>@ConfigurationProperties</code> 和 <code>@RefreshScope</code> 組合，會更方便：</p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="meta">@ConfigurationProperties(prefix = &quot;features&quot;)</span></span><br><span class="line"><span class="meta">@RefreshScope</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">FeatureProperties</span> &#123;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">private</span> <span class="type">boolean</span> newUiEnabled;</span><br><span class="line">    <span class="keyword">private</span> <span class="type">boolean</span> betaFeatureEnabled;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// getter/setter</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Service</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">UserService</span> &#123;</span><br><span class="line">    </span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> FeatureProperties featureProperties;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">doSomething</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (featureProperties.isNewUiEnabled()) &#123;</span><br><span class="line">            <span class="comment">// 新的邏輯</span></span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="comment">// 舊的邏輯</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><h2 id="開發-vs-生產的設定切換"><a href="#開發-vs-生產的設定切換" class="headerlink" title="開發 vs 生產的設定切換"></a>開發 vs 生產的設定切換</h2><p>通常開發和生產會有不同的 Config Server。在 <code>bootstrap.yml</code> 裡面用環境變數切換：</p><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">spring:</span></span><br><span class="line">  <span class="attr">application:</span></span><br><span class="line">    <span class="attr">name:</span> <span class="string">user-service</span></span><br><span class="line">  <span class="attr">profiles:</span></span><br><span class="line">    <span class="attr">active:</span> <span class="string">$&#123;PROFILE:dev&#125;</span></span><br><span class="line">  <span class="attr">cloud:</span></span><br><span class="line">    <span class="attr">config:</span></span><br><span class="line">      <span class="attr">uri:</span> <span class="string">$&#123;CONFIG_SERVER_URI:http://localhost:8888&#125;</span></span><br></pre></td></tr></table></figure><p>然後啟動應用時傳入環境變數：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 開發環境</span></span><br><span class="line"><span class="built_in">export</span> PROFILE=dev</span><br><span class="line"><span class="built_in">export</span> CONFIG_SERVER_URI=http://localhost:8888</span><br><span class="line"></span><br><span class="line"><span class="comment"># 生產環境</span></span><br><span class="line"><span class="built_in">export</span> PROFILE=prod</span><br><span class="line"><span class="built_in">export</span> CONFIG_SERVER_URI=http://config.production.com:8888</span><br><span class="line"></span><br><span class="line">java -jar user-service.jar</span><br></pre></td></tr></table></figure><h2 id="設定載入的優先順序"><a href="#設定載入的優先順序" class="headerlink" title="設定載入的優先順序"></a>設定載入的優先順序</h2><p>Spring Cloud Config Client 的設定載入優先順序是這樣的（高到低）：</p><ol><li>環境變數</li><li>Config Server 的設定</li><li><code>application.yml</code> &#x2F; <code>application-&#123;profile&#125;.yml</code></li><li><code>bootstrap.yml</code> &#x2F; <code>bootstrap-&#123;profile&#125;.yml</code></li><li>預設值</li></ol><p>也就是說，如果你在環境變數裡設定了某個值，它會覆蓋 Config Server 的值。</p><h2 id="常見的坑"><a href="#常見的坑" class="headerlink" title="常見的坑"></a>常見的坑</h2><h3 id="1-把設定寫在-application-yml-而不是-bootstrap-yml"><a href="#1-把設定寫在-application-yml-而不是-bootstrap-yml" class="headerlink" title="1. 把設定寫在 application.yml 而不是 bootstrap.yml"></a>1. 把設定寫在 application.yml 而不是 bootstrap.yml</h3><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 錯誤：application.yml</span></span><br><span class="line"><span class="attr">spring:</span></span><br><span class="line">  <span class="attr">cloud:</span></span><br><span class="line">    <span class="attr">config:</span></span><br><span class="line">      <span class="attr">uri:</span> <span class="string">http://localhost:8888</span></span><br></pre></td></tr></table></figure><p>Config Server 的設定一定要在 bootstrap.yml。</p><h3 id="2-忘記加-spring-cloud-config-client-依賴"><a href="#2-忘記加-spring-cloud-config-client-依賴" class="headerlink" title="2. 忘記加 spring-cloud-config-client 依賴"></a>2. 忘記加 spring-cloud-config-client 依賴</h3><p>沒有這個依賴，Spring 根本不會去連 Config Server。</p><h3 id="3-ConfigurationProperties-沒有指定-prefix"><a href="#3-ConfigurationProperties-沒有指定-prefix" class="headerlink" title="3. @ConfigurationProperties 沒有指定 prefix"></a>3. @ConfigurationProperties 沒有指定 prefix</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 錯誤</span></span><br><span class="line"><span class="meta">@ConfigurationProperties</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">AppProperties</span> &#123;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 正確</span></span><br><span class="line"><span class="meta">@ConfigurationProperties(prefix = &quot;app&quot;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">AppProperties</span> &#123;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><h3 id="4-熱更新時忘記加-RefreshScope"><a href="#4-熱更新時忘記加-RefreshScope" class="headerlink" title="4. 熱更新時忘記加 @RefreshScope"></a>4. 熱更新時忘記加 @RefreshScope</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 錯誤：改設定後不會生效</span></span><br><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">FeatureService</span> &#123;</span><br><span class="line">    <span class="meta">@Value(&quot;$&#123;feature.enabled&#125;&quot;)</span></span><br><span class="line">    <span class="keyword">private</span> <span class="type">boolean</span> enabled;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 正確</span></span><br><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="meta">@RefreshScope</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">FeatureService</span> &#123;</span><br><span class="line">    <span class="meta">@Value(&quot;$&#123;feature.enabled&#125;&quot;)</span></span><br><span class="line">    <span class="keyword">private</span> <span class="type">boolean</span> enabled;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><h2 id="完整例子"><a href="#完整例子" class="headerlink" title="完整例子"></a>完整例子</h2><p>Config Server 的 <code>user-service-dev.yml</code>：</p><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">server:</span></span><br><span class="line">  <span class="attr">port:</span> <span class="number">8001</span></span><br><span class="line"></span><br><span class="line"><span class="attr">app:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">user-service</span></span><br><span class="line">  <span class="attr">database:</span></span><br><span class="line">    <span class="attr">url:</span> <span class="string">jdbc:mysql://localhost:3306/user_db</span></span><br><span class="line">    <span class="attr">username:</span> <span class="string">root</span></span><br><span class="line">    <span class="attr">password:</span> <span class="string">password</span></span><br></pre></td></tr></table></figure><p>Client 的 <code>bootstrap.yml</code>：</p><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">spring:</span></span><br><span class="line">  <span class="attr">application:</span></span><br><span class="line">    <span class="attr">name:</span> <span class="string">user-service</span></span><br><span class="line">  <span class="attr">profiles:</span></span><br><span class="line">    <span class="attr">active:</span> <span class="string">dev</span></span><br><span class="line">  <span class="attr">cloud:</span></span><br><span class="line">    <span class="attr">config:</span></span><br><span class="line">      <span class="attr">uri:</span> <span class="string">http://localhost:8888</span></span><br></pre></td></tr></table></figure><p>Client 的 <code>application.yml</code>：</p><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">logging:</span></span><br><span class="line">  <span class="attr">level:</span></span><br><span class="line">    <span class="attr">root:</span> <span class="string">INFO</span></span><br></pre></td></tr></table></figure><p>Client 的設定 class：</p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="meta">@ConfigurationProperties(prefix = &quot;app&quot;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">AppConfig</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> String name;</span><br><span class="line">    <span class="keyword">private</span> DatabaseConfig database;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// getter/setter</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p>Client 啟動時，Spring 會：</p><ol><li>讀 bootstrap.yml，知道要去連 Config Server</li><li>連到 Config Server，拉 <code>user-service-dev.yml</code></li><li>合併兩份設定</li><li>初始化 Bean</li></ol><h2 id="重點整理"><a href="#重點整理" class="headerlink" title="重點整理"></a>重點整理</h2><ul><li>設定一定要在 <code>bootstrap.yml</code>，不是 <code>application.yml</code></li><li>用 <code>@ConfigurationProperties</code> 綁定相關設定，更整潔</li><li>用 <code>@RefreshScope</code> + <code>/actuator/refresh</code> 可以不重啟更新設定</li><li>Config Server 的設定優先序比本地設定高</li><li>環境變數優先序最高</li></ul><p>搞清楚這些概念後，就能輕鬆管理各個環境的設定了。</p>]]></content>
+        <content type="html"><![CDATA[<p>Spring Cloud Config 是用來集中管理應用設定的利器，但預設用 Git backend，在開發時有時候有點麻煩。我就來介紹怎麼用本地檔案模式搞定開發環境的設定管理。</p><h2 id="為什麼要用本地檔案模式？"><a href="#為什麼要用本地檔案模式？" class="headerlink" title="為什麼要用本地檔案模式？"></a>為什麼要用本地檔案模式？</h2><p>預設的 Config Server 是用 Git repository 當後端，這對生產環境來說很棒，但開發時有點費事：</p><ul><li>要維護一個 Git repo</li><li>改設定要 push、pull</li><li>不方便快速迭代</li></ul><p>用本地檔案模式就簡單多了，直接在電腦上改檔案，重新整理一下就行。</p><h2 id="Config-Server-的設定"><a href="#Config-Server-的設定" class="headerlink" title="Config Server 的設定"></a>Config Server 的設定</h2><p>首先建立一個 Spring Boot application 當 Config Server。</p><h3 id="1-加依賴"><a href="#1-加依賴" class="headerlink" title="1. 加依賴"></a>1. 加依賴</h3><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.cloud<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-cloud-config-server<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure><h3 id="2-啟動類別標注-EnableConfigServer"><a href="#2-啟動類別標注-EnableConfigServer" class="headerlink" title="2. 啟動類別標注 @EnableConfigServer"></a>2. 啟動類別標注 @EnableConfigServer</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@SpringBootApplication</span></span><br><span class="line"><span class="meta">@EnableConfigServer</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">ConfigServerApplication</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        SpringApplication.run(ConfigServerApplication.class, args);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><h3 id="3-application-yml-設定"><a href="#3-application-yml-設定" class="headerlink" title="3. application.yml 設定"></a>3. application.yml 設定</h3><p>這是重點。用 native profile 來啟用本地檔案模式：</p><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">spring:</span></span><br><span class="line">  <span class="attr">profiles:</span></span><br><span class="line">    <span class="attr">active:</span> <span class="string">native</span></span><br><span class="line">  <span class="attr">cloud:</span></span><br><span class="line">    <span class="attr">config:</span></span><br><span class="line">      <span class="attr">server:</span></span><br><span class="line">        <span class="attr">native:</span></span><br><span class="line">          <span class="attr">searchLocations:</span> <span class="string">file:///Users/cheng/config/</span></span><br></pre></td></tr></table></figure><p>或者用環境變數：</p><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">spring:</span></span><br><span class="line">  <span class="attr">profiles:</span></span><br><span class="line">    <span class="attr">active:</span> <span class="string">native</span></span><br><span class="line">  <span class="attr">cloud:</span></span><br><span class="line">    <span class="attr">config:</span></span><br><span class="line">      <span class="attr">server:</span></span><br><span class="line">        <span class="attr">native:</span></span><br><span class="line">          <span class="attr">searchLocations:</span> <span class="string">file://$&#123;user.home&#125;/config/</span></span><br></pre></td></tr></table></figure><h4 id="幾個重點"><a href="#幾個重點" class="headerlink" title="幾個重點"></a>幾個重點</h4><ul><li><code>file:///</code> 是本地檔案路徑（三個 slash）</li><li>路徑最後要加 <code>/</code></li><li>可以指定多個路徑，用逗號分隔：<code>file:///path1/,file:///path2/</code></li></ul><p>如果你想要更簡潔的設定，也可以這樣：</p><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">spring:</span></span><br><span class="line">  <span class="attr">profiles:</span></span><br><span class="line">    <span class="attr">active:</span> <span class="string">native</span></span><br><span class="line">  <span class="attr">config:</span></span><br><span class="line">    <span class="attr">import: configserver:</span></span><br><span class="line">  <span class="attr">cloud:</span></span><br><span class="line">    <span class="attr">config:</span></span><br><span class="line">      <span class="attr">server:</span></span><br><span class="line">        <span class="attr">native:</span></span><br><span class="line">          <span class="attr">searchLocations:</span> <span class="string">classpath:/config/</span></span><br></pre></td></tr></table></figure><p>用 <code>classpath:/</code> 的話設定檔會放在 JAR 裡面（通常是 <code>src/main/resources/config/</code>）。</p><h2 id="設定檔的命名和組織"><a href="#設定檔的命名和組織" class="headerlink" title="設定檔的命名和組織"></a>設定檔的命名和組織</h2><p>Config Server 預期的設定檔名稱有特定格式。假設 client 端的 application name 是 <code>user-service</code>，profiles 是 <code>dev</code>，那麼 Config Server 會依序查找：</p><ol><li><code>user-service-dev.yml</code> 或 <code>user-service-dev.properties</code></li><li><code>user-service.yml</code> 或 <code>user-service.properties</code></li></ol><p>所以假設你的設定檔目錄結構是這樣：</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">config/</span><br><span class="line">├── user-service-dev.yml</span><br><span class="line">├── user-service-prod.yml</span><br><span class="line">├── user-service.yml</span><br><span class="line">├── order-service-dev.yml</span><br><span class="line">├── order-service-prod.yml</span><br><span class="line">└── order-service.yml</span><br></pre></td></tr></table></figure><p>然後你有個檔案在 <code>/Users/cheng/config/user-service-dev.yml</code>：</p><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">server:</span></span><br><span class="line">  <span class="attr">port:</span> <span class="number">8001</span></span><br><span class="line"></span><br><span class="line"><span class="attr">app:</span></span><br><span class="line">  <span class="attr">database:</span></span><br><span class="line">    <span class="attr">url:</span> <span class="string">jdbc:mysql://localhost:3306/user_db_dev</span></span><br><span class="line">    <span class="attr">username:</span> <span class="string">root</span></span><br><span class="line">    <span class="attr">password:</span> <span class="string">password</span></span><br></pre></td></tr></table></figure><h2 id="Config-Server-的-Endpoint"><a href="#Config-Server-的-Endpoint" class="headerlink" title="Config Server 的 Endpoint"></a>Config Server 的 Endpoint</h2><p>Config Server 提供了一些 REST endpoint 來取得設定。格式是：</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/&#123;application&#125;/&#123;profile&#125;[/&#123;label&#125;]</span><br></pre></td></tr></table></figure><p>比如：</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"># 取得 user-service 在 dev profile 的設定</span><br><span class="line">GET http://localhost:8888/user-service/dev</span><br><span class="line"></span><br><span class="line"># 取得 user-service 預設 profile 的設定</span><br><span class="line">GET http://localhost:8888/user-service/default</span><br><span class="line"></span><br><span class="line"># 如果用 Git backend，&#123;label&#125; 就是 branch 名稱</span><br><span class="line"># 本地模式通常不用 &#123;label&#125;</span><br><span class="line">GET http://localhost:8888/user-service/dev/master</span><br></pre></td></tr></table></figure><h2 id="實際運作"><a href="#實際運作" class="headerlink" title="實際運作"></a>實際運作</h2><p>假設 Config Server 跑在 <code>http://localhost:8888</code>，我們用 curl 試試：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl http://localhost:8888/user-service/dev</span><br></pre></td></tr></table></figure><p>會回傳類似這樣的 JSON：</p><figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;user-service&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;profiles&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span><span class="string">&quot;dev&quot;</span><span class="punctuation">]</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;label&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">null</span></span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;version&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">null</span></span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;state&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">null</span></span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;propertySources&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">    <span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;file:///Users/cheng/config/user-service-dev.yml&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;source&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">        <span class="attr">&quot;server.port&quot;</span><span class="punctuation">:</span> <span class="number">8001</span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;app.database.url&quot;</span><span class="punctuation">:</span> <span class="string">&quot;jdbc:mysql://localhost:3306/user_db_dev&quot;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;app.database.username&quot;</span><span class="punctuation">:</span> <span class="string">&quot;root&quot;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;app.database.password&quot;</span><span class="punctuation">:</span> <span class="string">&quot;password&quot;</span></span><br><span class="line">      <span class="punctuation">&#125;</span></span><br><span class="line">    <span class="punctuation">&#125;</span></span><br><span class="line">  <span class="punctuation">]</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure><h2 id="Client-端的設定"><a href="#Client-端的設定" class="headerlink" title="Client 端的設定"></a>Client 端的設定</h2><p>現在來設定 Config Client。假設你的應用叫 <code>user-service</code>，想要讀 dev 的設定。</p><p>在 <code>bootstrap.yml</code> 裡面設定（不是 <code>application.yml</code>！重要）：</p><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">spring:</span></span><br><span class="line">  <span class="attr">application:</span></span><br><span class="line">    <span class="attr">name:</span> <span class="string">user-service</span></span><br><span class="line">  <span class="attr">profiles:</span></span><br><span class="line">    <span class="attr">active:</span> <span class="string">dev</span></span><br><span class="line">  <span class="attr">cloud:</span></span><br><span class="line">    <span class="attr">config:</span></span><br><span class="line">      <span class="attr">uri:</span> <span class="string">http://localhost:8888</span></span><br></pre></td></tr></table></figure><p>然後在 <code>application.yml</code> 就可以這樣用：</p><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 這些是預設值，如果 Config Server 有就會被覆蓋</span></span><br><span class="line"><span class="attr">server:</span></span><br><span class="line">  <span class="attr">port:</span> <span class="number">8080</span></span><br><span class="line"></span><br><span class="line"><span class="attr">app:</span></span><br><span class="line">  <span class="attr">version:</span> <span class="number">1.0</span><span class="number">.0</span></span><br></pre></td></tr></table></figure><h2 id="用-Value-取得設定"><a href="#用-Value-取得設定" class="headerlink" title="用 @Value 取得設定"></a>用 @Value 取得設定</h2><p>在程式裡面用 <code>@Value</code> 取得設定值：</p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Service</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">UserService</span> &#123;</span><br><span class="line">    </span><br><span class="line">    <span class="meta">@Value(&quot;$&#123;app.database.url&#125;&quot;)</span></span><br><span class="line">    <span class="keyword">private</span> String databaseUrl;</span><br><span class="line">    </span><br><span class="line">    <span class="meta">@Value(&quot;$&#123;app.database.username&#125;&quot;)</span></span><br><span class="line">    <span class="keyword">private</span> String username;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">connect</span><span class="params">()</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;Connecting to: &quot;</span> + databaseUrl);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p>或者用 <code>@ConfigurationProperties</code> 綁定整個設定物件（這個我在另外一篇文章講過了）。</p><h2 id="本地模式的限制"><a href="#本地模式的限制" class="headerlink" title="本地模式的限制"></a>本地模式的限制</h2><p>要注意本地模式有些限制：</p><ol><li><strong>沒有版本控制</strong> - native 模式不支援 Git 的 label（branch）概念</li><li><strong>不適合生產</strong> - 生產環境還是要用 Git backend，確保可追蹤和回滾</li><li><strong>熱重載有限制</strong> - Config Server 本身改了設定檔，client 端要呼叫 refresh endpoint 才能更新</li></ol><h2 id="從-Git-轉到本地模式"><a href="#從-Git-轉到本地模式" class="headerlink" title="從 Git 轉到本地模式"></a>從 Git 轉到本地模式</h2><p>開發時用本地模式，生產時切回 Git，可以這樣設定：</p><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">spring:</span></span><br><span class="line">  <span class="attr">profiles:</span></span><br><span class="line">    <span class="attr">active:</span> <span class="string">$&#123;CONFIG_PROFILE:native&#125;</span></span><br><span class="line">  <span class="attr">cloud:</span></span><br><span class="line">    <span class="attr">config:</span></span><br><span class="line">      <span class="attr">server:</span></span><br><span class="line">        <span class="comment"># native profile 設定</span></span><br><span class="line">        <span class="attr">native:</span></span><br><span class="line">          <span class="attr">searchLocations:</span> <span class="string">file://$&#123;CONFIG_PATH:~/config&#125;/</span></span><br><span class="line">        </span><br><span class="line">        <span class="comment"># git profile 設定</span></span><br><span class="line">        <span class="attr">git:</span></span><br><span class="line">          <span class="attr">uri:</span> <span class="string">https://github.com/myorg/config-repo</span></span><br><span class="line">          <span class="attr">searchPaths:</span> <span class="string">&quot;config/&#123;application&#125;&quot;</span></span><br></pre></td></tr></table></figure><p>然後用環境變數決定用哪個：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 開發環境</span></span><br><span class="line"><span class="built_in">export</span> CONFIG_PROFILE=native</span><br><span class="line"><span class="built_in">export</span> CONFIG_PATH=/Users/cheng/config/</span><br><span class="line"></span><br><span class="line"><span class="comment"># 生產環境</span></span><br><span class="line"><span class="built_in">export</span> CONFIG_PROFILE=git</span><br></pre></td></tr></table></figure><h2 id="完整例子"><a href="#完整例子" class="headerlink" title="完整例子"></a>完整例子</h2><p>一個完整的開發設定流程：</p><ol><li>建立設定檔目錄 <code>/Users/cheng/config/</code></li><li>建立 <code>user-service-dev.yml</code></li><li>Config Server 的 <code>application.yml</code>：</li></ol><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">server:</span></span><br><span class="line">  <span class="attr">port:</span> <span class="number">8888</span></span><br><span class="line"></span><br><span class="line"><span class="attr">spring:</span></span><br><span class="line">  <span class="attr">profiles:</span></span><br><span class="line">    <span class="attr">active:</span> <span class="string">native</span></span><br><span class="line">  <span class="attr">cloud:</span></span><br><span class="line">    <span class="attr">config:</span></span><br><span class="line">      <span class="attr">server:</span></span><br><span class="line">        <span class="attr">native:</span></span><br><span class="line">          <span class="attr">searchLocations:</span> <span class="string">file:///Users/cheng/config/</span></span><br></pre></td></tr></table></figure><ol start="4"><li>Client 的 <code>bootstrap.yml</code>：</li></ol><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">spring:</span></span><br><span class="line">  <span class="attr">application:</span></span><br><span class="line">    <span class="attr">name:</span> <span class="string">user-service</span></span><br><span class="line">  <span class="attr">profiles:</span></span><br><span class="line">    <span class="attr">active:</span> <span class="string">dev</span></span><br><span class="line">  <span class="attr">cloud:</span></span><br><span class="line">    <span class="attr">config:</span></span><br><span class="line">      <span class="attr">uri:</span> <span class="string">http://localhost:8888</span></span><br></pre></td></tr></table></figure><ol start="5"><li>啟動 Config Server，然後啟動 client 應用</li><li>Client 應用會自動從 Config Server 拉設定</li></ol><h2 id="重點整理"><a href="#重點整理" class="headerlink" title="重點整理"></a>重點整理</h2><ul><li>開發用 native profile + 本地檔案很方便</li><li>設定檔命名：<code>&#123;application&#125;-&#123;profile&#125;.yml</code></li><li>設定要在 <code>bootstrap.yml</code>，不是 <code>application.yml</code></li><li>Config Server endpoint 是 <code>/&#123;application&#125;/&#123;profile&#125;</code></li><li>生產環境還是建議用 Git backend</li><li>native 模式沒有版本控制，只適合開發</li></ul><p>下次要快速調整開發設定，就用本地檔案模式，爽度直接升天。</p>]]></content>
       
       
       <categories>
@@ -6300,9 +6300,9 @@
       
         <tags>
             
-            <tag> JSON </tag>
-            
             <tag> Java </tag>
+            
+            <tag> JSON </tag>
             
         </tags>
       
@@ -6702,9 +6702,9 @@
       
         <tags>
             
-            <tag> 資料庫 </tag>
-            
             <tag> Docker </tag>
+            
+            <tag> 資料庫 </tag>
             
         </tags>
       
