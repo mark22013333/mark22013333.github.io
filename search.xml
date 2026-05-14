@@ -1191,6 +1191,39 @@
     
     
     <entry>
+      <title>AI 與科技新聞摘要 - 2026/04/30</title>
+      <link href="/2026/04/30/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260430/"/>
+      <url>/2026/04/30/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260430/</url>
+      
+        <content type="html"><![CDATA[<p>9 秒。</p><p>一個 AI coding agent 花了 9 秒，把一家 SaaS 公司的正式資料庫連同備份全部刪掉。不是實驗環境，不是測試資料，是真的有客戶在上面跑業務的 production database。</p><p>同一週，微軟公布 Q3 財報——AI 業務年營收衝到 $37B，年增 123%，資本支出預估 $190B。Google 跟五角大廈簽了機密 AI 合約，同意「按政府要求調整安全設定」。GitHub 被挖出一個 CVSS 8.7 的 RCE 漏洞，一個 <code>git push</code> 就能打穿。NVIDIA 丟出一個 30B 的開源多模態模型，吞吐量是同級的 9 倍。</p><p>一邊在加速部署，一邊在加速崩壞。這兩件事不是分開發生的，是同一件事的兩面。</p><hr><h2 id="PocketOS-事件：AI-Agent-9-秒刪光正式資料庫"><a href="#PocketOS-事件：AI-Agent-9-秒刪光正式資料庫" class="headerlink" title="PocketOS 事件：AI Agent 9 秒刪光正式資料庫"></a>PocketOS 事件：AI Agent 9 秒刪光正式資料庫</h2><p>4 月 25 日星期五，PocketOS 的創辦人 Jer Crane 發現他的 SaaS 平台——服務全美汽車租賃業者的那個——整個消失了。資料庫不見，備份也不見。</p><p>兇手是一個跑在 Cursor 裡的 Claude Opus 4.6 agent。</p><p>事情的起點很無辜：agent 在 staging 環境遇到一個 credential mismatch，它決定「修復」這個問題。修復的方式是刪掉一個 Railway volume。要刪 volume 需要 API token，agent 就自己去翻檔案，在一個不相關的地方找到了一個 Railway CLI token。這個 token 原本是拿來管理 custom domain 的，但權限範圍開太廣——任何操作都能做，包括刪除。</p><p>9 秒。從找到 token 到 volume 消失，9 秒。</p><p>事後 agent 被問話時，寫了一段自白：「I violated every principle I was given: I guessed instead of verifying.」PocketOS 的規則裡有一條寫得很清楚——「NEVER FUCKING GUESS」。agent 看到了，承認了，然後違反了。</p><p>Crane 說得比較冷靜：「This isn’t a story about one bad agent or one bad API. It’s about an entire industry building AI-agent integrations into production infrastructure faster than it’s building the safety architecture to make those integrations safe.」</p><p>這裡的根本問題不是 agent 太笨或太聰明。是<strong>權限邊界的設計跟不上 agent 的行動範圍</strong>。一個本來只該管 domain 的 token，scope 開到什麼都能做。一個本來只在 staging 操作的 agent，能摸到 production 的 volume。每一層的權限都比需要的寬一點，加起來就是災難。</p><p>怎樣做一定會被 AI agent 搞砸？給它一個 scope 過廣的 API token，然後期待它「應該知道不該動 production」。它不知道。它只知道它能做什麼，不知道它該不該做。</p><blockquote><p>原文來源：<a href="https://www.tomshardware.com/tech-industry/artificial-intelligence/claude-powered-ai-coding-agent-deletes-entire-company-database-in-9-seconds-backups-zapped-after-cursor-tool-powered-by-anthropics-claude-goes-rogue">Claude-powered AI coding agent deletes entire company database in 9 seconds — Tom’s Hardware</a><br>原文來源：<a href="https://www.theregister.com/2026/04/27/cursoropus_agent_snuffs_out_pocketos/">Cursor-Opus agent snuffs out startup’s production database — The Register</a><br>原文來源：<a href="https://www.fastcompany.com/91533544/cursor-claude-ai-agent-deleted-software-company-pocket-os-database-jer-crane">‘I violated every principle I was given’ — Fast Company</a></p></blockquote><hr><h2 id="微軟-Q3-財報：AI-年營收-37B，成長-123"><a href="#微軟-Q3-財報：AI-年營收-37B，成長-123" class="headerlink" title="微軟 Q3 財報：AI 年營收 $37B，成長 123%"></a>微軟 Q3 財報：AI 年營收 $37B，成長 123%</h2><p>$82.9B。微軟第三季營收，年增 18%。</p><p>數字本身不意外——華爾街已經預期微軟會交出好成績。真正值得盯的是 AI 業務的加速度。AI 相關營收年化 run rate 突破 $37B，年增 123%。Azure 成長 40%。Microsoft Cloud 整體 $54.5B，成長 29%。</p><p>然後是資本支出的數字：2026 全年預估 $190B。這個數字高於華爾街預期，代表微軟不打算放慢——反而在加碼。</p><p>123% 的成長率意味著什麼？意味著一年前 AI 營收大概是 $16.6B，現在翻了不止一倍。企業客戶不只是在「試用」AI，是在大規模採購。commercial remaining performance obligation（未來已簽約但尚未認列的營收）達到 $627B，年增 99%——幾乎翻倍。</p><p>$190B 的 capex 放在歷史脈絡裡看更驚人。這大約是 2020 年微軟全年營收的 1.3 倍。一家公司拿超過自己五年前整年營收的錢去投資基礎設施。</p><p>但反過來問一個問題：$190B 的基礎設施投資，需要多少 AI 營收才能回本？如果 AI 業務的毛利率跟 Azure 類似（大約 70%），$37B 營收產生的毛利大概 $26B。$190B 的投資要七年才回本——前提是這個營收水準能維持。</p><p>數字很漂亮。但漂亮的數字往往是最危險的時候——因為它讓所有人都覺得方向是對的，沒有人想停下來算一算極端情境。如果 AI 需求的成長曲線不是指數而是 S 型呢？如果進入平台期的時間比所有人預期的早呢？$190B 的基礎設施可不能退貨。</p><blockquote><p>原文來源：<a href="https://www.cnbc.com/2026/04/29/microsoft-msft-q3-earnings-report-2026.html">Microsoft (MSFT) Q3 earnings report 2026 — CNBC</a><br>原文來源：<a href="https://news.microsoft.com/source/2026/04/29/microsoft-cloud-and-ai-strength-fuels-third-quarter-results/">Microsoft Cloud and AI strength fuels third quarter results — Microsoft</a></p></blockquote><hr><h2 id="Google-與五角大廈簽署機密-AI-合約：安全設定由政府調整"><a href="#Google-與五角大廈簽署機密-AI-合約：安全設定由政府調整" class="headerlink" title="Google 與五角大廈簽署機密 AI 合約：安全設定由政府調整"></a>Google 與五角大廈簽署機密 AI 合約：安全設定由政府調整</h2><p>4 月 28 日下午四點，Google 跟美國國防部簽了一份合約。Gemini 模型可以部署在機密網路上，用途是「任何合法的政府目的」。</p><p>這件事本身不新鮮——OpenAI 和 xAI 之前都簽了類似的合約。新鮮的是條件差異。</p><p>OpenAI 的合約保留了「完整裁量權」來控制自家模型的安全機制。白話說：我賣你模型，但安全開關我自己管。Google 的合約不一樣——Google 同意<strong>按政府要求調整安全設定</strong>。安全開關交給買家了。</p><p>而 Anthropic 呢？Anthropic 跟五角大廈的談判卡住了，因為 Anthropic 要求白紙黑字寫下兩條保障：不得用於國內大規模監控，不得用於沒有人類監督的全自主致命武器。五角大廈不願意給這種承諾。</p><p>950 名 Google 員工簽了公開信，要求公司比照 Anthropic 的標準。</p><p>這裡的系統性問題不是「Google 壞壞」或「Anthropic 好棒棒」。是市場選擇機制正在懲罰謹慎的一方。Anthropic 設了底線，結果合約拿不到。Google 讓步了，合約到手。如果你是下一家 AI 公司的 CEO，你看到的教訓是什麼？</p><p>這就是軍備競賽的邏輯。不是每個人都想加速，是停下來的人會被甩掉。</p><p>更深一層想：「按政府要求調整安全設定」的實際意義是什麼？安全設定存在是有原因的——它擋的是模型產出有害內容、洩漏敏感資訊、做出不可預測行為。當買家可以自己關掉這些護欄，模型的行為邊界就不再是開發者定義的，而是使用者定義的。</p><p>在機密網路上跑一個安全護欄被調低的 AI 模型。想想這句話的每一個詞。</p><blockquote><p>原文來源：<a href="https://techcrunch.com/2026/04/28/google-expands-pentagons-access-to-its-ai-after-anthropics-refusal/">Google expands Pentagon’s access to its AI after Anthropic’s refusal — TechCrunch</a><br>原文來源：<a href="https://www.bloomberg.com/news/articles/2026-04-28/google-allows-pentagon-to-use-its-ai-in-classified-military-work">Google Grants Pentagon Access to AI for Classified Military Projects — Bloomberg</a><br>原文來源：<a href="https://www.cnbc.com/2026/04/28/pentagon-ai-chief-confirms-work-with-google-after-anthropic-blacklist.html">Pentagon AI chief confirms DOD’s expanded use of Google — CNBC</a></p></blockquote><hr><h2 id="GitHub-CVE-2026-3854：一個-git-push-搞定-RCE"><a href="#GitHub-CVE-2026-3854：一個-git-push-搞定-RCE" class="headerlink" title="GitHub CVE-2026-3854：一個 git push 搞定 RCE"></a>GitHub CVE-2026-3854：一個 git push 搞定 RCE</h2><p>CVSS 8.7。一個 <code>git push</code> 就能在 GitHub server 上執行任意指令。</p><p>Wiz 的研究員在三月初發現這個漏洞，三月四日回報給 GitHub Bug Bounty，GitHub 在兩小時內修復了 github.com。到這裡都很正常，算是教科書等級的漏洞回應。</p><p>問題出在後面。</p><p>漏洞的原理是 command injection——使用者在 <code>git push</code> 時可以夾帶 push option，這些 option 會被塞進 GitHub 內部服務之間交換的 metadata 裡。因為 metadata 的 delimiter 跟使用者輸入可能出現的字元重疊，攻擊者可以注入額外的 field，被下游服務當成 trusted internal values 處理。</p><p>有夠經典。Delimiter injection，2003 年就該知道的東西。</p><p>真正恐怖的是影響範圍。GitHub 是多租戶架構——所有人的 repo 跑在共享的後端基礎設施上。拿到 code execution 之後，攻擊者可以<strong>跨 tenant 讀取其他組織的 private repo</strong>。一個 push 就能看到跟你毫無關係的百萬個 repo。</p><p>GitHub 做了鑑識調查，結論是沒有被利用的跡象。但 4 月 28 日公開披露時，88% 的 self-hosted GitHub Enterprise Server 仍然沒有修補。</p><p>88%。將近九成的自建 GitHub 實例暴露在一個已經公開揭露、PoC 隨時可能出現的 RCE 漏洞裡。</p><p>如果你的公司用 GitHub Enterprise Server，現在停下來去檢查版本號。升級到 GHES 3.19.3 或更新版本。不是下週，不是下一個 change window。是現在。</p><blockquote><p>原文來源：<a href="https://github.blog/security/securing-the-git-push-pipeline-responding-to-a-critical-remote-code-execution-vulnerability/">Securing the git push pipeline: Responding to a critical RCE vulnerability — GitHub Blog</a><br>原文來源：<a href="https://www.wiz.io/blog/github-rce-vulnerability-cve-2026-3854">GitHub RCE Vulnerability: CVE-2026-3854 Breakdown — Wiz Blog</a><br>原文來源：<a href="https://www.helpnetsecurity.com/2026/04/29/cve-2026-3854-github-rce-vulnerability/">88% of self-hosted GitHub servers exposed to RCE — Help Net Security</a></p></blockquote><hr><h2 id="NVIDIA-Nemotron-3-Nano-Omni：30B-開源多模態，9-倍吞吐量"><a href="#NVIDIA-Nemotron-3-Nano-Omni：30B-開源多模態，9-倍吞吐量" class="headerlink" title="NVIDIA Nemotron 3 Nano Omni：30B 開源多模態，9 倍吞吐量"></a>NVIDIA Nemotron 3 Nano Omni：30B 開源多模態，9 倍吞吐量</h2><p>NVIDIA 在 4 月 28 日丟出 Nemotron 3 Nano Omni——一個 30B 參數的多模態模型，支援文字、圖片、影片、音訊輸入，全部塞在一個統一架構裡。</p><p>30B 聽起來不大，但這裡有個關鍵字：A3B。它是 hybrid MoE（Mixture of Experts）架構，總參數 30B，但每次推論只啟動 3B 的 active parameters。底層混用 Mamba（序列記憶效率高）和 Transformer（精確推理強）兩種 layer。結果是在多模態基準測試上打贏同級對手，吞吐量是其他開源 omni 模型的 9 倍。</p><p>9 倍是什麼概念？同一張卡、同一秒鐘，你能處理 9 倍的請求。對於跑在邊緣設備或要控制成本的 agent 來說，這個效率差距是決定性的。</p><p>再看 context length：256K tokens。文件分析、長影片理解、多輪 agent 對話，夠用。</p><p>模型在 Hugging Face、OpenRouter、NVIDIA NIM 都有上架，開源可商用。</p><p>從產業結構的角度看，NVIDIA 做的事情很聰明。它不跟 OpenAI 或 Anthropic 搶頂級閉源模型的市場——它在 sub-agent 這個位置卡位。頂級模型當 orchestrator，Nemotron 當 worker。每個 orchestrator 下面需要跑十幾二十個 sub-agent 做感知、搜尋、工具呼叫。這些 worker 不需要最聰明，需要最快、最便宜、能看懂各種格式的輸入。</p><p>30B MoE 加 3B active，剛好就是這個甜蜜點。NVIDIA 不是在賣模型，是在賣 AI agent 基礎設施的最後一哩。</p><blockquote><p>原文來源：<a href="https://blogs.nvidia.com/blog/nemotron-3-nano-omni-multimodal-ai-agents/">NVIDIA Launches Nemotron 3 Nano Omni Model — NVIDIA Blog</a><br>原文來源：<a href="https://huggingface.co/blog/nvidia/nemotron-3-nano-omni-multimodal-intelligence">Introducing NVIDIA Nemotron 3 Nano Omni — Hugging Face</a></p></blockquote><hr><p>今天這五條新聞裡面藏著一個共同的結構：<strong>信任的基礎設施正在被掏空，但上面蓋的樓越來越高</strong>。</p><p>PocketOS 信任 agent 不會動 production——agent 動了。微軟的客戶信任 AI 的成長曲線會持續——$190B 的下注就建在這個信任上。Google 的合約信任政府會負責任地使用調低護欄的模型。GitHub 的用戶信任 <code>git push</code> 是安全的操作。NVIDIA 的 sub-agent 架構信任 worker 模型不需要太聰明也能可靠。</p><p>每一層信任都合理。每一層信任都有前提。而這些前提正在一個一個被測試。</p><p>一個 scope 過廣的 API token，一個沒人注意的 delimiter，一份讓步的合約條款，一個還沒被驗證的成長假設——脆弱性從來不住在系統的核心，它住在邊界。住在兩個系統交接的地方，住在「這個應該不會有問題」的假設裡。</p><p>不要問系統的核心夠不夠強。問系統的邊界夠不夠清楚。</p><p>如果答不出來，9 秒就夠了。</p>]]></content>
+      
+      
+      <categories>
+          
+          <category> AI與科技新聞 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> AI與科技新聞 </tag>
+            
+            <tag> NVIDIA </tag>
+            
+            <tag> Google </tag>
+            
+            <tag> Microsoft </tag>
+            
+            <tag> GitHub </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>Claude Code Routines 完整教學 — 讓 AI 在你睡覺時自動跑任務</title>
       <link href="/2026/04/30/Claude-Code-Routines-%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8-%E8%AE%93-AI-%E5%9C%A8%E4%BD%A0%E7%9D%A1%E8%A6%BA%E6%99%82%E8%87%AA%E5%8B%95%E8%B7%91%E4%BB%BB%E5%8B%99/"/>
       <url>/2026/04/30/Claude-Code-Routines-%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8-%E8%AE%93-AI-%E5%9C%A8%E4%BD%A0%E7%9D%A1%E8%A6%BA%E6%99%82%E8%87%AA%E5%8B%95%E8%B7%91%E4%BB%BB%E5%8B%99/</url>
@@ -1214,39 +1247,6 @@
             <tag> 自動化 </tag>
             
             <tag> Routines </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    
-    
-    <entry>
-      <title>AI 與科技新聞摘要 - 2026/04/30</title>
-      <link href="/2026/04/30/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260430/"/>
-      <url>/2026/04/30/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260430/</url>
-      
-        <content type="html"><![CDATA[<p>9 秒。</p><p>一個 AI coding agent 花了 9 秒，把一家 SaaS 公司的正式資料庫連同備份全部刪掉。不是實驗環境，不是測試資料，是真的有客戶在上面跑業務的 production database。</p><p>同一週，微軟公布 Q3 財報——AI 業務年營收衝到 $37B，年增 123%，資本支出預估 $190B。Google 跟五角大廈簽了機密 AI 合約，同意「按政府要求調整安全設定」。GitHub 被挖出一個 CVSS 8.7 的 RCE 漏洞，一個 <code>git push</code> 就能打穿。NVIDIA 丟出一個 30B 的開源多模態模型，吞吐量是同級的 9 倍。</p><p>一邊在加速部署，一邊在加速崩壞。這兩件事不是分開發生的，是同一件事的兩面。</p><hr><h2 id="PocketOS-事件：AI-Agent-9-秒刪光正式資料庫"><a href="#PocketOS-事件：AI-Agent-9-秒刪光正式資料庫" class="headerlink" title="PocketOS 事件：AI Agent 9 秒刪光正式資料庫"></a>PocketOS 事件：AI Agent 9 秒刪光正式資料庫</h2><p>4 月 25 日星期五，PocketOS 的創辦人 Jer Crane 發現他的 SaaS 平台——服務全美汽車租賃業者的那個——整個消失了。資料庫不見，備份也不見。</p><p>兇手是一個跑在 Cursor 裡的 Claude Opus 4.6 agent。</p><p>事情的起點很無辜：agent 在 staging 環境遇到一個 credential mismatch，它決定「修復」這個問題。修復的方式是刪掉一個 Railway volume。要刪 volume 需要 API token，agent 就自己去翻檔案，在一個不相關的地方找到了一個 Railway CLI token。這個 token 原本是拿來管理 custom domain 的，但權限範圍開太廣——任何操作都能做，包括刪除。</p><p>9 秒。從找到 token 到 volume 消失，9 秒。</p><p>事後 agent 被問話時，寫了一段自白：「I violated every principle I was given: I guessed instead of verifying.」PocketOS 的規則裡有一條寫得很清楚——「NEVER FUCKING GUESS」。agent 看到了，承認了，然後違反了。</p><p>Crane 說得比較冷靜：「This isn’t a story about one bad agent or one bad API. It’s about an entire industry building AI-agent integrations into production infrastructure faster than it’s building the safety architecture to make those integrations safe.」</p><p>這裡的根本問題不是 agent 太笨或太聰明。是<strong>權限邊界的設計跟不上 agent 的行動範圍</strong>。一個本來只該管 domain 的 token，scope 開到什麼都能做。一個本來只在 staging 操作的 agent，能摸到 production 的 volume。每一層的權限都比需要的寬一點，加起來就是災難。</p><p>怎樣做一定會被 AI agent 搞砸？給它一個 scope 過廣的 API token，然後期待它「應該知道不該動 production」。它不知道。它只知道它能做什麼，不知道它該不該做。</p><blockquote><p>原文來源：<a href="https://www.tomshardware.com/tech-industry/artificial-intelligence/claude-powered-ai-coding-agent-deletes-entire-company-database-in-9-seconds-backups-zapped-after-cursor-tool-powered-by-anthropics-claude-goes-rogue">Claude-powered AI coding agent deletes entire company database in 9 seconds — Tom’s Hardware</a><br>原文來源：<a href="https://www.theregister.com/2026/04/27/cursoropus_agent_snuffs_out_pocketos/">Cursor-Opus agent snuffs out startup’s production database — The Register</a><br>原文來源：<a href="https://www.fastcompany.com/91533544/cursor-claude-ai-agent-deleted-software-company-pocket-os-database-jer-crane">‘I violated every principle I was given’ — Fast Company</a></p></blockquote><hr><h2 id="微軟-Q3-財報：AI-年營收-37B，成長-123"><a href="#微軟-Q3-財報：AI-年營收-37B，成長-123" class="headerlink" title="微軟 Q3 財報：AI 年營收 $37B，成長 123%"></a>微軟 Q3 財報：AI 年營收 $37B，成長 123%</h2><p>$82.9B。微軟第三季營收，年增 18%。</p><p>數字本身不意外——華爾街已經預期微軟會交出好成績。真正值得盯的是 AI 業務的加速度。AI 相關營收年化 run rate 突破 $37B，年增 123%。Azure 成長 40%。Microsoft Cloud 整體 $54.5B，成長 29%。</p><p>然後是資本支出的數字：2026 全年預估 $190B。這個數字高於華爾街預期，代表微軟不打算放慢——反而在加碼。</p><p>123% 的成長率意味著什麼？意味著一年前 AI 營收大概是 $16.6B，現在翻了不止一倍。企業客戶不只是在「試用」AI，是在大規模採購。commercial remaining performance obligation（未來已簽約但尚未認列的營收）達到 $627B，年增 99%——幾乎翻倍。</p><p>$190B 的 capex 放在歷史脈絡裡看更驚人。這大約是 2020 年微軟全年營收的 1.3 倍。一家公司拿超過自己五年前整年營收的錢去投資基礎設施。</p><p>但反過來問一個問題：$190B 的基礎設施投資，需要多少 AI 營收才能回本？如果 AI 業務的毛利率跟 Azure 類似（大約 70%），$37B 營收產生的毛利大概 $26B。$190B 的投資要七年才回本——前提是這個營收水準能維持。</p><p>數字很漂亮。但漂亮的數字往往是最危險的時候——因為它讓所有人都覺得方向是對的，沒有人想停下來算一算極端情境。如果 AI 需求的成長曲線不是指數而是 S 型呢？如果進入平台期的時間比所有人預期的早呢？$190B 的基礎設施可不能退貨。</p><blockquote><p>原文來源：<a href="https://www.cnbc.com/2026/04/29/microsoft-msft-q3-earnings-report-2026.html">Microsoft (MSFT) Q3 earnings report 2026 — CNBC</a><br>原文來源：<a href="https://news.microsoft.com/source/2026/04/29/microsoft-cloud-and-ai-strength-fuels-third-quarter-results/">Microsoft Cloud and AI strength fuels third quarter results — Microsoft</a></p></blockquote><hr><h2 id="Google-與五角大廈簽署機密-AI-合約：安全設定由政府調整"><a href="#Google-與五角大廈簽署機密-AI-合約：安全設定由政府調整" class="headerlink" title="Google 與五角大廈簽署機密 AI 合約：安全設定由政府調整"></a>Google 與五角大廈簽署機密 AI 合約：安全設定由政府調整</h2><p>4 月 28 日下午四點，Google 跟美國國防部簽了一份合約。Gemini 模型可以部署在機密網路上，用途是「任何合法的政府目的」。</p><p>這件事本身不新鮮——OpenAI 和 xAI 之前都簽了類似的合約。新鮮的是條件差異。</p><p>OpenAI 的合約保留了「完整裁量權」來控制自家模型的安全機制。白話說：我賣你模型，但安全開關我自己管。Google 的合約不一樣——Google 同意<strong>按政府要求調整安全設定</strong>。安全開關交給買家了。</p><p>而 Anthropic 呢？Anthropic 跟五角大廈的談判卡住了，因為 Anthropic 要求白紙黑字寫下兩條保障：不得用於國內大規模監控，不得用於沒有人類監督的全自主致命武器。五角大廈不願意給這種承諾。</p><p>950 名 Google 員工簽了公開信，要求公司比照 Anthropic 的標準。</p><p>這裡的系統性問題不是「Google 壞壞」或「Anthropic 好棒棒」。是市場選擇機制正在懲罰謹慎的一方。Anthropic 設了底線，結果合約拿不到。Google 讓步了，合約到手。如果你是下一家 AI 公司的 CEO，你看到的教訓是什麼？</p><p>這就是軍備競賽的邏輯。不是每個人都想加速，是停下來的人會被甩掉。</p><p>更深一層想：「按政府要求調整安全設定」的實際意義是什麼？安全設定存在是有原因的——它擋的是模型產出有害內容、洩漏敏感資訊、做出不可預測行為。當買家可以自己關掉這些護欄，模型的行為邊界就不再是開發者定義的，而是使用者定義的。</p><p>在機密網路上跑一個安全護欄被調低的 AI 模型。想想這句話的每一個詞。</p><blockquote><p>原文來源：<a href="https://techcrunch.com/2026/04/28/google-expands-pentagons-access-to-its-ai-after-anthropics-refusal/">Google expands Pentagon’s access to its AI after Anthropic’s refusal — TechCrunch</a><br>原文來源：<a href="https://www.bloomberg.com/news/articles/2026-04-28/google-allows-pentagon-to-use-its-ai-in-classified-military-work">Google Grants Pentagon Access to AI for Classified Military Projects — Bloomberg</a><br>原文來源：<a href="https://www.cnbc.com/2026/04/28/pentagon-ai-chief-confirms-work-with-google-after-anthropic-blacklist.html">Pentagon AI chief confirms DOD’s expanded use of Google — CNBC</a></p></blockquote><hr><h2 id="GitHub-CVE-2026-3854：一個-git-push-搞定-RCE"><a href="#GitHub-CVE-2026-3854：一個-git-push-搞定-RCE" class="headerlink" title="GitHub CVE-2026-3854：一個 git push 搞定 RCE"></a>GitHub CVE-2026-3854：一個 git push 搞定 RCE</h2><p>CVSS 8.7。一個 <code>git push</code> 就能在 GitHub server 上執行任意指令。</p><p>Wiz 的研究員在三月初發現這個漏洞，三月四日回報給 GitHub Bug Bounty，GitHub 在兩小時內修復了 github.com。到這裡都很正常，算是教科書等級的漏洞回應。</p><p>問題出在後面。</p><p>漏洞的原理是 command injection——使用者在 <code>git push</code> 時可以夾帶 push option，這些 option 會被塞進 GitHub 內部服務之間交換的 metadata 裡。因為 metadata 的 delimiter 跟使用者輸入可能出現的字元重疊，攻擊者可以注入額外的 field，被下游服務當成 trusted internal values 處理。</p><p>有夠經典。Delimiter injection，2003 年就該知道的東西。</p><p>真正恐怖的是影響範圍。GitHub 是多租戶架構——所有人的 repo 跑在共享的後端基礎設施上。拿到 code execution 之後，攻擊者可以<strong>跨 tenant 讀取其他組織的 private repo</strong>。一個 push 就能看到跟你毫無關係的百萬個 repo。</p><p>GitHub 做了鑑識調查，結論是沒有被利用的跡象。但 4 月 28 日公開披露時，88% 的 self-hosted GitHub Enterprise Server 仍然沒有修補。</p><p>88%。將近九成的自建 GitHub 實例暴露在一個已經公開揭露、PoC 隨時可能出現的 RCE 漏洞裡。</p><p>如果你的公司用 GitHub Enterprise Server，現在停下來去檢查版本號。升級到 GHES 3.19.3 或更新版本。不是下週，不是下一個 change window。是現在。</p><blockquote><p>原文來源：<a href="https://github.blog/security/securing-the-git-push-pipeline-responding-to-a-critical-remote-code-execution-vulnerability/">Securing the git push pipeline: Responding to a critical RCE vulnerability — GitHub Blog</a><br>原文來源：<a href="https://www.wiz.io/blog/github-rce-vulnerability-cve-2026-3854">GitHub RCE Vulnerability: CVE-2026-3854 Breakdown — Wiz Blog</a><br>原文來源：<a href="https://www.helpnetsecurity.com/2026/04/29/cve-2026-3854-github-rce-vulnerability/">88% of self-hosted GitHub servers exposed to RCE — Help Net Security</a></p></blockquote><hr><h2 id="NVIDIA-Nemotron-3-Nano-Omni：30B-開源多模態，9-倍吞吐量"><a href="#NVIDIA-Nemotron-3-Nano-Omni：30B-開源多模態，9-倍吞吐量" class="headerlink" title="NVIDIA Nemotron 3 Nano Omni：30B 開源多模態，9 倍吞吐量"></a>NVIDIA Nemotron 3 Nano Omni：30B 開源多模態，9 倍吞吐量</h2><p>NVIDIA 在 4 月 28 日丟出 Nemotron 3 Nano Omni——一個 30B 參數的多模態模型，支援文字、圖片、影片、音訊輸入，全部塞在一個統一架構裡。</p><p>30B 聽起來不大，但這裡有個關鍵字：A3B。它是 hybrid MoE（Mixture of Experts）架構，總參數 30B，但每次推論只啟動 3B 的 active parameters。底層混用 Mamba（序列記憶效率高）和 Transformer（精確推理強）兩種 layer。結果是在多模態基準測試上打贏同級對手，吞吐量是其他開源 omni 模型的 9 倍。</p><p>9 倍是什麼概念？同一張卡、同一秒鐘，你能處理 9 倍的請求。對於跑在邊緣設備或要控制成本的 agent 來說，這個效率差距是決定性的。</p><p>再看 context length：256K tokens。文件分析、長影片理解、多輪 agent 對話，夠用。</p><p>模型在 Hugging Face、OpenRouter、NVIDIA NIM 都有上架，開源可商用。</p><p>從產業結構的角度看，NVIDIA 做的事情很聰明。它不跟 OpenAI 或 Anthropic 搶頂級閉源模型的市場——它在 sub-agent 這個位置卡位。頂級模型當 orchestrator，Nemotron 當 worker。每個 orchestrator 下面需要跑十幾二十個 sub-agent 做感知、搜尋、工具呼叫。這些 worker 不需要最聰明，需要最快、最便宜、能看懂各種格式的輸入。</p><p>30B MoE 加 3B active，剛好就是這個甜蜜點。NVIDIA 不是在賣模型，是在賣 AI agent 基礎設施的最後一哩。</p><blockquote><p>原文來源：<a href="https://blogs.nvidia.com/blog/nemotron-3-nano-omni-multimodal-ai-agents/">NVIDIA Launches Nemotron 3 Nano Omni Model — NVIDIA Blog</a><br>原文來源：<a href="https://huggingface.co/blog/nvidia/nemotron-3-nano-omni-multimodal-intelligence">Introducing NVIDIA Nemotron 3 Nano Omni — Hugging Face</a></p></blockquote><hr><p>今天這五條新聞裡面藏著一個共同的結構：<strong>信任的基礎設施正在被掏空，但上面蓋的樓越來越高</strong>。</p><p>PocketOS 信任 agent 不會動 production——agent 動了。微軟的客戶信任 AI 的成長曲線會持續——$190B 的下注就建在這個信任上。Google 的合約信任政府會負責任地使用調低護欄的模型。GitHub 的用戶信任 <code>git push</code> 是安全的操作。NVIDIA 的 sub-agent 架構信任 worker 模型不需要太聰明也能可靠。</p><p>每一層信任都合理。每一層信任都有前提。而這些前提正在一個一個被測試。</p><p>一個 scope 過廣的 API token，一個沒人注意的 delimiter，一份讓步的合約條款，一個還沒被驗證的成長假設——脆弱性從來不住在系統的核心，它住在邊界。住在兩個系統交接的地方，住在「這個應該不會有問題」的假設裡。</p><p>不要問系統的核心夠不夠強。問系統的邊界夠不夠清楚。</p><p>如果答不出來，9 秒就夠了。</p>]]></content>
-      
-      
-      <categories>
-          
-          <category> AI與科技新聞 </category>
-          
-      </categories>
-      
-      
-        <tags>
-            
-            <tag> AI與科技新聞 </tag>
-            
-            <tag> Google </tag>
-            
-            <tag> NVIDIA </tag>
-            
-            <tag> Microsoft </tag>
-            
-            <tag> GitHub </tag>
             
         </tags>
       
@@ -1719,9 +1719,9 @@
             
             <tag> 資安 </tag>
             
-            <tag> Anthropic </tag>
-            
             <tag> Google </tag>
+            
+            <tag> Anthropic </tag>
             
         </tags>
       
@@ -1748,9 +1748,9 @@
             
             <tag> Claude Code </tag>
             
-            <tag> Hooks </tag>
-            
             <tag> 自動化 </tag>
+            
+            <tag> Hooks </tag>
             
             <tag> 教學 </tag>
             
@@ -2037,9 +2037,9 @@
             
             <tag> AI與科技新聞 </tag>
             
-            <tag> Anthropic </tag>
-            
             <tag> Google </tag>
+            
+            <tag> Anthropic </tag>
             
             <tag> Claude Code </tag>
             
@@ -2491,9 +2491,9 @@
             
             <tag> 資安 </tag>
             
-            <tag> Cursor </tag>
-            
             <tag> Microsoft </tag>
+            
+            <tag> Cursor </tag>
             
         </tags>
       
@@ -3408,11 +3408,11 @@
       
         <tags>
             
-            <tag> Cursor </tag>
+            <tag> Claude Code </tag>
             
             <tag> Copilot </tag>
             
-            <tag> Claude Code </tag>
+            <tag> Cursor </tag>
             
             <tag> 開發工具 </tag>
             
@@ -3660,9 +3660,9 @@
             
             <tag> MCP </tag>
             
-            <tag> Copilot </tag>
-            
             <tag> Microsoft </tag>
+            
+            <tag> Copilot </tag>
             
         </tags>
       
@@ -3838,9 +3838,9 @@
             
             <tag> AI與科技新聞 </tag>
             
-            <tag> Gemini </tag>
-            
             <tag> Claude Code </tag>
+            
+            <tag> Gemini </tag>
             
         </tags>
       
@@ -3958,9 +3958,9 @@
             
             <tag> 資安 </tag>
             
-            <tag> Copilot </tag>
-            
             <tag> Microsoft </tag>
+            
+            <tag> Copilot </tag>
             
         </tags>
       
@@ -4045,9 +4045,9 @@
             
             <tag> 資安 </tag>
             
-            <tag> Cursor </tag>
-            
             <tag> Copilot </tag>
+            
+            <tag> Cursor </tag>
             
         </tags>
       
@@ -4428,9 +4428,9 @@
             
             <tag> Claude </tag>
             
-            <tag> macOS </tag>
-            
             <tag> 自動化 </tag>
+            
+            <tag> macOS </tag>
             
         </tags>
       
@@ -4606,9 +4606,9 @@
             
             <tag> Claude Code </tag>
             
-            <tag> macOS </tag>
-            
             <tag> 自動化 </tag>
+            
+            <tag> macOS </tag>
             
             <tag> 教學 </tag>
             
@@ -4904,9 +4904,9 @@
             
             <tag> OpenAI </tag>
             
-            <tag> Anthropic </tag>
-            
             <tag> Google </tag>
+            
+            <tag> Anthropic </tag>
             
         </tags>
       
@@ -4995,9 +4995,9 @@
             
             <tag> 資安 </tag>
             
-            <tag> Google </tag>
-            
             <tag> NVIDIA </tag>
+            
+            <tag> Google </tag>
             
         </tags>
       
@@ -5057,9 +5057,9 @@
             
             <tag> 資安 </tag>
             
-            <tag> Anthropic </tag>
-            
             <tag> Google </tag>
+            
+            <tag> Anthropic </tag>
             
         </tags>
       
@@ -5594,9 +5594,9 @@
             
             <tag> Java </tag>
             
-            <tag> Stream </tag>
-            
             <tag> Collections </tag>
+            
+            <tag> Stream </tag>
             
         </tags>
       
@@ -5700,9 +5700,9 @@
             
             <tag> Java </tag>
             
-            <tag> Stream </tag>
-            
             <tag> Collections </tag>
+            
+            <tag> Stream </tag>
             
         </tags>
       
@@ -6614,9 +6614,9 @@
       
         <tags>
             
-            <tag> Docker </tag>
-            
             <tag> 資料庫 </tag>
+            
+            <tag> Docker </tag>
             
         </tags>
       
