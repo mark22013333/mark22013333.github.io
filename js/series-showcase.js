@@ -1,8 +1,11 @@
-document.addEventListener('DOMContentLoaded', function () {
+function initSeriesShowcase() {
   initScrollButtons();
   initImageFallback();
   initSeriesToggle();
-});
+}
+
+document.addEventListener('DOMContentLoaded', initSeriesShowcase);
+document.addEventListener('pjax:complete', initSeriesShowcase);
 
 function initScrollButtons() {
   var track = document.querySelector('.series-showcase-track');
