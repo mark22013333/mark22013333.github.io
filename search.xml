@@ -20,6 +20,8 @@
       
         <tags>
             
+            <tag> AI與科技新聞 </tag>
+            
             <tag> Claude </tag>
             
             <tag> Anthropic </tag>
@@ -27,12 +29,6 @@
             <tag> Cursor </tag>
             
             <tag> GitHub Copilot </tag>
-            
-            <tag> LegalTech </tag>
-            
-            <tag> Cloudflare </tag>
-            
-            <tag> AI Commerce </tag>
             
         </tags>
       
@@ -61,9 +57,7 @@
             
             <tag> GitHub </tag>
             
-            <tag> Awesome </tag>
-            
-            <tag> 開發者工具 </tag>
+            <tag> 開發工具 </tag>
             
         </tags>
       
@@ -117,13 +111,13 @@
       
         <tags>
             
+            <tag> AI Agent </tag>
+            
             <tag> Claude Code </tag>
             
-            <tag> AI Coding </tag>
+            <tag> 自動化 </tag>
             
             <tag> /goal </tag>
-            
-            <tag> Automation </tag>
             
         </tags>
       
@@ -148,6 +142,8 @@
       
         <tags>
             
+            <tag> AI與科技新聞 </tag>
+            
             <tag> OpenAI </tag>
             
             <tag> Copilot </tag>
@@ -155,8 +151,6 @@
             <tag> Kiro </tag>
             
             <tag> Windsurf </tag>
-            
-            <tag> GPT-5.5 </tag>
             
         </tags>
       
@@ -238,6 +232,8 @@
       
       
         <tags>
+            
+            <tag> AI與科技新聞 </tag>
             
             <tag> 資安 </tag>
             
@@ -330,13 +326,11 @@
       
         <tags>
             
+            <tag> AI與科技新聞 </tag>
+            
             <tag> OpenAI </tag>
             
             <tag> Cursor </tag>
-            
-            <tag> Subquadratic </tag>
-            
-            <tag> JPMorgan </tag>
             
             <tag> AWS </tag>
             
@@ -365,9 +359,9 @@
             
             <tag> Claude Code </tag>
             
-            <tag> Hooks </tag>
+            <tag> 開發工具 </tag>
             
-            <tag> Developer Tools </tag>
+            <tag> Hooks </tag>
             
         </tags>
       
@@ -423,15 +417,11 @@
       
         <tags>
             
+            <tag> AI與科技新聞 </tag>
+            
             <tag> OpenAI </tag>
             
             <tag> Anthropic </tag>
-            
-            <tag> Vibe Coding </tag>
-            
-            <tag> FastGPT </tag>
-            
-            <tag> CVE </tag>
             
         </tags>
       
@@ -487,15 +477,9 @@
       
         <tags>
             
+            <tag> AI與科技新聞 </tag>
+            
             <tag> Gemini </tag>
-            
-            <tag> Cloudflare </tag>
-            
-            <tag> Five Eyes </tag>
-            
-            <tag> Cognizant </tag>
-            
-            <tag> Apache </tag>
             
         </tags>
       
@@ -520,9 +504,9 @@
       
         <tags>
             
-            <tag> Claude API </tag>
+            <tag> Claude </tag>
             
-            <tag> Anthropic SDK </tag>
+            <tag> Anthropic </tag>
             
             <tag> Tool Use </tag>
             
@@ -551,11 +535,11 @@
       
         <tags>
             
+            <tag> 開源 </tag>
+            
             <tag> OpenScreen </tag>
             
             <tag> Screen Recording </tag>
-            
-            <tag> Open Source </tag>
             
         </tags>
       
@@ -580,15 +564,13 @@
       
         <tags>
             
+            <tag> AI與科技新聞 </tag>
+            
             <tag> OpenAI </tag>
             
             <tag> Anthropic </tag>
             
             <tag> GitHub Copilot </tag>
-            
-            <tag> SpaceX </tag>
-            
-            <tag> Palo Alto </tag>
             
         </tags>
       
@@ -675,15 +657,9 @@
       
         <tags>
             
-            <tag> GPT-5.5 </tag>
+            <tag> AI與科技新聞 </tag>
             
-            <tag> Cerebras </tag>
-            
-            <tag> Foxconn </tag>
-            
-            <tag> Mandiant </tag>
-            
-            <tag> Claude Security </tag>
+            <tag> 資安 </tag>
             
         </tags>
       
@@ -708,13 +684,11 @@
       
         <tags>
             
+            <tag> 資安 </tag>
+            
             <tag> Anthropic </tag>
             
             <tag> Claude Code </tag>
-            
-            <tag> Claude Security </tag>
-            
-            <tag> DevSecOps </tag>
             
         </tags>
       
@@ -770,15 +744,11 @@
       
         <tags>
             
-            <tag> Apple </tag>
+            <tag> AI與科技新聞 </tag>
             
             <tag> Anthropic </tag>
             
-            <tag> Sierra </tag>
-            
-            <tag> cPanel </tag>
-            
-            <tag> World Labs </tag>
+            <tag> Apple </tag>
             
         </tags>
       
@@ -803,11 +773,11 @@
       
         <tags>
             
-            <tag> Claude API </tag>
+            <tag> Claude </tag>
+            
+            <tag> Anthropic </tag>
             
             <tag> Prompt Caching </tag>
-            
-            <tag> Anthropic SDK </tag>
             
             <tag> 成本優化 </tag>
             
@@ -865,15 +835,9 @@
       
         <tags>
             
+            <tag> AI與科技新聞 </tag>
+            
             <tag> MCP </tag>
-            
-            <tag> Pentagon </tag>
-            
-            <tag> IBM </tag>
-            
-            <tag> Semantic Kernel </tag>
-            
-            <tag> OpenClaw </tag>
             
         </tags>
       
@@ -900,11 +864,11 @@
             
             <tag> Claude Code </tag>
             
+            <tag> 自動化 </tag>
+            
             <tag> Agent </tag>
             
             <tag> Subagent </tag>
-            
-            <tag> AI Workflow </tag>
             
         </tags>
       
@@ -991,15 +955,15 @@
       
         <tags>
             
+            <tag> AI與科技新聞 </tag>
+            
             <tag> OpenAI </tag>
             
             <tag> NVIDIA </tag>
             
-            <tag> Mistral </tag>
-            
             <tag> Gemini </tag>
             
-            <tag> Copy Fail </tag>
+            <tag> Mistral </tag>
             
         </tags>
       
@@ -1086,15 +1050,9 @@
       
         <tags>
             
+            <tag> AI與科技新聞 </tag>
+            
             <tag> Cursor </tag>
-            
-            <tag> Ineffable Intelligence </tag>
-            
-            <tag> KKR </tag>
-            
-            <tag> DeepMind </tag>
-            
-            <tag> MS-Agent </tag>
             
         </tags>
       
@@ -1119,13 +1077,13 @@
       
         <tags>
             
-            <tag> Elasticsearch </tag>
+            <tag> Performance </tag>
             
-            <tag> Lucene </tag>
+            <tag> Elasticsearch </tag>
             
             <tag> internals </tag>
             
-            <tag> performance </tag>
+            <tag> Lucene </tag>
             
             <tag> Translog </tag>
             
@@ -1154,13 +1112,11 @@
       
         <tags>
             
+            <tag> AI與科技新聞 </tag>
+            
             <tag> OpenAI </tag>
             
             <tag> Anthropic </tag>
-            
-            <tag> Pentagon </tag>
-            
-            <tag> Mag-7 </tag>
             
             <tag> Amazon </tag>
             
@@ -1251,6 +1207,8 @@
       
         <tags>
             
+            <tag> AI與科技新聞 </tag>
+            
             <tag> Google </tag>
             
             <tag> NVIDIA </tag>
@@ -1258,8 +1216,6 @@
             <tag> Microsoft </tag>
             
             <tag> GitHub </tag>
-            
-            <tag> PocketOS </tag>
             
         </tags>
       
@@ -1288,7 +1244,7 @@
             
             <tag> Claude Code </tag>
             
-            <tag> Automation </tag>
+            <tag> 自動化 </tag>
             
             <tag> Routines </tag>
             
@@ -1317,9 +1273,9 @@
             
             <tag> Elasticsearch </tag>
             
-            <tag> Architecture </tag>
-            
             <tag> Lucene </tag>
+            
+            <tag> Architecture </tag>
             
         </tags>
       
@@ -1344,15 +1300,9 @@
       
         <tags>
             
+            <tag> AI與科技新聞 </tag>
+            
             <tag> GitHub Copilot </tag>
-            
-            <tag> ICLR </tag>
-            
-            <tag> Avoca </tag>
-            
-            <tag> OutSystems </tag>
-            
-            <tag> EU AI Act </tag>
             
         </tags>
       
@@ -1379,11 +1329,9 @@
             
             <tag> Claude Code </tag>
             
-            <tag> JetBrains </tag>
+            <tag> 開發工具 </tag>
             
             <tag> VS Code </tag>
-            
-            <tag> IDE </tag>
             
         </tags>
       
@@ -1470,6 +1418,8 @@
       
         <tags>
             
+            <tag> AI與科技新聞 </tag>
+            
             <tag> 資安 </tag>
             
             <tag> MCP </tag>
@@ -1477,8 +1427,6 @@
             <tag> Cursor </tag>
             
             <tag> Meta </tag>
-            
-            <tag> Muse Spark </tag>
             
         </tags>
       
@@ -1503,9 +1451,9 @@
       
         <tags>
             
-            <tag> MCP </tag>
-            
             <tag> AI Agent </tag>
+            
+            <tag> MCP </tag>
             
             <tag> Claude Code </tag>
             
@@ -1571,9 +1519,7 @@
             
             <tag> 168斷食 </tag>
             
-            <tag> 間歇性斷食 </tag>
-            
-            <tag> 工程師健康 </tag>
+            <tag> 健康 </tag>
             
             <tag> 生產力 </tag>
             
@@ -1604,6 +1550,8 @@
             
             <tag> Claude Code </tag>
             
+            <tag> 自動化 </tag>
+            
             <tag> Multi-Model </tag>
             
             <tag> Haiku </tag>
@@ -1613,8 +1561,6 @@
             <tag> Opus </tag>
             
             <tag> Token 成本 </tag>
-            
-            <tag> AI 工作流 </tag>
             
         </tags>
       
@@ -1674,17 +1620,11 @@
       
         <tags>
             
+            <tag> AI與科技新聞 </tag>
+            
             <tag> GitHub </tag>
             
-            <tag> Stanford AI Index </tag>
-            
-            <tag> Snap </tag>
-            
-            <tag> JetBrains </tag>
-            
-            <tag> Kiro CLI </tag>
-            
-            <tag> Shield AI </tag>
+            <tag> 開發工具 </tag>
             
         </tags>
       
@@ -1709,11 +1649,11 @@
       
         <tags>
             
+            <tag> Anthropic </tag>
+            
             <tag> Claude Code </tag>
             
             <tag> Claude Design </tag>
-            
-            <tag> Anthropic Labs </tag>
             
             <tag> Prototype </tag>
             
@@ -1742,11 +1682,11 @@
       
         <tags>
             
+            <tag> AI Agent </tag>
+            
             <tag> 資安 </tag>
             
             <tag> MCP </tag>
-            
-            <tag> AI Coding </tag>
             
             <tag> Sonatype Guide </tag>
             
@@ -1775,17 +1715,13 @@
       
         <tags>
             
+            <tag> AI與科技新聞 </tag>
+            
             <tag> 資安 </tag>
             
             <tag> Anthropic </tag>
             
             <tag> Google </tag>
-            
-            <tag> Claude Mythos </tag>
-            
-            <tag> Mag-7 財報 </tag>
-            
-            <tag> Vercel </tag>
             
         </tags>
       
@@ -1843,13 +1779,13 @@
             
             <tag> 理財 </tag>
             
-            <tag> Mag-7 </tag>
-            
             <tag> ETF </tag>
             
             <tag> 台股 </tag>
             
             <tag> 美股 </tag>
+            
+            <tag> Mag-7 </tag>
             
             <tag> 財報 </tag>
             
@@ -1876,15 +1812,11 @@
       
         <tags>
             
-            <tag> 工程師生活 </tag>
+            <tag> 168斷食 </tag>
             
             <tag> 健康 </tag>
             
-            <tag> 久坐 </tag>
-            
-            <tag> 站立辦公 </tag>
-            
-            <tag> 間歇斷食 </tag>
+            <tag> 工程師生活 </tag>
             
         </tags>
       
@@ -1909,15 +1841,15 @@
       
         <tags>
             
+            <tag> AI與科技新聞 </tag>
+            
             <tag> Anthropic </tag>
             
             <tag> Claude Code </tag>
             
-            <tag> OpenAI Codex </tag>
-            
             <tag> Windsurf </tag>
             
-            <tag> Claude Design </tag>
+            <tag> Codex </tag>
             
         </tags>
       
@@ -2006,17 +1938,15 @@
       
         <tags>
             
+            <tag> AI與科技新聞 </tag>
+            
+            <tag> 資安 </tag>
+            
             <tag> MCP </tag>
             
             <tag> OpenAI </tag>
             
-            <tag> GPT-5.5 </tag>
-            
-            <tag> DeepSeek </tag>
-            
-            <tag> Cybersecurity </tag>
-            
-            <tag> AI Security </tag>
+            <tag> AI 安全 </tag>
             
         </tags>
       
@@ -2041,15 +1971,13 @@
       
         <tags>
             
+            <tag> AI Agent </tag>
+            
             <tag> OpenAI </tag>
             
             <tag> Codex </tag>
             
             <tag> GPT-5.5 </tag>
-            
-            <tag> AI Coding Agent </tag>
-            
-            <tag> Agentic AI </tag>
             
         </tags>
       
@@ -2107,15 +2035,13 @@
       
         <tags>
             
+            <tag> AI與科技新聞 </tag>
+            
             <tag> Anthropic </tag>
             
+            <tag> Google </tag>
+            
             <tag> Claude Code </tag>
-            
-            <tag> Google Cloud </tag>
-            
-            <tag> A2A Protocol </tag>
-            
-            <tag> AI市場 </tag>
             
         </tags>
       
@@ -2140,6 +2066,8 @@
       
         <tags>
             
+            <tag> AI Agent </tag>
+            
             <tag> Claude Code </tag>
             
             <tag> Agent Skills </tag>
@@ -2147,8 +2075,6 @@
             <tag> Addy Osmani </tag>
             
             <tag> 工程紀律 </tag>
-            
-            <tag> AI Coding </tag>
             
         </tags>
       
@@ -2173,11 +2099,11 @@
       
         <tags>
             
+            <tag> AI Agent </tag>
+            
             <tag> Claude Code </tag>
             
             <tag> GitHub Copilot </tag>
-            
-            <tag> AI Coding </tag>
             
             <tag> 教學 </tag>
             
@@ -2206,15 +2132,13 @@
       
         <tags>
             
-            <tag> AI Agent </tag>
+            <tag> AI與科技新聞 </tag>
             
             <tag> Anthropic </tag>
             
             <tag> Claude Code </tag>
             
             <tag> Kiro </tag>
-            
-            <tag> Stanford AI Index </tag>
             
             <tag> GitHub Copilot </tag>
             
@@ -2243,11 +2167,11 @@
             
             <tag> AI Agent </tag>
             
+            <tag> 開源 </tag>
+            
             <tag> Claude Code </tag>
             
             <tag> Prompt Engineering </tag>
-            
-            <tag> 開源工具 </tag>
             
         </tags>
       
@@ -2305,7 +2229,7 @@
       
         <tags>
             
-            <tag> 資安 </tag>
+            <tag> AI與科技新聞 </tag>
             
             <tag> MCP </tag>
             
@@ -2314,8 +2238,6 @@
             <tag> Claude Code </tag>
             
             <tag> GitHub Copilot </tag>
-            
-            <tag> Salesforce </tag>
             
         </tags>
       
@@ -2375,11 +2297,7 @@
             
             <tag> AZ-305 </tag>
             
-            <tag> 證照考試 </tag>
-            
-            <tag> Microsoft Learn </tag>
-            
-            <tag> Pearson VUE </tag>
+            <tag> 微軟課程 </tag>
             
         </tags>
       
@@ -2439,9 +2357,7 @@
       
         <tags>
             
-            <tag> 資安 </tag>
-            
-            <tag> MCP </tag>
+            <tag> AI與科技新聞 </tag>
             
             <tag> OpenAI </tag>
             
@@ -2569,19 +2485,15 @@
       
         <tags>
             
+            <tag> AI與科技新聞 </tag>
+            
             <tag> 資安 </tag>
             
             <tag> OpenAI </tag>
             
-            <tag> Cursor </tag>
-            
             <tag> Microsoft </tag>
             
-            <tag> EY </tag>
-            
-            <tag> Canva </tag>
-            
-            <tag> Novo Nordisk </tag>
+            <tag> Cursor </tag>
             
         </tags>
       
@@ -2701,6 +2613,8 @@
       
         <tags>
             
+            <tag> AI與科技新聞 </tag>
+            
             <tag> 資安 </tag>
             
             <tag> OpenAI </tag>
@@ -2708,12 +2622,6 @@
             <tag> Google </tag>
             
             <tag> Gemini </tag>
-            
-            <tag> MiniMax </tag>
-            
-            <tag> EU </tag>
-            
-            <tag> Adobe </tag>
             
         </tags>
       
@@ -2740,9 +2648,9 @@
             
             <tag> Claude Code </tag>
             
-            <tag> Apify </tag>
-            
             <tag> Skills </tag>
+            
+            <tag> Apify </tag>
             
             <tag> 爬蟲 </tag>
             
@@ -2773,9 +2681,9 @@
             
             <tag> Anthropic </tag>
             
-            <tag> 教學 </tag>
+            <tag> Claude Code </tag>
             
-            <tag> Claude-Code </tag>
+            <tag> 教學 </tag>
             
         </tags>
       
@@ -2800,7 +2708,7 @@
       
         <tags>
             
-            <tag> 資安 </tag>
+            <tag> AI與科技新聞 </tag>
             
             <tag> Claude </tag>
             
@@ -2833,13 +2741,13 @@
       
         <tags>
             
-            <tag> DevOps </tag>
+            <tag> AI Agent </tag>
+            
+            <tag> Claude Code </tag>
             
             <tag> Rust </tag>
             
-            <tag> Claude-Code </tag>
-            
-            <tag> AI-Agent </tag>
+            <tag> DevOps </tag>
             
             <tag> Discord </tag>
             
@@ -2866,6 +2774,8 @@
       
         <tags>
             
+            <tag> AI Agent </tag>
+            
             <tag> Copilot </tag>
             
             <tag> GitHub </tag>
@@ -2873,8 +2783,6 @@
             <tag> SDD </tag>
             
             <tag> SpecKit </tag>
-            
-            <tag> Coding Agent </tag>
             
         </tags>
       
@@ -2899,13 +2807,13 @@
       
         <tags>
             
+            <tag> 資安 </tag>
+            
             <tag> Azure </tag>
             
             <tag> AZ-305 </tag>
             
             <tag> Networking </tag>
-            
-            <tag> Security </tag>
             
             <tag> Migration </tag>
             
@@ -2932,17 +2840,15 @@
       
         <tags>
             
-            <tag> Claude </tag>
+            <tag> AI與科技新聞 </tag>
             
-            <tag> OpenAI </tag>
+            <tag> Claude </tag>
             
             <tag> Anthropic </tag>
             
             <tag> Microsoft </tag>
             
             <tag> GitHub </tag>
-            
-            <tag> Stripe </tag>
             
         </tags>
       
@@ -3000,9 +2906,9 @@
       
         <tags>
             
-            <tag> Claude </tag>
-            
             <tag> AI </tag>
+            
+            <tag> Claude </tag>
             
             <tag> Anthropic </tag>
             
@@ -3068,7 +2974,7 @@
             
             <tag> AZ-305 </tag>
             
-            <tag> 微軟認證 </tag>
+            <tag> 微軟課程 </tag>
             
             <tag> Networking </tag>
             
@@ -3099,7 +3005,7 @@
             
             <tag> GitHub </tag>
             
-            <tag> 微軟認證 </tag>
+            <tag> 微軟課程 </tag>
             
             <tag> TDD </tag>
             
@@ -3128,17 +3034,15 @@
       
         <tags>
             
-            <tag> Claude </tag>
+            <tag> AI與科技新聞 </tag>
             
-            <tag> OpenAI </tag>
+            <tag> Claude </tag>
             
             <tag> Anthropic </tag>
             
             <tag> Gemini </tag>
             
             <tag> Kiro </tag>
-            
-            <tag> Codex </tag>
             
         </tags>
       
@@ -3165,11 +3069,11 @@
             
             <tag> Claude Code </tag>
             
+            <tag> 自動化 </tag>
+            
             <tag> Team </tag>
             
             <tag> Onboarding </tag>
-            
-            <tag> Workflow </tag>
             
         </tags>
       
@@ -3194,9 +3098,9 @@
       
         <tags>
             
-            <tag> Azure </tag>
+            <tag> 資安 </tag>
             
-            <tag> Security </tag>
+            <tag> Azure </tag>
             
             <tag> DP-300 </tag>
             
@@ -3229,7 +3133,7 @@
             
             <tag> Azure </tag>
             
-            <tag> 微軟認證 </tag>
+            <tag> 微軟課程 </tag>
             
             <tag> DP-300 </tag>
             
@@ -3262,7 +3166,7 @@
             
             <tag> AZ-305 </tag>
             
-            <tag> 微軟認證 </tag>
+            <tag> 微軟課程 </tag>
             
         </tags>
       
@@ -3291,7 +3195,7 @@
             
             <tag> GitHub </tag>
             
-            <tag> 微軟認證 </tag>
+            <tag> 微軟課程 </tag>
             
         </tags>
       
@@ -3316,15 +3220,13 @@
       
         <tags>
             
+            <tag> AI與科技新聞 </tag>
+            
             <tag> MCP </tag>
             
             <tag> Anthropic </tag>
             
-            <tag> Google </tag>
-            
             <tag> Copilot </tag>
-            
-            <tag> Mythos </tag>
             
             <tag> Kiro </tag>
             
@@ -3384,9 +3286,9 @@
       
         <tags>
             
-            <tag> Claude </tag>
-            
             <tag> AI Agent </tag>
+            
+            <tag> Claude </tag>
             
             <tag> Multi-Model </tag>
             
@@ -3421,7 +3323,7 @@
             
             <tag> GitHub </tag>
             
-            <tag> 微軟認證 </tag>
+            <tag> 微軟課程 </tag>
             
         </tags>
       
@@ -3448,7 +3350,7 @@
             
             <tag> Azure </tag>
             
-            <tag> 微軟認證 </tag>
+            <tag> 微軟課程 </tag>
             
             <tag> DP-300 </tag>
             
@@ -3481,7 +3383,7 @@
             
             <tag> AZ-305 </tag>
             
-            <tag> 微軟認證 </tag>
+            <tag> 微軟課程 </tag>
             
         </tags>
       
@@ -3506,11 +3408,11 @@
       
         <tags>
             
-            <tag> Cursor </tag>
+            <tag> Claude Code </tag>
             
             <tag> Copilot </tag>
             
-            <tag> Claude Code </tag>
+            <tag> Cursor </tag>
             
             <tag> 開發工具 </tag>
             
@@ -3572,15 +3474,13 @@
       
         <tags>
             
+            <tag> AI與科技新聞 </tag>
+            
             <tag> OpenAI </tag>
             
             <tag> Apple </tag>
             
             <tag> Copilot </tag>
-            
-            <tag> PwC </tag>
-            
-            <tag> Visa </tag>
             
         </tags>
       
@@ -3696,6 +3596,8 @@
       
         <tags>
             
+            <tag> AI與科技新聞 </tag>
+            
             <tag> 資安 </tag>
             
             <tag> Gemini </tag>
@@ -3703,8 +3605,6 @@
             <tag> Cursor </tag>
             
             <tag> AI 法規 </tag>
-            
-            <tag> Meta </tag>
             
         </tags>
       
@@ -3756,11 +3656,13 @@
       
         <tags>
             
+            <tag> AI與科技新聞 </tag>
+            
             <tag> MCP </tag>
             
-            <tag> Copilot </tag>
-            
             <tag> Microsoft </tag>
+            
+            <tag> Copilot </tag>
             
         </tags>
       
@@ -3839,13 +3741,13 @@
       
         <tags>
             
-            <tag> 資安 </tag>
+            <tag> AI Agent </tag>
+            
+            <tag> AI與科技新聞 </tag>
             
             <tag> Claude </tag>
             
             <tag> OpenAI </tag>
-            
-            <tag> AI Agent </tag>
             
             <tag> Copilot </tag>
             
@@ -3934,6 +3836,8 @@
             
             <tag> 理財 </tag>
             
+            <tag> AI與科技新聞 </tag>
+            
             <tag> Gemini </tag>
             
             <tag> Claude Code </tag>
@@ -3961,9 +3865,9 @@
       
         <tags>
             
-            <tag> DevOps </tag>
-            
             <tag> 開發工具 </tag>
+            
+            <tag> DevOps </tag>
             
             <tag> 教學 </tag>
             
@@ -3990,9 +3894,9 @@
       
         <tags>
             
-            <tag> MCP </tag>
-            
             <tag> AI Agent </tag>
+            
+            <tag> MCP </tag>
             
             <tag> Claude Code </tag>
             
@@ -4048,13 +3952,15 @@
       
         <tags>
             
+            <tag> AI與科技新聞 </tag>
+            
             <tag> 資安 </tag>
             
             <tag> Claude </tag>
             
-            <tag> Copilot </tag>
-            
             <tag> Microsoft </tag>
+            
+            <tag> Copilot </tag>
             
         </tags>
       
@@ -4135,11 +4041,13 @@
       
         <tags>
             
+            <tag> AI與科技新聞 </tag>
+            
             <tag> 資安 </tag>
             
-            <tag> Cursor </tag>
-            
             <tag> Copilot </tag>
+            
+            <tag> Cursor </tag>
             
         </tags>
       
@@ -4222,6 +4130,8 @@
       
         <tags>
             
+            <tag> AI與科技新聞 </tag>
+            
             <tag> 資安 </tag>
             
             <tag> OpenAI </tag>
@@ -4280,9 +4190,9 @@
             
             <tag> LLM </tag>
             
-            <tag> MCP </tag>
-            
             <tag> AI Agent </tag>
+            
+            <tag> MCP </tag>
             
             <tag> Claude Code </tag>
             
@@ -4338,9 +4248,9 @@
             
             <tag> LLM </tag>
             
-            <tag> 資安 </tag>
+            <tag> AI與科技新聞 </tag>
             
-            <tag> Qwen </tag>
+            <tag> 資安 </tag>
             
         </tags>
       
@@ -4367,9 +4277,9 @@
             
             <tag> 開源 </tag>
             
-            <tag> Skills </tag>
-            
             <tag> 開發工具 </tag>
+            
+            <tag> Skills </tag>
             
             <tag> 教學 </tag>
             
@@ -4395,6 +4305,8 @@
       
       
         <tags>
+            
+            <tag> AI與科技新聞 </tag>
             
             <tag> 資安 </tag>
             
@@ -4425,9 +4337,9 @@
       
         <tags>
             
-            <tag> MCP </tag>
-            
             <tag> AI Agent </tag>
+            
+            <tag> MCP </tag>
             
             <tag> Claude Code </tag>
             
@@ -4482,6 +4394,8 @@
       
       
         <tags>
+            
+            <tag> AI與科技新聞 </tag>
             
             <tag> 資安 </tag>
             
@@ -4570,13 +4484,13 @@
       
         <tags>
             
-            <tag> 資安 </tag>
-            
             <tag> 理財 </tag>
             
-            <tag> Gemini </tag>
+            <tag> AI與科技新聞 </tag>
             
-            <tag> Perplexity </tag>
+            <tag> 資安 </tag>
+            
+            <tag> Gemini </tag>
             
         </tags>
       
@@ -4659,9 +4573,9 @@
       
         <tags>
             
-            <tag> 資安 </tag>
-            
             <tag> 開源 </tag>
+            
+            <tag> 資安 </tag>
             
             <tag> 開發工具 </tag>
             
@@ -4721,13 +4635,13 @@
       
         <tags>
             
+            <tag> AI與科技新聞 </tag>
+            
             <tag> 資安 </tag>
             
             <tag> MCP </tag>
             
             <tag> Anthropic </tag>
-            
-            <tag> NVIDIA </tag>
             
             <tag> Claude Code </tag>
             
@@ -4758,9 +4672,9 @@
             
             <tag> Claude Code </tag>
             
-            <tag> 自動化 </tag>
-            
             <tag> 開發工具 </tag>
+            
+            <tag> 自動化 </tag>
             
             <tag> 教學 </tag>
             
@@ -4845,13 +4759,13 @@
       
         <tags>
             
-            <tag> AI 新聞 </tag>
+            <tag> AI與科技新聞 </tag>
             
             <tag> MCP </tag>
             
-            <tag> Apple </tag>
-            
             <tag> Anthropic </tag>
+            
+            <tag> Apple </tag>
             
             <tag> Mistral </tag>
             
@@ -4986,7 +4900,7 @@
       
         <tags>
             
-            <tag> AI 新聞 </tag>
+            <tag> AI與科技新聞 </tag>
             
             <tag> OpenAI </tag>
             
@@ -5017,9 +4931,9 @@
       
         <tags>
             
-            <tag> DevOps </tag>
-            
             <tag> Rust </tag>
+            
+            <tag> DevOps </tag>
             
             <tag> 系統監控 </tag>
             
@@ -5075,7 +4989,7 @@
       
         <tags>
             
-            <tag> AI 新聞 </tag>
+            <tag> AI與科技新聞 </tag>
             
             <tag> 資安 </tag>
             
@@ -5110,9 +5024,9 @@
             
             <tag> Claude Code </tag>
             
-            <tag> Skills </tag>
-            
             <tag> 自動化 </tag>
+            
+            <tag> Skills </tag>
             
         </tags>
       
@@ -5137,7 +5051,7 @@
       
         <tags>
             
-            <tag> AI 新聞 </tag>
+            <tag> AI與科技新聞 </tag>
             
             <tag> 資安 </tag>
             
@@ -5253,7 +5167,7 @@
       
         <tags>
             
-            <tag> AI 新聞 </tag>
+            <tag> AI與科技新聞 </tag>
             
             <tag> 資安 </tag>
             
@@ -5338,13 +5252,11 @@
       
         <tags>
             
-            <tag> AI 新聞 </tag>
-            
             <tag> LLM </tag>
             
-            <tag> Claude </tag>
+            <tag> AI與科技新聞 </tag>
             
-            <tag> MCP </tag>
+            <tag> Claude </tag>
             
             <tag> OpenAI </tag>
             
@@ -5429,7 +5341,7 @@
       
         <tags>
             
-            <tag> AI 新聞 </tag>
+            <tag> AI與科技新聞 </tag>
             
             <tag> 資安 </tag>
             
@@ -5570,9 +5482,9 @@
       
         <tags>
             
-            <tag> AI 新聞 </tag>
-            
             <tag> LLM </tag>
+            
+            <tag> AI與科技新聞 </tag>
             
             <tag> 資安 </tag>
             
@@ -6250,7 +6162,7 @@
       
         <tags>
             
-            <tag> Spring Cloud </tag>
+            <tag> Spring </tag>
             
         </tags>
       
@@ -6275,7 +6187,7 @@
       
         <tags>
             
-            <tag> Spring Cloud </tag>
+            <tag> Spring </tag>
             
         </tags>
       

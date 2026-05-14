@@ -1,0 +1,91 @@
+/* Search Tab Bar */
+.search-tab-bar {
+  display: flex;
+  gap: 0;
+  margin-bottom: 14px;
+  border-bottom: 2px solid var(--hr-border, #eee);
+}
+
+.search-tab {
+  flex: 1;
+  padding: 10px 0;
+  border: none;
+  background: none;
+  color: var(--font-color, #666);
+  font-size: 0.95em;
+  cursor: pointer;
+  transition: color 0.2s, border-bottom 0.2s;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.search-tab:hover {
+  color: var(--theme-color, #49b1f5);
+}
+
+.search-tab.active {
+  color: var(--theme-color, #49b1f5);
+  border-bottom-color: var(--theme-color, #49b1f5);
+  font-weight: 600;
+}
+
+/* Tag Search Results */
+.tag-search-list {
+  overflow-y: auto;
+  max-height: calc(80vh - 280px);
+  margin: 0 -20px;
+  padding: 0 20px;
+}
+
+.tag-search-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 12px;
+  margin: 4px 0;
+  border-radius: 8px;
+  text-decoration: none;
+  color: var(--font-color, #333);
+  transition: background 0.2s, transform 0.15s;
+}
+
+.tag-search-item:hover {
+  background: var(--btn-hover-color, rgba(73, 177, 245, 0.1));
+  transform: translateX(4px);
+}
+
+.tag-search-name {
+  font-size: 0.95em;
+}
+
+.tag-search-name mark {
+  background: rgba(73, 177, 245, 0.25);
+  color: inherit;
+  padding: 1px 2px;
+  border-radius: 3px;
+}
+
+.tag-search-count {
+  font-size: 0.8em;
+  color: var(--font-color, #999);
+  opacity: 0.6;
+  flex-shrink: 0;
+  margin-left: 12px;
+}
+
+/* Dark mode */
+[data-theme="dark"] .search-tab-bar {
+  border-bottom-color: var(--hr-border, #333);
+}
+
+[data-theme="dark"] .tag-search-item:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+[data-theme="dark"] .tag-search-name mark {
+  background: rgba(73, 177, 245, 0.3);
+}
