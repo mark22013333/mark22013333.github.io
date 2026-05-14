@@ -1,71 +1,88 @@
-function initSeriesShowcase() {
-  initScrollButtons();
-  initImageFallback();
-  initSeriesToggle();
-}
+/* series-showcase.js — 系列頁面互動 */
+(function () {
+  'use strict';
 
-document.addEventListener('DOMContentLoaded', initSeriesShowcase);
-document.addEventListener('pjax:complete', initSeriesShowcase);
+  // ========== 展開/收合按鈕：事件委派，不依賴初始化時機 ==========
+  document.addEventListener('click', function (e) {
+    var btn = e.target.closest('.series-toggle-btn');
+    if (!btn) return;
 
-function initScrollButtons() {
-  var track = document.querySelector('.series-showcase-track');
-  if (!track) return;
+    var key = btn.getAttribute('data-series');
+    var section = document.getElementById(key);
+    if (!section) return;
 
-  var leftBtn = document.querySelector('.series-scroll-left');
-  var rightBtn = document.querySelector('.series-scroll-right');
-  if (!leftBtn || !rightBtn) return;
+    var hidden = section.querySelector('.series-article-hidden');
+    if (!hidden) return;
 
-  function getScrollAmount() {
-    var card = track.querySelector('.series-card');
-    if (!card) return 296;
-    var style = window.getComputedStyle(track);
-    var gap = parseFloat(style.gap) || 16;
-    return card.offsetWidth + gap;
+    var isVisible = hidden.style.display !== 'none';
+    hidden.style.display = isVisible ? 'none' : 'block';
+    btn.textContent = isVisible
+      ? btn.textContent.replace('收合', '展開').replace('↑', '↓')
+      : btn.textContent.replace('展開', '收合').replace('↓', '↑');
+  });
+
+  // ========== 首頁精選卡片滑動 ==========
+  function initScrollButtons() {
+    var track = document.querySelector('.series-showcase-track');
+    if (!track) return;
+
+    var leftBtn = document.querySelector('.series-scroll-left');
+    var rightBtn = document.querySelector('.series-scroll-right');
+    if (!leftBtn || !rightBtn) return;
+
+    function getScrollAmount() {
+      var card = track.querySelector('.series-card');
+      if (!card) return 296;
+      var style = window.getComputedStyle(track);
+      var gap = parseFloat(style.gap) || 16;
+      return card.offsetWidth + gap;
+    }
+
+    leftBtn.addEventListener('click', function () {
+      track.scrollBy({ left: -getScrollAmount(), behavior: 'smooth' });
+    });
+    rightBtn.addEventListener('click', function () {
+      track.scrollBy({ left: getScrollAmount(), behavior: 'smooth' });
+    });
+
+    function updateButtons() {
+      leftBtn.style.display = track.scrollLeft <= 0 ? 'none' : 'flex';
+      rightBtn.style.display =
+        track.scrollLeft + track.clientWidth >= track.scrollWidth - 1 ? 'none' : 'flex';
+    }
+
+    track.addEventListener('scroll', updateButtons, { passive: true });
+    window.addEventListener('resize', updateButtons, { passive: true });
+    updateButtons();
   }
 
-  leftBtn.addEventListener('click', function () {
-    track.scrollBy({ left: -getScrollAmount(), behavior: 'smooth' });
-  });
-  rightBtn.addEventListener('click', function () {
-    track.scrollBy({ left: getScrollAmount(), behavior: 'smooth' });
-  });
-
-  function updateButtons() {
-    var scrollLeft = track.scrollLeft;
-    var scrollWidth = track.scrollWidth;
-    var clientWidth = track.clientWidth;
-    leftBtn.style.display = scrollLeft <= 0 ? 'none' : 'flex';
-    rightBtn.style.display = scrollLeft + clientWidth >= scrollWidth - 1 ? 'none' : 'flex';
+  // ========== 圖片載入失敗隱藏 ==========
+  function initImageFallback() {
+    document.querySelectorAll('.series-card-cover img').forEach(function (img) {
+      if (img._seriesFallback) return;
+      img._seriesFallback = true;
+      img.addEventListener('error', function () { this.style.display = 'none'; });
+    });
   }
 
-  track.addEventListener('scroll', updateButtons, { passive: true });
-  updateButtons();
-  window.addEventListener('resize', updateButtons, { passive: true });
-}
+  // ========== 初始化（首頁卡片滑動 + 圖片 fallback） ==========
+  function initShowcase() {
+    initScrollButtons();
+    initImageFallback();
+  }
 
-function initImageFallback() {
-  document.querySelectorAll('.series-card-cover img').forEach(function (img) {
-    img.addEventListener('error', function () {
-      this.style.display = 'none';
-    });
-  });
-}
+  // 首次載入
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initShowcase);
+  } else {
+    initShowcase();
+  }
 
-function initSeriesToggle() {
-  document.querySelectorAll('.series-toggle-btn').forEach(function (btn) {
-    btn.addEventListener('click', function () {
-      var key = this.getAttribute('data-series');
-      var section = document.getElementById(key);
-      if (!section) return;
+  // Butterfly PJAX 回調（btf.addGlobalFn 可能尚未定義，安全取用）
+  if (typeof btf !== 'undefined' && btf.addGlobalFn) {
+    btf.addGlobalFn('pjaxComplete', initShowcase, 'seriesShowcase');
+  }
 
-      var hidden = section.querySelector('.series-article-hidden');
-      if (!hidden) return;
-
-      var isVisible = hidden.style.display !== 'none';
-      hidden.style.display = isVisible ? 'none' : 'block';
-      this.textContent = isVisible
-        ? this.textContent.replace('收合', '展開').replace('↑', '↓')
-        : this.textContent.replace('展開', '收合').replace('↓', '↑');
-    });
-  });
-}
+  // 標準 PJAX 事件（備援）
+  document.addEventListener('pjax:complete', initShowcase);
+})();

@@ -99,35 +99,6 @@
     
     
     <entry>
-      <title>Awesome — GitHub 上 Star 最多的開源資源策展清單</title>
-      <link href="/2026/05/13/Awesome-GitHub-%E4%B8%8A-Star-%E6%9C%80%E5%A4%9A%E7%9A%84%E9%96%8B%E6%BA%90%E8%B3%87%E6%BA%90%E7%AD%96%E5%B1%95%E6%B8%85%E5%96%AE/"/>
-      <url>/2026/05/13/Awesome-GitHub-%E4%B8%8A-Star-%E6%9C%80%E5%A4%9A%E7%9A%84%E9%96%8B%E6%BA%90%E8%B3%87%E6%BA%90%E7%AD%96%E5%B1%95%E6%B8%85%E5%96%AE/</url>
-      
-        <content type="html"><![CDATA[<p>GitHub 全站 star 數最高的 repo，不是 React，不是 Linux kernel，不是任何一個 AI 模型。</p><p>是一份清單。</p><p><code>sindresorhus/awesome</code> 拿了 46 萬顆 star，比 TensorFlow 高、比 VS Code 高、比 freeCodeCamp 高。一個沒有程式碼的 repo，打贏了所有有程式碼的 repo。這件事本身就很值得想一下。</p><h2 id="開發者最貴的成本不是寫-code"><a href="#開發者最貴的成本不是寫-code" class="headerlink" title="開發者最貴的成本不是寫 code"></a>開發者最貴的成本不是寫 code</h2><p>你要用 Python 做一個爬蟲。Google「python web scraping library」，前三頁是 SEO 農場的推薦文，Stack Overflow 最高票的答案是 2019 年的，有人留言說「這個 API 已經 deprecated」但沒人理。你花了兩小時比較 Scrapy、BeautifulSoup、Selenium、Playwright，最後還是不確定該選哪個。</p><p>這個場景每天都在發生。技術選型的隱性成本比寫 code 本身還高。你以為你在「做研究」，其實你在被 SEO 排名牽著鼻子走。排在前面的不見得是最好的，只是最會做行銷的。</p><p>Awesome list 的做法不一樣。它讓真正用過的人來推薦。每個主題有一份獨立清單——awesome-python、awesome-go、awesome-rust——裡面列的工具和資源，是某個開發者願意拿自己的 GitHub 帳號背書說「我用過，這個好」。跟搜尋引擎最大的差異就在這裡：你看到的不是演算法排出來的結果，而是一個活人的判斷。</p><p>想像一下你要找餐廳。Google Maps 上 4.5 分的店有幾萬家，你根本分不出來。但你朋友跟你說「那家牛肉麵真的好吃」——你會直接去。Awesome list 就是開源世界的「朋友推薦」，只不過你的朋友有幾十萬個，而且他們都是工程師。</p><h2 id="一份清單的清單"><a href="#一份清單的清單" class="headerlink" title="一份清單的清單"></a>一份清單的清單</h2><p><code>sindresorhus/awesome</code> 本身不直接推薦工具。它是一個索引——把數百份主題清單集中在一起，分成 27 個大分類，收錄超過 527 個子清單。你可以把它想成圖書館的總目錄：它不是書，但它告訴你每本書在哪裡。</p><p>這些子清單的規模有時候大得嚇人。awesome-selfhosted 有 29 萬 stars，專門收錄你可以自己架的服務——從密碼管理器到影音串流到 email server。awesome-for-beginners 有 8.5 萬 stars，列出適合新手貢獻的開源專案。awesome-interview-questions 也有 8.2 萬 stars，面試前刷一遍對應語言的清單，命中率不低。</p><p>不是隨便一個 markdown 檔案掛上「awesome」就能被收錄。</p><h2 id="品質把關比你想的嚴格"><a href="#品質把關比你想的嚴格" class="headerlink" title="品質把關比你想的嚴格"></a>品質把關比你想的嚴格</h2><p>這是最反直覺的部分。一個「社群推薦」的清單，照理說應該很鬆散，誰都能丟東西進去。但 Awesome 的提交門檻其實不低。</p><p>首先，你的清單必須已經存在至少 30 天。剛建的不行——這個等待期是為了過濾衝動型的「我剛做了一個 awesome-xxx 快來看」。然後，你要先去審查至少 4 個其他人的 open PR。沒錯，你要先幫別人 review，才有資格提交自己的。這個設計很聰明：它強迫你先理解整個生態系的品質標準，而不是只管自己的東西。</p><p>清單本身也有規格要求：要有目錄（TOC）、要有 contributing.md、要用 Creative Commons 授權。還有一個叫 <code>awesome-lint</code> 的自動化工具會跑格式檢查。</p><p>核心原則寫在 Awesome Manifesto 裡，只有一句話：<strong>「只放你或其他貢獻者能親自推薦的東西。」</strong> 不是「放你覺得不錯的東西」，是「你親自用過並且願意推薦的東西」。這個差異很關鍵。</p><p>而且從 2024 年開始，純 AI 生成的 PR 是直接被禁止的。</p><h2 id="誰在背後維護這一切"><a href="#誰在背後維護這一切" class="headerlink" title="誰在背後維護這一切"></a>誰在背後維護這一切</h2><p>Sindre Sorhus。一個全職做開源的挪威開發者。</p><p>「全職開源」這四個字聽起來浪漫，但你想想：他在 GitHub 上有 1,134 個公開 repo，7.9 萬 followers。npm 生態系裡你八成用過他的東西——<code>execa</code>（跑子程序）、<code>got</code>（HTTP 請求）、<code>p-queue</code>（Promise 佇列）、<code>globby</code>（檔案路徑匹配）。這些不是什麼花俏的框架，都是基礎建設等級的工具，裝在幾百萬個專案裡面安靜運作。</p><p>他從 2014 年建立了 Awesome 這個 repo，到現在十二年了，還在維護。整個生態系高度依賴一個人的持續投入，這是事實，也是風險。但反過來想——正因為有一個品味一致的人把關，品質才沒有失控。</p><h2 id="真正該知道的使用場景"><a href="#真正該知道的使用場景" class="headerlink" title="真正該知道的使用場景"></a>真正該知道的使用場景</h2><p>大部分人對 Awesome list 的認知停在「一堆連結的集合」。但你拆開來看，它在幾個特定場景的價值遠超過 Google。</p><p><strong>技術選型的起點。</strong> 不確定該用哪個框架的時候，先去對應語言的 awesome list 看一輪。不是說上面推薦的就一定要用，而是它幫你快速建立「這個領域有哪些主要選擇」的全局觀。你再去深入比較，至少方向不會偏太遠。</p><p><strong>學新技術的路徑。</strong> awesome-rust 不只是列工具，它同時收錄教學資源、書籍、範例專案。你不用從零拼湊學習路徑，社群已經幫你整理好了。</p><p><strong>Self-hosting 的導航。</strong> awesome-selfhosted 是這個領域的聖經級資源。想自己架 Bitwarden 替代品、想自架 Gitea、想跑一個私有的 RSS reader——這份清單幾乎涵蓋你能想到的每一種自架服務。</p><h2 id="但它不是萬靈丹"><a href="#但它不是萬靈丹" class="headerlink" title="但它不是萬靈丹"></a>但它不是萬靈丹</h2><p>46 萬 stars 的光環底下有幾個你該知道的坑。</p><p>品質參差不齊。主索引的審核很嚴格，但各個子清單的品質完全取決於個別維護者。有些子清單兩年沒更新，裡面推薦的工具已經停止維護了，但連結還掛在那裡。</p><p>「Awesome」這個名字已經被用爛了。GitHub 上有超過 6,000 個 repo 的名字帶有 <code>awesome-</code>，但經過主索引審核收錄的只有 527 個。剩下的品質就不好說了。看到 awesome-xxx 不要預設它就是被認證過的——先回主索引查一下。</p><p>還有一個更根本的問題：存活偏差。被推薦的都是「有人用過覺得好」的工具，但有些很好的專案可能因為行銷做得差、或者太小眾，永遠不會出現在清單上。清單能告訴你「這些確定不錯」，但不能告訴你「這些就是全部」。</p><h2 id="開源世界缺的不是程式碼"><a href="#開源世界缺的不是程式碼" class="headerlink" title="開源世界缺的不是程式碼"></a>開源世界缺的不是程式碼</h2><p>GitHub 上不缺 repo。每天有幾十萬個 commit 被推上去，每個月有幾千個新專案誕生。程式碼從來不是問題。</p><p>真正稀缺的是策展——有人願意花時間去篩選、分類、維護一份品質穩定的清單。這件事不性感、不酷、不會讓你在 Hacker News 上得到一千個 upvote（諷刺的是，Awesome 自己做到了）。但它解決的問題比大部分程式碼都更根本：在資訊過載的世界裡，幫你過濾雜訊。</p><p>搜尋引擎回答「有什麼」，Awesome list 回答「用哪個」。這兩個問題之間的落差，就是 46 萬顆 star 的來源。</p>]]></content>
-      
-      
-      <categories>
-          
-          <category> 開發工具 </category>
-          
-      </categories>
-      
-      
-        <tags>
-            
-            <tag> 開源 </tag>
-            
-            <tag> GitHub </tag>
-            
-            <tag> 開發工具 </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    
-    
-    <entry>
       <title>AI 與科技新聞摘要 - 2026/05/13</title>
       <link href="/2026/05/13/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260513/"/>
       <url>/2026/05/13/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260513/</url>
@@ -153,6 +124,35 @@
             <tag> Cursor </tag>
             
             <tag> GitHub Copilot </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>Awesome — GitHub 上 Star 最多的開源資源策展清單</title>
+      <link href="/2026/05/13/Awesome-GitHub-%E4%B8%8A-Star-%E6%9C%80%E5%A4%9A%E7%9A%84%E9%96%8B%E6%BA%90%E8%B3%87%E6%BA%90%E7%AD%96%E5%B1%95%E6%B8%85%E5%96%AE/"/>
+      <url>/2026/05/13/Awesome-GitHub-%E4%B8%8A-Star-%E6%9C%80%E5%A4%9A%E7%9A%84%E9%96%8B%E6%BA%90%E8%B3%87%E6%BA%90%E7%AD%96%E5%B1%95%E6%B8%85%E5%96%AE/</url>
+      
+        <content type="html"><![CDATA[<p>GitHub 全站 star 數最高的 repo，不是 React，不是 Linux kernel，不是任何一個 AI 模型。</p><p>是一份清單。</p><p><code>sindresorhus/awesome</code> 拿了 46 萬顆 star，比 TensorFlow 高、比 VS Code 高、比 freeCodeCamp 高。一個沒有程式碼的 repo，打贏了所有有程式碼的 repo。這件事本身就很值得想一下。</p><h2 id="開發者最貴的成本不是寫-code"><a href="#開發者最貴的成本不是寫-code" class="headerlink" title="開發者最貴的成本不是寫 code"></a>開發者最貴的成本不是寫 code</h2><p>你要用 Python 做一個爬蟲。Google「python web scraping library」，前三頁是 SEO 農場的推薦文，Stack Overflow 最高票的答案是 2019 年的，有人留言說「這個 API 已經 deprecated」但沒人理。你花了兩小時比較 Scrapy、BeautifulSoup、Selenium、Playwright，最後還是不確定該選哪個。</p><p>這個場景每天都在發生。技術選型的隱性成本比寫 code 本身還高。你以為你在「做研究」，其實你在被 SEO 排名牽著鼻子走。排在前面的不見得是最好的，只是最會做行銷的。</p><p>Awesome list 的做法不一樣。它讓真正用過的人來推薦。每個主題有一份獨立清單——awesome-python、awesome-go、awesome-rust——裡面列的工具和資源，是某個開發者願意拿自己的 GitHub 帳號背書說「我用過，這個好」。跟搜尋引擎最大的差異就在這裡：你看到的不是演算法排出來的結果，而是一個活人的判斷。</p><p>想像一下你要找餐廳。Google Maps 上 4.5 分的店有幾萬家，你根本分不出來。但你朋友跟你說「那家牛肉麵真的好吃」——你會直接去。Awesome list 就是開源世界的「朋友推薦」，只不過你的朋友有幾十萬個，而且他們都是工程師。</p><h2 id="一份清單的清單"><a href="#一份清單的清單" class="headerlink" title="一份清單的清單"></a>一份清單的清單</h2><p><code>sindresorhus/awesome</code> 本身不直接推薦工具。它是一個索引——把數百份主題清單集中在一起，分成 27 個大分類，收錄超過 527 個子清單。你可以把它想成圖書館的總目錄：它不是書，但它告訴你每本書在哪裡。</p><p>這些子清單的規模有時候大得嚇人。awesome-selfhosted 有 29 萬 stars，專門收錄你可以自己架的服務——從密碼管理器到影音串流到 email server。awesome-for-beginners 有 8.5 萬 stars，列出適合新手貢獻的開源專案。awesome-interview-questions 也有 8.2 萬 stars，面試前刷一遍對應語言的清單，命中率不低。</p><p>不是隨便一個 markdown 檔案掛上「awesome」就能被收錄。</p><h2 id="品質把關比你想的嚴格"><a href="#品質把關比你想的嚴格" class="headerlink" title="品質把關比你想的嚴格"></a>品質把關比你想的嚴格</h2><p>這是最反直覺的部分。一個「社群推薦」的清單，照理說應該很鬆散，誰都能丟東西進去。但 Awesome 的提交門檻其實不低。</p><p>首先，你的清單必須已經存在至少 30 天。剛建的不行——這個等待期是為了過濾衝動型的「我剛做了一個 awesome-xxx 快來看」。然後，你要先去審查至少 4 個其他人的 open PR。沒錯，你要先幫別人 review，才有資格提交自己的。這個設計很聰明：它強迫你先理解整個生態系的品質標準，而不是只管自己的東西。</p><p>清單本身也有規格要求：要有目錄（TOC）、要有 contributing.md、要用 Creative Commons 授權。還有一個叫 <code>awesome-lint</code> 的自動化工具會跑格式檢查。</p><p>核心原則寫在 Awesome Manifesto 裡，只有一句話：<strong>「只放你或其他貢獻者能親自推薦的東西。」</strong> 不是「放你覺得不錯的東西」，是「你親自用過並且願意推薦的東西」。這個差異很關鍵。</p><p>而且從 2024 年開始，純 AI 生成的 PR 是直接被禁止的。</p><h2 id="誰在背後維護這一切"><a href="#誰在背後維護這一切" class="headerlink" title="誰在背後維護這一切"></a>誰在背後維護這一切</h2><p>Sindre Sorhus。一個全職做開源的挪威開發者。</p><p>「全職開源」這四個字聽起來浪漫，但你想想：他在 GitHub 上有 1,134 個公開 repo，7.9 萬 followers。npm 生態系裡你八成用過他的東西——<code>execa</code>（跑子程序）、<code>got</code>（HTTP 請求）、<code>p-queue</code>（Promise 佇列）、<code>globby</code>（檔案路徑匹配）。這些不是什麼花俏的框架，都是基礎建設等級的工具，裝在幾百萬個專案裡面安靜運作。</p><p>他從 2014 年建立了 Awesome 這個 repo，到現在十二年了，還在維護。整個生態系高度依賴一個人的持續投入，這是事實，也是風險。但反過來想——正因為有一個品味一致的人把關，品質才沒有失控。</p><h2 id="真正該知道的使用場景"><a href="#真正該知道的使用場景" class="headerlink" title="真正該知道的使用場景"></a>真正該知道的使用場景</h2><p>大部分人對 Awesome list 的認知停在「一堆連結的集合」。但你拆開來看，它在幾個特定場景的價值遠超過 Google。</p><p><strong>技術選型的起點。</strong> 不確定該用哪個框架的時候，先去對應語言的 awesome list 看一輪。不是說上面推薦的就一定要用，而是它幫你快速建立「這個領域有哪些主要選擇」的全局觀。你再去深入比較，至少方向不會偏太遠。</p><p><strong>學新技術的路徑。</strong> awesome-rust 不只是列工具，它同時收錄教學資源、書籍、範例專案。你不用從零拼湊學習路徑，社群已經幫你整理好了。</p><p><strong>Self-hosting 的導航。</strong> awesome-selfhosted 是這個領域的聖經級資源。想自己架 Bitwarden 替代品、想自架 Gitea、想跑一個私有的 RSS reader——這份清單幾乎涵蓋你能想到的每一種自架服務。</p><h2 id="但它不是萬靈丹"><a href="#但它不是萬靈丹" class="headerlink" title="但它不是萬靈丹"></a>但它不是萬靈丹</h2><p>46 萬 stars 的光環底下有幾個你該知道的坑。</p><p>品質參差不齊。主索引的審核很嚴格，但各個子清單的品質完全取決於個別維護者。有些子清單兩年沒更新，裡面推薦的工具已經停止維護了，但連結還掛在那裡。</p><p>「Awesome」這個名字已經被用爛了。GitHub 上有超過 6,000 個 repo 的名字帶有 <code>awesome-</code>，但經過主索引審核收錄的只有 527 個。剩下的品質就不好說了。看到 awesome-xxx 不要預設它就是被認證過的——先回主索引查一下。</p><p>還有一個更根本的問題：存活偏差。被推薦的都是「有人用過覺得好」的工具，但有些很好的專案可能因為行銷做得差、或者太小眾，永遠不會出現在清單上。清單能告訴你「這些確定不錯」，但不能告訴你「這些就是全部」。</p><h2 id="開源世界缺的不是程式碼"><a href="#開源世界缺的不是程式碼" class="headerlink" title="開源世界缺的不是程式碼"></a>開源世界缺的不是程式碼</h2><p>GitHub 上不缺 repo。每天有幾十萬個 commit 被推上去，每個月有幾千個新專案誕生。程式碼從來不是問題。</p><p>真正稀缺的是策展——有人願意花時間去篩選、分類、維護一份品質穩定的清單。這件事不性感、不酷、不會讓你在 Hacker News 上得到一千個 upvote（諷刺的是，Awesome 自己做到了）。但它解決的問題比大部分程式碼都更根本：在資訊過載的世界裡，幫你過濾雜訊。</p><p>搜尋引擎回答「有什麼」，Awesome list 回答「用哪個」。這兩個問題之間的落差，就是 46 萬顆 star 的來源。</p>]]></content>
+      
+      
+      <categories>
+          
+          <category> 開發工具 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> 開源 </tag>
+            
+            <tag> GitHub </tag>
+            
+            <tag> 開發工具 </tag>
             
         </tags>
       
@@ -330,11 +330,11 @@
             
             <tag> AI與科技新聞 </tag>
             
+            <tag> 資安 </tag>
+            
             <tag> MCP </tag>
             
             <tag> OpenAI </tag>
-            
-            <tag> 資安 </tag>
             
             <tag> Anthropic </tag>
             
@@ -841,9 +841,9 @@
             
             <tag> AI與科技新聞 </tag>
             
-            <tag> Anthropic </tag>
-            
             <tag> Apple </tag>
+            
+            <tag> Anthropic </tag>
             
         </tags>
       
@@ -1515,9 +1515,9 @@
             
             <tag> AI與科技新聞 </tag>
             
-            <tag> MCP </tag>
-            
             <tag> 資安 </tag>
+            
+            <tag> MCP </tag>
             
             <tag> Cursor </tag>
             
@@ -1779,9 +1779,9 @@
             
             <tag> AI Agent </tag>
             
-            <tag> MCP </tag>
-            
             <tag> 資安 </tag>
+            
+            <tag> MCP </tag>
             
             <tag> Sonatype Guide </tag>
             
@@ -2035,11 +2035,11 @@
             
             <tag> AI與科技新聞 </tag>
             
+            <tag> 資安 </tag>
+            
             <tag> MCP </tag>
             
             <tag> OpenAI </tag>
-            
-            <tag> 資安 </tag>
             
             <tag> AI 安全 </tag>
             
@@ -2421,13 +2421,13 @@
             
             <tag> GitHub </tag>
             
-            <tag> GH-300 </tag>
-            
-            <tag> Responsible AI </tag>
+            <tag> TDD </tag>
             
             <tag> SDD </tag>
             
-            <tag> TDD </tag>
+            <tag> GH-300 </tag>
+            
+            <tag> Responsible AI </tag>
             
         </tags>
       
@@ -2582,9 +2582,9 @@
             
             <tag> AI與科技新聞 </tag>
             
-            <tag> OpenAI </tag>
-            
             <tag> 資安 </tag>
+            
+            <tag> OpenAI </tag>
             
             <tag> Cursor </tag>
             
@@ -2710,9 +2710,9 @@
             
             <tag> AI與科技新聞 </tag>
             
-            <tag> OpenAI </tag>
-            
             <tag> 資安 </tag>
+            
+            <tag> OpenAI </tag>
             
             <tag> Google </tag>
             
@@ -3069,9 +3069,9 @@
             
             <tag> AZ-305 </tag>
             
-            <tag> Networking </tag>
-            
             <tag> 微軟課程 </tag>
+            
+            <tag> Networking </tag>
             
         </tags>
       
@@ -3102,9 +3102,9 @@
             
             <tag> 微軟課程 </tag>
             
-            <tag> SDD </tag>
-            
             <tag> TDD </tag>
+            
+            <tag> SDD </tag>
             
         </tags>
       
@@ -4049,9 +4049,9 @@
             
             <tag> AI與科技新聞 </tag>
             
-            <tag> Claude </tag>
-            
             <tag> 資安 </tag>
+            
+            <tag> Claude </tag>
             
             <tag> Copilot </tag>
             
@@ -4227,9 +4227,9 @@
             
             <tag> AI與科技新聞 </tag>
             
-            <tag> OpenAI </tag>
-            
             <tag> 資安 </tag>
+            
+            <tag> OpenAI </tag>
             
             <tag> NVIDIA </tag>
             
@@ -4492,11 +4492,11 @@
             
             <tag> AI與科技新聞 </tag>
             
+            <tag> 資安 </tag>
+            
             <tag> MCP </tag>
             
             <tag> OpenAI </tag>
-            
-            <tag> 資安 </tag>
             
         </tags>
       
@@ -4732,9 +4732,9 @@
             
             <tag> AI與科技新聞 </tag>
             
-            <tag> MCP </tag>
-            
             <tag> 資安 </tag>
+            
+            <tag> MCP </tag>
             
             <tag> Anthropic </tag>
             
@@ -4858,9 +4858,9 @@
             
             <tag> MCP </tag>
             
-            <tag> Anthropic </tag>
-            
             <tag> Apple </tag>
+            
+            <tag> Anthropic </tag>
             
             <tag> Mistral </tag>
             
@@ -5086,9 +5086,9 @@
             
             <tag> AI與科技新聞 </tag>
             
-            <tag> MCP </tag>
-            
             <tag> 資安 </tag>
+            
+            <tag> MCP </tag>
             
             <tag> Google </tag>
             
@@ -5148,9 +5148,9 @@
             
             <tag> AI與科技新聞 </tag>
             
-            <tag> MCP </tag>
-            
             <tag> 資安 </tag>
+            
+            <tag> MCP </tag>
             
             <tag> Anthropic </tag>
             
@@ -5264,9 +5264,9 @@
             
             <tag> AI與科技新聞 </tag>
             
-            <tag> OpenAI </tag>
-            
             <tag> 資安 </tag>
+            
+            <tag> OpenAI </tag>
             
         </tags>
       
@@ -5438,13 +5438,13 @@
             
             <tag> AI與科技新聞 </tag>
             
+            <tag> 資安 </tag>
+            
             <tag> Claude </tag>
             
             <tag> MCP </tag>
             
             <tag> OpenAI </tag>
-            
-            <tag> 資安 </tag>
             
         </tags>
       

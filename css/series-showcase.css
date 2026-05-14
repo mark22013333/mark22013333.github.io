@@ -320,6 +320,10 @@
   margin-left: 12px;
 }
 
+.series-article-hidden .series-article-list {
+  counter-reset: article 5;
+}
+
 .series-show-all,
 .series-toggle-btn {
   display: block;
