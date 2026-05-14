@@ -4,11 +4,42 @@
   
     
     <entry>
-      <title>AI 與科技新聞摘要 - 2026/05/13</title>
-      <link href="/2026/05/13/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260513/"/>
-      <url>/2026/05/13/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260513/</url>
+      <title>Claude Code Desktop App 完整教學 — 平行 Session、拖放工作區與整合終端機</title>
+      <link href="/2026/05/14/Claude-Code-Desktop-App-%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8-%E5%B9%B3%E8%A1%8C-Session-%E6%8B%96%E6%94%BE%E5%B7%A5%E4%BD%9C%E5%8D%80%E8%88%87%E6%95%B4%E5%90%88%E7%B5%82%E7%AB%AF%E6%A9%9F/"/>
+      <url>/2026/05/14/Claude-Code-Desktop-App-%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8-%E5%B9%B3%E8%A1%8C-Session-%E6%8B%96%E6%94%BE%E5%B7%A5%E4%BD%9C%E5%8D%80%E8%88%87%E6%95%B4%E5%90%88%E7%B5%82%E7%AB%AF%E6%A9%9F/</url>
       
-        <content type="html"><![CDATA[<p>393%。</p><p>這是 2026 年第一季，AI 驅動的流量導向美國零售網站的年增幅。不是 39.3%，是 393%。接近四倍。而且這些 AI 帶來的流量，購買轉換率比傳統管道高出 42%。</p><p>同一天，Anthropic 宣布 Claude 正式進軍法律科技，帶著 12 個法律 Plugin 和 20 多個 MCP 連接器。GitHub 把 Copilot 從月費制改成用量計費，開發者社群的反應可以用一句話總結：「付一樣的錢，拿更少的東西。」Cloudflare 發表了一個把 LLM 權重無損壓縮 22% 的技術。Cursor 推出 2.0，自研 coding model 加上八個 agent 同時平行執行。</p><p>如果你把這五條新聞疊在一起看，會發現一件事：AI 正在同時吃掉基礎設施層、工具層、和應用層。不是「即將」，是「正在」。</p><hr><h2 id="Claude-for-Legal：AI-進法律業，不是替代律師，是替代律師的工具鏈"><a href="#Claude-for-Legal：AI-進法律業，不是替代律師，是替代律師的工具鏈" class="headerlink" title="Claude for Legal：AI 進法律業，不是替代律師，是替代律師的工具鏈"></a>Claude for Legal：AI 進法律業，不是替代律師，是替代律師的工具鏈</h2><p>Anthropic 不做法律 AI 產品已經不可能了。</p><p>五月十二日，Anthropic 正式推出 Claude for Legal。這不是「Claude 幫你看合約」這種玩具級整合。這是一整套法律實務堆疊——12 個 Plugin 涵蓋商業法律顧問、僱傭法顧問、訴訟助理、甚至法律系學生的學習輔助。20 多個 MCP 連接器直接串進 Ironclad、DocuSign、Definely、iManage、NetDocuments、Relativity、Everlaw、Consilio 這些法律科技產業的核心系統。</p><p>但真正的大事是 Thomson Reuters 那一塊。</p><p>CoCounsel Legal——Thomson Reuters 的法律 AI 產品——被用 Anthropic Claude Agent SDK 從頭重建了。使用者用自然語言描述案件，CoCounsel 自動規劃任務、選擇工具、去 Westlaw 和 Practical Law 裡檢索內容、產出附帶完整引用的工作成果。</p><p>翻譯一下：一個 AI agent 可以自己決定要查哪些判例、用哪個法律資料庫、怎麼組合出一份有引用來源的法律分析報告。</p><p>逆向想一下：怎樣做這件事一定會失敗？答案是——讓 AI 直接面對終端客戶，沒有律師在中間做品質把關。Anthropic 顯然也想到了，所以它的定位是「律師的工具」而不是「律師的替代品」。但定位歸定位，當工具夠好的時候，客戶的第一個問題一定是：「我為什麼要付律師的時薪來操作一個 AI 工具？」</p><p>法律科技市場的底層邏輯正在翻轉。以前的法律 AI 是「幫律師搜索更快」，現在是「幫律師思考更少」。這兩者之間的距離，就是整個法律業商業模式的斷層線。</p><blockquote><p>原文來源：<a href="https://www.artificiallawyer.com/2026/05/12/claude-for-legal-launches-may-reshape-the-legal-tech-world/">Claude for Legal Launches — Artificial Lawyer</a><br>原文來源：<a href="https://www.prnewswire.com/news-releases/thomson-reuters-and-anthropic-expand-partnership-to-connect-claude-with-cocounsel-legal-302769890.html">Thomson Reuters and Anthropic Expand Partnership — PR Newswire</a></p></blockquote><hr><p>付一樣的錢，拿更少的東西。開發者社群的怒氣不在於價格，在於被當盤子。</p><hr><h2 id="GitHub-Copilot-用量計費：-10-美金的心理學實驗"><a href="#GitHub-Copilot-用量計費：-10-美金的心理學實驗" class="headerlink" title="GitHub Copilot 用量計費：$10 美金的心理學實驗"></a>GitHub Copilot 用量計費：$10 美金的心理學實驗</h2><p>六月一日，GitHub Copilot 全線轉為 AI Credits 用量計費制。</p><p>Pro 方案還是 $10&#x2F;月，但現在你拿到的不是「無限使用 Copilot」，而是 $10 的 AI Credits。用完就沒了。Pro+ 是 $39&#x2F;月含 $39 Credits。Business 是 $19&#x2F;用戶&#x2F;月。計費方式按 token 消耗——input + output + cached——全算。</p><p>好消息是 code completions 和 Next Edit 維持無限使用。壞消息是，其他所有功能——Chat、Agent mode、Copilot Workspace——都吃 Credits。</p><p>月繳用戶 6&#x2F;1 自動遷移，連個同意的機會都沒有。年繳用戶可以撐到合約到期。</p><p>開發者社群的反應非常直接。Visual Studio Magazine 下了這個標題：「You Will Get Less, but Pay the Same Price」。這句話精準到不需要翻譯。</p><p>但真正值得注意的不是情緒，是結構。</p><p>用量計費的邏輯是什麼？表面上是「用多少付多少」。但在實務上，它創造了一個每次按下 Tab 鍵都要做成本計算的心理負擔。你不會再毫無顧忌地讓 Copilot 幫你探索三種解法然後選最好的——因為每一次探索都在燒 Credits。</p><p>這跟雲端運算早期的陷阱一模一樣。按用量計費聽起來合理，直到你發現帳單比固定費率高了三倍，而且你完全預測不了下個月要花多少錢。</p><p>GitHub 的算盤是：大多數用戶其實用不到 $10 的量，所以轉用量計費對 GitHub 來說是淨賺。少數重度用戶會超支——而這些人正好是最離不開 Copilot 的人，價格彈性最低。完美的價格歧視。</p><blockquote><p>原文來源：<a href="https://github.blog/news-insights/company-news/github-copilot-is-moving-to-usage-based-billing/">GitHub Copilot Is Moving to Usage-Based Billing — GitHub Blog</a><br>原文來源：<a href="https://visualstudiomagazine.com/articles/2026/04/27/devs-sound-off-on-usage-based-copilot-pricing-change-you-will-get-less-but-pay-the-same-price.aspx">Devs Sound Off on Usage-Based Copilot Pricing — Visual Studio Magazine</a></p></blockquote><hr><h2 id="Cloudflare-Unweight：壓縮-22-，零損失，GPU-直接解壓"><a href="#Cloudflare-Unweight：壓縮-22-，零損失，GPU-直接解壓" class="headerlink" title="Cloudflare Unweight：壓縮 22%，零損失，GPU 直接解壓"></a>Cloudflare Unweight：壓縮 22%，零損失，GPU 直接解壓</h2><p>LLM 推理的瓶頸不是算力，是記憶體頻寬。</p><p>Cloudflare 發表 Unweight，一個無損壓縮 LLM 權重的技術。在 Llama-3.1-8B 上，MLP 層的權重壓縮了約 30%，整體模型大小減少約 20~22%。重點是：完全無損，bit-exact outputs。壓縮前後跑出來的結果一模一樣，連最後一個 bit 都不差。</p><p>技術原理很漂亮。把 BF16 浮點數拆成兩部分：sign + mantissa 和 exponent。然後對 exponent 做 Huffman 編碼——因為 LLM 權重的 exponent 分布極度集中，最常見的 16 個值覆蓋了 99% 以上的權重。高度集中的分布，正是 Huffman 編碼最擅長壓縮的對象。</p><p>更妙的是解壓縮路徑。GPU 直接在 shared memory 裡解壓，繞過 main memory。這意味著壓縮不只省了儲存空間，還減少了記憶體到 GPU 的傳輸量——而這正是推理延遲的主要瓶頸。</p><p>用工程師的話說：這是一個「沒有 trade-off 的優化」。壓縮率不高不低剛好在甜蜜點——22% 不足以改變模型架構，但足以讓你在同一張 GPU 上多塞幾個並行請求。配合 Cloudflare 正在建設的全球 LLM 推理基礎設施，這個技術的戰略價值遠大於技術本身。</p><p>逆向問一個問題：為什麼之前沒人做這件事？因為 LLM 權重的統計特性——exponent 分布集中——是一個已知事實，Huffman 編碼是資訊理論的第一堂課。答案可能是：大家都太忙著做有損壓縮（量化）了，沒人回頭看這個最基本的無損路線。有時候最大的盲點不是你不知道的事，是你以為不值得做的事。</p><blockquote><p>原文來源：<a href="https://blog.cloudflare.com/unweight-tensor-compression/">Unweight: Tensor Compression — Cloudflare Blog</a><br>原文來源：<a href="https://www.infoq.com/news/2026/05/cloudflare-llm-infrastructure/">Cloudflare LLM Infrastructure — InfoQ</a></p></blockquote><hr><p>八個 agent 同時跑。一個人的生產力乘以八。但 bug 的生產力也乘以八。</p><hr><h2 id="Cursor-2-0：自研模型-八個平行-Agent，開發者的分身術"><a href="#Cursor-2-0：自研模型-八個平行-Agent，開發者的分身術" class="headerlink" title="Cursor 2.0：自研模型 + 八個平行 Agent，開發者的分身術"></a>Cursor 2.0：自研模型 + 八個平行 Agent，開發者的分身術</h2><p>Cursor 推出 2.0，一次拉開了兩個戰線。</p><p>第一條戰線：自研 coding model。Cursor 把它叫做 Composer，號稱速度是同等智力模型的四倍。這句話很微妙——「similarly intelligent」——等於承認它不是最聰明的模型，但它是同級裡最快的。在 coding 場景中，這個 trade-off 通常是值得的。寫程式不像寫論文，你不需要模型花三十秒深度思考然後給你一個完美答案。你需要它在三秒內給你一個八十分的答案，然後你迭代。</p><p>第二條戰線：平行 agent。新介面支援最多八個 agent 同時工作，用 git worktrees 或 remote machines 做隔離。Tiled layout 讓你同時看到所有 agent 的狀態。</p><p>八個 agent 同時跑。一個人坐在螢幕前，管理八條平行的開發線。這不是科幻，這是 Cursor 2.0 的預設體驗。</p><p>但想一下失敗模式：八個 agent 同時寫程式碼，每個 agent 都在自己的 worktree 裡獨立工作。當你把八條 worktree 合併回去的時候——merge conflict 的數量和複雜度是線性增長還是指數增長？如果其中兩個 agent 都決定重構同一個模組的介面呢？</p><p>另外值得注意的是 Security Review（beta）。Cursor 加了一個 always-on 的安全審查器和漏洞掃描器。這暗示了一件事：當 AI agent 大量產出程式碼的時候，安全漏洞的注入速率也會等比例上升。Cursor 自己顯然意識到了這個問題——所以它在加速油門的同時，也開始裝煞車。</p><blockquote><p>原文來源：<a href="https://cursor.com/blog/2-0">Cursor 2.0 — Cursor Blog</a><br>原文來源：<a href="https://cursor.com/changelog/2-0">Cursor 2.0 Changelog</a></p></blockquote><hr><h2 id="AI-導流電商：轉換率高-42-，但誰在決定你買什麼？"><a href="#AI-導流電商：轉換率高-42-，但誰在決定你買什麼？" class="headerlink" title="AI 導流電商：轉換率高 42%，但誰在決定你買什麼？"></a>AI 導流電商：轉換率高 42%，但誰在決定你買什麼？</h2><p>2026 年第一季，AI 驅動的流量導向美國零售網站，年增 393%。</p><p>這個數字的意義不在於大小——年增率在基期小的時候本來就容易飆高。真正值得注意的是轉換率：AI 導流的購買轉換率比其他管道高出 42%。</p><p>為什麼高？因為 AI 代理——ChatGPT、Claude、Perplexity——在推薦產品的時候，做的不是「列出十個選項讓你自己挑」。它做的是「理解你的需求，直接告訴你買這個，附上連結」。這跟 Google 搜尋的體驗完全不同。搜尋引擎給你選擇。AI 代理給你答案。</p><p>選擇讓人猶豫。答案讓人行動。所以轉換率高 42% 一點都不意外。</p><p>但這裡藏著一個系統性風險。當消費者的購買決策從「我搜尋、我比較、我選擇」變成「AI 推薦、我點連結、我付款」，決定你買什麼的人就不再是你了。是訓練 AI 的資料。是 AI 公司和品牌之間的合作協議。是推薦演算法的權重分配。</p><p>這不是陰謀論，這是商業邏輯。如果 AI 導流的轉換率比搜尋引擎高 42%，品牌商願意為這個管道付多少溢價？當溢價夠高的時候，AI 公司有沒有動機把「最好的產品」換成「付最多錢的產品」？</p><p>搜尋引擎時代我們花了十五年才搞清楚 SEO 和付費排名的遊戲規則。AI 推薦時代的遊戲規則還沒建立，但利益結構已經在形成了。</p><blockquote><p>原文來源：各大科技媒體報導</p></blockquote><hr><p>五條新聞，五個不同的領域，一個相同的結構。</p><p>Anthropic 進法律業——AI 從「幫你搜索」進化到「幫你思考」。GitHub Copilot 轉用量計費——工具供應商開始對 AI 的真實成本做更精確的定價。Cloudflare 壓縮 LLM 權重——基礎設施層在為 AI 的規模化部署掃除瓶頸。Cursor 八個 agent 平行——單一開發者的產出能力在非線性膨脹。AI 導流電商轉換率飆升——消費者的決策權正在靜默轉移。</p><p>把這些拼在一起，你會看到一個模式：<strong>AI 的能力邊界每擴張一步，人類的某個決策環節就被壓縮一步。</strong> 法律判斷、程式碼審查、購買決策、甚至「用多少 AI」這個決定本身——都在從人的手裡滑向系統的手裡。</p><p>這不是好或壞的問題。這是結構性的。</p><p>所以該問的問題不是「AI 會不會取代我」。該問的是：<strong>在這個加速的過程中，哪些決策環節是你絕對不能外包的？</strong> 畫出那條線，然後守住它。因為如果你不主動畫線，系統會幫你畫——而系統畫的線，通常不在你想要的地方。</p>]]></content>
+        <content type="html"><![CDATA[<p>打開三個終端機視窗。一個跑前端 dev server，一個跑後端 API，一個跑測試。再開一個 Claude Code session 修 bug，另一個 session 寫新功能。Alt-Tab 按到手指抽筋，每次切回去都要花五秒重新定位「我剛才做到哪了」。</p><p>如果你有過這種經驗，Claude Code 的桌面版重新設計就是為你做的。</p><hr><h2 id="一個視窗，多個-Session"><a href="#一個視窗，多個-Session" class="headerlink" title="一個視窗，多個 Session"></a>一個視窗，多個 Session</h2><p>2026 年四月，Anthropic 對 Claude Code 的桌面 app 做了一次大改版。核心改變只有一個：<strong>你可以在同一個視窗裡同時開多個 session，並排顯示。</strong></p><p>聽起來很簡單。實際用起來的差距是這樣的——以前你要在不同視窗之間跳來跳去，每次切換都斷一次思路。現在你把兩個 session 並排放在螢幕上，左邊修 bug、右邊跑測試，眼睛掃一下就能看到兩邊的狀態。</p><p>這就像雙螢幕跟單螢幕的差距。技術上你用單螢幕也能做一樣的事。但雙螢幕省下的是每天幾百次的視窗切換，每次省一點點認知負擔，一天下來是真實的生產力差距。</p><hr><h2 id="Session-Sidebar：所有工作，一個清單"><a href="#Session-Sidebar：所有工作，一個清單" class="headerlink" title="Session Sidebar：所有工作，一個清單"></a>Session Sidebar：所有工作，一個清單</h2><p>新版左側加了一個 Session Sidebar。每個活躍的和最近的 session 都列在這裡。</p><p>你可以按狀態篩選（進行中、暫停、完成）、按專案篩選、按環境篩選。如果你同時在做三個不同專案的事，可以用專案分組。一個 session 的 PR 被合併或關閉後，它會自動歸檔，sidebar 只留還在動的東西。</p><p>好啦認真說，這功能最大的價值不是組織——是記憶。早上開機，sidebar 上還掛著昨天沒做完的三個 session，每個 session 保留了完整的上下文。你不用再花十分鐘回想「昨天做到哪」。打開就繼續。</p><hr><p>做半天。發現少一個分號。</p><hr><h2 id="拖放工作區：你的螢幕，你排"><a href="#拖放工作區：你的螢幕，你排" class="headerlink" title="拖放工作區：你的螢幕，你排"></a>拖放工作區：你的螢幕，你排</h2><p>每個面板——session、終端機、檔案編輯器、diff 檢視器、預覽窗格——都可以拖放重排。</p><p>不是那種「只能選左右分割或上下分割」的制式 layout。是真正的自由拖放。你可以把一個 session 拖到左半邊、終端機拖到右上角、diff 檢視器放右下角。下次你調了一個新的 layout，桌面 app 會記住它。</p><p>具體怎麼操作？抓住面板的標題列，拖到你想要的位置放下。面板之間會出現吸附提示，對齊很直覺。如果你用過 VS Code 的面板拖放，操作方式幾乎一樣。</p><hr><h2 id="整合終端機：不用再切視窗跑指令"><a href="#整合終端機：不用再切視窗跑指令" class="headerlink" title="整合終端機：不用再切視窗跑指令"></a>整合終端機：不用再切視窗跑指令</h2><p>新版內建了終端機。</p><p>以前你在 Claude Code 裡讓 AI 幫你改了程式碼，想跑個測試確認——得切到外部終端機、cd 到對的目錄、跑指令、看結果、再切回 Claude Code。現在終端機就在同一個視窗裡，跑測試、跑 build、跑 dev server，都不用離開。</p><p>搭配 session 並排使用：左邊 Claude Code 在改程式碼，右邊終端機即時看 test output。改完一行、存檔、測試自動重跑、結果即時更新。這個迴圈的速度比切視窗的版本快很多。</p><hr><h2 id="檔案編輯器-Diff-檢視器"><a href="#檔案編輯器-Diff-檢視器" class="headerlink" title="檔案編輯器 + Diff 檢視器"></a>檔案編輯器 + Diff 檢視器</h2><p>新版加了一個 in-app 檔案編輯器，做小幅修改不用開外部 IDE。</p><p>但更實用的是重建過的 diff 檢視器。如果你讓 Claude Code 改了一大堆檔案，之前的 diff 顯示在大型 changeset 上很痛苦——要滾動很久、不容易看出哪些是重要的改動。新的 diff 檢視器針對大型 changeset 做了優化，折疊不重要的部分、高亮關鍵改動。</p><p>預覽窗格也升級了。除了原本的本地 dev server 預覽，現在還能直接預覽 HTML 檔案和 PDF。寫前端的人會很有感——改一個 HTML template，右邊即時看到渲染結果，不用另開瀏覽器。</p><hr><p>Command + ; 就對了。</p><hr><h2 id="Side-Chat：不打斷主線的快速提問"><a href="#Side-Chat：不打斷主線的快速提問" class="headerlink" title="Side Chat：不打斷主線的快速提問"></a>Side Chat：不打斷主線的快速提問</h2><p>這是新版最巧妙的一個小功能。</p><p>按 <code>Command + ;</code>（Mac），會在當前 session 旁邊彈出一個 side chat。你可以在裡面問一個跟主任務相關的問題——「這個 API 的 rate limit 是多少？」「這個 error code 代表什麼？」——但 side chat 的內容<strong>不會回灌到主 session 的 context</strong> 裡。</p><p>為什麼這很重要？因為 Claude Code 的 context window 是有限的。以前你如果在 session 中間問了一個跟主任務無關的問題，那個問答會佔掉 context 空間，可能讓後面的主要任務品質下降。Side chat 把「順便問一下」這個需求獨立出來，不污染主線。</p><p>這就像你在寫程式的時候，旁邊開一個便條紙查東西。查完了，便條紙丟掉，主要工作的桌面還是乾淨的。</p><hr><h2 id="SSH-支援（Mac）"><a href="#SSH-支援（Mac）" class="headerlink" title="SSH 支援（Mac）"></a>SSH 支援（Mac）</h2><p>新版支援 SSH 連線到遠端機器。</p><p>這對在雲端開發的人來說是剛需。你的程式碼在 EC2 或 GCP VM 上，以前要先 SSH 進去、在遠端跑 Claude Code CLI。現在桌面 app 可以直接連到遠端環境，在本地的 GUI 裡操作遠端的程式碼。</p><p>設定方式跟 VS Code Remote SSH 類似——指定 host、port、key path，連上之後 Claude Code 的所有操作都在遠端執行。</p><p>目前只有 Mac 版支援。Windows 和 Linux 還在開發中。</p><hr><h2 id="實際工作流範例"><a href="#實際工作流範例" class="headerlink" title="實際工作流範例"></a>實際工作流範例</h2><p>你拿到一個需求：「修掉這個 API timeout 的 bug，順便加一個重試機制。」</p><p><strong>以前的流程</strong>：</p><ol><li>開一個 Claude Code session → 討論方案</li><li>切到終端機 → 跑測試確認 bug</li><li>切回 Claude Code → 讓它改程式碼</li><li>切到終端機 → 跑測試</li><li>切到另一個視窗 → 看 diff</li><li>來來回回十幾次</li></ol><p><strong>現在的流程</strong>：</p><ol><li>左邊開 Claude Code session → 討論方案並改程式碼</li><li>右上角開終端機 → test watch 模式自動跑</li><li>右下角開 diff 檢視器 → 即時看改動</li><li>需要查東西？<code>Command + ;</code> 開 side chat → 查完關掉</li><li>全程不離開同一個視窗</li></ol><p>省下的不是什麼大段時間。是每次切換的一兩秒、加上重新定位的三五秒、加上思路被打斷後的恢復時間。一天累積下來，這些碎片時間加起來至少半小時到一小時。</p><hr><h2 id="誰該用、誰不用急"><a href="#誰該用、誰不用急" class="headerlink" title="誰該用、誰不用急"></a>誰該用、誰不用急</h2><p><strong>該用的人</strong>：</p><ul><li>同時在做兩個以上專案的開發者</li><li>習慣在 Claude Code 裡做大量 code review 和 refactoring 的人</li><li>在遠端環境開發、需要 SSH 支援的人</li></ul><p><strong>不用急的人</strong>：</p><ul><li>主力用 CLI 版的人（CLI 版的功能完整度沒有變，桌面版是額外的 GUI 層）</li><li>一次只做一個 session、不需要並排的人</li></ul><p>桌面版目前在 Pro、Max、Team、Enterprise 方案上可用。</p><hr><h2 id="學完這個，接著看什麼"><a href="#學完這個，接著看什麼" class="headerlink" title="學完這個，接著看什麼"></a>學完這個，接著看什麼</h2><p>如果你剛開始用 Claude Code，先把 <a href="/2026/04/24/Claude-Code-CLAUDE-md-%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8-%E8%AE%93-AI-%E8%A8%98%E4%BD%8F%E4%BD%A0%E7%9A%84%E5%B0%88%E6%A1%88-%E5%BE%9E%E6%AD%A4%E4%B8%8D%E7%94%A8%E9%87%8D%E8%A4%87%E8%A7%A3%E9%87%8B/">CLAUDE.md 教學</a> 看完——讓 Claude 記住你的專案規範，是所有後續功能的基礎。</p><p>如果你已經熟悉基本操作，<a href="/2026/04/06/Claude-Code-Agent-Teams-%E5%A4%9A-Agent-%E5%8D%94%E4%BD%9C%E9%96%8B%E7%99%BC%E5%AF%A6%E6%88%B0%E6%95%99%E5%AD%B8/">Agent Teams</a> 和 <a href="/2026/04/09/Claude-Code-Git-Worktrees-%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8-%E8%AE%93-AI-%E5%90%8C%E6%99%82%E5%B9%AB%E4%BD%A0%E5%81%9A%E4%BA%94%E4%BB%B6%E4%BA%8B/">Git Worktrees</a> 是平行 session 的延伸——桌面版讓你看到多個 session，Agent Teams 讓多個 agent 互相協作，Worktrees 讓它們在隔離的環境裡工作。三者搭配起來，才是完整的平行開發體驗。</p><blockquote><p>參考來源：<a href="https://claude.com/blog/claude-code-desktop-redesign">Redesigning Claude Code on desktop for parallel agents — Claude Blog</a></p></blockquote>]]></content>
+      
+      
+      <categories>
+          
+          <category> Claude Code </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> Claude </tag>
+            
+            <tag> Claude Code </tag>
+            
+            <tag> AI 開發工具 </tag>
+            
+            <tag> 教學 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>AI 與科技新聞摘要 - 2026/05/14</title>
+      <link href="/2026/05/14/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260514/"/>
+      <url>/2026/05/14/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260514/</url>
+      
+        <content type="html"><![CDATA[<p>15 個。</p><p>這是 Anthropic 昨天丟進中小企業市場的預製 AI 工作流數量。不是 15 個 prompt template，是 15 個直接串進 QuickBooks、PayPal、HubSpot、Canva、DocuSign 的 agentic workflow。Claude 可以自己對帳、追發票、分析毛利、整理月報——不需要你寫一行程式碼。</p><p>同一天，OpenAI 成立了一間叫 DeployCo 的子公司，專門幫企業把 AI 塞進生產環境。Google 把 Gemini 縫進 Android 的每一層，從 app 操作到瀏覽器摘要到桌面 widget。微軟用一群 AI agent 挖出了 16 個 Windows 零日漏洞，其中四個是遠端程式碼執行。DeepSeek V4 Pro 以 Opus 4.7 六分之一的價格，在 benchmark 上貼到了同一個水準。</p><p>五條新聞，一個共同訊號：AI 公司不再只是賣模型了。它們在搶的是——誰先嵌進你的日常工作流，誰就拔不掉。</p><hr><h2 id="Claude-for-Small-Business：15-個工作流，7-個軟體整合，零行程式碼"><a href="#Claude-for-Small-Business：15-個工作流，7-個軟體整合，零行程式碼" class="headerlink" title="Claude for Small Business：15 個工作流，7 個軟體整合，零行程式碼"></a>Claude for Small Business：15 個工作流，7 個軟體整合，零行程式碼</h2><p>Anthropic 昨天發布 Claude for Small Business，正式把火力從企業客戶延伸到中小企業。</p><p>這不是「把 Claude 加上一個 Small Business 標籤」的行銷操作。它是一整套連接器和預製工作流——直接串進 Intuit QuickBooks、PayPal、HubSpot、Canva、DocuSign、Google Workspace、Microsoft 365。15 個內建的 agentic workflow 涵蓋財務、營運、銷售、行銷、HR、客服六大領域。</p><p>具體能做什麼？Claude 可以幫你對帳、標記可疑交易、產出損益表摘要、準備月結報表。還有發票催收器、毛利分析器、稅季整理器、合約審查器、lead 分類器、內容策略師。每一個都是一個獨立的 AI 技能，可以組合使用。</p><p>定價很簡單：不額外收費。你只需要 Claude 的訂閱費加上你已經在付的 QuickBooks、HubSpot 之類的費用。</p><p>但真正有意思的不是產品本身，是 Anthropic 的下一步。從五月十四號開始，Anthropic 啟動十城巡迴——芝加哥、達拉斯、紐澤西、舊金山等——每站辦半天免費 AI 培訓，每場 100 位中小企業主。</p><p>換個角度想：怎樣讓這個策略失敗？讓中小企業主自己去看文件、自己設定整合、自己搞懂 AI 能幹嘛。Anthropic 顯然知道這行不通，所以它乾脆把教育成本也吃下來了。這不是慈善，這是用戶獲取成本。但對被獲取的那些中小企業來說，真的是佛心來的。</p><blockquote><p>原文來源：<a href="https://siliconangle.com/2026/05/13/anthropic-launches-claude-small-business-new-automation-workflows/">Anthropic launches Claude for Small Business — SiliconANGLE</a><br>原文來源：<a href="https://www.anthropic.com/news/claude-for-small-business">Introducing Claude for Small Business — Anthropic</a></p></blockquote><hr><p>不賣模型了。賣的是「幫你把 AI 塞進去」這件事本身。</p><hr><h2 id="OpenAI-DeployCo：一間專門幫企業「把-AI-裝好」的子公司"><a href="#OpenAI-DeployCo：一間專門幫企業「把-AI-裝好」的子公司" class="headerlink" title="OpenAI DeployCo：一間專門幫企業「把 AI 裝好」的子公司"></a>OpenAI DeployCo：一間專門幫企業「把 AI 裝好」的子公司</h2><p>五月十三號，OpenAI 宣布成立 DeployCo——一間獨立的企業部署公司，任務只有一個：幫企業把 frontier AI 帶進生產環境，並且轉化成可量測的商業影響。</p><p>這件事表面上很無聊。AI 公司成立企業服務部門，有什麼好報的？</p><p>但仔細看結構，這其實是 OpenAI 對一個尷尬現實的回應：<strong>大多數買了 ChatGPT Enterprise 的公司，其實不知道怎麼用。</strong> 帳號開了，API key 發了，然後呢？工程團隊忙著維護現有系統，產品團隊不知道 AI 該塞在哪個環節，管理層只看到帳單但看不到 ROI。</p><p>DeployCo 的模式是派人進去——不是賣 license，是賣「把 AI 真正用起來」的全流程服務。從找痛點、設計工作流、到上線後的效果追蹤。</p><p>逆向問一下：如果你是 OpenAI 的競爭對手，你應該擔心什麼？不是 DeployCo 的技術——它不做模型。你應該擔心的是 lock-in。一旦 OpenAI 的團隊幫一間企業設計完整個 AI 工作流、訓練完整個團隊、建好衡量框架，那間企業要換到你的模型的成本就不只是 API 費率的差距了。它是整個組織慣性的差距。</p><p>這招 Accenture 玩了二十年，現在 OpenAI 也學會了。</p><blockquote><p>原文來源：<a href="https://openai.com/index/openai-launches-the-deployment-company/">OpenAI launches the OpenAI Deployment Company — OpenAI</a></p></blockquote><hr><h2 id="Gemini-Intelligence-for-Android：Google-把-AI-縫進手機的每一層"><a href="#Gemini-Intelligence-for-Android：Google-把-AI-縫進手機的每一層" class="headerlink" title="Gemini Intelligence for Android：Google 把 AI 縫進手機的每一層"></a>Gemini Intelligence for Android：Google 把 AI 縫進手機的每一層</h2><p>Google 宣布 Gemini Intelligence for Android——一個跨越手機、Chrome、筆電、汽車的 AI 整合層。</p><p>這不是 Google Assistant 改名。Gemini Intelligence 可以自動執行跨 app 的多步驟操作、摘要網頁內容、用自然語言建立桌面 widget。今年夏天開始在部分 Samsung Galaxy 和 Google Pixel 上推出。</p><p>跨 app 操作是關鍵。以前的手機助理只能在單一 app 內做事——設鬧鐘、查天氣、播音樂。Gemini Intelligence 的目標是串聯多個 app 的操作流。「幫我把這張收據拍照，存到 Google Drive 的報帳資料夾，然後在 Google Sheets 的報帳表新增一筆」——一句話，三個 app。</p><p>但 Google 做語音助理的歷史紀錄不算漂亮。Google Assistant 推出十年了，大多數人用它做的事還是設鬧鐘和問天氣。Gemini Intelligence 能不能打破這個慣性？</p><p>決定因素不是技術能力。是可靠度。一個每十次出錯一次的跨 app 操作，比手動操作更浪費時間——因為你不知道它「這次」會不會出錯，所以每次都要盯著看。可靠度要到 98% 以上，使用者才會放心「丟了就走」。Gemini Intelligence 能不能達到這個門檻，現在沒人知道。</p><p>不過 Google 的時機選得很巧。Apple 的 AI 重塑計畫還沒正式推出，Google 在搶的是「成為 Android 上預設 AI 層」的先機。一旦搶到了，後面的人就不是在追技術，是在追使用者習慣。而使用者習慣，才是真正的護城河。</p><blockquote><p>原文來源：<a href="https://www.cnbc.com/2026/05/12/google-races-put-gemini-at-center-of-android-before-apples-ai-reboot.html">Google races to put Gemini at the center of Android — CNBC</a></p></blockquote><hr><p>16 個零日漏洞。在 Windows 裡。其中四個是遠端程式碼執行。發現者不是人類研究員，是一群 AI agent。</p><hr><h2 id="Microsoft-MDASH：AI-Agent-挖出-16-個-Windows-零日漏洞"><a href="#Microsoft-MDASH：AI-Agent-挖出-16-個-Windows-零日漏洞" class="headerlink" title="Microsoft MDASH：AI Agent 挖出 16 個 Windows 零日漏洞"></a>Microsoft MDASH：AI Agent 挖出 16 個 Windows 零日漏洞</h2><p>微軟內部代號 MDASH 的多模型 agentic 安全系統，在 Windows 的網路和認證元件中發現了 16 個先前未知的漏洞。其中四個是嚴重等級的遠端程式碼執行。</p><p>MDASH 不是一個模型，是一群模型。多個 AI agent 分工——有的負責模糊測試，有的負責靜態分析，有的負責驗證漏洞是否可被利用。它們之間會互相交叉確認，降低誤報率。</p><p>16 個零日漏洞。如果這些是由人類安全研究員發現的，會是一年份的安全公告。AI agent 在短時間內就做到了。</p><p>但這裡有一個結構性矛盾。</p><p>微軟用 AI 找自家產品的漏洞，這是防守。但同樣的技術——多模型 agent、自動化漏洞挖掘、攻擊鏈驗證——如果被攻擊者用在別人的產品上呢？</p><p>上週我們報導過 OpenAI 的 GPT-5.5-Cyber 在模擬環境中十次攻擊成功兩次。這週微軟的 MDASH 在真實環境中找到 16 個零日。攻防兩端同時在加速，但加速的曲線不一定對稱。防守方要修所有漏洞，攻擊方只需要找到一個。</p><p>更值得注意的是規模效應。一個人類安全研究團隊一年能審計多少行程式碼？一百萬行算頂尖。AI agent 不需要睡覺、不需要休假、可以同時跑一百個實例。當漏洞挖掘的速度超過修補的速度，整個安全生態系的平衡就會改變。</p><p>微軟至少在用這個技術保護自己的產品。問題是：有多少其他公司的產品，還沒被同等級的工具審計過？</p><blockquote><p>原文來源：<a href="https://www.crescendo.ai/news/latest-ai-news-and-updates">Microsoft agentic security system finds 16 Windows zero-days — Crescendo AI</a></p></blockquote><hr><h2 id="DeepSeek-V4-Pro：六分之一的成本，同一個水準的表現"><a href="#DeepSeek-V4-Pro：六分之一的成本，同一個水準的表現" class="headerlink" title="DeepSeek V4 Pro：六分之一的成本，同一個水準的表現"></a>DeepSeek V4 Pro：六分之一的成本，同一個水準的表現</h2><p>四月二十四號，DeepSeek 發布 V4 Pro，1.6 兆參數，MIT License，開源權重。</p><p>價格是重點。Input $1.74、Output $3.48，每百萬 token。跟 Claude Opus 4.7 比是六分之一的成本。跟 GPT-5.5 比也在同一個量級的折扣。</p><p>Benchmark 表現呢？agentic benchmark 上緊貼 GPT-5.5 和 Opus 4.7。不是超越，是「在同一張桌子上」。考慮到價格差距，這個結果足以讓很多企業重新算一次帳。</p><p>DeepSeek V4 有兩個版本。Pro 是旗艦版，1.6T 參數。Flash 是輕量版，284B 參數，適合延遲敏感的場景。兩個版本都有開源權重——你可以下載下來自己部署，完全不經過 DeepSeek 的 API。</p><p>對開發者來說，這個開源授權是最大的差異化。Opus 和 GPT 都是閉源模型，你只能透過 API 使用，定價權完全在模型供應商手裡。DeepSeek V4 Pro 讓你可以自己 host，自己定價。長期來看，這是成本結構的根本性差異。</p><p>但別急著全線切換。Benchmark 分數跟實際體驗之間的落差向來不小。DeepSeek V4 Pro 在中文場景的表現通常比英文好一截——這對台灣開發者可能是加分，但如果你的產品主要面對英語市場，拿 benchmark 當決策依據之前最好自己跑一輪 eval。</p><p>還有一件事值得留意：DeepSeek 的模型訓練基礎設施在中國。對部分受監管行業的企業來說，這是一個不能用 benchmark 分數抵消的風險因子。技術能力跟合規可用性是兩回事。</p><blockquote><p>原文來源：<a href="https://venturebeat.com/technology/deepseek-v4-arrives-with-near-state-of-the-art-intelligence-at-1-6th-the-cost-of-opus-4-7-gpt-5-5">DeepSeek V4 arrives at 1&#x2F;6th the cost of Opus 4.7 — VentureBeat</a><br>原文來源：<a href="https://www.datacamp.com/blog/deepseek-v4">DeepSeek V4: Features, Benchmarks, and Comparisons — DataCamp</a></p></blockquote><hr><p>五條新聞，一個模式。</p><p>Anthropic 帶著 15 個工作流直接嵌進中小企業的日常工具鏈。OpenAI 成立子公司專門幫企業「把 AI 裝好」。Google 把 Gemini 縫進 Android 的作業系統層。微軟用 AI agent 挖自家產品的漏洞。DeepSeek 用六分之一的價格提供同級能力。</p><p><strong>每一家都在做同一件事：從「提供 AI 能力」轉向「嵌入 AI 能力」。</strong></p><p>能力是可以切換的——今天用 Claude，明天換 GPT，成本就是 API key 換一個。嵌入是拔不掉的——工作流設好了、團隊訓練完了、資料管線建好了，換一家供應商的成本不再是技術成本，是組織成本。</p><p>所以真正的競爭不在 benchmark 分數上。在你的 QuickBooks 裡。在你的 Android 桌面上。在你的安全審計流程裡。在你的基礎設施帳單裡。</p><p>該問的問題不是「哪個模型最強」。是：<strong>你現在正在被哪一家嵌入？你有意識到嗎？</strong></p>]]></content>
       
       
       <categories>
@@ -20,15 +51,46 @@
       
         <tags>
             
+            <tag> AI Agent </tag>
+            
             <tag> AI與科技新聞 </tag>
             
-            <tag> Claude </tag>
+            <tag> OpenAI </tag>
             
             <tag> Anthropic </tag>
             
-            <tag> Cursor </tag>
+            <tag> Google </tag>
             
-            <tag> GitHub Copilot </tag>
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>Pixelle-Video — 一句話生成完整短影片的 AI 編排引擎</title>
+      <link href="/2026/05/14/Pixelle-Video-%E4%B8%80%E5%8F%A5%E8%A9%B1%E7%94%9F%E6%88%90%E5%AE%8C%E6%95%B4%E7%9F%AD%E5%BD%B1%E7%89%87%E7%9A%84-AI-%E7%B7%A8%E6%8E%92%E5%BC%95%E6%93%8E/"/>
+      <url>/2026/05/14/Pixelle-Video-%E4%B8%80%E5%8F%A5%E8%A9%B1%E7%94%9F%E6%88%90%E5%AE%8C%E6%95%B4%E7%9F%AD%E5%BD%B1%E7%89%87%E7%9A%84-AI-%E7%B7%A8%E6%8E%92%E5%BC%95%E6%93%8E/</url>
+      
+        <content type="html"><![CDATA[<p>大部分人聽到「AI 影片生成」，腦中浮現的是 Sora、Kling 這類工具——輸入一段文字，模型吐出一段影片。</p><p>但仔細想一下：你上次需要的「影片」，真的是一段 10 秒的動畫片段嗎？還是一支有旁白、有配圖、有背景音樂的完整短影片？</p><p>Sora 解決的是前者。Pixelle-Video 解決的是後者。而這兩件事之間的距離，比大多數人以為的還要遠。</p><hr><h2 id="影片界的-LangChain"><a href="#影片界的-LangChain" class="headerlink" title="影片界的 LangChain"></a>影片界的 LangChain</h2><p>Pixelle-Video 是阿里巴巴達摩院開源的短影片自動生成引擎。你給它一個主題——比如「為什麼我們還沒有找到外星文明」——它會自動完成文案撰寫、AI 配圖、語音旁白、背景音樂，最後輸出一支完整的短影片。</p><p>注意，它不是一個模型。它是一個編排器。</p><p>這個區別很重要。就像 LangChain 把 LLM、Embedding、Vector DB 串起來做 RAG pipeline 一樣，Pixelle-Video 把 LLM（寫文案）、圖像生成模型（畫配圖）、影片生成模型（做動態）、TTS（唸旁白）串成一條影片 pipeline。每個環節你都可以自己換模型。</p><p>文案用 GPT-4o 或 Qwen？隨你。配圖用 FLUX 或 SDXL？都行。影片用 WAN 2.1 或 LTX-2？看你的 GPU。語音用免費的 Edge-TTS 或能克隆聲音的 Index-TTS？錢包決定。</p><p>這個「原子能力自由組合」的設計，是它跟所有「一站式影片生成工具」最根本的差別。一站式工具的問題在於：模型過時了，整個工具就過時了。Pixelle-Video 的思路是——模型來來去去，pipeline 才是持久的東西。一個活了越久的架構設計，未來還會活越久。</p><hr><h2 id="八步走完一支影片"><a href="#八步走完一支影片" class="headerlink" title="八步走完一支影片"></a>八步走完一支影片</h2><p>整個標準 Pipeline 走八步：環境設定 → 文案生成 → 標題生成 → 視覺規劃 → 分鏡初始化 → 資產生成（圖&#x2F;影片&#x2F;語音）→ 後製合成 → 完成。</p><p>每一步都可以獨立替換或跳過。不想用 AI 配圖？直接上傳自己的素材。不需要旁白？把 TTS 那步關掉。底層靠 ComfyUI 當 workflow 執行引擎，所以 ComfyUI 社群裡任何厲害的生圖 workflow，都可以直接接進來用。</p><p>這設計有一個很工程的好處：你可以用便宜模型跑出草稿版確認流程對不對，滿意之後再把昂貴模型接進去跑正式版。不用一開始就把 GPU 燒在試錯上。</p><hr><p>三分鐘。這是拿到一支五分鏡科普影片的大致時間。如果同樣的事要手動做——找素材、寫腳本、錄音、剪輯——至少兩個小時起跳。</p><hr><h2 id="安裝：三條路選一條"><a href="#安裝：三條路選一條" class="headerlink" title="安裝：三條路選一條"></a>安裝：三條路選一條</h2><p>最簡單的路是 Windows 整合包。從 GitHub Releases 下載，解壓後雙擊 <code>start.bat</code>，瀏覽器自動開啟。不用裝 Python、不用裝 FFmpeg。</p><p>稍微進階一點，用 <code>uv</code> 從原始碼跑：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">git <span class="built_in">clone</span> https://github.com/AIDC-AI/Pixelle-Video.git</span><br><span class="line"><span class="built_in">cd</span> Pixelle-Video</span><br><span class="line">uv run streamlit run web/app.py</span><br></pre></td></tr></table></figure><p>Docker 也行：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker-compose up -d</span><br></pre></td></tr></table></figure><p>Docker Compose 會起三個服務：init（初始化）、api（FastAPI 後端，port 8000）、web（Streamlit 前端，port 8501）。</p><p>硬體需求取決於你選的模型。FLUX 建議 12GB+ VRAM，WAN 2.1 建議 24GB+。沒 GPU？可以用 RunningHub 雲端跑 ComfyUI，但要付費。</p><p>不過有一說一，部分使用者在 GitHub issue 裡反映 RunningHub 有引流賣會員的嫌疑。如果介意的話，純本地部署比較安心。</p><hr><h2 id="不只是科普影片"><a href="#不只是科普影片" class="headerlink" title="不只是科普影片"></a>不只是科普影片</h2><p>Pixelle-Video 最直覺的用法是知識科普——輸入「量子力學入門」，自動產出一段有旁白、有配圖的解說影片。但它有幾個比較出格的功能。</p><p><strong>數位人口播</strong>：上傳一張人物照片加上文字，系統生成一段數位人口播影片。支援多國語言，適合做多語系行銷素材。一張照片加一段中文文案，五分鐘後你有中、英、韓、法四個語系版本的行銷影片。</p><p><strong>動作遷移</strong>：上傳一段參考影片（比如跳舞）和一張靜態圖片，圖片裡的角色會做出影片中的動作。社群上最常見的玩法是讓寵物照片「跳舞」——很有效果，也很荒謬。</p><p><strong>自訂素材模式</strong>：不想用 AI 生成的圖？上傳自己的照片或影片，系統用 LLM 分析素材內容，自動寫腳本、配旁白、合成影片。適合有一堆素材但懶得剪的人。</p><hr><h2 id="費用：從零元到不設限"><a href="#費用：從零元到不設限" class="headerlink" title="費用：從零元到不設限"></a>費用：從零元到不設限</h2><p>如果你有自己的 GPU、用免費的 Edge-TTS 和開源圖片模型，基本上零成本。</p><p>如果你把 LLM 換成 GPT-4o，配圖換成 FLUX2 商業版，語音用 Index-TTS 的付費克隆功能，一支五分鏡影片的成本大概在 $0.5 到 $2 之間。跟請一個剪輯師比，這個數字幾乎可以忽略。</p><p>但別指望零成本方案能產出商業級品質。免費模型跟付費模型之間的差距是看得見的——文案的流暢度、配圖的精細度、語音的自然度，每一環都差一點，最後加起來就差很多。</p><hr><h2 id="現在值不值得用"><a href="#現在值不值得用" class="headerlink" title="現在值不值得用"></a>現在值不值得用</h2><p>值得試。不一定值得投入。</p><p>值得試的原因：它是目前極少數把「完整影片製作 pipeline」開源的專案。11,000 顆星、1,700 個 fork、Apache 2.0 授權、持續更新——這些都是健康的社群指標。</p><p>不一定值得投入的原因：社群以中文為主，英文文件偏簡略。Playwright 偶發崩潰的問題還沒完全解決。而且 WAN 2.2 的 1080P 影片品質被使用者回報模糊——影片生成模型這塊的天花板還在快速移動中。</p><p>背後的真正問題其實是：<strong>工具的價值跟它串接的模型的壽命綁在一起。</strong> 今天你精心配好的 pipeline，三個月後可能有更好的模型出來，整套要重新調。Pixelle-Video 的「原子組合」設計讓這個切換成本比較低，但不等於沒有成本。</p><p>如果你是自媒體工作者，每天要產出多條短影片，它可以把你從繁瑣的剪輯工作裡解放出來——至少解放掉 70%。如果你是偶爾做一支影片的人，用 CapCut 可能比學一套 pipeline 更快。</p><p>工具的選擇從來不是「好不好」的問題。是「你的使用頻率有沒有高到讓學習成本攤薄」的問題。</p>]]></content>
+      
+      
+      <categories>
+          
+          <category> AI 工具 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> AI Agent </tag>
+            
+            <tag> 開源 </tag>
+            
+            <tag> AI 開發工具 </tag>
+            
+            <tag> Python </tag>
             
         </tags>
       
@@ -66,6 +128,39 @@
     
     
     <entry>
+      <title>AI 與科技新聞摘要 - 2026/05/13</title>
+      <link href="/2026/05/13/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260513/"/>
+      <url>/2026/05/13/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260513/</url>
+      
+        <content type="html"><![CDATA[<p>393%。</p><p>這是 2026 年第一季，AI 驅動的流量導向美國零售網站的年增幅。不是 39.3%，是 393%。接近四倍。而且這些 AI 帶來的流量，購買轉換率比傳統管道高出 42%。</p><p>同一天，Anthropic 宣布 Claude 正式進軍法律科技，帶著 12 個法律 Plugin 和 20 多個 MCP 連接器。GitHub 把 Copilot 從月費制改成用量計費，開發者社群的反應可以用一句話總結：「付一樣的錢，拿更少的東西。」Cloudflare 發表了一個把 LLM 權重無損壓縮 22% 的技術。Cursor 推出 2.0，自研 coding model 加上八個 agent 同時平行執行。</p><p>如果你把這五條新聞疊在一起看，會發現一件事：AI 正在同時吃掉基礎設施層、工具層、和應用層。不是「即將」，是「正在」。</p><hr><h2 id="Claude-for-Legal：AI-進法律業，不是替代律師，是替代律師的工具鏈"><a href="#Claude-for-Legal：AI-進法律業，不是替代律師，是替代律師的工具鏈" class="headerlink" title="Claude for Legal：AI 進法律業，不是替代律師，是替代律師的工具鏈"></a>Claude for Legal：AI 進法律業，不是替代律師，是替代律師的工具鏈</h2><p>Anthropic 不做法律 AI 產品已經不可能了。</p><p>五月十二日，Anthropic 正式推出 Claude for Legal。這不是「Claude 幫你看合約」這種玩具級整合。這是一整套法律實務堆疊——12 個 Plugin 涵蓋商業法律顧問、僱傭法顧問、訴訟助理、甚至法律系學生的學習輔助。20 多個 MCP 連接器直接串進 Ironclad、DocuSign、Definely、iManage、NetDocuments、Relativity、Everlaw、Consilio 這些法律科技產業的核心系統。</p><p>但真正的大事是 Thomson Reuters 那一塊。</p><p>CoCounsel Legal——Thomson Reuters 的法律 AI 產品——被用 Anthropic Claude Agent SDK 從頭重建了。使用者用自然語言描述案件，CoCounsel 自動規劃任務、選擇工具、去 Westlaw 和 Practical Law 裡檢索內容、產出附帶完整引用的工作成果。</p><p>翻譯一下：一個 AI agent 可以自己決定要查哪些判例、用哪個法律資料庫、怎麼組合出一份有引用來源的法律分析報告。</p><p>逆向想一下：怎樣做這件事一定會失敗？答案是——讓 AI 直接面對終端客戶，沒有律師在中間做品質把關。Anthropic 顯然也想到了，所以它的定位是「律師的工具」而不是「律師的替代品」。但定位歸定位，當工具夠好的時候，客戶的第一個問題一定是：「我為什麼要付律師的時薪來操作一個 AI 工具？」</p><p>法律科技市場的底層邏輯正在翻轉。以前的法律 AI 是「幫律師搜索更快」，現在是「幫律師思考更少」。這兩者之間的距離，就是整個法律業商業模式的斷層線。</p><blockquote><p>原文來源：<a href="https://www.artificiallawyer.com/2026/05/12/claude-for-legal-launches-may-reshape-the-legal-tech-world/">Claude for Legal Launches — Artificial Lawyer</a><br>原文來源：<a href="https://www.prnewswire.com/news-releases/thomson-reuters-and-anthropic-expand-partnership-to-connect-claude-with-cocounsel-legal-302769890.html">Thomson Reuters and Anthropic Expand Partnership — PR Newswire</a></p></blockquote><hr><p>付一樣的錢，拿更少的東西。開發者社群的怒氣不在於價格，在於被當盤子。</p><hr><h2 id="GitHub-Copilot-用量計費：-10-美金的心理學實驗"><a href="#GitHub-Copilot-用量計費：-10-美金的心理學實驗" class="headerlink" title="GitHub Copilot 用量計費：$10 美金的心理學實驗"></a>GitHub Copilot 用量計費：$10 美金的心理學實驗</h2><p>六月一日，GitHub Copilot 全線轉為 AI Credits 用量計費制。</p><p>Pro 方案還是 $10&#x2F;月，但現在你拿到的不是「無限使用 Copilot」，而是 $10 的 AI Credits。用完就沒了。Pro+ 是 $39&#x2F;月含 $39 Credits。Business 是 $19&#x2F;用戶&#x2F;月。計費方式按 token 消耗——input + output + cached——全算。</p><p>好消息是 code completions 和 Next Edit 維持無限使用。壞消息是，其他所有功能——Chat、Agent mode、Copilot Workspace——都吃 Credits。</p><p>月繳用戶 6&#x2F;1 自動遷移，連個同意的機會都沒有。年繳用戶可以撐到合約到期。</p><p>開發者社群的反應非常直接。Visual Studio Magazine 下了這個標題：「You Will Get Less, but Pay the Same Price」。這句話精準到不需要翻譯。</p><p>但真正值得注意的不是情緒，是結構。</p><p>用量計費的邏輯是什麼？表面上是「用多少付多少」。但在實務上，它創造了一個每次按下 Tab 鍵都要做成本計算的心理負擔。你不會再毫無顧忌地讓 Copilot 幫你探索三種解法然後選最好的——因為每一次探索都在燒 Credits。</p><p>這跟雲端運算早期的陷阱一模一樣。按用量計費聽起來合理，直到你發現帳單比固定費率高了三倍，而且你完全預測不了下個月要花多少錢。</p><p>GitHub 的算盤是：大多數用戶其實用不到 $10 的量，所以轉用量計費對 GitHub 來說是淨賺。少數重度用戶會超支——而這些人正好是最離不開 Copilot 的人，價格彈性最低。完美的價格歧視。</p><blockquote><p>原文來源：<a href="https://github.blog/news-insights/company-news/github-copilot-is-moving-to-usage-based-billing/">GitHub Copilot Is Moving to Usage-Based Billing — GitHub Blog</a><br>原文來源：<a href="https://visualstudiomagazine.com/articles/2026/04/27/devs-sound-off-on-usage-based-copilot-pricing-change-you-will-get-less-but-pay-the-same-price.aspx">Devs Sound Off on Usage-Based Copilot Pricing — Visual Studio Magazine</a></p></blockquote><hr><h2 id="Cloudflare-Unweight：壓縮-22-，零損失，GPU-直接解壓"><a href="#Cloudflare-Unweight：壓縮-22-，零損失，GPU-直接解壓" class="headerlink" title="Cloudflare Unweight：壓縮 22%，零損失，GPU 直接解壓"></a>Cloudflare Unweight：壓縮 22%，零損失，GPU 直接解壓</h2><p>LLM 推理的瓶頸不是算力，是記憶體頻寬。</p><p>Cloudflare 發表 Unweight，一個無損壓縮 LLM 權重的技術。在 Llama-3.1-8B 上，MLP 層的權重壓縮了約 30%，整體模型大小減少約 20~22%。重點是：完全無損，bit-exact outputs。壓縮前後跑出來的結果一模一樣，連最後一個 bit 都不差。</p><p>技術原理很漂亮。把 BF16 浮點數拆成兩部分：sign + mantissa 和 exponent。然後對 exponent 做 Huffman 編碼——因為 LLM 權重的 exponent 分布極度集中，最常見的 16 個值覆蓋了 99% 以上的權重。高度集中的分布，正是 Huffman 編碼最擅長壓縮的對象。</p><p>更妙的是解壓縮路徑。GPU 直接在 shared memory 裡解壓，繞過 main memory。這意味著壓縮不只省了儲存空間，還減少了記憶體到 GPU 的傳輸量——而這正是推理延遲的主要瓶頸。</p><p>用工程師的話說：這是一個「沒有 trade-off 的優化」。壓縮率不高不低剛好在甜蜜點——22% 不足以改變模型架構，但足以讓你在同一張 GPU 上多塞幾個並行請求。配合 Cloudflare 正在建設的全球 LLM 推理基礎設施，這個技術的戰略價值遠大於技術本身。</p><p>逆向問一個問題：為什麼之前沒人做這件事？因為 LLM 權重的統計特性——exponent 分布集中——是一個已知事實，Huffman 編碼是資訊理論的第一堂課。答案可能是：大家都太忙著做有損壓縮（量化）了，沒人回頭看這個最基本的無損路線。有時候最大的盲點不是你不知道的事，是你以為不值得做的事。</p><blockquote><p>原文來源：<a href="https://blog.cloudflare.com/unweight-tensor-compression/">Unweight: Tensor Compression — Cloudflare Blog</a><br>原文來源：<a href="https://www.infoq.com/news/2026/05/cloudflare-llm-infrastructure/">Cloudflare LLM Infrastructure — InfoQ</a></p></blockquote><hr><p>八個 agent 同時跑。一個人的生產力乘以八。但 bug 的生產力也乘以八。</p><hr><h2 id="Cursor-2-0：自研模型-八個平行-Agent，開發者的分身術"><a href="#Cursor-2-0：自研模型-八個平行-Agent，開發者的分身術" class="headerlink" title="Cursor 2.0：自研模型 + 八個平行 Agent，開發者的分身術"></a>Cursor 2.0：自研模型 + 八個平行 Agent，開發者的分身術</h2><p>Cursor 推出 2.0，一次拉開了兩個戰線。</p><p>第一條戰線：自研 coding model。Cursor 把它叫做 Composer，號稱速度是同等智力模型的四倍。這句話很微妙——「similarly intelligent」——等於承認它不是最聰明的模型，但它是同級裡最快的。在 coding 場景中，這個 trade-off 通常是值得的。寫程式不像寫論文，你不需要模型花三十秒深度思考然後給你一個完美答案。你需要它在三秒內給你一個八十分的答案，然後你迭代。</p><p>第二條戰線：平行 agent。新介面支援最多八個 agent 同時工作，用 git worktrees 或 remote machines 做隔離。Tiled layout 讓你同時看到所有 agent 的狀態。</p><p>八個 agent 同時跑。一個人坐在螢幕前，管理八條平行的開發線。這不是科幻，這是 Cursor 2.0 的預設體驗。</p><p>但想一下失敗模式：八個 agent 同時寫程式碼，每個 agent 都在自己的 worktree 裡獨立工作。當你把八條 worktree 合併回去的時候——merge conflict 的數量和複雜度是線性增長還是指數增長？如果其中兩個 agent 都決定重構同一個模組的介面呢？</p><p>另外值得注意的是 Security Review（beta）。Cursor 加了一個 always-on 的安全審查器和漏洞掃描器。這暗示了一件事：當 AI agent 大量產出程式碼的時候，安全漏洞的注入速率也會等比例上升。Cursor 自己顯然意識到了這個問題——所以它在加速油門的同時，也開始裝煞車。</p><blockquote><p>原文來源：<a href="https://cursor.com/blog/2-0">Cursor 2.0 — Cursor Blog</a><br>原文來源：<a href="https://cursor.com/changelog/2-0">Cursor 2.0 Changelog</a></p></blockquote><hr><h2 id="AI-導流電商：轉換率高-42-，但誰在決定你買什麼？"><a href="#AI-導流電商：轉換率高-42-，但誰在決定你買什麼？" class="headerlink" title="AI 導流電商：轉換率高 42%，但誰在決定你買什麼？"></a>AI 導流電商：轉換率高 42%，但誰在決定你買什麼？</h2><p>2026 年第一季，AI 驅動的流量導向美國零售網站，年增 393%。</p><p>這個數字的意義不在於大小——年增率在基期小的時候本來就容易飆高。真正值得注意的是轉換率：AI 導流的購買轉換率比其他管道高出 42%。</p><p>為什麼高？因為 AI 代理——ChatGPT、Claude、Perplexity——在推薦產品的時候，做的不是「列出十個選項讓你自己挑」。它做的是「理解你的需求，直接告訴你買這個，附上連結」。這跟 Google 搜尋的體驗完全不同。搜尋引擎給你選擇。AI 代理給你答案。</p><p>選擇讓人猶豫。答案讓人行動。所以轉換率高 42% 一點都不意外。</p><p>但這裡藏著一個系統性風險。當消費者的購買決策從「我搜尋、我比較、我選擇」變成「AI 推薦、我點連結、我付款」，決定你買什麼的人就不再是你了。是訓練 AI 的資料。是 AI 公司和品牌之間的合作協議。是推薦演算法的權重分配。</p><p>這不是陰謀論，這是商業邏輯。如果 AI 導流的轉換率比搜尋引擎高 42%，品牌商願意為這個管道付多少溢價？當溢價夠高的時候，AI 公司有沒有動機把「最好的產品」換成「付最多錢的產品」？</p><p>搜尋引擎時代我們花了十五年才搞清楚 SEO 和付費排名的遊戲規則。AI 推薦時代的遊戲規則還沒建立，但利益結構已經在形成了。</p><blockquote><p>原文來源：各大科技媒體報導</p></blockquote><hr><p>五條新聞，五個不同的領域，一個相同的結構。</p><p>Anthropic 進法律業——AI 從「幫你搜索」進化到「幫你思考」。GitHub Copilot 轉用量計費——工具供應商開始對 AI 的真實成本做更精確的定價。Cloudflare 壓縮 LLM 權重——基礎設施層在為 AI 的規模化部署掃除瓶頸。Cursor 八個 agent 平行——單一開發者的產出能力在非線性膨脹。AI 導流電商轉換率飆升——消費者的決策權正在靜默轉移。</p><p>把這些拼在一起，你會看到一個模式：<strong>AI 的能力邊界每擴張一步，人類的某個決策環節就被壓縮一步。</strong> 法律判斷、程式碼審查、購買決策、甚至「用多少 AI」這個決定本身——都在從人的手裡滑向系統的手裡。</p><p>這不是好或壞的問題。這是結構性的。</p><p>所以該問的問題不是「AI 會不會取代我」。該問的是：<strong>在這個加速的過程中，哪些決策環節是你絕對不能外包的？</strong> 畫出那條線，然後守住它。因為如果你不主動畫線，系統會幫你畫——而系統畫的線，通常不在你想要的地方。</p>]]></content>
+      
+      
+      <categories>
+          
+          <category> AI與科技新聞 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> AI與科技新聞 </tag>
+            
+            <tag> Claude </tag>
+            
+            <tag> Anthropic </tag>
+            
+            <tag> Cursor </tag>
+            
+            <tag> GitHub Copilot </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>Claude Code Plan Mode 完整教學 — 讓 AI 先想清楚再動手的正確姿勢</title>
       <link href="/2026/05/13/Claude-Code-Plan-Mode-%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8-%E8%AE%93-AI-%E5%85%88%E6%83%B3%E6%B8%85%E6%A5%9A%E5%86%8D%E5%8B%95%E6%89%8B%E7%9A%84%E6%AD%A3%E7%A2%BA%E5%A7%BF%E5%8B%A2/"/>
       <url>/2026/05/13/Claude-Code-Plan-Mode-%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8-%E8%AE%93-AI-%E5%85%88%E6%83%B3%E6%B8%85%E6%A5%9A%E5%86%8D%E5%8B%95%E6%89%8B%E7%9A%84%E6%AD%A3%E7%A2%BA%E5%A7%BF%E5%8B%A2/</url>
@@ -84,9 +179,9 @@
             
             <tag> Claude Code </tag>
             
-            <tag> Plan Mode </tag>
-            
             <tag> AI 開發工具 </tag>
+            
+            <tag> Plan Mode </tag>
             
         </tags>
       
@@ -746,9 +841,9 @@
             
             <tag> AI與科技新聞 </tag>
             
-            <tag> Apple </tag>
-            
             <tag> Anthropic </tag>
+            
+            <tag> Apple </tag>
             
         </tags>
       
@@ -1209,9 +1304,9 @@
             
             <tag> AI與科技新聞 </tag>
             
-            <tag> NVIDIA </tag>
-            
             <tag> Google </tag>
+            
+            <tag> NVIDIA </tag>
             
             <tag> Microsoft </tag>
             
@@ -1719,9 +1814,9 @@
             
             <tag> 資安 </tag>
             
-            <tag> Google </tag>
-            
             <tag> Anthropic </tag>
+            
+            <tag> Google </tag>
             
         </tags>
       
@@ -1748,9 +1843,9 @@
             
             <tag> Claude Code </tag>
             
-            <tag> 自動化 </tag>
-            
             <tag> Hooks </tag>
+            
+            <tag> 自動化 </tag>
             
             <tag> 教學 </tag>
             
@@ -2037,9 +2132,9 @@
             
             <tag> AI與科技新聞 </tag>
             
-            <tag> Google </tag>
-            
             <tag> Anthropic </tag>
+            
+            <tag> Google </tag>
             
             <tag> Claude Code </tag>
             
@@ -2326,13 +2421,13 @@
             
             <tag> GitHub </tag>
             
-            <tag> TDD </tag>
-            
-            <tag> SDD </tag>
-            
             <tag> GH-300 </tag>
             
             <tag> Responsible AI </tag>
+            
+            <tag> SDD </tag>
+            
+            <tag> TDD </tag>
             
         </tags>
       
@@ -2491,9 +2586,9 @@
             
             <tag> 資安 </tag>
             
-            <tag> Microsoft </tag>
-            
             <tag> Cursor </tag>
+            
+            <tag> Microsoft </tag>
             
         </tags>
       
@@ -2974,9 +3069,9 @@
             
             <tag> AZ-305 </tag>
             
-            <tag> 微軟課程 </tag>
-            
             <tag> Networking </tag>
+            
+            <tag> 微軟課程 </tag>
             
         </tags>
       
@@ -3007,9 +3102,9 @@
             
             <tag> 微軟課程 </tag>
             
-            <tag> TDD </tag>
-            
             <tag> SDD </tag>
+            
+            <tag> TDD </tag>
             
         </tags>
       
@@ -3410,9 +3505,9 @@
             
             <tag> Claude Code </tag>
             
-            <tag> Copilot </tag>
-            
             <tag> Cursor </tag>
+            
+            <tag> Copilot </tag>
             
             <tag> 開發工具 </tag>
             
@@ -3660,9 +3755,9 @@
             
             <tag> MCP </tag>
             
-            <tag> Microsoft </tag>
-            
             <tag> Copilot </tag>
+            
+            <tag> Microsoft </tag>
             
         </tags>
       
@@ -3958,9 +4053,9 @@
             
             <tag> 資安 </tag>
             
-            <tag> Microsoft </tag>
-            
             <tag> Copilot </tag>
+            
+            <tag> Microsoft </tag>
             
         </tags>
       
@@ -4045,9 +4140,9 @@
             
             <tag> 資安 </tag>
             
-            <tag> Copilot </tag>
-            
             <tag> Cursor </tag>
+            
+            <tag> Copilot </tag>
             
         </tags>
       
@@ -4428,9 +4523,9 @@
             
             <tag> Claude </tag>
             
-            <tag> 自動化 </tag>
-            
             <tag> macOS </tag>
+            
+            <tag> 自動化 </tag>
             
         </tags>
       
@@ -4606,9 +4701,9 @@
             
             <tag> Claude Code </tag>
             
-            <tag> 自動化 </tag>
-            
             <tag> macOS </tag>
+            
+            <tag> 自動化 </tag>
             
             <tag> 教學 </tag>
             
@@ -4763,9 +4858,9 @@
             
             <tag> MCP </tag>
             
-            <tag> Apple </tag>
-            
             <tag> Anthropic </tag>
+            
+            <tag> Apple </tag>
             
             <tag> Mistral </tag>
             
@@ -4904,9 +4999,9 @@
             
             <tag> OpenAI </tag>
             
-            <tag> Google </tag>
-            
             <tag> Anthropic </tag>
+            
+            <tag> Google </tag>
             
         </tags>
       
@@ -4995,9 +5090,9 @@
             
             <tag> 資安 </tag>
             
-            <tag> NVIDIA </tag>
-            
             <tag> Google </tag>
+            
+            <tag> NVIDIA </tag>
             
         </tags>
       
@@ -5057,9 +5152,9 @@
             
             <tag> 資安 </tag>
             
-            <tag> Google </tag>
-            
             <tag> Anthropic </tag>
+            
+            <tag> Google </tag>
             
         </tags>
       
@@ -6614,9 +6709,9 @@
       
         <tags>
             
-            <tag> 資料庫 </tag>
-            
             <tag> Docker </tag>
+            
+            <tag> 資料庫 </tag>
             
         </tags>
       
