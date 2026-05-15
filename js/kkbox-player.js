@@ -57,15 +57,27 @@
   });
   player.appendChild(shuffleBtn);
 
-  // --- Toggle button (always visible on edge) ---
+  // --- Turntable toggle button ---
   var btn = document.createElement('button');
   btn.id = 'music-toggle';
   btn.title = '播放音樂';
+  btn.innerHTML =
+    '<div class="mt-case">' +
+      '<div class="mt-vinyl"></div>' +
+      '<div class="mt-arm">' +
+        '<div class="mt-arm-pivot"></div>' +
+        '<div class="mt-arm-shaft"></div>' +
+        '<div class="mt-arm-needle"></div>' +
+      '</div>' +
+    '</div>' +
+    '<div class="mt-led">PLAY</div>';
 
+  var ledEl = btn.querySelector('.mt-led');
   btn.addEventListener('click', function () {
     var isOpen = player.classList.toggle('open');
     btn.classList.toggle('open', isOpen);
     btn.title = isOpen ? '關閉播放器' : '播放音樂';
+    ledEl.textContent = isOpen ? 'ON AIR' : 'PLAY';
   });
 
   document.body.appendChild(player);
