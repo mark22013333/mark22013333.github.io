@@ -1054,11 +1054,11 @@
             
             <tag> OpenAI </tag>
             
-            <tag> Gemini </tag>
+            <tag> NVIDIA </tag>
             
             <tag> Mistral </tag>
             
-            <tag> NVIDIA </tag>
+            <tag> Gemini </tag>
             
         </tags>
       
@@ -2421,13 +2421,13 @@
             
             <tag> GitHub </tag>
             
-            <tag> TDD </tag>
-            
             <tag> SDD </tag>
             
             <tag> GH-300 </tag>
             
             <tag> Responsible AI </tag>
+            
+            <tag> TDD </tag>
             
         </tags>
       
@@ -2586,9 +2586,9 @@
             
             <tag> 資安 </tag>
             
-            <tag> Cursor </tag>
-            
             <tag> Microsoft </tag>
+            
+            <tag> Cursor </tag>
             
         </tags>
       
@@ -2743,9 +2743,9 @@
             
             <tag> Claude Code </tag>
             
-            <tag> Apify </tag>
-            
             <tag> Skills </tag>
+            
+            <tag> Apify </tag>
             
             <tag> 爬蟲 </tag>
             
@@ -3069,9 +3069,9 @@
             
             <tag> AZ-305 </tag>
             
-            <tag> Networking </tag>
-            
             <tag> 微軟課程 </tag>
+            
+            <tag> Networking </tag>
             
         </tags>
       
@@ -3102,9 +3102,9 @@
             
             <tag> 微軟課程 </tag>
             
-            <tag> TDD </tag>
-            
             <tag> SDD </tag>
+            
+            <tag> TDD </tag>
             
         </tags>
       
@@ -3505,9 +3505,9 @@
             
             <tag> Claude Code </tag>
             
-            <tag> Cursor </tag>
-            
             <tag> Copilot </tag>
+            
+            <tag> Cursor </tag>
             
             <tag> 開發工具 </tag>
             
@@ -3755,9 +3755,9 @@
             
             <tag> MCP </tag>
             
-            <tag> Copilot </tag>
-            
             <tag> Microsoft </tag>
+            
+            <tag> Copilot </tag>
             
         </tags>
       
@@ -3933,9 +3933,9 @@
             
             <tag> AI與科技新聞 </tag>
             
-            <tag> Gemini </tag>
-            
             <tag> Claude Code </tag>
+            
+            <tag> Gemini </tag>
             
         </tags>
       
@@ -4053,9 +4053,9 @@
             
             <tag> 資安 </tag>
             
-            <tag> Copilot </tag>
-            
             <tag> Microsoft </tag>
+            
+            <tag> Copilot </tag>
             
         </tags>
       
@@ -4140,9 +4140,9 @@
             
             <tag> 資安 </tag>
             
-            <tag> Cursor </tag>
-            
             <tag> Copilot </tag>
+            
+            <tag> Cursor </tag>
             
         </tags>
       
@@ -5119,9 +5119,9 @@
             
             <tag> Claude Code </tag>
             
-            <tag> Skills </tag>
-            
             <tag> 自動化 </tag>
+            
+            <tag> Skills </tag>
             
         </tags>
       

@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Music Player</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#111;color:#fff;font-family:-apple-system,BlinkMacSystemFont,sans-serif;display:flex;flex-direction:column;height:100vh;overflow:hidden}
+#player-wrap{flex-shrink:0;background:#000;position:relative;width:100%;aspect-ratio:16/9}
+#player-wrap iframe,#player-wrap div{position:absolute;top:0;left:0;width:100%!important;height:100%!important}
+#now-playing{padding:8px 12px;background:#1a1a2e;font-size:12px;color:#a29bfe;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex-shrink:0}
+#tracklist{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch}
+.track{padding:10px 12px;cursor:pointer;border-bottom:1px solid #222;font-size:13px;line-height:1.4;display:flex;align-items:baseline;gap:8px;transition:background .15s}
+.track:hover{background:#1a1a2e}
+.track.active{background:#1a1a2e;color:#6c5ce7;font-weight:600}
+.track .ts{color:#555;font-size:11px;flex-shrink:0;width:38px}
+.track.active .ts{color:#6c5ce7}
+.track .name{flex:1}
+#no-tracks{padding:20px;text-align:center;color:#666;font-size:13px}
+#tracklist::-webkit-scrollbar{width:4px}
+#tracklist::-webkit-scrollbar-track{background:#111}
+#tracklist::-webkit-scrollbar-thumb{background:#333;border-radius:2px}
+</style>
+</head>
+<body>
+<div id="player-wrap"><div id="player"></div></div>
+<div id="now-playing">載入中...</div>
+<div id="tracklist"></div>
+
+<script>
+var VIDEOS = {
+  'GSAI6bnf25A': {
+    title: 'Groove Pop 節奏精選',
+    tracks: []
+  },
+  '7GRP7m5KVu8': {
+    title: '重低音 Lo-Fi R&B × JAZZ',
+    tracks: []
+  },
+  '3Q-x2HvOyrc': {
+    title: 'Hi-Pa Groove Vibes',
+    tracks: [
+      { time: 0, name: '🍍 Pineapple King' },
+      { time: 153, name: '🍒 Cherry Flash Boulevard' },
+      { time: 333, name: '🍬 Golden Candy Cyclone' },
+      { time: 495, name: '☀️ Paper Cup Sun' },
+      { time: 655, name: '🍒 Cherry Bounce Horizon' },
+      { time: 836, name: '🏖️ Bubble Rush Paradise' },
+      { time: 1026, name: '🌆 Bubble Skyline Drift' },
+      { time: 1182, name: '🏃‍♂️ Golden Rhythm Sprint' },
+      { time: 1387, name: '😄 Golden Smile Runner' },
+      { time: 1578, name: '🍋 Lemon Groove Rocket' },
+      { time: 1791, name: '🔄 Roll Overdrive' },
+      { time: 1945, name: '✨ Skyline Sparks' },
+      { time: 2100, name: '🍭 Sugar Lane Drive' },
+      { time: 2266, name: '💃 Velvet Candy Motion' }
+    ]
+  }
+};
+
+var params = new URLSearchParams(location.search);
+var videoId = params.get('v') || 'GSAI6bnf25A';
+var config = VIDEOS[videoId] || { title: 'Music', tracks: [] };
+
+var tag = document.createElement('script');
+tag.src = 'https://www.youtube.com/iframe_api';
+document.head.appendChild(tag);
+
+var player;
+var pollTimer;
+
+function onYouTubeIframeAPIReady() {
+  player = new YT.Player('player', {
+    videoId: videoId,
+    playerVars: { autoplay: 0, rel: 0, modestbranding: 1 },
+    events: {
+      onReady: onReady,
+      onStateChange: onStateChange
+    }
+  });
+}
+
+function onReady() {
+  document.getElementById('now-playing').textContent = '♪ ' + config.title;
+  renderTracklist();
+}
+
+function onStateChange(e) {
+  if (e.data === YT.PlayerState.PLAYING) {
+    startPolling();
+  } else {
+    stopPolling();
+  }
+  updateActive();
+}
+
+function startPolling() {
+  stopPolling();
+  if (config.tracks.length === 0) return;
+  pollTimer = setInterval(updateActive, 1000);
+}
+
+function stopPolling() {
+  if (pollTimer) { clearInterval(pollTimer); pollTimer = null; }
+}
+
+function getCurrentTrackIndex() {
+  if (!player || !player.getCurrentTime || config.tracks.length === 0) return -1;
+  var t = player.getCurrentTime();
+  var idx = 0;
+  for (var i = config.tracks.length - 1; i >= 0; i--) {
+    if (t >= config.tracks[i].time) { idx = i; break; }
+  }
+  return idx;
+}
+
+function updateActive() {
+  var idx = getCurrentTrackIndex();
+  var els = document.querySelectorAll('.track');
+  els.forEach(function(el, i) {
+    el.classList.toggle('active', i === idx);
+  });
+  if (idx >= 0 && config.tracks[idx]) {
+    document.getElementById('now-playing').textContent = '♪ ' + config.tracks[idx].name;
+  }
+  var active = document.querySelector('.track.active');
+  if (active) active.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+}
+
+function fmtTime(sec) {
+  var m = Math.floor(sec / 60);
+  var s = sec % 60;
+  return m + ':' + (s < 10 ? '0' : '') + s;
+}
+
+function renderTracklist() {
+  var el = document.getElementById('tracklist');
+  if (config.tracks.length === 0) {
+    el.innerHTML = '<div id="no-tracks">▶ 點擊播放即可欣賞全曲</div>';
+    return;
+  }
+  el.innerHTML = '';
+  config.tracks.forEach(function(track, i) {
+    var div = document.createElement('div');
+    div.className = 'track';
+    div.innerHTML = '<span class="ts">' + fmtTime(track.time) + '</span><span class="name">' + escHtml(track.name) + '</span>';
+    div.addEventListener('click', function() {
+      player.seekTo(track.time, true);
+      player.playVideo();
+    });
+    el.appendChild(div);
+  });
+}
+
+function escHtml(s) {
+  var d = document.createElement('div');
+  d.textContent = s;
+  return d.innerHTML;
+}
+</script>
+</body>
+</html>

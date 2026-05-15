@@ -3,8 +3,9 @@
   if (document.getElementById('music-fixed-player')) return;
 
   var TABS = [
-    { id: 'ai-music', label: 'AI 歌曲', url: 'https://interesting-echo-verse-live.base44.app/w/ai-music' },
-    { id: 'qq', label: '純音樂', url: 'https://interesting-echo-verse-live.base44.app/w/qq' },
+    { id: 'groove-pop', label: 'Groove Pop', url: '/music/yt-player.html?v=GSAI6bnf25A' },
+    { id: 'groove-vibes', label: 'Groove Vibes', url: '/music/yt-player.html?v=3Q-x2HvOyrc' },
+    { id: 'lofi-jazz', label: 'Lo-Fi Jazz', url: '/music/yt-player.html?v=7GRP7m5KVu8' },
     { id: 'hymn-piano', label: '詩歌鋼琴', url: '/music/hymn-player.html' }
   ];
   var activeTab = TABS[0];
