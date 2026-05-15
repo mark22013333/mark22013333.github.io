@@ -4,7 +4,8 @@
 
   var TABS = [
     { id: 'ai-music', label: 'AI 歌曲', url: 'https://interesting-echo-verse-live.base44.app/w/ai-music' },
-    { id: 'qq', label: '純音樂', url: 'https://interesting-echo-verse-live.base44.app/w/qq' }
+    { id: 'qq', label: '純音樂', url: 'https://interesting-echo-verse-live.base44.app/w/qq' },
+    { id: 'hymn-piano', label: '詩歌鋼琴', url: '/music/hymn-player.html' }
   ];
   var activeTab = TABS[0];
 

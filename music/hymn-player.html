@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>詩歌鋼琴</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#111;color:#fff;font-family:-apple-system,BlinkMacSystemFont,sans-serif;display:flex;flex-direction:column;height:100vh;overflow:hidden}
+#player-wrap{flex-shrink:0;background:#000;position:relative;width:100%;aspect-ratio:16/9}
+#player-wrap iframe{position:absolute;top:0;left:0;width:100%;height:100%}
+#now-playing{padding:8px 12px;background:#1a1a2e;font-size:12px;color:#a29bfe;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex-shrink:0}
+#playlist{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch}
+.song{padding:10px 12px;cursor:pointer;border-bottom:1px solid #222;font-size:13px;line-height:1.4;transition:background .15s}
+.song:hover{background:#1a1a2e}
+.song.active{background:#1a1a2e;color:#6c5ce7;font-weight:600}
+.song .idx{color:#555;font-size:11px;margin-right:6px}
+.song.active .idx{color:#6c5ce7}
+#loading{padding:20px;text-align:center;color:#666;font-size:13px}
+#playlist::-webkit-scrollbar{width:4px}
+#playlist::-webkit-scrollbar-track{background:#111}
+#playlist::-webkit-scrollbar-thumb{background:#333;border-radius:2px}
+</style>
+</head>
+<body>
+<div id="player-wrap"><div id="player"></div></div>
+<div id="now-playing">載入中...</div>
+<div id="playlist"><div id="loading">正在載入歌單...</div></div>
+
+<script>
+var PLAYLIST_ID = 'PLXpzudOrwmSORJSvQFEW3Isn2f2TlT4wh';
+var player;
+var songs = [];
+
+var tag = document.createElement('script');
+tag.src = 'https://www.youtube.com/iframe_api';
+document.head.appendChild(tag);
+
+function onYouTubeIframeAPIReady() {
+  player = new YT.Player('player', {
+    playerVars: {
+      listType: 'playlist',
+      list: PLAYLIST_ID,
+      autoplay: 0,
+      rel: 0,
+      modestbranding: 1
+    },
+    events: {
+      onReady: onReady,
+      onStateChange: onStateChange
+    }
+  });
+}
+
+function onReady() {
+  var ids = player.getPlaylist();
+  if (ids && ids.length) {
+    fetchTitles(ids);
+  } else {
+    setTimeout(function() {
+      var ids2 = player.getPlaylist();
+      if (ids2 && ids2.length) fetchTitles(ids2);
+      else document.getElementById('loading').textContent = '無法載入歌單';
+    }, 2000);
+  }
+}
+
+function onStateChange(e) {
+  if (e.data === YT.PlayerState.PLAYING || e.data === YT.PlayerState.PAUSED) {
+    updateActive();
+  }
+}
+
+function updateActive() {
+  var idx = player.getPlaylistIndex();
+  document.querySelectorAll('.song').forEach(function(el, i) {
+    el.classList.toggle('active', i === idx);
+  });
+  if (songs[idx]) {
+    document.getElementById('now-playing').textContent = '♪ ' + songs[idx].title;
+  }
+  var active = document.querySelector('.song.active');
+  if (active) active.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+}
+
+function fetchTitles(ids) {
+  var done = 0;
+  songs = ids.map(function(id) { return { id: id, title: '' }; });
+
+  ids.forEach(function(id, i) {
+    fetch('https://noembed.com/embed?url=https://www.youtube.com/watch?v=' + id)
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        songs[i].title = cleanTitle(data.title || id);
+      })
+      .catch(function() {
+        songs[i].title = id;
+      })
+      .finally(function() {
+        done++;
+        if (done === ids.length) renderPlaylist();
+      });
+  });
+}
+
+function cleanTitle(t) {
+  return t.replace(/\s*-\s*YouTube\s*$/i, '').trim();
+}
+
+function renderPlaylist() {
+  var el = document.getElementById('playlist');
+  el.innerHTML = '';
+  songs.forEach(function(song, i) {
+    var div = document.createElement('div');
+    div.className = 'song';
+    div.innerHTML = '<span class="idx">' + (i + 1) + '</span>' + escHtml(song.title);
+    div.addEventListener('click', function() {
+      player.playVideoAt(i);
+    });
+    el.appendChild(div);
+  });
+  updateActive();
+}
+
+function escHtml(s) {
+  var d = document.createElement('div');
+  d.textContent = s;
+  return d.innerHTML;
+}
+</script>
+</body>
+</html>
