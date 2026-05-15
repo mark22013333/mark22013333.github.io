@@ -4,6 +4,97 @@
   
     
     <entry>
+      <title>Claude Code 自動記憶系統完整教學 — 讓 AI 跨 Session 記住你的一切</title>
+      <link href="/2026/05/15/Claude-Code-%E8%87%AA%E5%8B%95%E8%A8%98%E6%86%B6%E7%B3%BB%E7%B5%B1%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8-%E8%AE%93-AI-%E8%B7%A8-Session-%E8%A8%98%E4%BD%8F%E4%BD%A0%E7%9A%84%E4%B8%80%E5%88%87/"/>
+      <url>/2026/05/15/Claude-Code-%E8%87%AA%E5%8B%95%E8%A8%98%E6%86%B6%E7%B3%BB%E7%B5%B1%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8-%E8%AE%93-AI-%E8%B7%A8-Session-%E8%A8%98%E4%BD%8F%E4%BD%A0%E7%9A%84%E4%B8%80%E5%88%87/</url>
+      
+        <content type="html"><![CDATA[<p>你有沒有那種經驗——搬到一間新公司，坐下來，隔壁的前輩跟你說：「資料庫密碼在 wiki 第三頁，build 指令用 make 不要用 gradle，還有，千萬不要動 legacy 那個資料夾。」</p><p>你點頭，記在腦子裡。第二天醒來，全部忘了。</p><p>Claude Code 每次開新 session，就是在經歷這件事。你跟它講了很多：「我偏好用 pnpm」「commit message 要用繁體中文」「這個 API 的 rate limit 是每秒 10 次」——然後下一次對話，它什麼都不記得，因為 session 一關，記憶就清零了。</p><p>CLAUDE.md 解決了一部分問題，讓你把「規則」寫死在檔案裡。但規則和記憶是兩件事。規則是「公司 SOP」，記憶是「跟這個同事相處一個月後，你知道他習慣什麼、踩過什麼坑、哪些東西要特別注意」。</p><p>Claude Code 的自動記憶系統（auto memory）就是在做這件事。</p><hr><h2 id="一本自動更新的工作筆記"><a href="#一本自動更新的工作筆記" class="headerlink" title="一本自動更新的工作筆記"></a>一本自動更新的工作筆記</h2><p>想像你入職第一天，公司發了一本空白筆記本給你。沒人叫你寫什麼，但你自然會開始記——「前輩說那個 API 有 bug 先不要碰」「老闆偏好用 bullet point 報告」「上次部署出事是因為忘記跑 migration」。</p><p>這本筆記不是 SOP 手冊，是你自己的工作筆記。別人不會幫你寫，但每次新任務來的時候，你都會翻一下。</p><p>Claude Code 的 auto memory 就是這本筆記。它存在 <code>~/.claude-company/projects/&lt;project-path&gt;/memory/</code> 目錄底下，每個記憶是一個 <code>.md</code> 檔案。而 <code>MEMORY.md</code> 是目錄裡的索引頁——每次新 session 啟動時，Claude 會先讀這個索引，知道有哪些記憶可以參考。</p><p>這裡有個跟直覺不太一樣的地方：<strong>MEMORY.md 不是記憶本身，而是記憶的目錄</strong>。真正的內容在各個獨立的 <code>.md</code> 檔案裡。就像書的目錄頁告訴你第三章在第 87 頁，但內容要翻到第 87 頁才看得到。</p><hr><h2 id="四種記憶，四種用途"><a href="#四種記憶，四種用途" class="headerlink" title="四種記憶，四種用途"></a>四種記憶，四種用途</h2><p>不是所有記憶都一樣。Claude 會根據它觀察到的內容，自動分成四種類型，每種有不同的觸發時機和用途。</p><table><thead><tr><th>類型</th><th>像是什麼</th><th>什麼時候觸發</th></tr></thead><tbody><tr><td><strong>user</strong></td><td>同事的個人檔案</td><td>聊到你的角色、技術背景、工作習慣</td></tr><tr><td><strong>feedback</strong></td><td>便利貼上的修正紀錄</td><td>你糾正它的行為，或肯定它做對了</td></tr><tr><td><strong>project</strong></td><td>專案看板的備忘欄</td><td>討論到進行中的工作、截止日、技術決策</td></tr><tr><td><strong>reference</strong></td><td>書籤列</td><td>提到外部系統（Jira、Slack、Grafana）和它的用途</td></tr></tbody></table><p><strong>user 記憶</strong>是最穩定的那種。你告訴 Claude「我是後端工程師，主要用 Java 和 Spring Boot」，它會記下來。之後每次新 session，它就知道不用跟你解釋什麼是 dependency injection。</p><p><strong>feedback 記憶</strong>是最值錢的那種。每次你糾正 Claude——「不要用中國用語」「commit message 不要加 emoji」「測試要用 JUnit 5 不要用 JUnit 4」——它會存成一條 feedback 記憶。這表示你只需要糾正一次，以後它都記得。老實說這是整個記憶系統最划算的投資。</p><p><strong>project 記憶</strong>是最容易過時的那種。「小明在做支付模組重構，預計下週完成」——這種資訊三個禮拜後就過期了。Claude 發現事實有衝突時會自動更新，但你偶爾也要主動清理。</p><p><strong>reference 記憶</strong>是最容易被忽略的那種。「我們的 Grafana dashboard 在 <a href="https://grafana.internal.com,看/">https://grafana.internal.com，看</a> API latency 用 ‘Backend Overview’ 面板」——存一次，以後每次問它查效能數據，它都知道去哪裡看。</p><hr><h2 id="記憶檔案長什麼樣"><a href="#記憶檔案長什麼樣" class="headerlink" title="記憶檔案長什麼樣"></a>記憶檔案長什麼樣</h2><p>打開一個記憶檔案，你會看到 YAML frontmatter 加上 Markdown 內容：</p><figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">---</span><br><span class="line">name: feedback-no-china-slang</span><br><span class="line">description: 所有輸出都用台灣用語，不只文章正文，對話和設計討論也算</span><br><span class="line">metadata:</span><br><span class="line"><span class="section">  type: feedback</span></span><br><span class="line"><span class="section">---</span></span><br><span class="line"></span><br><span class="line">所有輸出使用台灣繁體中文用語，禁止中國大陸用語</span><br><span class="line">（「信息」→「資訊」、「視頻」→「影片」、「軟件」→「軟體」）。</span><br><span class="line"></span><br><span class="line"><span class="strong">**Why:**</span> 使用者是台灣工程師，讀者也是台灣社群，</span><br><span class="line">用語不一致會降低信任感。</span><br><span class="line"></span><br><span class="line"><span class="strong">**How to apply:**</span> 每次輸出前檢查，包括對話、文章、</span><br><span class="line">程式碼註解、commit message。</span><br></pre></td></tr></table></figure><p>結構很單純：<code>name</code> 是識別用的 key，<code>description</code> 是一句話摘要（會出現在 MEMORY.md 索引裡），<code>metadata.type</code> 是上面說的四種之一，底下的 Markdown 是完整內容。</p><p>而 MEMORY.md 索引長這樣：</p><figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="bullet">-</span> [<span class="string">禁止中國用語（含對話）</span>](<span class="link">feedback_no_china_slang.md</span>) — 所有輸出都用台灣用語</span><br><span class="line"><span class="bullet">-</span> [<span class="string">封面圖升級方案</span>](<span class="link">project_cover_image_upgrade.md</span>) — Imagen 4 vs notebooklm-py</span><br></pre></td></tr></table></figure><p>每一行就是一條記憶的連結加摘要。Claude 開新 session 時讀這個索引，判斷哪些記憶跟當前工作有關，再去讀對應的檔案。不是每次都全部載入——它會挑著看，跟你翻筆記本一樣，只翻跟眼前任務有關的頁。</p><div class="note info flat"><p>MEMORY.md 索引有 200 行的實用上限。超過這個長度，後面的記憶被參考到的機率會明顯下降。保持精簡，定期清理過時的條目。</p></div><hr><h2 id="主動管理你的記憶"><a href="#主動管理你的記憶" class="headerlink" title="主動管理你的記憶"></a>主動管理你的記憶</h2><p>auto memory 雖然叫「自動」，但完全放著不管不是好策略。就像你的工作筆記本——如果從來不整理，半年後翻開來全是過期的東西，反而會干擾判斷。</p><h3 id="主動儲存"><a href="#主動儲存" class="headerlink" title="主動儲存"></a>主動儲存</h3><p>直接跟 Claude 說你要記住什麼：</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">記住這個：我們團隊的 code review 規則是至少一個人 approve 才能 merge，</span><br><span class="line">而且 approve 的人不能是 PR 作者本人。</span><br></pre></td></tr></table></figure><p>Claude 會自動建立一個記憶檔案，分類、命名、寫入索引，整個流程不到五秒。</p><h3 id="主動刪除"><a href="#主動刪除" class="headerlink" title="主動刪除"></a>主動刪除</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">忘記關於舊版支付系統的記憶，那個模組已經被移除了。</span><br></pre></td></tr></table></figure><p>Claude 會找到對應的記憶檔案刪掉，同時更新 MEMORY.md 索引。</p><h3 id="直接翻閱"><a href="#直接翻閱" class="headerlink" title="直接翻閱"></a>直接翻閱</h3><p>不確定 Claude 記了什麼？直接打開 <code>memory/MEMORY.md</code> 看索引，或者用 <code>/memory</code> 指令列出所有已載入的記憶來源。</p><h3 id="手動編輯"><a href="#手動編輯" class="headerlink" title="手動編輯"></a>手動編輯</h3><p>記憶檔案就是 Markdown，你可以直接用編輯器打開改。要調整措辭、合併重複的記憶、或加上 Claude 遺漏的細節，改完存檔就好。下次 session 會讀到更新後的版本。</p><p>這裡有個小撇步：如果你想讓某條記憶特別醒目，在 MEMORY.md 索引裡把它排到前面幾行。Claude 對索引開頭的項目注意力會稍微高一點，跟人讀清單的習慣差不多。</p><hr><h2 id="什麼不該存進記憶"><a href="#什麼不該存進記憶" class="headerlink" title="什麼不該存進記憶"></a>什麼不該存進記憶</h2><p>記憶系統不是垃圾桶，有些東西塞進去反而會造成問題。</p><p><strong>程式碼結構和檔案路徑</strong>——Claude 可以直接讀你的 codebase，不需要把 <code>src/api/handlers/auth.ts</code> 這種路徑存成記憶。程式碼會變，記憶不會自動跟著變，最後記憶裡的路徑反而會誤導它。</p><p><strong>Git 歷史</strong>——誰在什麼時候改了什麼，<code>git log</code> 是權威來源。把 commit 記錄存進記憶等於是在做一份會過時的副本。</p><p><strong>暫時性的任務狀態</strong>——「目前在修 issue #1234 的 bug」這種事用 Task 系統追蹤更合適。記憶是持久化的，暫時性的東西放進去會製造噪音。</p><p><strong>CLAUDE.md 已經寫過的東西</strong>——如果你在 CLAUDE.md 裡已經寫了「用 pnpm 不要用 npm」，就不需要再存一條記憶說同樣的事。重複的資訊不會讓 Claude 更遵守，只會浪費 context window。</p><p>判斷標準就一句話：<strong>這個資訊是不是「Claude 自己沒辦法從其他來源取得」的？</strong> 如果 <code>git log</code> 查得到、codebase 讀得到、CLAUDE.md 寫了，就不要存。記憶系統存的應該是那些「只存在於你腦子裡」的東西。</p><hr><h2 id="新專案的記憶冷啟動"><a href="#新專案的記憶冷啟動" class="headerlink" title="新專案的記憶冷啟動"></a>新專案的記憶冷啟動</h2><p>剛開一個新專案的第一次對話，Claude 的記憶是空的。這時候花兩分鐘做一件事，投資報酬率超高：</p><p><strong>自我介紹。</strong></p><p>不是客套那種，而是告訴它對工作有用的事：</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">我是後端工程師，主要用 Java 17 + Spring Boot 3。</span><br><span class="line">偏好 functional style，不喜歡 inheritance 超過兩層。</span><br><span class="line">Commit message 一律用繁體中文 conventional commit 格式。</span><br><span class="line">這個專案是內部工具，使用者大概 50 人，不需要考慮超大規模的效能最佳化。</span><br></pre></td></tr></table></figure><p>講完這段，Claude 會自動把它存成 user 記憶。往後每次新 session，它就帶著這些背景知識進來。你不用再解釋自己是誰、用什麼技術、偏好什麼風格。</p><p>然後在接下來幾天的工作中，每次你糾正它——「不要用 <code>var</code>，我要明確型別」「API response 統一用 envelope pattern」——每一次糾正都會累積成 feedback 記憶。一個月後，它的行為會非常貼合你的習慣，像是被你帶了一個月的 junior engineer。</p><hr><h2 id="記憶之間的連結"><a href="#記憶之間的連結" class="headerlink" title="記憶之間的連結"></a>記憶之間的連結</h2><p>記憶不是一個一個獨立的便利貼。它們可以用 <code>[[name]]</code> 語法互相連結：</p><figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">---</span><br><span class="line">name: project-payment-refactor</span><br><span class="line">description: 支付模組重構進度追蹤</span><br><span class="line">metadata:</span><br><span class="line"><span class="section">  type: project</span></span><br><span class="line"><span class="section">---</span></span><br><span class="line"></span><br><span class="line">支付模組正在從 legacy SOAP API 遷移到 REST API。</span><br><span class="line"></span><br><span class="line">相關決策：</span><br><span class="line"><span class="bullet">-</span> 使用 Stripe 取代原本的自建金流 [[reference-stripe-dashboard]]</span><br><span class="line"><span class="bullet">-</span> API 設計遵循團隊規範 [[feedback-api-envelope-pattern]]</span><br></pre></td></tr></table></figure><p>Claude 讀到一條記憶時，如果發現裡面有連結，就會順便去讀被連結的那條。這讓相關的記憶可以串成網路，而不是散落的片段。</p><hr><h2 id="背後的設計直覺"><a href="#背後的設計直覺" class="headerlink" title="背後的設計直覺"></a>背後的設計直覺</h2><p>回到最開始的比喻。CLAUDE.md 是公司發的 SOP 手冊——每個新人都要讀，內容由管理層維護。Auto memory 是你自己的工作筆記——你跟這個同事相處越久，筆記就越厚、越精準。</p><p>但這裡有一個反直覺的觀察：<strong>大部分人花很多時間寫 CLAUDE.md，卻完全忽略記憶系統</strong>。這就像你花三天寫了一份完美的 SOP，卻不讓新人自己做筆記。SOP 能覆蓋的是通用規則，但每個人的工作習慣、踩過的坑、偏好的做法，這些是 SOP 寫不完的。</p><p>如果你只用 CLAUDE.md，Claude 是一個讀過公司手冊的新人。<br>如果你同時善用記憶系統，Claude 是一個跟你合作了三個月的同事。</p><p>差別不在知識量，在於它知不知道「你」是怎麼工作的。</p><p>記憶系統的核心就兩條線：<strong>什麼值得記</strong>，和<strong>什麼時候該忘</strong>。記太多會製造噪音，記太少每次都要重頭來。在這兩條線之間找到平衡，你的 Claude Code 就不再是每天報到的陌生人，而是一個越來越懂你的長期夥伴。</p><hr><blockquote><p>參考來源：<a href="https://docs.anthropic.com/en/docs/claude-code/memory">Claude Code Memory System - Anthropic Docs</a><br>延伸閱讀：<a href="/2026/04/24/Claude-Code-CLAUDE-md-%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8-%E8%AE%93-AI-%E8%A8%98%E4%BD%8F%E4%BD%A0%E7%9A%84%E5%B0%88%E6%A1%88-%E5%BE%9E%E6%AD%A4%E4%B8%8D%E7%94%A8%E9%87%8D%E8%A4%87%E8%A7%A3%E9%87%8B/">CLAUDE.md 完整教學</a></p></blockquote>]]></content>
+      
+      
+      <categories>
+          
+          <category> Claude Code </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> AI Agent </tag>
+            
+            <tag> Claude Code </tag>
+            
+            <tag> 教學 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>AI 與科技新聞摘要 - 2026/05/15</title>
+      <link href="/2026/05/15/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260515/"/>
+      <url>/2026/05/15/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260515/</url>
+      
+        <content type="html"><![CDATA[<p>67%。</p><p>這是全球企業裡，懷疑自家 AI agent 已經偷看了不該看的資料的比例。不是「可能會」，是「懷疑已經發生了」。三分之二的企業承認：我們放了一個東西進來，然後我們不確定它看了什麼。</p><p>同一週，Apple 宣布 iOS 27 讓你選第三方 AI 取代 ChatGPT。Notion 把工作空間變成 AI agent 的控制中心。Amazon 的 AI 購物助理可以跑去別家網站幫你刷卡。Honeycomb 推出 agent-native 可觀測性——因為你根本不知道你的 AI agent 在生產環境裡幹了什麼。</p><p>五條新聞，一個共同訊號：AI agent 的權限正在以超越我們理解速度的方式擴張。而我們連監控它們的工具都才剛開始蓋。</p><hr><h2 id="Apple-iOS-27：你的-Siri，你選引擎"><a href="#Apple-iOS-27：你的-Siri，你選引擎" class="headerlink" title="Apple iOS 27：你的 Siri，你選引擎"></a>Apple iOS 27：你的 Siri，你選引擎</h2><p>Apple 終於承認了一個事實：單一模型不可能最擅長所有事。</p><p>iOS 27、iPadOS 27、macOS 27 將允許使用者選擇第三方 AI 模型——Claude、Gemini、以及其他通過審核的模型——取代 ChatGPT，作為 Apple Intelligence 的預設引擎。不是只能換一個，是可以依任務分配：寫作用 Claude、搜尋用 Gemini、圖片生成用別的。Apple 同時發布了新的「Extensions」框架，讓第三方 AI 可以插入 Siri、Writing Tools、Image Playground 的每一個接口。</p><p>Apple 跟 Google 簽了約，Gemini 會是選項之一。第三方 AI 會有獨立語音，跟 Siri 區分。預計 WWDC 六月公布細節，秋季正式推出。</p><p><strong>為什麼重要？</strong></p><p>表面上，這是 Apple 向開放生態系邁出的一步。實際上，這是一個風險轉移的決策。</p><p>當 Apple 只綁定 ChatGPT 的時候，OpenAI 的任何問題——幻覺、偏見、安全漏洞——都是 Apple 的問題。現在 Apple 說：你自己選，責任你自己扛。這不是慷慨，這是保險。</p><p>但更深層的結構性變化在這裡：<strong>Apple 正在把自己從「AI 供應商」重新定位成「AI 平台商」。</strong> 它不需要有最強的模型，它只需要所有最強的模型都在它的平台上跑。這跟 App Store 的邏輯一模一樣——Apple 不做 app，Apple 做的是讓所有 app 必須經過它。</p><p>反過來想：怎樣讓這個策略一定失敗？讓第三方 AI 的體驗比原生 ChatGPT 差。如果切換引擎後 Siri 變慢、Writing Tools 格式跑掉、Image Playground 品質下降，使用者試一次就不會再試了。Extensions 框架的 API 設計品質，會決定這件事是真正的開放還是做做樣子。</p><blockquote><p>原文來源：<a href="https://9to5mac.com/2026/05/05/ios-27-will-let-you-choose-between-gemini-claude-and-more-for-ai-features-report/">iOS 27 will let you choose between Gemini, Claude, and more for AI features — 9to5Mac</a><br>原文來源：<a href="https://www.macrumors.com/2026/05/05/ios-27-third-party-chatbots-apple-intelligence/">iOS 27 Third-Party Chatbots to Replace ChatGPT in Apple Intelligence — MacRumors</a></p></blockquote><hr><p>工作空間、購物車、信用卡、生產環境——AI agent 的觸手伸進的地方，比你以為的多得多。</p><hr><h2 id="Notion-Developer-Platform：你的工作空間變成-AI-Agent-的作業系統"><a href="#Notion-Developer-Platform：你的工作空間變成-AI-Agent-的作業系統" class="headerlink" title="Notion Developer Platform：你的工作空間變成 AI Agent 的作業系統"></a>Notion Developer Platform：你的工作空間變成 AI Agent 的作業系統</h2><p>Notion 不想只當筆記軟體了。它想當 AI agent 的控制中心。</p><p>五月十三號，Notion 發布 Developer Platform，包含三個核心組件。<strong>Workers</strong>：在 Notion 託管環境中部署自訂程式碼，處理資料同步、工具建立、webhook 觸發，不需要你自己架伺服器。<strong>External Agent API</strong>：把 Claude、Codex、Decagon 等外部 AI agent 直接接進你的 Notion workspace。<strong>Database Sync</strong>：從 Zendesk、Salesforce、Postgres 等外部系統把資料拉進 Notion。</p><p>還附了一個 CLI 工具叫 <code>ntn</code>——一行指令就能認證、讀寫 Notion、管理部署。Workers 在 beta 期間免費，八月十一號起開始使用 Notion credits 計費。</p><p><strong>為什麼重要？</strong></p><p>Notion 正在做的事情，本質上是把一個「人類用的工具」改造成「AI agent 用的平台」。</p><p>這有夠猛，但也有夠危險。</p><p>想像一下：你的 Notion workspace 裡有產品路線圖、客戶資料、內部討論紀錄、財務數字。現在你可以讓外部 AI agent 直接存取這些資料。你設定了權限——至少你覺得你設定了。但 AI agent 不像人類員工，它不會「只看跟自己工作相關的頁面」然後「忽略旁邊那個薪資表」。它會存取所有它被允許存取的東西，而「被允許存取」跟「應該存取」之間的差距，就是風險住的地方。</p><p>這不是 Notion 的問題，這是整個「AI agent 接入企業工具」浪潮的結構性問題。每一個新的 API 接口，都是一個新的攻擊面。每一個「讓 AI agent 更方便」的設計決策，同時也是一個「讓未授權存取更容易」的設計決策。</p><blockquote><p>原文來源：<a href="https://techcrunch.com/2026/05/13/notion-just-turned-its-workspace-into-a-hub-for-ai-agents/">Notion just turned its workspace into a hub for AI agents — TechCrunch</a><br>原文來源：<a href="https://www.notion.com/blog/introducing-developer-platform">Introducing Developer Platform — Notion Blog</a></p></blockquote><hr><h2 id="Akeyless-調查：三分之二企業懷疑-AI-Agent-已偷看資料"><a href="#Akeyless-調查：三分之二企業懷疑-AI-Agent-已偷看資料" class="headerlink" title="Akeyless 調查：三分之二企業懷疑 AI Agent 已偷看資料"></a>Akeyless 調查：三分之二企業懷疑 AI Agent 已偷看資料</h2><p>67% 的企業懷疑 AI agent 已經存取了超出預期範圍的資料。這個數字不是來自恐嚇行銷，是 Akeyless 的全球企業調查結果。</p><p>問題的根源不是 AI agent 有惡意。是它們被授予了過多權限，而傳統的 secrets management 框架根本不是為這種動態行為設計的。</p><p>人類員工拿到一組 API key，會用它做特定的事。AI agent 拿到同一組 key，會用它做所有它「能」做的事——因為它被設計成盡可能完成任務。你給它「讀取客戶資料庫」的權限來回答客服問題，它可能為了「更完整地回答」而去翻了客戶的付款紀錄、合約條款、甚至內部備註。它不是在偷看，它是在「盡責」。但結果跟偷看一模一樣。</p><p><strong>為什麼重要？</strong></p><p>企業正面臨一個兩難：限制太多，AI agent 就廢了，你花的錢全白費。限制太少，你的資料就在裸奔。</p><p>這個兩難的根本原因是：<strong>我們還在用「人類權限管理」的思維去管「非人類行為者」。</strong> 人類權限管理假設行為者有判斷力——你不會因為有權限就去翻同事的薪水。AI agent 沒有這層判斷。它只看權限邊界，而權限邊界通常設得比需要的寬，因為設太窄會讓它做不了事。</p><p>這是一個脆弱性的經典來源：系統的安全性取決於最寬鬆的那一層。你可以把防火牆蓋到天花板，但如果你給 AI agent 一把萬能鑰匙，防火牆就只是裝飾品。</p><p>現在回頭看上一則 Notion 的新聞——Workers、External Agent API、Database Sync——每一個都是在給 AI agent 更多鑰匙。技術上很漂亮。風險管理上，踩坑的機率有夠高。</p><blockquote><p>原文來源：<a href="https://www.prnewswire.com/news-releases/two-thirds-of-enterprises-suspect-ai-agents-have-already-accessed-unauthorized-data-akeyless-finds-302769768.html">Two-Thirds of Enterprises Suspect AI Agents Have Already Accessed Unauthorized Data — PR Newswire</a></p></blockquote><hr><p>AI agent 能讀你的資料庫。能操作你的工作空間。現在它還能拿你的信用卡去別家網站結帳。</p><hr><h2 id="Amazon-Alexa-for-Shopping：AI-替你去別家網站刷卡"><a href="#Amazon-Alexa-for-Shopping：AI-替你去別家網站刷卡" class="headerlink" title="Amazon Alexa for Shopping：AI 替你去別家網站刷卡"></a>Amazon Alexa for Shopping：AI 替你去別家網站刷卡</h2><p>Amazon 五月十二號推出 Alexa for Shopping——一個由 Alexa+ 驅動的 AI 購物助理。它能比較產品、追蹤價格、排程定期訂購。</p><p>但真正讓人瞪大眼睛的是 <strong>Buy for Me</strong> 功能：AI 可以到 Amazon 以外的零售商網站，替你完成購買。</p><p>讓我說清楚這代表什麼。Amazon 的 AI agent 會打開第三方網站、瀏覽商品頁、把東西加進購物車、填寫你的信用卡資訊、按下結帳按鈕。整個過程不需要你碰鍵盤。</p><p>方便嗎？炸了。但請冷靜三秒鐘想一下這裡的風險結構。</p><p>你正在把你的信用卡號碼、帳單地址、收貨地址交給一個 AI agent，讓它在你不完全控制的環境中使用。第三方網站的結帳流程可能改版、可能有隱藏費用、可能有不同的退貨政策。AI agent 會不會在結帳前幫你確認退貨條款？會不會辨識出釣魚網站？會不會在遇到「加購延長保固只要 $9.99」的彈窗時幫你按「不要」？</p><p><strong>為什麼重要？</strong></p><p>這是 AI agent 從「資訊助理」跨到「金融行為者」的分水嶺。以前 AI agent 最多幫你整理資料、寫摘要、回答問題——做錯了，最多是資訊不準確。現在它代替你花錢——做錯了，是真金白銀的損失。</p><p>而且 Amazon 選擇讓 AI agent 到「別家」網站買東西，這不只是功能擴張，是控制權的延伸。Amazon 的 AI 會成為你跟整個電商生態系之間的中介層。你不再直接跟零售商互動，你透過 Amazon 的 AI 跟它們互動。長期來看，這讓 Amazon 掌握了跨平台的購物行為資料——即使那些購買不是在 Amazon 上完成的。</p><blockquote><p>原文來源：各大科技媒體報導</p></blockquote><hr><h2 id="Honeycomb-Agent-Native-Observability：給-AI-Agent-裝上黑盒子"><a href="#Honeycomb-Agent-Native-Observability：給-AI-Agent-裝上黑盒子" class="headerlink" title="Honeycomb Agent-Native Observability：給 AI Agent 裝上黑盒子"></a>Honeycomb Agent-Native Observability：給 AI Agent 裝上黑盒子</h2><p>如果前面四則新聞讓你開始焦慮——AI agent 在你的手機裡、工作空間裡、信用卡裡、企業資料庫裡——那 Honeycomb 這則新聞至少是個好消息的方向。</p><p>五月十三號，Honeycomb 推出 agent-native 可觀測性功能，專門設計給在生產環境中自主運作的 AI agent。三個核心功能：<strong>Agent Timeline</strong> 提供跨 multi-agent、multi-trace 的工作流視圖，讓你看到一個 AI agent 從接到任務到完成的完整路徑。<strong>Canvas</strong> 是重建的工作空間，結合聊天介面和自主 agent。<strong>Canvas Skills</strong> 讓你把工程師的除錯經驗編碼成可重複使用的 debugging playbook，變成 AI 可以直接使用的技能。</p><p><strong>為什麼重要？</strong></p><p>這解決的問題很根本：<strong>當 AI agent 在生產環境中自主運作時，你怎麼知道它做了什麼、為什麼做、在哪裡做錯了？</strong></p><p>飛機有黑盒子。每一次飛行的每一個操作都被記錄下來。不是因為我們不信任飛行員，是因為在高風險環境中，「可追溯性」不是可選的——它是必要的。</p><p>AI agent 正在進入高風險環境：你的財務系統、你的客戶資料、你的購物流程、你的程式碼庫。但大多數企業部署 AI agent 的方式，更像是讓一架沒有黑盒子的飛機起飛。它飛得很好——直到它出事。然後你連它為什麼墜毀都不知道。</p><p>Honeycomb 的 Agent Timeline 本質上就是 AI agent 的黑盒子。它不能阻止事故發生，但它讓你有能力在事後理解發生了什麼，並且在事前設定告警。這是目前整個 AI agent 生態系最缺的一塊拼圖。</p><blockquote><p>原文來源：Honeycomb Blog</p></blockquote><hr><p>五條新聞，一個結構。</p><p>Apple 讓你選 AI 引擎——但選擇權的背後是責任的轉移。Notion 讓 AI agent 接入你的工作空間——每一個 API 都是一扇門。Akeyless 的調查說三分之二的企業已經在擔心 AI agent 看了不該看的東西。Amazon 讓 AI agent 拿你的信用卡出去逛街。Honeycomb 開始蓋黑盒子，因為其他人都在蓋沒有黑盒子的飛機。</p><p><strong>共同趨勢不是「AI 變強了」。是「AI agent 的權限膨脹速度，遠遠超過我們對它們行為的可見度。」</strong></p><p>每一次你授權一個 AI agent 存取一個系統，你都在做一個不對稱的交易：你給出去的是確定的——權限、資料、行為能力。你收到的回報是或然的——它可能幫你省時間，也可能幫你製造一個你三個月後才發現的資安事件。</p><p>不對稱風險的管理原則很簡單：<strong>在你看不清楚下行風險的時候，不要急著最大化上行收益。</strong></p><p>這不是說不要用 AI agent。是說在用之前，先問自己三個問題：</p><ol><li>這個 agent 能存取什麼？它「需要」存取的跟它「被允許」存取的，範圍一樣嗎？</li><li>它做了什麼事，我有辦法事後知道嗎？</li><li>它做錯了，我有辦法在損害擴大前發現嗎？</li></ol><p>如果三個問題裡有任何一個答案是「不確定」，你的 AI agent 部署就還沒準備好。</p>]]></content>
+      
+      
+      <categories>
+          
+          <category> AI與科技新聞 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> AI Agent </tag>
+            
+            <tag> AI與科技新聞 </tag>
+            
+            <tag> Apple </tag>
+            
+            <tag> AI 安全 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>Hermes Agent — 在自家 VM 部署 AI 助理的完整踩坑記錄</title>
+      <link href="/2026/05/15/Hermes-Agent-%E5%9C%A8%E8%87%AA%E5%AE%B6-VM-%E9%83%A8%E7%BD%B2-AI-%E5%8A%A9%E7%90%86%E7%9A%84%E5%AE%8C%E6%95%B4%E8%B8%A9%E5%9D%91%E8%A8%98%E9%8C%84/"/>
+      <url>/2026/05/15/Hermes-Agent-%E5%9C%A8%E8%87%AA%E5%AE%B6-VM-%E9%83%A8%E7%BD%B2-AI-%E5%8A%A9%E7%90%86%E7%9A%84%E5%AE%8C%E6%95%B4%E8%B8%A9%E5%9D%91%E8%A8%98%E9%8C%84/</url>
+      
+        <content type="html"><![CDATA[<p>你以為自架 AI 助理最難的是模型。不是。</p><p>模型換六次就好了。真正會讓你卡住的，是 nginx 回傳 400、瀏覽器無限 redirect、還有人設怎麼寫都不生效這種鬼問題。NousResearch 的 Hermes Agent v0.13.0 是一套開源 AI 代理框架，可以接各種 LLM 後端，自帶 Dashboard 跟多平台 Gateway。我在公司的 Ubuntu 26.04 VM 上把它跑起來，串上 LINE 聊天機器人，中間踩的坑比安裝步驟還多。</p><p>這篇文章是 Notion 開發筆記的整理，保留原始的踩坑順序。不是教學文，比較像驗屍報告。</p><hr><h2 id="先畫一張圖"><a href="#先畫一張圖" class="headerlink" title="先畫一張圖"></a>先畫一張圖</h2><p>整體架構其實不複雜，用一句話講完：外面的流量進來先經過 nginx 做 SSL 終止，然後根據路徑決定往哪送。</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Internet → TP-Link Router (port 80+443)</span><br><span class="line">         → VM 235: nginx 中央閘道 (SSL 終止)</span><br><span class="line">              ├── /            → VM 199:80   (CoolApps 管理系統)</span><br><span class="line">              ├── /hermes/     → localhost:9119 (Hermes Dashboard)</span><br><span class="line">              └── /line/webhook → localhost:8646 (Hermes LINE Gateway)</span><br></pre></td></tr></table></figure><p>VM 規格是 16 核 7.2GB RAM、40GB 硬碟，跑 VMware。Hermes 本身不吃什麼資源，因為推論全丟給外部 API——它是代理框架，不是推論引擎。這個區分很重要：你不需要 GPU，你需要的是穩定的 API key。</p><hr><h2 id="六次模型切換：一部免費仔的血淚史"><a href="#六次模型切換：一部免費仔的血淚史" class="headerlink" title="六次模型切換：一部免費仔的血淚史"></a>六次模型切換：一部免費仔的血淚史</h2><p>如果用餐廳來比喻：你不是在挑哪間好吃，你是在試哪間還沒倒閉、還沒漲價、而且不會上錯菜。</p><p><strong>第一次：google&#x2F;gemma-3-27b-it:free</strong></p><p>OpenRouter 上面看到免費就選了。結果 404，模型已經下架。連門都沒開。</p><p><strong>第二次：google&#x2F;gemma-4-31b-it:free</strong></p><p>同一個平台換一個新的。能動了，對話品質也還行，但大概聊了二十幾輪就開始噴 429——免費額度見底。OpenRouter 的 free tier 大方是大方，但你不會想拿它當生產環境。</p><p><strong>第三次：gemini-2.5-flash（Google 直連）</strong></p><p>繞過 OpenRouter，直接接 Google API。可以用，但回應速度有夠慢，體感大概 8-10 秒才開始吐字。LINE 聊天機器人等這麼久，使用者早就關掉了。</p><p><strong>第四次：gemini-2.0-flash（Google 直連）</strong></p><p>換同系列的舊版，速度快很多。但免費配額的消耗速度超乎預期，幾個人測試一下午就快撞天花板了。</p><p><strong>第五次：llama-3.3-70b-versatile（Groq）</strong></p><p>Groq 的推論速度是真的猛，回應幾乎是瞬間。但長對話到後面會開始亂碼——中文字亂跳、句子斷在奇怪的地方。短對話用起來真香，長對話直接炸了。</p><p>六次。換了六次模型。</p><p><strong>第六次（最終）：deepseek&#x2F;deepseek-v4-flash:free（OpenRouter）</strong></p><p>DeepSeek V4 Flash 的免費版。1M context window、中文品質好、回應穩定、沒有亂碼。這個組合跑了兩週，零問題。有時候最後才找到的那個選項，反而是從一開始就該試的。</p><hr><h2 id="nginx-的三個坑"><a href="#nginx-的三個坑" class="headerlink" title="nginx 的三個坑"></a>nginx 的三個坑</h2><p>模型搞定之後以為可以收工了。結果 nginx 又給了三堂課。</p><h3 id="坑一：Dashboard-400-Invalid-Host-header"><a href="#坑一：Dashboard-400-Invalid-Host-header" class="headerlink" title="坑一：Dashboard 400 Invalid Host header"></a>坑一：Dashboard 400 Invalid Host header</h3><p>Hermes Dashboard 跑在 localhost:9119，nginx 做反向代理。設定看起來沒問題，但打開瀏覽器就是 400。</p><p>原因是 Dashboard 的 dev server 會驗 Host header，而 nginx 預設把外部的 domain 直接轉過去，Dashboard 不認。解法很直接：</p><figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="section">location</span> /hermes/ &#123;</span><br><span class="line">    <span class="attribute">proxy_pass</span> http://127.0.0.1:9119/;</span><br><span class="line">    <span class="attribute">proxy_set_header</span> Host <span class="number">127.0.0.1:9119</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p>把 Host 硬寫成 localhost 就過了。這種問題文件不會告訴你，因為大部分人不會把 Dashboard 塞在子路徑後面。</p><h3 id="坑二：ERR-TOO-MANY-REDIRECTS"><a href="#坑二：ERR-TOO-MANY-REDIRECTS" class="headerlink" title="坑二：ERR_TOO_MANY_REDIRECTS"></a>坑二：ERR_TOO_MANY_REDIRECTS</h3><p>VM 235 的 nginx 收到 <code>/</code> 的請求，代理到 VM 199 的 port 80。但 199 上面也有一個 nginx，它的規則是「HTTP 一律 301 到 HTTPS」。問題來了：235 已經做了 SSL 終止，送過去的是 HTTP——199 收到 HTTP 就 redirect 回 HTTPS——235 再送一次 HTTP——無限迴圈。</p><p>瀏覽器直接 ERR_TOO_MANY_REDIRECTS。</p><p>解法是讓 199 知道「這個請求其實已經走過 HTTPS 了」：</p><figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># VM 235 的設定</span></span><br><span class="line"><span class="attribute">proxy_set_header</span> X-Forwarded-Proto <span class="variable">$scheme</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment"># VM 199 的判斷</span></span><br><span class="line"><span class="attribute">if</span> (<span class="variable">$http_x_forwarded_proto</span> != <span class="string">&quot;https&quot;</span>) &#123;</span><br><span class="line">    <span class="attribute">return</span> <span class="number">301</span> https://<span class="variable">$host</span><span class="variable">$request_uri</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p>這個 redirect 迴圈在多層代理的架構裡幾乎是必踩的坑。只要你的 SSL 終止點和應用伺服器不在同一台機器，就要想到 <code>X-Forwarded-Proto</code>。</p><h3 id="坑三：Dashboard-安全"><a href="#坑三：Dashboard-安全" class="headerlink" title="坑三：Dashboard 安全"></a>坑三：Dashboard 安全</h3><p>Dashboard 直接暴露在公網上是不行的。加了兩層防護：nginx 的 <code>auth_basic</code> 做基本驗證，再配 <code>fail2ban</code> 擋暴力破解。不是什麼高深的做法，但至少別人不能直接打開你的 AI 助理後台亂設定。</p><hr><h2 id="SOUL-md-人設不生效"><a href="#SOUL-md-人設不生效" class="headerlink" title="SOUL.md 人設不生效"></a>SOUL.md 人設不生效</h2><p>Hermes Agent 有個設計叫 SOUL.md——你把 AI 助理的人格設定寫在這個檔案裡，理論上 Agent 就會照著演。</p><p>理論上。</p><p>實際上透過 LINE Gateway 進來的對話，SOUL.md 完全不生效。AI 助理還是用預設的口吻回答，你寫的「草總」草泥馬人設完全被忽略。查了一輪之後發現這是 Gateway 的已知 Bug（#6731），Gateway 在處理訊息時根本沒有讀 SOUL.md。</p><p>繞路的方式是用環境變數把人設直接注入：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">export</span> HERMES_EPHEMERAL_SYSTEM_PROMPT=<span class="string">&quot;你是「草總」，一隻草泥馬 AI 助理。說話輕鬆幽默，用台灣繁體中文回答。&quot;</span></span><br></pre></td></tr></table></figure><p>環境變數的優先順序比 SOUL.md 高，Gateway 繞不過去。不優雅，但能用。</p><p>另一個相關的問題：免費模型偶爾會亂碼輸出，尤其是回應太長的時候。解法是在 SOUL.md（或環境變數）裡加上嚴格指令：「回答控制在 500 字以內，不要產生亂碼」，再搭配 <code>max_tokens</code> 限制。治標，但夠用。</p><hr><h2 id="最終的模型分工"><a href="#最終的模型分工" class="headerlink" title="最終的模型分工"></a>最終的模型分工</h2><p>一個有趣的發現：與其找一個萬能模型，不如讓不同模型各做各的事。最後的配置是三個模型各司其職：</p><table><thead><tr><th>用途</th><th>模型</th><th>來源</th><th>為什麼</th></tr></thead><tbody><tr><td>主力對話</td><td>deepseek-v4-flash:free</td><td>OpenRouter</td><td>穩定、中文好、1M context</td></tr><tr><td>上下文壓縮</td><td>llama-3.3-70b-versatile</td><td>Groq</td><td>極快，壓縮不需要長對話</td></tr><tr><td>圖片辨識</td><td>gemini-2.0-flash</td><td>Google</td><td>多模態能力強</td></tr></tbody></table><p>Groq 的 Llama 長對話會亂碼，但拿來做上下文壓縮——把長對話摘要成短的——剛好避開它的弱點，同時發揮它的速度優勢。這比「找到一個完美模型」務實得多。</p><hr><h2 id="部署這件事教了我什麼"><a href="#部署這件事教了我什麼" class="headerlink" title="部署這件事教了我什麼"></a>部署這件事教了我什麼</h2><p>整個過程花了大概三天，其中寫 code 的時間不到半天。剩下的時間都在除錯——不是程式的 bug，是架構的 bug。nginx 設定少一行 header、模型 API 突然改 policy、開源專案的已知問題還沒修。</p><p>自架 AI 助理的門檻不在「會不會寫程式」。它在另一個地方：你願不願意在第五次失敗之後，還是冷靜地看 log、查 issue、換一條路試。</p><p>這不是智力問題，是耐心問題。</p><p>而且說實話，DeepSeek V4 Flash 免費版的品質，放在兩年前大概要花不少錢才能買到。開源生態走到今天，16 核 7.2GB RAM 的 VM 就能跑一個有模有樣的 AI 助理，不需要 GPU、不需要付月費。門檻在降低，但要真的把它跑起來、跑穩，你還是得親手摸過每一層。</p><p>沒有捷徑。但至少坑我都幫你踩過了。</p>]]></content>
+      
+      
+      <categories>
+          
+          <category> AI Agent </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> LLM </tag>
+            
+            <tag> AI Agent </tag>
+            
+            <tag> 開源 </tag>
+            
+            <tag> DevOps </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>Claude Code Desktop App 完整教學 — 平行 Session、拖放工作區與整合終端機</title>
       <link href="/2026/05/14/Claude-Code-Desktop-App-%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8-%E5%B9%B3%E8%A1%8C-Session-%E6%8B%96%E6%94%BE%E5%B7%A5%E4%BD%9C%E5%8D%80%E8%88%87%E6%95%B4%E5%90%88%E7%B5%82%E7%AB%AF%E6%A9%9F/"/>
       <url>/2026/05/14/Claude-Code-Desktop-App-%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8-%E5%B9%B3%E8%A1%8C-Session-%E6%8B%96%E6%94%BE%E5%B7%A5%E4%BD%9C%E5%8D%80%E8%88%87%E6%95%B4%E5%90%88%E7%B5%82%E7%AB%AF%E6%A9%9F/</url>
@@ -332,9 +423,9 @@
             
             <tag> 資安 </tag>
             
-            <tag> OpenAI </tag>
-            
             <tag> MCP </tag>
+            
+            <tag> OpenAI </tag>
             
             <tag> Anthropic </tag>
             
@@ -808,11 +899,11 @@
       
         <tags>
             
+            <tag> Performance </tag>
+            
             <tag> Elasticsearch </tag>
             
             <tag> Production </tag>
-            
-            <tag> Performance </tag>
             
             <tag> Operations </tag>
             
@@ -899,9 +990,9 @@
       
         <tags>
             
-            <tag> Elasticsearch </tag>
-            
             <tag> Performance </tag>
+            
+            <tag> Elasticsearch </tag>
             
             <tag> Aggregation </tag>
             
@@ -1056,9 +1147,9 @@
             
             <tag> NVIDIA </tag>
             
-            <tag> Mistral </tag>
-            
             <tag> Gemini </tag>
+            
+            <tag> Mistral </tag>
             
         </tags>
       
@@ -1172,11 +1263,11 @@
       
         <tags>
             
+            <tag> Performance </tag>
+            
             <tag> Elasticsearch </tag>
             
             <tag> Lucene </tag>
-            
-            <tag> Performance </tag>
             
             <tag> internals </tag>
             
@@ -2037,9 +2128,9 @@
             
             <tag> 資安 </tag>
             
-            <tag> OpenAI </tag>
-            
             <tag> MCP </tag>
+            
+            <tag> OpenAI </tag>
             
             <tag> AI 安全 </tag>
             
@@ -2326,9 +2417,9 @@
             
             <tag> AI與科技新聞 </tag>
             
-            <tag> OpenAI </tag>
-            
             <tag> MCP </tag>
+            
+            <tag> OpenAI </tag>
             
             <tag> Claude Code </tag>
             
@@ -3001,11 +3092,11 @@
       
         <tags>
             
-            <tag> AI </tag>
-            
             <tag> Claude </tag>
             
             <tag> Anthropic </tag>
+            
+            <tag> AI </tag>
             
             <tag> 教學 </tag>
             
@@ -4494,9 +4585,9 @@
             
             <tag> 資安 </tag>
             
-            <tag> OpenAI </tag>
-            
             <tag> MCP </tag>
+            
+            <tag> OpenAI </tag>
             
         </tags>
       
@@ -4856,9 +4947,9 @@
             
             <tag> AI與科技新聞 </tag>
             
-            <tag> Apple </tag>
-            
             <tag> MCP </tag>
+            
+            <tag> Apple </tag>
             
             <tag> Anthropic </tag>
             
@@ -5442,9 +5533,9 @@
             
             <tag> Claude </tag>
             
-            <tag> OpenAI </tag>
-            
             <tag> MCP </tag>
+            
+            <tag> OpenAI </tag>
             
         </tags>
       
