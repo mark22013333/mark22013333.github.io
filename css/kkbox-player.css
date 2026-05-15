@@ -92,34 +92,81 @@
   100% { transform: rotate(360deg) scale(1); }
 }
 
-/* Toggle button on screen edge */
+/* Vinyl record toggle button */
 #music-toggle {
   position: fixed;
-  right: 0;
+  right: -4px;
   top: 50%;
   transform: translateY(-50%);
   z-index: 10000;
-  width: 40px;
-  height: 40px;
-  border-radius: 8px 0 0 8px;
-  background: linear-gradient(135deg, #6c5ce7, #1a1a2e);
-  color: #fff;
-  border: none;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  border: 2px solid #1a1a1a;
   cursor: pointer;
-  font-size: 18px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: -2px 2px 8px rgba(0, 0, 0, 0.3);
-  transition: right 0.35s ease;
+  padding: 0;
+  font-size: 0;
+  color: transparent;
+  box-shadow: -2px 2px 12px rgba(0, 0, 0, 0.6);
+  transition: right 0.35s ease, box-shadow 0.3s ease;
+  background:
+    radial-gradient(circle, #ccc 2.5px, transparent 3px),
+    radial-gradient(circle, #a29bfe 6px, #6c5ce7 6.5px, #5b4cc5 10px, #4a3db4 10.5px, transparent 11px),
+    repeating-radial-gradient(circle,
+      transparent 12px, rgba(255,255,255,0.04) 13px, transparent 14px,
+      transparent 15px, rgba(255,255,255,0.03) 16px, transparent 17px,
+      transparent 18px, rgba(255,255,255,0.04) 19px, transparent 20px,
+      transparent 21px, rgba(255,255,255,0.03) 22px, transparent 23px),
+    conic-gradient(from 30deg,
+      rgba(255,255,255,0) 0%,
+      rgba(255,255,255,0.06) 8%,
+      rgba(255,255,255,0) 18%,
+      rgba(255,255,255,0.03) 45%,
+      rgba(255,255,255,0) 55%,
+      rgba(255,255,255,0.06) 75%,
+      rgba(255,255,255,0) 90%);
+  background-color: #111;
 }
 
 #music-toggle.open {
-  right: 360px;
+  right: 364px;
+  animation: vinyl-spin 3s linear infinite;
+  box-shadow: -2px 2px 16px rgba(108, 92, 231, 0.4);
 }
 
-#music-toggle:hover {
-  opacity: 0.9;
+#music-toggle::after {
+  content: '✕';
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.55);
+  color: #fff;
+  font-size: 16px;
+  font-family: sans-serif;
+  opacity: 0;
+  transition: opacity 0.2s;
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+#music-toggle.open:hover {
+  animation-play-state: paused;
+}
+
+#music-toggle.open:hover::after {
+  opacity: 1;
+}
+
+#music-toggle:not(.open):hover {
+  right: 0;
+  box-shadow: -2px 2px 16px rgba(108, 92, 231, 0.5);
+}
+
+@keyframes vinyl-spin {
+  from { transform: translateY(-50%) rotate(0deg); }
+  to { transform: translateY(-50%) rotate(360deg); }
 }
 
 @media screen and (max-width: 768px) {
@@ -129,6 +176,6 @@
     right: -300px;
   }
   #music-toggle.open {
-    right: 300px;
+    right: 304px;
   }
 }

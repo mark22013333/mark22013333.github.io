@@ -60,13 +60,11 @@
   // --- Toggle button (always visible on edge) ---
   var btn = document.createElement('button');
   btn.id = 'music-toggle';
-  btn.innerHTML = '&#9835;';  // ♫
   btn.title = '播放音樂';
 
   btn.addEventListener('click', function () {
     var isOpen = player.classList.toggle('open');
     btn.classList.toggle('open', isOpen);
-    btn.innerHTML = isOpen ? '&#10005;' : '&#9835;';
     btn.title = isOpen ? '關閉播放器' : '播放音樂';
   });
 
