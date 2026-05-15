@@ -191,7 +191,7 @@
 }
 
 #music-toggle.open .mt-arm {
-  transform: rotate(5deg);
+  transform: rotate(20deg);
 }
 
 .mt-arm-pivot {
