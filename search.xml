@@ -4,6 +4,95 @@
   
     
     <entry>
+      <title>Claude Code TDD 工作流完整教學 — 讓 AI 先寫測試再寫程式的正確姿勢</title>
+      <link href="/2026/05/18/Claude-Code-TDD-%E5%B7%A5%E4%BD%9C%E6%B5%81%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8-%E8%AE%93-AI-%E5%85%88%E5%AF%AB%E6%B8%AC%E8%A9%A6%E5%86%8D%E5%AF%AB%E7%A8%8B%E5%BC%8F%E7%9A%84%E6%AD%A3%E7%A2%BA%E5%A7%BF%E5%8B%A2/"/>
+      <url>/2026/05/18/Claude-Code-TDD-%E5%B7%A5%E4%BD%9C%E6%B5%81%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8-%E8%AE%93-AI-%E5%85%88%E5%AF%AB%E6%B8%AC%E8%A9%A6%E5%86%8D%E5%AF%AB%E7%A8%8B%E5%BC%8F%E7%9A%84%E6%AD%A3%E7%A2%BA%E5%A7%BF%E5%8B%A2/</url>
+      
+        <content type="html"><![CDATA[<p>你去餐廳點餐的時候，不會先讓廚師煮完再告訴他你要什麼。你會先點菜——「我要一份牛排，七分熟，不要蘑菇醬」——然後廚師根據你的規格去做。</p><p>寫程式也是一樣。測試就是你的點單。程式碼就是廚師做出來的菜。</p><p>大部分人用 Claude Code 的時候，順序是反的：先叫 AI 寫程式碼，然後自己補測試，發現問題再改。這就像讓廚師先做一道他覺得你應該會喜歡的菜，然後你看了之後說「我其實不吃蘑菇」。浪費時間，浪費食材。</p><p>TDD（Test-Driven Development）把順序翻過來：先寫測試，再寫程式碼，最後重構。跟 Claude Code 搭配的時候，這個順序的效果特別好——因為測試就是最精確的需求規格。你用測試告訴 AI「我要的結果長這樣」，AI 就不用猜了。</p><hr><h2 id="Red-Green-Refactor：三步循環"><a href="#Red-Green-Refactor：三步循環" class="headerlink" title="Red-Green-Refactor：三步循環"></a>Red-Green-Refactor：三步循環</h2><p>TDD 的核心只有三步，用顏色記最快：</p><p><strong>Red</strong> — 寫一個會失敗的測試。這個測試描述你要的行為，但對應的程式碼還不存在，所以它一定會失敗。跑一下確認是紅的。</p><p><strong>Green</strong> — 寫最少的程式碼讓測試通過。不要多寫，不要考慮架構，不要想「順便加個 feature」。目標就是從紅變綠，其他都不管。</p><p><strong>Refactor</strong> — 測試綠了之後，回頭看程式碼有沒有重複、命名有沒有清楚、結構有沒有合理。改的時候隨時跑測試，確保還是綠的。</p><p>然後回到 Red，寫下一個測試。循環。</p><p>這個循環的妙處在於：你永遠知道目前的程式碼是對的。每一步都有測試保護。出問題的時候，只可能是你剛剛改的那幾行。debug 範圍從「整個專案」縮小到「最後三分鐘寫的東西」。</p><hr><h2 id="跟-Claude-Code-搭配的實際做法"><a href="#跟-Claude-Code-搭配的實際做法" class="headerlink" title="跟 Claude Code 搭配的實際做法"></a>跟 Claude Code 搭配的實際做法</h2><p>打開 Claude Code，第一句話不是「幫我寫一個 XXX 功能」。是這樣：</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">幫我寫一個測試，驗證 calculateDiscount 函式的行為：</span><br><span class="line">- 訂單金額超過 1000 元打 9 折</span><br><span class="line">- 超過 5000 元打 85 折</span><br><span class="line">- VIP 會員在上述基礎上再打 95 折</span><br><span class="line">- 金額 &lt;= 0 要拋出 ValueError</span><br><span class="line"></span><br><span class="line">先寫測試就好，不要寫實作。</span><br></pre></td></tr></table></figure><p>Claude Code 會產出一組測試。你跑一下，確認全部失敗（Red）。然後：</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">現在寫 calculateDiscount 的實作，讓所有測試通過。用最簡單的方式，不要過度設計。</span><br></pre></td></tr></table></figure><p>Claude Code 寫完實作，你跑測試，全部綠了（Green）。最後：</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">測試都通過了。看一下實作有沒有可以改善的地方——命名、結構、重複的部分。改完要確保測試還是全部通過。</span><br></pre></td></tr></table></figure><p>三步完成。整個過程你在做的事只有一件：<strong>定義規格</strong>。寫程式碼和重構都交給 AI，但你始終透過測試掌握「對不對」的判斷權。</p><hr><h2 id="為什麼「先測試」對-AI-特別有效"><a href="#為什麼「先測試」對-AI-特別有效" class="headerlink" title="為什麼「先測試」對 AI 特別有效"></a>為什麼「先測試」對 AI 特別有效</h2><p>Claude Code 跟人類工程師有一個根本性的差異：<strong>它不會覺得寫測試很無聊。</strong></p><p>人類工程師做 TDD 的最大障礙是心理的——寫完功能程式碼之後，回頭寫測試感覺像在做重複的事。但如果測試是先寫的，功能程式碼反而變成「把紅的變綠的」的通關遊戲，反而有動力。</p><p>但對 AI 來說，更根本的好處是：<strong>測試消除了需求的模糊性。</strong></p><p>你跟 Claude Code 說「寫一個折扣計算功能」，它要猜你的業務規則。打幾折？什麼條件？例外情況怎麼處理？AI 必須做很多假設，而每個假設都可能是錯的。</p><p>但如果你先寫好測試——<code>assert calculate_discount(1500, is_vip=False) == 1350</code>——AI 不需要猜任何東西。規格就在測試裡，精確到數字。</p><p>結果是：AI 產出的程式碼第一次就對的機率大幅提升，你花在「看 AI 寫的東西對不對」上面的時間大幅下降。</p><hr><p>好，講完理論了。接下來是實戰。</p><hr><h2 id="實戰範例：用-TDD-做一個-URL-短縮服務"><a href="#實戰範例：用-TDD-做一個-URL-短縮服務" class="headerlink" title="實戰範例：用 TDD 做一個 URL 短縮服務"></a>實戰範例：用 TDD 做一個 URL 短縮服務</h2><p>不是完整專案，只抓最核心的邏輯來示範流程。</p><h3 id="Step-1：寫測試（Red）"><a href="#Step-1：寫測試（Red）" class="headerlink" title="Step 1：寫測試（Red）"></a>Step 1：寫測試（Red）</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">我要做一個 URL shortener 的核心邏輯。先幫我寫測試，框架用 pytest：</span><br><span class="line"></span><br><span class="line">1. shorten(url) 回傳一個 6 字元的短碼</span><br><span class="line">2. 同一個 URL 呼叫兩次，回傳同一個短碼</span><br><span class="line">3. resolve(code) 回傳原始 URL</span><br><span class="line">4. resolve 找不到短碼時拋出 KeyError</span><br><span class="line">5. URL 格式不合法（沒有 http/https 開頭）時拋出 ValueError</span><br><span class="line"></span><br><span class="line">只寫測試，不要寫實作。</span><br></pre></td></tr></table></figure><p>Claude Code 會產出大概這樣的東西：</p><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">test_shorten_returns_six_char_code</span>():</span><br><span class="line">    code = shorten(<span class="string">&quot;https://example.com&quot;</span>)</span><br><span class="line">    <span class="keyword">assert</span> <span class="built_in">len</span>(code) == <span class="number">6</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">test_same_url_same_code</span>():</span><br><span class="line">    code1 = shorten(<span class="string">&quot;https://example.com&quot;</span>)</span><br><span class="line">    code2 = shorten(<span class="string">&quot;https://example.com&quot;</span>)</span><br><span class="line">    <span class="keyword">assert</span> code1 == code2</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">test_resolve_returns_original_url</span>():</span><br><span class="line">    code = shorten(<span class="string">&quot;https://example.com&quot;</span>)</span><br><span class="line">    <span class="keyword">assert</span> resolve(code) == <span class="string">&quot;https://example.com&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">test_resolve_unknown_code_raises</span>():</span><br><span class="line">    <span class="keyword">with</span> pytest.raises(KeyError):</span><br><span class="line">        resolve(<span class="string">&quot;nonexist&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">test_invalid_url_raises</span>():</span><br><span class="line">    <span class="keyword">with</span> pytest.raises(ValueError):</span><br><span class="line">        shorten(<span class="string">&quot;not-a-url&quot;</span>)</span><br></pre></td></tr></table></figure><p>跑一下：全部紅的。完美。</p><h3 id="Step-2：寫實作（Green）"><a href="#Step-2：寫實作（Green）" class="headerlink" title="Step 2：寫實作（Green）"></a>Step 2：寫實作（Green）</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">測試寫好了，全部失敗。現在寫 shorten 和 resolve 的實作，讓測試通過。用最簡單的方式。</span><br></pre></td></tr></table></figure><p>Claude Code 會用 hashlib 或隨機生成的方式實作。跑測試——全部綠了。</p><h3 id="Step-3：重構（Refactor）"><a href="#Step-3：重構（Refactor）" class="headerlink" title="Step 3：重構（Refactor）"></a>Step 3：重構（Refactor）</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">測試通過了。看一下有沒有可以改善的地方：</span><br><span class="line">- hash 碰撞怎麼處理？</span><br><span class="line">- 記憶體內的 dict 是否該抽成獨立的 storage 介面？</span><br><span class="line">- 改完確保測試還是全部通過。</span><br></pre></td></tr></table></figure><p>這一步通常會讓 Claude Code 把 storage 抽成一個 protocol&#x2F;interface，方便之後換成 Redis 或資料庫。改完跑測試，還是全綠。</p><p>三步走完，你有了一個有測試保護、結構清楚的核心模組。整個過程大概十分鐘。</p><hr><h2 id="五個常見的坑"><a href="#五個常見的坑" class="headerlink" title="五個常見的坑"></a>五個常見的坑</h2><p><strong>1. AI 寫的測試太寬鬆。</strong> Claude Code 有時候會寫出 <code>assert result is not None</code> 這種什麼都能過的測試。看到這種要立刻改掉——測試的價值在於精確。<code>assert len(code) == 6</code> 比 <code>assert code</code> 有意義得多。</p><p><strong>2. 跳過 Red 階段。</strong> 有人會叫 AI 同時寫測試和實作。不要這樣做。如果你從來沒看到測試失敗過，你不知道測試是不是真的在檢查你以為它在檢查的東西。一個從來沒紅過的測試，跟沒有測試一樣。</p><p><strong>3. Green 階段寫太多。</strong> 叫 AI「讓測試通過」的時候，它有時會順便加你沒要求的功能。加了就加了？不行。額外的功能沒有對應的測試保護，等於是盲區。要嘛補測試，要嘛刪掉。</p><p><strong>4. Refactor 階段改測試。</strong> 重構的對象是程式碼，不是測試。如果你在重構的時候改了測試讓它通過，那不叫重構，叫作弊。測試是你的規格，規格不該在「讓程式碼更好看」的時候被偷改。</p><p><strong>5. 測試之間有依賴。</strong> 每個測試應該獨立執行。如果 test_A 失敗導致 test_B 也失敗，表示它們共用了可變狀態。跟 Claude Code 說：「確保每個測試用獨立的 fixture，不要共用物件。」</p><hr><h2 id="什麼時候不該用-TDD"><a href="#什麼時候不該用-TDD" class="headerlink" title="什麼時候不該用 TDD"></a>什麼時候不該用 TDD</h2><p>有些人的文章會告訴你 TDD 適用於所有場景。這不是真的。</p><p><strong>探索性的 prototype</strong> 不適合。你還在搞清楚「要做什麼」的時候，先寫測試等於在還不知道目的地的情況下規劃路線。先讓 Claude Code 快速做一個 prototype，確認方向對了，再回頭補測試。</p><p><strong>UI 互動邏輯</strong>很難純 TDD。按鈕點下去的視覺回饋、動畫、排版——這些用單元測試驗證不了。用 E2E 測試（Playwright、Cypress）比較實際。</p><p><strong>一次性腳本</strong>也不需要。寫一個跑完就刪的資料遷移腳本，不需要花時間寫測試。直覺判斷：如果這段程式碼兩週後還會存在，就值得寫測試。不會的話，省下來的時間更值錢。</p><hr><h2 id="把-TDD-變成習慣的最小可行改變"><a href="#把-TDD-變成習慣的最小可行改變" class="headerlink" title="把 TDD 變成習慣的最小可行改變"></a>把 TDD 變成習慣的最小可行改變</h2><p>不需要整個專案從頭改成 TDD。挑一個你接下來要做的新功能，只對這個功能試一次完整的 Red-Green-Refactor 循環。</p><p>跟 Claude Code 合作的時候，對話的開頭從「幫我寫 XXX」改成「幫我寫 XXX 的測試」。就這一個改變。</p><p>做完之後你會發現兩件事。第一，AI 產出的程式碼品質明顯提升，因為測試消除了模糊性。第二，你對程式碼的信心提高了，因為任何時候都可以跑測試確認「目前為止做的東西都是對的」。</p><p>這個信心的差別，在專案越來越複雜的時候會越來越明顯。有測試保護的程式碼可以放心重構。沒有的只能小心翼翼地加東西，祈禱不會弄壞已有的功能。</p><p>學完 TDD 之後，自然的下一步是看 Claude Code 的 Sub-agents 和 Agent Teams 怎麼跟測試驅動的工作流整合——讓一個 agent 寫測試、另一個 agent 寫實作、第三個做 code review。但那是另一篇文章的事了。</p><blockquote><p>參考來源：<a href="https://anthropic.skilljar.com/">Claude Code in Action — Anthropic Academy</a></p></blockquote>]]></content>
+      
+      
+      <categories>
+          
+          <category> Claude Code </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> Claude Code </tag>
+            
+            <tag> 教學 </tag>
+            
+            <tag> TDD </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>AI 與科技新聞摘要 - 2026/05/18</title>
+      <link href="/2026/05/18/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260518/"/>
+      <url>/2026/05/18/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260518/</url>
+      
+        <content type="html"><![CDATA[<p>18 個月。</p><p>微軟 AI 主管 Mustafa Suleyman 說，再過一年半，所有坐在電腦前面的白領工作都會被 AI 自動化。律師、會計師、行銷、專案管理——全部。</p><p>同一週，Apple 宣布 iOS 27 會讓你把 Claude 或 Gemini 設成預設 AI，結束 ChatGPT 獨佔兩年的局面。Meta 的 Avocado 模型再次跳票，1,350 億美元的 AI 投資被華爾街盯著看。歐洲的 AI 資料中心發現自己被電價和電網卡住。Anthropic 則簽下 SpaceX 的 Colossus 1 資料中心——22 萬顆 NVIDIA GPU——然後把 Claude Code 的使用限速翻了一倍。</p><p>五條新聞，一個共同訊號：AI 產業正在從「模型夠不夠強」的問題，轉向「基礎設施撐不撐得住」。</p><hr><h2 id="Apple-iOS-27：iPhone-的-AI-不再只有-ChatGPT"><a href="#Apple-iOS-27：iPhone-的-AI-不再只有-ChatGPT" class="headerlink" title="Apple iOS 27：iPhone 的 AI 不再只有 ChatGPT"></a>Apple iOS 27：iPhone 的 AI 不再只有 ChatGPT</h2><p>Apple 確認 iOS 27、iPadOS 27 和 macOS 27 將開放第三方 AI 服務作為 Apple Intelligence 的預設選項。使用者可以在 Writing Tools、Image Playground、Siri 等系統功能裡，選擇 Claude、Gemini 或其他 AI 來取代 ChatGPT。</p><p>技術上，這是透過一個新的「Extensions」架構實現的。任何 AI 供應商只要支援這個 API，就能直接嵌入 iOS 的系統層級功能。Siri 甚至會支援第三方語音，讓使用者分辨現在回答你的是 Siri 本人還是 Claude。</p><p>預計六月八號 WWDC 正式公布，秋季隨 iOS 27 上線。</p><p><strong>為什麼重要？</strong></p><p>ChatGPT 從 2024 年底 iOS 18.2 開始獨佔 Apple Intelligence，整整一年多。這段時間，OpenAI 是唯一能進入十億台 iPhone 系統層級的 AI 公司。現在 Apple 打算讓所有人都進來。</p><p>表面上這對 Anthropic 和 Google 是好消息。但換一個角度想：Apple 為什麼要開放？</p><p>一個可能的答案：ChatGPT 的表現沒有好到讓 Apple 願意繼續押注在單一供應商上。開放是 Apple 的避險動作——如果一家 AI 出問題，使用者可以自己切換。Apple 不想承擔「我們選的 AI 搞砸了」的品牌風險。</p><p>更深一層的影響在於：一旦 AI 選擇權交給使用者，<strong>模型之間的競爭場域就從「誰拿到平台合約」變成「誰在日常體驗裡勝出」</strong>。這是完全不同的戰爭。ChatGPT 可能輸在反應速度。Claude 可能輸在多模態。Gemini 可能靠 Google 生態系的整合度勝出。十億使用者的日常偏好，會比任何 benchmark 都更殘酷地揭示誰真的好用。</p><blockquote><p>原文來源：<a href="https://www.macrumors.com/2026/05/05/ios-27-third-party-chatbots-apple-intelligence/">iOS 27 Will Let You Pick Claude or Gemini Instead of ChatGPT — MacRumors</a><br>原文來源：<a href="https://9to5mac.com/2026/05/05/ios-27-will-let-you-choose-between-gemini-claude-and-more-for-ai-features-report/">iOS 27 will let you choose between Gemini, Claude, and more — 9to5Mac</a></p></blockquote><hr><p>十億使用者的手機上要跑 AI 了。那問題來了——跑這些 AI 的電從哪裡來？</p><hr><h2 id="歐洲-AI-資料中心：被電價和電網雙殺"><a href="#歐洲-AI-資料中心：被電價和電網雙殺" class="headerlink" title="歐洲 AI 資料中心：被電價和電網雙殺"></a>歐洲 AI 資料中心：被電價和電網雙殺</h2><p>歐洲五大資料中心市場——法蘭克福、倫敦、阿姆斯特丹、巴黎、都柏林——今年的容量取得成本預計再漲 12%。歐洲的工業電價平均是美國的兩倍、比中國和印度高 50%。</p><p>但價格還不是最狠的。</p><p>電網連接等待時間才是真正的殺手。在歐洲和北美的成熟市場，新的大規模電網連接平均要等 7 到 10 年，有些案子拖到 13 年。都柏林和阿姆斯特丹已經暫停接受新的資料中心申請，因為電網根本接不上。</p><p><strong>為什麼重要？</strong></p><p>AI 競賽正在從「誰的演算法最強」變成「誰的電最便宜」。美國有便宜的天然氣和相對寬鬆的電網審批。中國有國家級的電力基礎設施調度能力。歐洲兩者都沒有。</p><p>這不是短期的挑戰，是結構性的劣勢。你可以在三個月內開發一個新模型，但你沒辦法在三個月內蓋一條高壓電纜。電力基礎設施的建設週期是用「十年」計的，而 AI 產業的成長是用「季」計的。當需求成長的速度超過基礎設施供應的速度，結果不是「慢一點」——是整塊區域被排除在競爭之外。</p><p>歐盟正在擬定資料中心能效標章制度。但標章解決不了電網容量不足的問題。標章告訴你哪個資料中心比較省電，但如果根本連不上電網，省不省電都是空談。</p><blockquote><p>原文來源：<a href="https://www.cnbc.com/2026/05/18/europe-ai-energy-electricity-costs-data-centers-china-us.html">High energy prices could derail Europe’s AI race — CNBC</a><br>原文來源：<a href="https://www.euronews.com/next/2026/05/05/europe-is-hungry-for-ai-data-centres-but-its-energy-grid-cannot-feed-them">Europe is hungry for AI data centres — but its energy grid cannot feed them — Euronews</a></p></blockquote><hr><p>電力是硬限制。但有一家公司的限制不在電力，在模型本身。</p><hr><h2 id="Meta-Avocado-模型再跳票：1-350-億美元賭注被盯上了"><a href="#Meta-Avocado-模型再跳票：1-350-億美元賭注被盯上了" class="headerlink" title="Meta Avocado 模型再跳票：1,350 億美元賭注被盯上了"></a>Meta Avocado 模型再跳票：1,350 億美元賭注被盯上了</h2><p>Meta 的 AI 模型 Avocado 原本預計 2025 年底發布，先延到 2026 年三月，再延到五月。現在五月過了一半，依然沒有消息。</p><p>內部測試的結果是問題所在。Avocado 的表現落在 Google Gemini 2.5 和 Gemini 3.0 之間——比 Meta 自家的 Llama 4 強，但追不上 OpenAI、Anthropic 和 Google 的頂級模型。內部討論過臨時授權 Google 的 Gemini 來補缺口，但還沒有做決定。</p><p>同時，Meta 今年的 AI 資本支出預算是 1,150 億到 1,350 億美元。華爾街開始問：這麼大的投入，什麼時候能看到跟投入規模匹配的產出？</p><p><strong>為什麼重要？</strong></p><p>怎樣讓一筆 1,350 億的投資一定失敗？答案很簡單——把錢花在追趕一個移動目標上。</p><p>Meta 的問題不是技術能力不夠。是它在追一場別人定義規則的比賽。OpenAI 和 Anthropic 用閉源模型建立了品牌認知。Google 用 Gemma 4 Apache 2.0 搶走了 Meta 關閉 Llama 開源後留下的空間。Meta 同時被擠出了閉源的頂端和開源的主流——兩頭不到岸。</p><p>歷史上有一個 pattern：當一家公司反覆延後核心產品的發布時間，通常代表內部對產品方向有根本性的分歧，而不是單純的技術挑戰。Avocado 跳票的次數本身就是訊號。</p><p>Meta 已經公布了後繼模型代號——Watermelon 和 Mango。但如果 Avocado 的問題是方向性的而不是工程性的，換名字不會解決問題。</p><blockquote><p>原文來源：<a href="https://www.techbuzz.ai/articles/meta-s-avocado-ai-model-delayed-as-internal-tensions-rise">Meta’s Avocado AI Model Delayed as Internal Tensions Rise — TechBuzz</a><br>原文來源：<a href="https://www.pymnts.com/news/artificial-intelligence/2026/meta-avocado-delay-puts-135-billion-dollar-ai-bet-under-scrutiny/">Meta’s Avocado Delay Puts $135 Billion AI Bet Under Scrutiny — PYMNTS</a></p></blockquote><hr><h2 id="微軟-AI-主管：18-個月，白領工作全面自動化"><a href="#微軟-AI-主管：18-個月，白領工作全面自動化" class="headerlink" title="微軟 AI 主管：18 個月，白領工作全面自動化"></a>微軟 AI 主管：18 個月，白領工作全面自動化</h2><p>五月十六號，微軟 AI CEO Mustafa Suleyman 做了一個非常明確的預測：未來 12 到 18 個月內，AI 將在幾乎所有坐電腦的專業工作中達到人類水準。他點名了律師、會計師、行銷和專案管理。</p><p>他的核心論點是：組織可以把 AI 技術「改裝」到任何需要的職能上。他的使命是實現「超智慧」。</p><p>Thomson Reuters 2025 年的報告提供了一個不同視角：律師和會計師確實在用 AI 做文件審閱和例行分析，但實際生產力改善幅度「有限」，離大規模取代還很遠。</p><p><strong>為什麼重要？</strong></p><p>這個預測最有意思的地方不是它對不對，是誰說的。</p><p>微軟 AI CEO 做出「18 個月全面自動化」的公開宣言，這不是分析——是定價。他在告訴企業客戶：「如果你現在不投資 AI 轉型，18 個月後你會落後到追不上。」這個預測的功能不是描述未來，是製造緊迫感來推動採購決策。</p><p>但精準的預測在複雜系統裡幾乎不可能。AI 自動化的瓶頸不在技術，在組織。一家律所可能三個月就能部署 AI 文件審閱，但改變律師的工作流程、重新定義計費方式、處理法規合規問題——這些每一項都需要年計的時間。</p><p>18 個月可能是技術上的正確時間框架。但技術從來不是唯一的變數。</p><blockquote><p>原文來源：<a href="https://fortune.com/article/why-microsoft-ai-chief-mustafa-suleyman-predicts-ai-automation-18-months/">Microsoft AI chief gives it 18 months for all white-collar work to be automated — Fortune</a><br>原文來源：<a href="https://finance.yahoo.com/news/microsoft-ai-chief-white-collar-203951888.html">Microsoft AI Chief: White-Collar Jobs Face Automation Within 18 Months — Yahoo Finance</a></p></blockquote><hr><p>有人在做預測，有人在做基礎建設。</p><hr><h2 id="Anthropic-拿下-SpaceX-22-萬顆-GPU，Claude-Code-限速翻倍"><a href="#Anthropic-拿下-SpaceX-22-萬顆-GPU，Claude-Code-限速翻倍" class="headerlink" title="Anthropic 拿下 SpaceX 22 萬顆 GPU，Claude Code 限速翻倍"></a>Anthropic 拿下 SpaceX 22 萬顆 GPU，Claude Code 限速翻倍</h2><p>五月六號，Anthropic 宣布簽下 SpaceX Colossus 1 資料中心的全部算力——超過 22 萬顆 NVIDIA GPU，300 百萬瓦的容量。</p><p>伴隨這筆交易，Claude Code 在 Pro、Max、Team 和 Enterprise 方案的五小時使用限速全部翻倍。同時取消了 Pro 和 Max 方案的尖峰時段限速降級。API 端也大幅提升——Tier 1 用戶的每分鐘輸入 token 上限從 3 萬跳到 50 萬，輸出從 8 千跳到 8 萬。</p><p><strong>為什麼重要？</strong></p><p>這是一筆典型的「先鎖定資源再找需求」的交易。</p><p>22 萬顆 GPU 不便宜。Anthropic 在還沒確定這些算力全部能被填滿的情況下就先買下來，靠的是一個賭注：Claude Code 的使用量會繼續指數成長。翻倍限速是為了讓這個賭注自我實現——使用限制是目前 Claude Code 使用者抱怨最多的問題，鬆綁之後用量應該會再衝一波。</p><p>結合上週報導的 Agent SDK 獨立計費（六月十五號起生效），Anthropic 的策略很清楚：先用翻倍限速把使用者吸進來，等使用量穩定之後再把 agent 用量獨立計價。進門的時候很舒服，進來之後再調整計費結構。</p><p>不是壞事，但使用者要清楚自己在這個時間線上的位置。現在的翻倍限速是甜蜜期。六月之後的計費結構才是長期狀態。</p><blockquote><p>原文來源：<a href="https://www.anthropic.com/news/higher-limits-spacex">Higher usage limits for Claude and a compute deal with SpaceX — Anthropic</a><br>原文來源：<a href="https://www.engadget.com/2166315/anthropic-is-doubling-claude-code-rate-limits-after-deal-with-spacex/">Anthropic is doubling Claude Code rate limits after deal with SpaceX — Engadget</a></p></blockquote><hr><p>五條新聞，一條結構線。</p><p>Apple 打開 iPhone 的 AI 大門。微軟的 AI 主管在催促企業加速投資。Meta 的模型追不上對手。歐洲的電網跟不上需求。Anthropic 在搶 GPU。</p><p>每一條新聞背後都在指向同一個瓶頸：<strong>AI 的能力已經超前基礎設施的承載力。</strong></p><p>模型的進步是對數成長——前面衝得快，後面會趨緩。但基礎設施的擴張是線性的——蓋一條電纜、建一座資料中心、訓練一批工程師，每一步都有物理世界的時間限制。當對數曲線和線性曲線交叉的時候，瓶頸就出現了。</p><p>現在就是那個交叉點。Meta 花 1,350 億追模型能力，但模型能力的邊際回報正在遞減。歐洲想建 AI 產業，但電網要等十年。Anthropic 搶到 22 萬顆 GPU，但 GPU 本身也是有限資源。</p><p>AI 的下一場戰爭不在演算法裡。在電線、合約和資料中心的混凝土地板上。</p>]]></content>
+      
+      
+      <categories>
+          
+          <category> AI與科技新聞 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> AI與科技新聞 </tag>
+            
+            <tag> Apple </tag>
+            
+            <tag> Anthropic </tag>
+            
+            <tag> AI 產業 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>OpenClaw 101 — 七天從零部署你的 AI 私人助理</title>
+      <link href="/2026/05/18/OpenClaw-101-%E4%B8%83%E5%A4%A9%E5%BE%9E%E9%9B%B6%E9%83%A8%E7%BD%B2%E4%BD%A0%E7%9A%84-AI-%E7%A7%81%E4%BA%BA%E5%8A%A9%E7%90%86/"/>
+      <url>/2026/05/18/OpenClaw-101-%E4%B8%83%E5%A4%A9%E5%BE%9E%E9%9B%B6%E9%83%A8%E7%BD%B2%E4%BD%A0%E7%9A%84-AI-%E7%A7%81%E4%BA%BA%E5%8A%A9%E7%90%86/</url>
+      
+        <content type="html"><![CDATA[<p>大部分 AI 聊天機器人解決的是「回答問題」這個問題。但真正浪費你時間的，不是等答案——是你根本不知道今天該先做什麼。</p><p>每天早上打開 email、行事曆、Slack，花二十分鐘搞清楚今天的優先順序。這件事不需要你來做。需要的是一個看得到你所有資料、而且會主動整理好再推給你的助理。</p><p>OpenClaw 就是這個東西。</p><hr><h2 id="一句話講完：可以自己架設的-ChatGPT-Siri-自動化工作流"><a href="#一句話講完：可以自己架設的-ChatGPT-Siri-自動化工作流" class="headerlink" title="一句話講完：可以自己架設的 ChatGPT + Siri + 自動化工作流"></a>一句話講完：可以自己架設的 ChatGPT + Siri + 自動化工作流</h2><p>跟普通 AI 聊天機器人的差別在哪？普通聊天機器人是你問它答。OpenClaw 不一樣——你不問它，它也會動。</p><p>它可以定時掃描你的 Gmail，把未讀郵件按緊急程度分類，然後用 Telegram 推給你。可以每週自動搜集競品動態、產出分析報告。可以在你什麼都沒說的情況下，每天早上九點整理好今天的行事曆摘要。</p><p>而且所有資料都留在你自己的設備上，不經過任何第三方雲端服務。</p><p>這聽起來像是要寫很多程式。其實不用。<a href="https://github.com/mengjian-github/openclaw101">OpenClaw 101</a> 這個 repo 用七天課程帶你從零開始，每天大概花一到兩小時，第七天你就有一個跑在自己機器上的 AI 助理了。</p><hr><h2 id="讓-AI-懂你的關鍵：三個-Markdown-檔案"><a href="#讓-AI-懂你的關鍵：三個-Markdown-檔案" class="headerlink" title="讓 AI 懂你的關鍵：三個 Markdown 檔案"></a>讓 AI 懂你的關鍵：三個 Markdown 檔案</h2><p>OpenClaw 最有意思的設計，是它定義 AI 行為的方式。</p><p>想像你今天請了一個真人助理。第一天你不會直接丟工作給他，你會先跟他說：你是什麼個性、我的工作習慣是什麼、哪些事你可以自己做哪些要先問我。</p><p>OpenClaw 把這三件事變成三個 Markdown 檔：</p><p><strong>SOUL.md</strong> 定義助理的性格和行為邊界——講話風格、什麼事絕對不能做、遇到不確定的情況怎麼處理。<strong>USER.md</strong> 放你的個人資訊——時區、工作時段、偏好的通知頻率、常用工具清單。<strong>AGENTS.md</strong> 設定工作規範——哪些操作可以自己執行、哪些要先確認、自動化任務的觸發條件。</p><p>如果你用過 Claude Code 的 CLAUDE.md，這套設計會覺得很熟悉。核心概念完全一樣：用純文字檔定義 AI 的行為邊界。差別在於 OpenClaw 拆成三份，讓職責更清楚。</p><p>不過「具體」是關鍵。「幫我處理郵件」太籠統，等於沒說。「每天早上 9 點整理未讀郵件，按緊急 &#x2F; 重要分類，標題超過三行的自動摘要，透過 Telegram 傳給我」——這才是 AI 能執行的指令。</p><hr><h2 id="七天課程長什麼樣"><a href="#七天課程長什麼樣" class="headerlink" title="七天課程長什麼樣"></a>七天課程長什麼樣</h2><p>Day 1 搞懂 OpenClaw 跟聊天機器人的差別。Day 2 用一行指令裝好，連上 Telegram Bot。Day 3 寫你的「靈魂三件套」。Day 4 裝 Gmail、行事曆、搜尋引擎這些真正有用的技能。Day 5 深入理解 Skills 系統的安裝、優先級和組合策略。Day 6 設定 Heartbeat 定時任務和三層記憶系統。Day 7 學會自己開發 Skill、多設備協作、安全檢查。</p><p>整個過程需要的前置條件不多：一台 Linux 伺服器（或 Mac）、Node.js 18 以上、一個 LLM API key（推薦 Claude）、一個 Telegram Bot Token。雲端主機大概每月五美元就夠了。</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl -fsSL https://openclaw.ai/install.sh | bash</span><br></pre></td></tr></table></figure><p>一行搞定安裝。比你想的簡單很多。</p><hr><h2 id="實際用起來的三個場景"><a href="#實際用起來的三個場景" class="headerlink" title="實際用起來的三個場景"></a>實際用起來的三個場景</h2><p><strong>晨間簡報</strong>是最直覺的用法。每天早上九點，助理自動整理未讀郵件加今日行事曆加你關注的數據指標，濃縮成一段訊息傳到 Telegram。你原本要打開三個 app 掃二十分鐘的事，變成在手機上讀三十秒。</p><p><strong>郵件自動分類</strong>更實用。Gmail Skill 會自動掃描新郵件，重要的立刻推播通知，不重要的每天彙整一次。你不用再被通知轟炸，但也不會漏掉關鍵訊息。</p><p><strong>競品監控</strong>是進階玩法。設定 Cron 定時任務，每週自動搜尋競品動態、產出分析報告。一般公司裡這件事要一個人花半天去做，現在變成自動跑。</p><hr><p>等等，先不要急著裝。</p><hr><h2 id="你應該知道的風險"><a href="#你應該知道的風險" class="headerlink" title="你應該知道的風險"></a>你應該知道的風險</h2><p>ClawHub 技能市場有安全問題。不是理論上的風險——已經有安全研究發現超過 340 個惡意技能和將近 1,500 個惡意 payload 散佈在平台上。安裝技能之前，先看來源、看評價、看 issue。不要無腦 <code>clawdhub install</code>。</p><p>LLM API 費用也要注意。OpenClaw 的 Heartbeat 機制會定期消耗 token 來維持助理的「心跳」——檢查有沒有新任務、有沒有新郵件。技能裝太多的話，每次心跳掃描的範圍就越大，token 燒得越快。建議一開始只裝你真正需要的兩三個技能，跑一週看看帳單再決定要不要加。</p><p>還有一點：OpenClaw 101 是社群維護的學習資源，不是 OpenClaw 官方出品。內容品質不錯，但更新速度不一定跟得上官方版本變動。遇到指令跑不通的時候，先去官方文件確認。</p><hr><h2 id="這件事真正在解決什麼問題"><a href="#這件事真正在解決什麼問題" class="headerlink" title="這件事真正在解決什麼問題"></a>這件事真正在解決什麼問題</h2><p>表面上看，OpenClaw 解決的是「自動化日常任務」。但往下想一層，它解決的其實是一個更根本的問題：<strong>你的注意力應該花在哪裡。</strong></p><p>大部分人每天有三到四個小時的深度工作時間。剩下的時間花在收信、看通知、整理資料、回覆不重要的訊息。這些事情不難，但加起來佔掉你一天裡最多的時間。</p><p>把這些事交給一個住在你自己伺服器上的 AI，不是偷懶——是讓你的深度工作時間不被瑣事切碎。</p><p>能不能做到完全自動化？當然不行。SOUL.md 寫得再好，助理還是會犯錯，還是需要你定期校正。但「偶爾校正一下 AI」跟「每天親自做兩小時瑣事」，時間成本差了一個數量級。</p><p>背後的選擇其實就兩個：你是要繼續用自己的注意力去處理低價值任務，還是把這些任務的執行權交出去，只保留最後的判斷權。</p><p>OpenClaw 不是唯一的選項，但它是目前少數可以完全自架、資料不離開你設備的選項。這個特性對在意隱私的人來說，可能比任何功能都重要。</p><blockquote><p>相關資源：<a href="https://github.com/mengjian-github/openclaw101">OpenClaw 101 GitHub</a> ｜ <a href="https://openclaw.ai/">OpenClaw 官方文件</a></p></blockquote>]]></content>
+      
+      
+      <categories>
+          
+          <category> AI 開發工具 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> AI Agent </tag>
+            
+            <tag> 開源 </tag>
+            
+            <tag> 自動化 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>168 斷食不是節食 — 一個工程師拆解間歇性斷食的運作原理</title>
       <link href="/2026/05/17/168-%E6%96%B7%E9%A3%9F%E4%B8%8D%E6%98%AF%E7%AF%80%E9%A3%9F-%E4%B8%80%E5%80%8B%E5%B7%A5%E7%A8%8B%E5%B8%AB%E6%8B%86%E8%A7%A3%E9%96%93%E6%AD%87%E6%80%A7%E6%96%B7%E9%A3%9F%E7%9A%84%E9%81%8B%E4%BD%9C%E5%8E%9F%E7%90%86/"/>
       <url>/2026/05/17/168-%E6%96%B7%E9%A3%9F%E4%B8%8D%E6%98%AF%E7%AF%80%E9%A3%9F-%E4%B8%80%E5%80%8B%E5%B7%A5%E7%A8%8B%E5%B8%AB%E6%8B%86%E8%A7%A3%E9%96%93%E6%AD%87%E6%80%A7%E6%96%B7%E9%A3%9F%E7%9A%84%E9%81%8B%E4%BD%9C%E5%8E%9F%E7%90%86/</url>
@@ -20,9 +109,9 @@
       
         <tags>
             
-            <tag> 168斷食 </tag>
-            
             <tag> 健康 </tag>
+            
+            <tag> 168斷食 </tag>
             
             <tag> 工程師生活 </tag>
             
@@ -177,9 +266,9 @@
             
             <tag> 開源 </tag>
             
-            <tag> AI 開發工具 </tag>
-            
             <tag> macOS </tag>
+            
+            <tag> AI 開發工具 </tag>
             
         </tags>
       
@@ -204,9 +293,9 @@
       
         <tags>
             
-            <tag> AI Agent </tag>
-            
             <tag> Claude Code </tag>
+            
+            <tag> AI Agent </tag>
             
             <tag> 教學 </tag>
             
@@ -481,9 +570,9 @@
       
         <tags>
             
-            <tag> AI Agent </tag>
-            
             <tag> Claude Code </tag>
+            
+            <tag> AI Agent </tag>
             
             <tag> 自動化 </tag>
             
@@ -636,9 +725,9 @@
       
         <tags>
             
-            <tag> AI Agent </tag>
-            
             <tag> Claude Code </tag>
+            
+            <tag> AI Agent </tag>
             
             <tag> GitHub </tag>
             
@@ -1331,9 +1420,9 @@
             
             <tag> NVIDIA </tag>
             
-            <tag> Mistral </tag>
-            
             <tag> Gemini </tag>
+            
+            <tag> Mistral </tag>
             
         </tags>
       
@@ -1823,9 +1912,9 @@
             
             <tag> MCP </tag>
             
-            <tag> AI Agent </tag>
-            
             <tag> Claude Code </tag>
+            
+            <tag> AI Agent </tag>
             
             <tag> 教學 </tag>
             
@@ -1887,9 +1976,9 @@
       
         <tags>
             
-            <tag> 168斷食 </tag>
-            
             <tag> 健康 </tag>
+            
+            <tag> 168斷食 </tag>
             
             <tag> 生產力 </tag>
             
@@ -2120,9 +2209,9 @@
             
             <tag> 自動化 </tag>
             
-            <tag> 教學 </tag>
-            
             <tag> Hooks </tag>
+            
+            <tag> 教學 </tag>
             
         </tags>
       
@@ -2182,9 +2271,9 @@
       
         <tags>
             
-            <tag> 168斷食 </tag>
-            
             <tag> 健康 </tag>
+            
+            <tag> 168斷食 </tag>
             
             <tag> 工程師生活 </tag>
             
@@ -2217,9 +2306,9 @@
             
             <tag> Claude Code </tag>
             
-            <tag> Codex </tag>
-            
             <tag> Windsurf </tag>
+            
+            <tag> Codex </tag>
             
         </tags>
       
@@ -2436,9 +2525,9 @@
       
         <tags>
             
-            <tag> AI Agent </tag>
-            
             <tag> Claude Code </tag>
+            
+            <tag> AI Agent </tag>
             
             <tag> Agent Skills </tag>
             
@@ -2469,9 +2558,9 @@
       
         <tags>
             
-            <tag> AI Agent </tag>
-            
             <tag> Claude Code </tag>
+            
+            <tag> AI Agent </tag>
             
             <tag> GitHub Copilot </tag>
             
@@ -2535,11 +2624,11 @@
       
         <tags>
             
+            <tag> Claude Code </tag>
+            
             <tag> AI Agent </tag>
             
             <tag> 開源 </tag>
-            
-            <tag> Claude Code </tag>
             
             <tag> Prompt Engineering </tag>
             
@@ -2696,13 +2785,13 @@
             
             <tag> GitHub </tag>
             
+            <tag> TDD </tag>
+            
             <tag> GH-300 </tag>
             
             <tag> Responsible AI </tag>
             
             <tag> SDD </tag>
-            
-            <tag> TDD </tag>
             
         </tags>
       
@@ -2795,9 +2884,9 @@
             
             <tag> Claude Code </tag>
             
-            <tag> 教學 </tag>
-            
             <tag> Hooks </tag>
+            
+            <tag> 教學 </tag>
             
             <tag> Monitor Tool </tag>
             
@@ -2888,9 +2977,9 @@
       
         <tags>
             
-            <tag> AI Agent </tag>
-            
             <tag> Claude Code </tag>
+            
+            <tag> AI Agent </tag>
             
             <tag> Skills </tag>
             
@@ -3111,9 +3200,9 @@
       
         <tags>
             
-            <tag> AI Agent </tag>
-            
             <tag> Claude Code </tag>
+            
+            <tag> AI Agent </tag>
             
             <tag> DevOps </tag>
             
@@ -3276,9 +3365,9 @@
       
         <tags>
             
-            <tag> Claude </tag>
-            
             <tag> AI </tag>
+            
+            <tag> Claude </tag>
             
             <tag> Anthropic </tag>
             
@@ -3377,9 +3466,9 @@
             
             <tag> 微軟課程 </tag>
             
-            <tag> SDD </tag>
-            
             <tag> TDD </tag>
+            
+            <tag> SDD </tag>
             
         </tags>
       
@@ -3778,11 +3867,11 @@
       
         <tags>
             
+            <tag> Claude Code </tag>
+            
             <tag> Cursor </tag>
             
             <tag> Copilot </tag>
-            
-            <tag> Claude Code </tag>
             
             <tag> 開發工具 </tag>
             
@@ -3937,9 +4026,9 @@
             
             <tag> LLM </tag>
             
-            <tag> 理財 </tag>
-            
             <tag> AI Agent </tag>
+            
+            <tag> 理財 </tag>
             
             <tag> 開源 </tag>
             
@@ -4206,11 +4295,11 @@
             
             <tag> AI與科技新聞 </tag>
             
+            <tag> Claude Code </tag>
+            
             <tag> Gemini </tag>
             
             <tag> 理財 </tag>
-            
-            <tag> Claude Code </tag>
             
         </tags>
       
@@ -4266,9 +4355,9 @@
             
             <tag> MCP </tag>
             
-            <tag> AI Agent </tag>
-            
             <tag> Claude Code </tag>
+            
+            <tag> AI Agent </tag>
             
         </tags>
       
@@ -4471,9 +4560,9 @@
       
         <tags>
             
-            <tag> AI Agent </tag>
-            
             <tag> Claude Code </tag>
+            
+            <tag> AI Agent </tag>
             
             <tag> Code Review </tag>
             
@@ -4562,9 +4651,9 @@
             
             <tag> LLM </tag>
             
-            <tag> AI Agent </tag>
-            
             <tag> Claude Code </tag>
+            
+            <tag> AI Agent </tag>
             
         </tags>
       
@@ -4709,9 +4798,9 @@
             
             <tag> MCP </tag>
             
-            <tag> AI Agent </tag>
-            
             <tag> Claude Code </tag>
+            
+            <tag> AI Agent </tag>
             
             <tag> Rust </tag>
             
@@ -4978,9 +5067,9 @@
             
             <tag> 自動化 </tag>
             
-            <tag> 教學 </tag>
-            
             <tag> macOS </tag>
+            
+            <tag> 教學 </tag>
             
         </tags>
       
@@ -5481,9 +5570,9 @@
       
         <tags>
             
-            <tag> AI Agent </tag>
-            
             <tag> Claude Code </tag>
+            
+            <tag> AI Agent </tag>
             
             <tag> Skills </tag>
             
@@ -5593,9 +5682,9 @@
       
         <tags>
             
-            <tag> AI Agent </tag>
-            
             <tag> Claude Code </tag>
+            
+            <tag> AI Agent </tag>
             
             <tag> 自動化 </tag>
             
@@ -5964,9 +6053,9 @@
             
             <tag> Java </tag>
             
-            <tag> Collections </tag>
-            
             <tag> Stream </tag>
+            
+            <tag> Collections </tag>
             
         </tags>
       
@@ -6070,9 +6159,9 @@
             
             <tag> Java </tag>
             
-            <tag> Collections </tag>
-            
             <tag> Stream </tag>
+            
+            <tag> Collections </tag>
             
         </tags>
       
@@ -6099,9 +6188,9 @@
             
             <tag> Java </tag>
             
-            <tag> JSON </tag>
-            
             <tag> Stream </tag>
+            
+            <tag> JSON </tag>
             
         </tags>
       
@@ -6228,9 +6317,9 @@
       
         <tags>
             
-            <tag> JSON </tag>
-            
             <tag> Collections </tag>
+            
+            <tag> JSON </tag>
             
         </tags>
       
