@@ -4,6 +4,99 @@
   
     
     <entry>
+      <title>Claude Code Agent View 完整教學 — 在一個終端機裡同時管理多個 AI 任務</title>
+      <link href="/2026/05/19/Claude-Code-Agent-View-%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8-%E5%9C%A8%E4%B8%80%E5%80%8B%E7%B5%82%E7%AB%AF%E6%A9%9F%E8%A3%A1%E5%90%8C%E6%99%82%E7%AE%A1%E7%90%86%E5%A4%9A%E5%80%8B-AI-%E4%BB%BB%E5%8B%99/"/>
+      <url>/2026/05/19/Claude-Code-Agent-View-%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8-%E5%9C%A8%E4%B8%80%E5%80%8B%E7%B5%82%E7%AB%AF%E6%A9%9F%E8%A3%A1%E5%90%8C%E6%99%82%E7%AE%A1%E7%90%86%E5%A4%9A%E5%80%8B-AI-%E4%BB%BB%E5%8B%99/</url>
+      
+        <content type="html"><![CDATA[<p>昨天下午我同時開了四個 Claude Code session。一個在寫測試、一個在重構 API 層、一個在改 CI pipeline、還有一個在幫另一個 repo 做 code review。四個 terminal tab，四個不同的 context，我得不斷切來切去——第三個問我要不要執行 <code>rm -rf dist/</code>，我差點在第一個的 tab 裡按了 Enter。</p><p><strong>四個 terminal tab 管四個 AI，你管理的不是任務，是 tab 焦慮。</strong></p><p>這週我改用 <code>claude agents</code> 做同樣的事。一個畫面，四個任務排成清單，哪個在跑、哪個等我回覆、哪個做完了，一目瞭然。空白鍵看一眼最新回應，需要介入再按 Enter 跳進去。</p><hr><h2 id="工頭不用親自搬磚"><a href="#工頭不用親自搬磚" class="headerlink" title="工頭不用親自搬磚"></a>工頭不用親自搬磚</h2><p>工地上有個角色叫工頭。工頭不砌牆、不拉線、不灌水泥。他站在一個可以看到整個工地的位置，手上一張清單：A 區在灌漿、B 區等材料、C 區完工待驗收。哪邊出狀況他走過去看一眼、下個指令、再回到他的位置。</p><p>以前用 Claude Code 跑多個任務，你像一個在每個工位之間跑來跑去的工頭——沒有制高點，不知道其他人在幹嘛，只能靠記憶和 tab 切換。</p><p><strong>Agent View 就是那個制高點。</strong> <code>claude agents</code> 打開一個 dashboard，把所有背景 session 攤成一張表。每一列就是一個工人的狀態。你不用走到每個工位，站在那裡就能看見全局。</p><p>技術上的定義：Agent View 是 Claude Code 的 <strong>session orchestration UI</strong>，讓你從單一終端機介面 dispatch、monitor、peek、reply、attach 多個背景 session。2026 年 5 月 11 日加入，目前是 research preview，需要 Claude Code v2.1.139 以上。</p><hr><h2 id="三十秒上手"><a href="#三十秒上手" class="headerlink" title="三十秒上手"></a>三十秒上手</h2><p>在 terminal 裡打一行指令：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 啟動 Agent View</span></span><br><span class="line">claude agents</span><br></pre></td></tr></table></figure><p>畫面會變成一個表格介面，列出你所有的背景 session。如果你是第一次用，清單是空的——很正常，因為你還沒派任何任務出去。</p><p>在最下面的輸入框打一段任務描述，按 Enter：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 在 Agent View 的輸入框裡直接打</span></span><br><span class="line">重構 src/services/auth.ts，把 if-else 改成 strategy pattern，跑完測試確認全過</span><br></pre></td></tr></table></figure><p>一個新的背景 session 就誕生了。它會出現在表格裡，狀態是 <strong>working</strong>。Claude 在背景裡改 code、跑測試，你可以繼續派下一個任務。</p><p>再打一行：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 繼續在 Agent View 裡派第二個任務</span></span><br><span class="line">幫我 review src/api/payment.ts 的錯誤處理，列出所有沒有 try-catch 的 async <span class="keyword">function</span></span><br></pre></td></tr></table></figure><p>現在表格裡有兩列了。<strong>你剛剛用 30 秒派了兩個 AI 背景工作，沒開任何新的 terminal tab。</strong></p><hr><h2 id="核心操作：三個動詞就夠"><a href="#核心操作：三個動詞就夠" class="headerlink" title="核心操作：三個動詞就夠"></a>核心操作：三個動詞就夠</h2><p>Agent View 的操作邏輯極度單純，只有三個動作：</p><h3 id="Peek（瞄一眼）"><a href="#Peek（瞄一眼）" class="headerlink" title="Peek（瞄一眼）"></a>Peek（瞄一眼）</h3><p>用方向鍵選到某個 session 的那一列，按 <strong>Space</strong>。</p><p>右邊會展開一個 peek panel，顯示這個 session 最近的輸出——可能是「測試跑完了，3 個 fail」，也可能是「我需要你確認要不要刪除這個檔案」。</p><p>看完了，不用做任何事，peek panel 自己會收起來。你回到了全局視圖。</p><p>這就是工頭走到某個工位「看一眼」的動作。不介入、不打斷、只是確認進度。</p><h3 id="Reply（回覆）"><a href="#Reply（回覆）" class="headerlink" title="Reply（回覆）"></a>Reply（回覆）</h3><p>Peek 的時候如果看到 session 在等你輸入——比如它問你「要用 Jest 還是 Vitest？」——你可以<strong>直接在 peek panel 裡打字，按 Enter 送出</strong>。</p><p>訊息送過去，session 繼續跑。你還是留在 Agent View 裡。不用跳進去、不用切 tab。</p><p>這個設計很巧妙：<strong>80% 的情況你只需要回一句話就能解除 block，沒必要把整個 transcript 叫出來。</strong></p><h3 id="Attach（接管）"><a href="#Attach（接管）" class="headerlink" title="Attach（接管）"></a>Attach（接管）</h3><p>真的需要看完整對話？選到那列按 <strong>Enter</strong> 或 <strong>→</strong>。</p><p>Terminal 會切換成那個 session 的完整互動模式，就像你直接 <code>claude</code> 進去一樣。改完想回到 Agent View，按 <strong>←</strong> 或直接 <code>claude agents</code>。</p><p>三個動詞的速查表：</p><table><thead><tr><th>按鍵</th><th>動作</th><th>什麼時候用</th></tr></thead><tbody><tr><td>Space</td><td>Peek</td><td>看一眼最新狀態</td></tr><tr><td>Enter &#x2F; →</td><td>Attach</td><td>需要完整對話</td></tr><tr><td>←</td><td>回到 Agent View</td><td>從 session 退出</td></tr><tr><td>Esc</td><td>離開 Agent View</td><td>所有 session 繼續跑</td></tr></tbody></table><p>按 Esc 離開 Agent View 不會殺掉背景 session。它們繼續跑。你可以關掉 terminal 去吃飯，回來再 <code>claude agents</code> 看結果。</p><hr><h2 id="用-Dispatch-Flags-客製化每個-Session"><a href="#用-Dispatch-Flags-客製化每個-Session" class="headerlink" title="用 Dispatch Flags 客製化每個 Session"></a>用 Dispatch Flags 客製化每個 Session</h2><p>這才是進階玩家會覺得真香的地方。</p><p>你從 Agent View 派出去的 session 預設繼承你目前的設定——model、permission、MCP server 之類的。但有時候你想要「這個任務用 Haiku 跑就好，那個任務要掛特定的 MCP server」。</p><p>v2.1.142 加了一組 <strong>dispatch flags</strong>，讓你在派任務的時候精確控制每個 session 的配置：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 從 CLI 啟動 Agent View 時直接帶 flags（會套用到這個 view 裡派出的 session）</span></span><br><span class="line">claude agents --model haiku      <span class="comment"># 用 Haiku 模型，省錢</span></span><br><span class="line">claude agents --effort low       <span class="comment"># 低 effort 模式</span></span><br><span class="line">claude agents --add-dir ~/shared-libs  <span class="comment"># 額外掛一個目錄</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 掛自訂 MCP 設定</span></span><br><span class="line">claude agents --mcp-config ./my-mcp.json</span><br><span class="line"></span><br><span class="line"><span class="comment"># 指定 plugin 目錄</span></span><br><span class="line">claude agents --plugin-dir ./my-plugins</span><br><span class="line"></span><br><span class="line"><span class="comment"># 指定權限模式</span></span><br><span class="line">claude agents --permission-mode plan</span><br></pre></td></tr></table></figure><p>完整的 dispatch flags：</p><table><thead><tr><th>Flag</th><th>用途</th></tr></thead><tbody><tr><td><code>--add-dir</code></td><td>讓 session 存取額外的目錄</td></tr><tr><td><code>--settings</code></td><td>載入自訂 settings 檔</td></tr><tr><td><code>--mcp-config</code></td><td>指定 MCP server 設定</td></tr><tr><td><code>--plugin-dir</code></td><td>指定 plugin 目錄</td></tr><tr><td><code>--permission-mode</code></td><td>設定權限模式</td></tr><tr><td><code>--model</code></td><td>指定模型（opus &#x2F; sonnet &#x2F; haiku）</td></tr><tr><td><code>--effort</code></td><td>設定 effort level</td></tr><tr><td><code>--dangerously-skip-permissions</code></td><td>跳過所有權限確認（危險，慎用）</td></tr></tbody></table><p>一個實際的場景：你有一個 monorepo，前端和後端在不同目錄。你可以從 Agent View 派兩個 session——前端那個 <code>--add-dir ./frontend</code>，後端那個 <code>--add-dir ./backend</code>——各自只看到自己該看的程式碼。</p><hr><h2 id="它跟-bg-什麼關係？"><a href="#它跟-bg-什麼關係？" class="headerlink" title="它跟 &#x2F;bg 什麼關係？"></a>它跟 &#x2F;bg 什麼關係？</h2><p>如果你已經在用 <code>/bg</code>，你可能會想：「我 <code>/bg</code> 丟到背景的 session，Agent View 看得到嗎？」</p><p><strong>看得到。</strong></p><p>Agent View 不是一個獨立的系統，它是一個<strong>視圖</strong>——所有背景 session 的視圖。你用 <code>/bg</code> 丟到背景的、用 <code>claude --bg &quot;task&quot;</code> 直接在背景啟動的、用 Agent View 自己 dispatch 的，全部會出現在同一張表上。</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 這三種方式建立的 session，Agent View 裡全看得到</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 方式 1：互動中丟背景</span></span><br><span class="line">/bg</span><br><span class="line"></span><br><span class="line"><span class="comment"># 方式 2：CLI 直接背景啟動</span></span><br><span class="line">claude --<span class="built_in">bg</span> <span class="string">&quot;跑完所有 e2e test&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 方式 3：Agent View 裡 dispatch</span></span><br><span class="line"><span class="comment"># （在 claude agents 的輸入框打任務）</span></span><br></pre></td></tr></table></figure><p><code>/bg</code> 是「把一個工人從你面前移到背景」的動作。Agent View 是「站到制高點看所有背景工人」的視角。不衝突，互補。</p><hr><h2 id="三個會讓你馬上想試的場景"><a href="#三個會讓你馬上想試的場景" class="headerlink" title="三個會讓你馬上想試的場景"></a>三個會讓你馬上想試的場景</h2><p><strong>場景一：晨間 code review 三連發</strong></p><p>早上進辦公室，三個 PR 等著 review。</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">claude agents</span><br><span class="line"><span class="comment"># 依序派三個 review 任務</span></span><br><span class="line">&gt; Review PR <span class="comment">#142 的 auth 模組改動，重點看 SQL injection 防護</span></span><br><span class="line">&gt; Review PR <span class="comment">#143 的 payment flow，確認錯誤處理完整</span></span><br><span class="line">&gt; Review PR <span class="comment">#145 的 CI 改動，檢查有沒有 secret 外洩風險</span></span><br></pre></td></tr></table></figure><p>三個 session 同時跑，你去泡咖啡。回來 peek 一輪——一個完成了、一個在問你「這個 catch block 要 rethrow 嗎？」、一個還在跑。Reply 回覆那個問題，繼續喝咖啡。</p><p><strong>場景二：重構 + 測試雙軌並行</strong></p><p>你重構一個模組，同時希望有另一個 session 持續跑測試來確認你沒有搞壞東西。</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">claude agents</span><br><span class="line">&gt; 重構 src/services/order.ts，用 repository pattern 取代直接 DB 呼叫</span><br><span class="line">&gt; 每當 src/services/ 有檔案改動就跑 npm <span class="built_in">test</span>，回報結果</span><br></pre></td></tr></table></figure><p>第一個 session 在改 code，第二個在盯著測試。你在 Agent View 裡同時看兩邊的進度。第二個報了 3 個 fail，你 peek 看哪些 test 壞了，然後 reply「先不用管 integration test，只跑 unit test」。</p><p><strong>場景三：跨 repo 作業</strong></p><p>你同時在維護 API server 和前端 app，兩個不同的 repo。</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">claude agents --add-dir ~/projects/api-server --add-dir ~/projects/frontend-app</span><br><span class="line">&gt; 在 api-server 加一個 GET /users/:<span class="built_in">id</span>/preferences endpoint</span><br><span class="line">&gt; 在 frontend-app 加一個 usePreferences hook 呼叫新的 API</span><br></pre></td></tr></table></figure><p>兩個 session 各自在不同的 repo 工作。API 那個做完了，你 attach 進去確認 endpoint 的 response format，確認後 reply 給前端那個 session「API response 長這樣：{ theme: string, language: string }」。</p><hr><h2 id="幾個踩坑提醒"><a href="#幾個踩坑提醒" class="headerlink" title="幾個踩坑提醒"></a>幾個踩坑提醒</h2><p><strong>版本要求</strong>：Agent View 需要 Claude Code v2.1.139 以上。如果你打 <code>claude agents</code> 沒反應，先 <code>claude --version</code> 確認一下。</p><p><strong>方案限制</strong>：Research Preview 只開放給 Pro、Max、Team、Enterprise 和 API plan。Free plan 沒有背景 session，也用不了 <code>claude agents</code>。</p><p><strong>Session 不會自己消失</strong>：你 Esc 離開 Agent View，session 繼續跑。做完的 session 會一直留在清單裡直到你手動清除。如果你習慣一天派十幾個任務，記得定期清理。</p><p><strong>Peek 不是完整 transcript</strong>：Peek panel 只顯示最近的輸出。如果你需要看完整的對話歷史或 Claude 執行過的所有工具呼叫，你得 attach 進去。</p><hr><h2 id="你管理的是注意力，不是-session"><a href="#你管理的是注意力，不是-session" class="headerlink" title="你管理的是注意力，不是 session"></a>你管理的是注意力，不是 session</h2><p>回到最開始的工地。</p><p>一個好工頭的核心能力不是砌牆砌得多快，而是<strong>注意力分配</strong>——知道什麼時候該看哪裡、什麼時候該介入、什麼時候就讓工人自己做。</p><p>Agent View 做的事情本質上就是這個。它不會讓 Claude 跑得更快，也不會讓你的任務自動變簡單。它做的是<strong>把你的注意力成本降到最低</strong>——你不需要記住「第三個 tab 在幹嘛」，不需要怕按錯 tab，不需要花精力在 session 之間跳來跳去。你只要站在制高點，瞄一眼清單，決定下一步。</p><p>工具的價值不是功能多不多，而是它讓你少想多少事。一個讓你不用管 tab 的介面，釋放出來的注意力可以拿去想架構、想設計、想下一個要派什麼任務。</p><p>打開 terminal，試一下：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">claude agents</span><br></pre></td></tr></table></figure><p>派兩個你今天本來就要做的任務出去。然後站起來倒杯水。回來的時候，你會看到一個乾淨的表格告訴你事情進行得怎麼樣了。</p><p>接下來可以搭配的路線：</p><ul><li>搭配 <a href="/2026/05/12/Claude-Code-Goal-%E5%91%BD%E4%BB%A4%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8-%E8%A8%AD%E5%AE%9A%E5%AE%8C%E6%88%90%E6%A2%9D%E4%BB%B6%E8%AE%93-AI-%E8%87%AA%E5%B7%B1%E8%B7%91%E5%88%B0%E7%B5%90%E6%9D%9F/">&#x2F;goal</a> 讓每個 session 自己跑到完成條件才停</li><li>搭配 <a href="/2026/05/04/Claude-Code-Git-Worktrees-%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8-%E8%AE%93-AI-%E5%90%8C%E6%99%82%E5%B9%AB%E4%BD%A0%E5%81%9A%E4%BA%94%E4%BB%B6%E4%BA%8B/">Git Worktrees</a> 讓多個 session 在不同 branch 上平行作業</li><li>搭配 <a href="/2026/05/10/Claude-Code-Agent-Teams-%E5%A4%9A-Agent-%E5%8D%94%E4%BD%9C%E9%96%8B%E7%99%BC%E5%AF%A6%E6%88%B0%E6%95%99%E5%AD%B8/">Agent Teams</a> 做 leader-delegate 架構的複雜任務</li></ul><hr><blockquote><p>參考來源：<a href="https://code.claude.com/docs/en/whats-new">Claude Code What’s New — Anthropic</a><br>參考來源：<a href="https://code.claude.com/docs/en/agent-view">Manage multiple agents with agent view — Claude Code Docs</a><br>參考來源：<a href="https://anthropic.skilljar.com/">Claude Code in Action — Anthropic Academy</a></p></blockquote>]]></content>
+      
+      
+      <categories>
+          
+          <category> Claude Code </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> AI Agent </tag>
+            
+            <tag> Claude Code </tag>
+            
+            <tag> CLI </tag>
+            
+            <tag> 教學 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>AI 與科技新聞摘要 - 2026/05/19</title>
+      <link href="/2026/05/19/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260519/"/>
+      <url>/2026/05/19/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260519/</url>
+      
+        <content type="html"><![CDATA[<p>AI 找漏洞的速度，已經比人類修漏洞的速度更快。</p><p>HackerOne 三月暫停了 Internet Bug Bounty 計畫。不是因為沒人參加，是因為 AI 輔助的漏洞研究把開源專案的漏洞利用窗口壓縮到維護者根本來不及反應。你的 patch cycle 是兩週，AI 找到新漏洞只需要兩小時。這個速差不是線性的，是指數級的，而且只會繼續拉開。</p><p>同一天，Google I&#x2F;O 2026 開場，預計丟出 Gemini 4。OpenAI 推出 Daybreak 資安平台，用 AI 來找漏洞修漏洞。Kiro Web 版上線讓你在瀏覽器裡跑 coding agent。Windsurf 2.0 把整個 Devin 塞進編輯器。GitHub Copilot 暫停接受新用戶——需求超過了供給。</p><p>六條新聞，一個結構性問題：AI 工具的擴張速度，正在系統性地超越安全防線的建設速度。</p><h2 id="Google-I-O-2026-今天登場：Gemini-4-可能來了"><a href="#Google-I-O-2026-今天登場：Gemini-4-可能來了" class="headerlink" title="Google I&#x2F;O 2026 今天登場：Gemini 4 可能來了"></a>Google I&#x2F;O 2026 今天登場：Gemini 4 可能來了</h2><p>今天早上十點（太平洋時間），Google I&#x2F;O 2026 keynote 正式開場。距離二月發布 Gemini 3.1 Pro 過了三個月，市場的期待值已經拉到 Gemini 4。</p><p>但模型只是冰山一角。更大的動作在生態系層面——Android 17 的核心口號叫「Gemini Intelligence」，意思是 Gemini 不再是手機裡的一個 App，而是整個作業系統的底層引擎。ChromeOS 上的整合也在推進。更激進的是 Aluminium OS，一套基於 Android 的 PC 作業系統，直接跨入桌機戰場。Android XR 眼鏡也會有預覽——Google 想從手機、電腦到穿戴裝置，全部用 Gemini 串起來。</p><p><strong>為什麼重要？</strong></p><p>Google 正在做的事情，用一句話講就是：把 AI 從「功能」變成「基礎設施」。Gemini 不再是你打開來問問題的東西，它是你的手機、你的電腦、你的眼鏡背後那層你看不見的運算層。</p><p>這聽起來很美好。但有一個被低估的風險。</p><p>當 AI 從獨立功能變成作業系統的一部分，它的故障模式也跟著改變。一個聊天機器人出錯，你關掉重開就好。一個作業系統底層的 AI 出錯，你的通知排序壞掉、你的搜尋結果歪掉、你的相簿分類亂掉——而你甚至不知道是 AI 的問題，因為它藏在系統裡面。越看不見的東西，出問題越難抓。</p><blockquote><p>原文來源：<a href="https://www.androidauthority.com/what-to-expect-from-google-io-2026-3664979/">What to expect from Google I&#x2F;O 2026 — Android Authority</a><br>原文來源：<a href="https://letsdatascience.com/news/google-debuts-gemini-focused-updates-at-io-2026-4be4fde6">Google debuts Gemini-focused updates at I&#x2F;O 2026 — Let’s Data Science</a></p></blockquote><p>Google 想把 AI 塞進所有東西裡。OpenAI 則選了一個更精準的切入點——資安。</p><h2 id="OpenAI-Daybreak：用-AI-找漏洞，然後用-AI-修漏洞"><a href="#OpenAI-Daybreak：用-AI-找漏洞，然後用-AI-修漏洞" class="headerlink" title="OpenAI Daybreak：用 AI 找漏洞，然後用 AI 修漏洞"></a>OpenAI Daybreak：用 AI 找漏洞，然後用 AI 修漏洞</h2><p>OpenAI 推出 Daybreak 資安計畫。核心想法很直白：結合 frontier model 的推理能力和 Codex Security 的程式碼分析，幫組織自動發現漏洞並產出修補建議。</p><p>更有意思的是 GPT-5.5-Cyber——這是 GPT-5.5 的資安特化版，目前只以限定預覽方式提供給經過審核的資安團隊。「特化」的意思是它在安全相關任務上的限制更寬鬆，可以做一些通用模型被擋住的事情。Palo Alto Networks 的實測結果顯示，GPT-5.5-Cyber 和它們自家的 Mythos 模型在漏洞發現能力上「超出預期」。</p><p><strong>為什麼重要？</strong></p><p>把這條新聞和最後一條放在一起看，會看到一個很矛盾的局面。</p><p>HackerOne 暫停 Bug Bounty 的原因是 AI 找漏洞太快了，開源維護者修不過來。OpenAI 推出 Daybreak 的賣點也是 AI 找漏洞很快。同一個能力，對防守方是工具，對攻擊方也是武器。OpenAI 選擇把 GPT-5.5-Cyber 限定在經審核的資安團隊手上，但模型的能力邊界是很難用行政手段控制的。</p><p>逆過來想：怎樣讓 Daybreak 一定失敗？答案是它只負責「找到」而沒人負責「修好」。目前企業資安的瓶頸從來不是「不知道有漏洞」——CVE 資料庫裡躺了幾十萬條，大多數組織的修補率不到三成。找的速度再快，修的速度跟不上，效果就是生產了更多焦慮而不是更多安全。</p><blockquote><p>原文來源：<a href="https://thehackernews.com/2026/05/openai-launches-daybreak-for-ai-powered.html">OpenAI launches Daybreak for AI-powered cybersecurity — The Hacker News</a><br>原文來源：<a href="https://www.cnbc.com/2026/05/07/openai-rolls-out-new-gpt-5point5-cyber-to-vetted-cybersecurity-teams.html">OpenAI rolls out new GPT-5.5-Cyber to vetted cybersecurity teams — CNBC</a></p></blockquote><p>大廠在搶 AI 資安市場，coding agent 生態也沒閒著。Amazon 的 Kiro 剛把戰場搬到瀏覽器上。</p><h2 id="Kiro-Web-版正式上線：瀏覽器裡的-Coding-Agent"><a href="#Kiro-Web-版正式上線：瀏覽器裡的-Coding-Agent" class="headerlink" title="Kiro Web 版正式上線：瀏覽器裡的 Coding Agent"></a>Kiro Web 版正式上線：瀏覽器裡的 Coding Agent</h2><p>Kiro 推出 Web 版（app.kiro.dev），Pro、Pro+ 和 Power 用戶可以直接用瀏覽器啟動 agent。不需要裝 VS Code 擴充、不需要跑 CLI、不需要本地環境。打開網頁就能開始。</p><p>功能面支援 agent chat（丟想法進去、修 bug、從零到一開 PR），分成 collaborative 和 autonomous 兩種模式。你可以開多 repo session，接上 GitHub issue，所有操作跑在隔離沙箱裡。更重要的是支援 HTTP-based MCP servers，預設就能接 Slack、GitHub、Figma 的 OAuth。</p><p><strong>為什麼重要？</strong></p><p>Kiro Web 版的意義不在於功能多了什麼，在於門檻少了什麼。</p><p>之前要用 coding agent，你得先搞定本地開發環境——Node 版本、Python 虛擬環境、Docker、SSH key。光是 setup 就能卡住一半想試的人。Web 版把這些全省掉了。一個產品經理想讓 AI 幫他開一個簡單的 PR？打開瀏覽器就行。</p><p>這同時也意味著 coding agent 的使用者輪廓正在改變。它不再只是工程師的工具。當進入門檻降到「打開網頁」的程度，會有大量非工程背景的人開始操作程式碼庫。這些人不一定看得懂 agent 產出的 diff，不一定知道什麼改動會炸 production。</p><p>工具的易用性和使用者的判斷力之間的落差，就是風險住的地方。</p><blockquote><p>原文來源：<a href="https://releasebot.io/updates/kiro">Kiro updates — ReleaseBot</a></p></blockquote><p>Kiro 從瀏覽器切入，Windsurf 走了完全相反的路——它把雲端 agent 拉回編輯器裡面。</p><h2 id="Windsurf-2-0：把-Devin-直接塞進編輯器"><a href="#Windsurf-2-0：把-Devin-直接塞進編輯器" class="headerlink" title="Windsurf 2.0：把 Devin 直接塞進編輯器"></a>Windsurf 2.0：把 Devin 直接塞進編輯器</h2><p>Windsurf 2.0 最大的賣點就一句話：Devin 現在住在你的編輯器裡了。</p><p>之前 Devin 是一個獨立的雲端 agent，你在網頁上開任務、等它跑完、看結果。Windsurf 2.0 把這整套搬進了編輯器——你在寫程式的時候，可以一鍵把任務委派到遠端 VM 上跑。新增的 Planning Mode 讓你在啟動長時間任務前先看 agent 打算怎麼做。內建瀏覽器讓 agent 能感知端到端工作流。還多了 EU production cluster 處理合規需求。</p><p><strong>為什麼重要？</strong></p><p>Coding agent 的架構正在快速收斂成兩種模式：一種是 Kiro 這樣的純雲端（你在瀏覽器裡操作，所有運算在雲上）；一種是 Windsurf 這樣的混合式（你在本地編輯器操作，重活丟到遠端 VM 跑）。</p><p>兩種模式解決的核心問題其實一樣：coding agent 需要的運算資源太大，你的筆電跑不動。差別在信任邊界畫在哪裡——Kiro 的模式是「你的程式碼離開你的電腦」；Windsurf 的模式是「你的程式碼還是在你看得到的地方，但執行在別人的機器上」。對企業來說，這個差別很重要。CTO 們現在多了一個需要回答的問題：我的程式碼在誰的機器上跑？</p><p>Planning Mode 是一個有意思的功能。讓 agent 先說它要幹嘛，你看了覺得 OK 再放手讓它跑。這本質上是一種「可審計的自主性」——agent 有自主能力，但執行前先讓人類看過計畫。真正的考驗在於：計畫和實際執行之間的偏差有多大？如果 agent 計畫說「我要改三個檔案」，結果改了八個，那 Planning Mode 就只是一個安慰劑。</p><blockquote><p>原文來源：<a href="https://lushbinary.com/blog/ai-coding-agents-comparison-cursor-windsurf-claude-copilot-kiro-2026/">AI Coding Agents Comparison 2026 — Lush Binary</a></p></blockquote><p>Coding agent 供應商在拼功能、拼架構。但市場領先者 GitHub Copilot 此刻正在做一件完全相反的事——關門。</p><h2 id="GitHub-Copilot-暫停新用戶註冊：需求大到接不住"><a href="#GitHub-Copilot-暫停新用戶註冊：需求大到接不住" class="headerlink" title="GitHub Copilot 暫停新用戶註冊：需求大到接不住"></a>GitHub Copilot 暫停新用戶註冊：需求大到接不住</h2><p>GitHub 暫停了 Copilot Pro、Pro+ 和 Student 方案的新用戶註冊。同時收緊現有用戶的使用額度。理由？「保護現有客戶的體驗品質」。</p><p>白話翻譯：用量炸了，伺服器撐不住。</p><p>另外 5&#x2F;15 已經棄用 Grok Code Fast 1 模型。CLI 那邊倒是更新很勤，1.0.44 到 1.0.48 連出四版，加了 model picker、<code>/autopilot</code> 指令和 MCP server search。</p><p><strong>為什麼重要？</strong></p><p>一個軟體產品因為太多人想用而暫停註冊——這在 SaaS 的世界裡幾乎聞所未聞。通常你只會在產品快死的時候看到註冊被關掉，不會在產品最紅的時候。</p><p>但這恰好揭示了 AI coding tool 的一個結構性困境：<strong>每一次使用都消耗大量運算資源。</strong> 傳統 SaaS 產品，一個新用戶上來大概就是多一行資料庫記錄、多幾 KB 的儲存空間。AI coding tool 不一樣——每一次 code completion、每一次 agent 任務，都是在燒 GPU。使用者越多、GPU 燒越多、成本越高、但訂閱費是固定的。</p><p>這跟前兩天講的 Anthropic 拿下 SpaceX 22 萬顆 GPU 是同一個故事的不同章節。GPU 供給有限，需求在指數成長。GitHub 選擇關門限流，Anthropic 選擇搶 GPU 開門迎客。兩種策略，同一個瓶頸。</p><blockquote><p>原文來源：<a href="https://github.blog/changelog/2026-04-20-changes-to-github-copilot-plans-for-individuals/">Changes to GitHub Copilot plans for individuals — GitHub Blog</a></p></blockquote><p>GitHub 關門是因為接不住需求。HackerOne 關門則是因為接不住後果。</p><h2 id="HackerOne-暫停開源-Bug-Bounty：攻擊加速，防守沒跟上"><a href="#HackerOne-暫停開源-Bug-Bounty：攻擊加速，防守沒跟上" class="headerlink" title="HackerOne 暫停開源 Bug Bounty：攻擊加速，防守沒跟上"></a>HackerOne 暫停開源 Bug Bounty：攻擊加速，防守沒跟上</h2><p>回到開頭的數字。</p><p>HackerOne 在三月暫停了 Internet Bug Bounty 計畫。這個計畫從 2013 年跑到現在，獎勵全球的安全研究者幫開源專案找漏洞。十三年了，現在暫停。</p><p>原因不是沒有人找漏洞。恰恰相反——AI 輔助漏洞研究讓漏洞被發現的速度暴增，但開源維護者的修補速度沒有跟上。漏洞利用窗口正在縮短。以前一個漏洞從被發現到被利用可能有幾週的緩衝期，現在可能只剩幾天。AI 生成的惡意軟體也開始繞過傳統偵測工具——pattern matching 的偵測方式面對多態變種的惡意軟體，已經開始力不從心。</p><p><strong>為什麼重要？</strong></p><p>把今天六條新聞全部攤開來看，會看到一個極度不對稱的局面。</p><p>攻擊端：AI 找漏洞更快、生成惡意軟體更多態、繞過偵測更容易。防守端：開源維護者還是那幾個人、patch cycle 還是那個速度、偵測工具還在用老方法。OpenAI 推 Daybreak 用 AI 補防守的缺口，但 Daybreak 服務的是有錢買服務的企業，不是開源社群。開源專案的安全依然靠志工撐著，而志工的頻寬不會因為 AI 出現就突然變大。</p><p>這才是 HackerOne 暫停 Bug Bounty 的深層意義。它不是一個計畫的結束，是一個訊號——現有的「找漏洞→回報→修補→獎勵」流程假設了防守方能跟上攻擊方的節奏。當這個假設不再成立，整個流程就失效了。</p><blockquote><p>原文來源：<a href="https://thehackernews.com/2026/05/2026-year-of-ai-assisted-attacks.html">2026: Year of AI-assisted attacks — The Hacker News</a><br>原文來源：<a href="https://www.paloaltonetworks.com/blog/2026/05/defenders-guide-frontier-ai-impact-cybersecurity-may-2026-update/">Defender’s guide: Frontier AI impact on cybersecurity — Palo Alto Networks</a></p></blockquote><hr><p>六條新聞，一個框架。</p><p>Google 把 Gemini 塞進作業系統。Kiro 讓你在瀏覽器裡跑 coding agent。Windsurf 把 Devin 拉進編輯器。GitHub Copilot 的使用者多到要關門。每一條都指向同一個方向：AI 工具正在加速滲透到軟體開發的每一個環節。</p><p>但同一時間，OpenAI 推出 Daybreak 是因為漏洞太多了需要 AI 幫忙。HackerOne 暫停 Bug Bounty 是因為漏洞被找到的速度超過修補的速度。AI 生成的惡意軟體正在繞過傳統偵測。</p><p><strong>工具的擴散速度和安全的建設速度之間，存在一個持續擴大的落差。</strong></p><p>這不是「某個產品不安全」的問題。是整個系統的動力學出了問題。AI 讓開發變快，也讓攻擊變快。但防守的速度受限於人——開源維護者的時間、資安團隊的規模、patch review 的流程——這些東西不會因為 AI 的出現就自動加速。</p><p>最危險的情境不是「AI 被拿來攻擊」。而是大家都很興奮地在用 AI 寫程式、AI 找漏洞、AI 修漏洞，覺得問題正在被解決——但實際上，整個攻防天平正在悄悄傾斜，而大多數人只看到了天平的其中一端。</p>]]></content>
+      
+      
+      <categories>
+          
+          <category> AI與科技新聞 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> AI與科技新聞 </tag>
+            
+            <tag> OpenAI </tag>
+            
+            <tag> 資安 </tag>
+            
+            <tag> Google </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>x-algorithm — X 平台「為你推薦」推薦演算法完整解析</title>
+      <link href="/2026/05/19/x-algorithm-X-%E5%B9%B3%E5%8F%B0%E7%82%BA%E4%BD%A0%E6%8E%A8%E8%96%A6%E6%8E%A8%E8%96%A6%E6%BC%94%E7%AE%97%E6%B3%95%E5%AE%8C%E6%95%B4%E8%A7%A3%E6%9E%90/"/>
+      <url>/2026/05/19/x-algorithm-X-%E5%B9%B3%E5%8F%B0%E7%82%BA%E4%BD%A0%E6%8E%A8%E8%96%A6%E6%8E%A8%E8%96%A6%E6%BC%94%E7%AE%97%E6%B3%95%E5%AE%8C%E6%95%B4%E8%A7%A3%E6%9E%90/</url>
+      
+        <content type="html"><![CDATA[<p>你以為推薦演算法是在「猜你喜歡什麼」。不是。它在預測你「會做什麼動作」。</p><p>xAI 把 X 平台「為你推薦」的完整推薦系統原始碼丟上了 GitHub。不是示意圖，不是論文，是真的在跑的那套程式碼。從幾十億則貼文裡，即時幫你挑出最相關的幾十則——決定你每天打開 X 會看到什麼。</p><p>23,761 顆星，Apache 2.0 授權。這是目前公開過最完整的 production-level 社群推薦系統，包含檢索、排序、過濾、廣告混合、內容安全，整條鏈路一次攤開。</p><h2 id="不是猜你喜歡，是算你會幹嘛"><a href="#不是猜你喜歡，是算你會幹嘛" class="headerlink" title="不是猜你喜歡，是算你會幹嘛"></a>不是猜你喜歡，是算你會幹嘛</h2><p>先搞懂一件事：推薦系統不是在做「你喜歡貓所以推貓」這種事。</p><p>想像你走進一間有三萬道菜的自助餐。餐廳不可能讓你一道一道看，所以它分兩步：第一步，服務生先從三萬道菜裡撈出三百道你可能感興趣的（粗篩）；第二步，主廚根據你的口味、今天的心情、甚至你上次剩了什麼菜沒吃，幫你排出最上面那十道。</p><p>x-algorithm 就是這樣。Two-Tower Retrieval 負責粗篩，Transformer Ranking 負責精排。</p><p>粗篩用的是「雙塔模型」——一邊是你的使用者特徵，一邊是貼文特徵，兩邊各自算出一個向量，距離近的就是候選。這步要快，幾十億則貼文要在毫秒內縮到幾百則。</p><p>精排才是真正的主角。</p><h2 id="Grok-的骨架，換了一個腦子"><a href="#Grok-的骨架，換了一個腦子" class="headerlink" title="Grok 的骨架，換了一個腦子"></a>Grok 的骨架，換了一個腦子</h2><p>這裡有個反直覺的事：排序模型的 Transformer 架構是直接從 Grok-1 移植過來的。對，就是那個聊天機器人的骨架。同樣的結構，但目的從「生成下一個字」變成「預測你會不會按讚」。</p><p>這就像拿一台法拉利的引擎，裝到一台送貨車上。引擎沒變，但用途完全不同。Grok 學到的語言理解能力，現在被拿來理解「這個人看到這則貼文會有什麼反應」。</p><p>更猛的是，它不只預測一件事。模型同時預測你對一則貼文可能做的 <strong>19 種動作</strong>——按讚、回覆、轉發、引用、收藏、封鎖、檢舉、停留時間……全部同時算。最終分數是這 19 個機率的加權總和。</p><p>為什麼是 19 種？因為單看「按讚」太片面了。一個人可能看到某則貼文想回覆但不想按讚，另一個人看到想轉發但會封鎖作者。推薦系統要的不是「你喜不喜歡」，是「你會做出什麼行為」，然後把這些行為的商業價值加權。</p><h2 id="四大模組，兩種語言"><a href="#四大模組，兩種語言" class="headerlink" title="四大模組，兩種語言"></a>四大模組，兩種語言</h2><p>整個系統拆成四塊，Rust 和 Python 各管各的：</p><p><strong>home-mixer</strong> 是協調層，用 Rust 寫的。它的工作像餐廳的外場經理——不自己做菜，但負責把前菜、主菜、甜點、廣告（對，廣告也是一道菜）按順序排好端上桌。你的 For You feed 最終長什麼樣，就是它組裝出來的。</p><p><strong>thunder</strong> 也是 Rust，負責即時貼文儲存。用 DashMap 做記憶體快取，背後接 Kafka。有人發了一則新貼文，thunder 確保幾秒內就能被推薦系統看到。速度在這裡是一切。</p><p><strong>phoenix</strong> 是 ML 模型核心，Python 搭配 JAX 框架寫的。Two-Tower 檢索和 Grok Transformer 排序都在這裡。取名 phoenix 大概是因為從舊系統浴火重生的意思（純猜）。</p><p><strong>grox</strong> 也是 Python，做內容理解。垃圾訊息偵測、內容分類、多模態嵌入（圖片和文字一起看）。它是推薦系統的眼睛——不懂內容是什麼，就沒辦法推薦。</p><p>為什麼用兩種語言？Rust 處理高併發的服務層，效能好、記憶體安全；Python&#x2F;JAX 處理 ML 推論，生態成熟、迭代快。各取所長。</p><h2 id="Candidate-Isolation：一個精妙的設計"><a href="#Candidate-Isolation：一個精妙的設計" class="headerlink" title="Candidate Isolation：一個精妙的設計"></a>Candidate Isolation：一個精妙的設計</h2><p>這邊有個技術細節值得特別講。</p><p>一般 Transformer 裡，所有 token 可以互相看到（self-attention 嘛）。但 x-algorithm 在排序的時候做了一個 trick：候選貼文之間互相看不到。</p><p>什麼意思？假設系統要幫你排 200 則候選貼文。正常做法是 200 則一起丟進 Transformer，讓它們互相比較。但 x-algorithm 的做法是：每則候選貼文只能看到「你的使用者上下文」，看不到其他候選。</p><p>用排隊的比喻：不是 200 個人站在你面前讓你比較，而是每個人獨立走進房間跟你面談，你給每個人打分，他們之間不知道彼此的存在。</p><p>這帶來三個好處。分數獨立，不會因為旁邊放了一則超熱門貼文就影響其他人的分數。可以快取，因為使用者上下文短時間內不會變，算過的中間結果能重複用。可以平行，200 則候選可以同時算，不用等。</p><p>這不是什麼天才發明，但在 production 規模下，這種設計決定了系統撐不撐得住。</p><h2 id="和-2023-年那次開源差在哪"><a href="#和-2023-年那次開源差在哪" class="headerlink" title="和 2023 年那次開源差在哪"></a>和 2023 年那次開源差在哪</h2><p>2023 年 Twitter 也開源過推薦演算法。那次用的是 SimClusters（社群聚類）加上手工設計的特徵，Scala 語言，模型相對簡單。</p><p>三年後的版本跳了一整個世代：</p><p>手工特徵變成 Grok Transformer 自動學習。Scala 整個換成 Rust。模型從淺層跳到 2-4 層 Transformer。而且這次包含了完整的廣告混合和內容安全邏輯——2023 年那次這兩塊是拿掉的。</p><p>開源出來的是縮小版（mini），Embedding 維度 128~256，模型大概 3 GB。生產環境的版本更大，但架構一模一樣。</p><h2 id="限制要先講清楚"><a href="#限制要先講清楚" class="headerlink" title="限制要先講清楚"></a>限制要先講清楚</h2><p>三個重要的但是。</p><p>第一，這是 transparency release，不是社群專案。xAI 放出來是為了透明度，不是要大家一起貢獻 PR。Issue 和 Discussion 不一定會有人回。</p><p>第二，沒有訓練程式碼。你看到的是推論（inference）的部分，怎麼訓練模型的程式碼沒有放。所以你可以理解它怎麼跑，但沒辦法自己從頭訓一個。</p><p>第三，Rust 元件依賴 X 內部的建置系統。你沒辦法 <code>cargo build</code> 就直接跑起來，需要自己補一些相依套件。Python 部分相對獨立，比較好玩。</p><h2 id="看懂它你會學到什麼"><a href="#看懂它你會學到什麼" class="headerlink" title="看懂它你會學到什麼"></a>看懂它你會學到什麼</h2><p>推薦系統的論文滿天飛，但能看到真正跑在幾億使用者上的完整程式碼，這是第一次。</p><p>這套系統背後其實就兩條線在拉扯：<strong>速度</strong>和<strong>精準度</strong>。粗篩要快所以用向量檢索，精排要準所以上 Transformer。Rust 管速度，Python 管精準。19 個預測目標管精準，Candidate Isolation 管速度。</p><p>每一個設計決策都是在這兩條線之間找平衡。理解了這個框架，你看任何推薦系統都能快速抓到它的取捨。不只是 X，YouTube、TikTok、Instagram 的推薦系統骨子裡都在處理同一個問題——只是各自選了不同的平衡點。</p><hr><blockquote><p>原始碼：<a href="https://github.com/xai-org/x-algorithm">xai-org&#x2F;x-algorithm — GitHub</a></p></blockquote>]]></content>
+      
+      
+      <categories>
+          
+          <category> AI與科技新聞 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> 開源 </tag>
+            
+            <tag> Rust </tag>
+            
+            <tag> Python </tag>
+            
+            <tag> AI 模型 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>Claude Code TDD 工作流完整教學 — 讓 AI 先寫測試再寫程式的正確姿勢</title>
       <link href="/2026/05/18/Claude-Code-TDD-%E5%B7%A5%E4%BD%9C%E6%B5%81%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8-%E8%AE%93-AI-%E5%85%88%E5%AF%AB%E6%B8%AC%E8%A9%A6%E5%86%8D%E5%AF%AB%E7%A8%8B%E5%BC%8F%E7%9A%84%E6%AD%A3%E7%A2%BA%E5%A7%BF%E5%8B%A2/"/>
       <url>/2026/05/18/Claude-Code-TDD-%E5%B7%A5%E4%BD%9C%E6%B5%81%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8-%E8%AE%93-AI-%E5%85%88%E5%AF%AB%E6%B8%AC%E8%A9%A6%E5%86%8D%E5%AF%AB%E7%A8%8B%E5%BC%8F%E7%9A%84%E6%AD%A3%E7%A2%BA%E5%A7%BF%E5%8B%A2/</url>
@@ -109,9 +202,9 @@
       
         <tags>
             
-            <tag> 健康 </tag>
-            
             <tag> 168斷食 </tag>
+            
+            <tag> 健康 </tag>
             
             <tag> 工程師生活 </tag>
             
@@ -144,9 +237,9 @@
             
             <tag> 資安 </tag>
             
-            <tag> Google </tag>
-            
             <tag> Anthropic </tag>
+            
+            <tag> Google </tag>
             
         </tags>
       
@@ -171,9 +264,9 @@
       
         <tags>
             
-            <tag> 資安 </tag>
-            
             <tag> 開源 </tag>
+            
+            <tag> 資安 </tag>
             
             <tag> CLI </tag>
             
@@ -200,9 +293,9 @@
       
         <tags>
             
-            <tag> 工程師生活 </tag>
-            
             <tag> 理財 </tag>
+            
+            <tag> 工程師生活 </tag>
             
             <tag> 生活札記 </tag>
             
@@ -235,9 +328,9 @@
             
             <tag> 資安 </tag>
             
-            <tag> Google </tag>
-            
             <tag> Anthropic </tag>
+            
+            <tag> Google </tag>
             
         </tags>
       
@@ -293,9 +386,9 @@
       
         <tags>
             
-            <tag> Claude Code </tag>
-            
             <tag> AI Agent </tag>
+            
+            <tag> Claude Code </tag>
             
             <tag> 教學 </tag>
             
@@ -322,11 +415,11 @@
       
         <tags>
             
+            <tag> AI Agent </tag>
+            
             <tag> AI與科技新聞 </tag>
             
             <tag> Apple </tag>
-            
-            <tag> AI Agent </tag>
             
             <tag> AI 安全 </tag>
             
@@ -388,9 +481,9 @@
             
             <tag> Claude Code </tag>
             
-            <tag> AI 開發工具 </tag>
-            
             <tag> 教學 </tag>
+            
+            <tag> AI 開發工具 </tag>
             
         </tags>
       
@@ -415,15 +508,15 @@
       
         <tags>
             
+            <tag> AI Agent </tag>
+            
             <tag> AI與科技新聞 </tag>
             
             <tag> OpenAI </tag>
             
-            <tag> Google </tag>
-            
             <tag> Anthropic </tag>
             
-            <tag> AI Agent </tag>
+            <tag> Google </tag>
             
         </tags>
       
@@ -570,9 +663,9 @@
       
         <tags>
             
-            <tag> Claude Code </tag>
-            
             <tag> AI Agent </tag>
+            
+            <tag> Claude Code </tag>
             
             <tag> 自動化 </tag>
             
@@ -725,9 +818,9 @@
       
         <tags>
             
-            <tag> Claude Code </tag>
-            
             <tag> AI Agent </tag>
+            
+            <tag> Claude Code </tag>
             
             <tag> GitHub </tag>
             
@@ -1418,11 +1511,11 @@
             
             <tag> OpenAI </tag>
             
+            <tag> Mistral </tag>
+            
             <tag> NVIDIA </tag>
             
             <tag> Gemini </tag>
-            
-            <tag> Mistral </tag>
             
         </tags>
       
@@ -1668,9 +1761,9 @@
             
             <tag> AI與科技新聞 </tag>
             
-            <tag> NVIDIA </tag>
-            
             <tag> Google </tag>
+            
+            <tag> NVIDIA </tag>
             
             <tag> Microsoft </tag>
             
@@ -1910,11 +2003,11 @@
       
         <tags>
             
+            <tag> AI Agent </tag>
+            
             <tag> MCP </tag>
             
             <tag> Claude Code </tag>
-            
-            <tag> AI Agent </tag>
             
             <tag> 教學 </tag>
             
@@ -1976,9 +2069,9 @@
       
         <tags>
             
-            <tag> 健康 </tag>
-            
             <tag> 168斷食 </tag>
+            
+            <tag> 健康 </tag>
             
             <tag> 生產力 </tag>
             
@@ -2141,11 +2234,11 @@
       
         <tags>
             
+            <tag> AI Agent </tag>
+            
             <tag> MCP </tag>
             
             <tag> 資安 </tag>
-            
-            <tag> AI Agent </tag>
             
             <tag> Sonatype Guide </tag>
             
@@ -2178,9 +2271,9 @@
             
             <tag> 資安 </tag>
             
-            <tag> Google </tag>
-            
             <tag> Anthropic </tag>
+            
+            <tag> Google </tag>
             
         </tags>
       
@@ -2207,9 +2300,9 @@
             
             <tag> Claude Code </tag>
             
-            <tag> 自動化 </tag>
-            
             <tag> Hooks </tag>
+            
+            <tag> 自動化 </tag>
             
             <tag> 教學 </tag>
             
@@ -2271,9 +2364,9 @@
       
         <tags>
             
-            <tag> 健康 </tag>
-            
             <tag> 168斷食 </tag>
+            
+            <tag> 健康 </tag>
             
             <tag> 工程師生活 </tag>
             
@@ -2430,9 +2523,9 @@
       
         <tags>
             
-            <tag> OpenAI </tag>
-            
             <tag> AI Agent </tag>
+            
+            <tag> OpenAI </tag>
             
             <tag> Codex </tag>
             
@@ -2496,9 +2589,9 @@
             
             <tag> AI與科技新聞 </tag>
             
-            <tag> Google </tag>
-            
             <tag> Anthropic </tag>
+            
+            <tag> Google </tag>
             
             <tag> Claude Code </tag>
             
@@ -2525,9 +2618,9 @@
       
         <tags>
             
-            <tag> Claude Code </tag>
-            
             <tag> AI Agent </tag>
+            
+            <tag> Claude Code </tag>
             
             <tag> Agent Skills </tag>
             
@@ -2558,9 +2651,9 @@
       
         <tags>
             
-            <tag> Claude Code </tag>
-            
             <tag> AI Agent </tag>
+            
+            <tag> Claude Code </tag>
             
             <tag> GitHub Copilot </tag>
             
@@ -2624,11 +2717,11 @@
       
         <tags>
             
-            <tag> Claude Code </tag>
-            
             <tag> AI Agent </tag>
             
             <tag> 開源 </tag>
+            
+            <tag> Claude Code </tag>
             
             <tag> Prompt Engineering </tag>
             
@@ -2787,11 +2880,11 @@
             
             <tag> TDD </tag>
             
+            <tag> SDD </tag>
+            
             <tag> GH-300 </tag>
             
             <tag> Responsible AI </tag>
-            
-            <tag> SDD </tag>
             
         </tags>
       
@@ -2977,9 +3070,9 @@
       
         <tags>
             
-            <tag> Claude Code </tag>
-            
             <tag> AI Agent </tag>
+            
+            <tag> Claude Code </tag>
             
             <tag> Skills </tag>
             
@@ -3200,13 +3293,13 @@
       
         <tags>
             
-            <tag> Claude Code </tag>
-            
             <tag> AI Agent </tag>
             
-            <tag> DevOps </tag>
+            <tag> Claude Code </tag>
             
             <tag> Rust </tag>
+            
+            <tag> DevOps </tag>
             
             <tag> Discord </tag>
             
@@ -3745,9 +3838,9 @@
       
         <tags>
             
-            <tag> Claude </tag>
-            
             <tag> AI Agent </tag>
+            
+            <tag> Claude </tag>
             
             <tag> Multi-Model </tag>
             
@@ -4200,13 +4293,13 @@
       
         <tags>
             
+            <tag> AI Agent </tag>
+            
             <tag> AI與科技新聞 </tag>
             
             <tag> Claude </tag>
             
             <tag> OpenAI </tag>
-            
-            <tag> AI Agent </tag>
             
             <tag> Copilot </tag>
             
@@ -4233,9 +4326,9 @@
       
         <tags>
             
-            <tag> Anthropic </tag>
-            
             <tag> AI Agent </tag>
+            
+            <tag> Anthropic </tag>
             
             <tag> 開發工具 </tag>
             
@@ -4262,9 +4355,9 @@
       
         <tags>
             
-            <tag> MCP </tag>
-            
             <tag> LLM </tag>
+            
+            <tag> MCP </tag>
             
             <tag> Microsoft </tag>
             
@@ -4293,13 +4386,13 @@
       
         <tags>
             
-            <tag> AI與科技新聞 </tag>
+            <tag> 理財 </tag>
             
-            <tag> Claude Code </tag>
+            <tag> AI與科技新聞 </tag>
             
             <tag> Gemini </tag>
             
-            <tag> 理財 </tag>
+            <tag> Claude Code </tag>
             
         </tags>
       
@@ -4353,11 +4446,11 @@
       
         <tags>
             
+            <tag> AI Agent </tag>
+            
             <tag> MCP </tag>
             
             <tag> Claude Code </tag>
-            
-            <tag> AI Agent </tag>
             
         </tags>
       
@@ -4560,9 +4653,9 @@
       
         <tags>
             
-            <tag> Claude Code </tag>
-            
             <tag> AI Agent </tag>
+            
+            <tag> Claude Code </tag>
             
             <tag> Code Review </tag>
             
@@ -4647,13 +4740,13 @@
       
         <tags>
             
-            <tag> MCP </tag>
-            
             <tag> LLM </tag>
             
-            <tag> Claude Code </tag>
-            
             <tag> AI Agent </tag>
+            
+            <tag> MCP </tag>
+            
+            <tag> Claude Code </tag>
             
         </tags>
       
@@ -4705,11 +4798,11 @@
       
         <tags>
             
+            <tag> LLM </tag>
+            
             <tag> AI與科技新聞 </tag>
             
             <tag> 資安 </tag>
-            
-            <tag> LLM </tag>
             
         </tags>
       
@@ -4796,11 +4889,11 @@
       
         <tags>
             
+            <tag> AI Agent </tag>
+            
             <tag> MCP </tag>
             
             <tag> Claude Code </tag>
-            
-            <tag> AI Agent </tag>
             
             <tag> Rust </tag>
             
@@ -4887,9 +4980,9 @@
             
             <tag> Claude </tag>
             
-            <tag> 自動化 </tag>
-            
             <tag> macOS </tag>
+            
+            <tag> 自動化 </tag>
             
         </tags>
       
@@ -4943,13 +5036,13 @@
       
         <tags>
             
+            <tag> 理財 </tag>
+            
             <tag> AI與科技新聞 </tag>
             
             <tag> 資安 </tag>
             
             <tag> Gemini </tag>
-            
-            <tag> 理財 </tag>
             
         </tags>
       
@@ -5032,9 +5125,9 @@
       
         <tags>
             
-            <tag> 資安 </tag>
-            
             <tag> 開源 </tag>
+            
+            <tag> 資安 </tag>
             
             <tag> 開發工具 </tag>
             
@@ -5065,9 +5158,9 @@
             
             <tag> Claude Code </tag>
             
-            <tag> 自動化 </tag>
-            
             <tag> macOS </tag>
+            
+            <tag> 自動化 </tag>
             
             <tag> 教學 </tag>
             
@@ -5332,9 +5425,9 @@
       
         <tags>
             
-            <tag> 工程師生活 </tag>
-            
             <tag> 理財 </tag>
+            
+            <tag> 工程師生活 </tag>
             
         </tags>
       
@@ -5363,9 +5456,9 @@
             
             <tag> OpenAI </tag>
             
-            <tag> Google </tag>
-            
             <tag> Anthropic </tag>
+            
+            <tag> Google </tag>
             
         </tags>
       
@@ -5390,9 +5483,9 @@
       
         <tags>
             
-            <tag> DevOps </tag>
-            
             <tag> Rust </tag>
+            
+            <tag> DevOps </tag>
             
             <tag> 系統監控 </tag>
             
@@ -5454,9 +5547,9 @@
             
             <tag> 資安 </tag>
             
-            <tag> NVIDIA </tag>
-            
             <tag> Google </tag>
+            
+            <tag> NVIDIA </tag>
             
         </tags>
       
@@ -5516,9 +5609,9 @@
             
             <tag> 資安 </tag>
             
-            <tag> Google </tag>
-            
             <tag> Anthropic </tag>
+            
+            <tag> Google </tag>
             
         </tags>
       
@@ -5570,9 +5663,9 @@
       
         <tags>
             
-            <tag> Claude Code </tag>
-            
             <tag> AI Agent </tag>
+            
+            <tag> Claude Code </tag>
             
             <tag> Skills </tag>
             
@@ -5682,9 +5775,9 @@
       
         <tags>
             
-            <tag> Claude Code </tag>
-            
             <tag> AI Agent </tag>
+            
+            <tag> Claude Code </tag>
             
             <tag> 自動化 </tag>
             
@@ -5711,13 +5804,13 @@
       
         <tags>
             
+            <tag> LLM </tag>
+            
             <tag> AI與科技新聞 </tag>
             
             <tag> Claude </tag>
             
             <tag> OpenAI </tag>
-            
-            <tag> LLM </tag>
             
             <tag> Apple </tag>
             
@@ -5941,11 +6034,11 @@
       
         <tags>
             
+            <tag> LLM </tag>
+            
             <tag> AI與科技新聞 </tag>
             
             <tag> 資安 </tag>
-            
-            <tag> LLM </tag>
             
         </tags>
       
@@ -6053,9 +6146,9 @@
             
             <tag> Java </tag>
             
-            <tag> Stream </tag>
-            
             <tag> Collections </tag>
+            
+            <tag> Stream </tag>
             
         </tags>
       
@@ -6159,9 +6252,9 @@
             
             <tag> Java </tag>
             
-            <tag> Stream </tag>
-            
             <tag> Collections </tag>
+            
+            <tag> Stream </tag>
             
         </tags>
       
@@ -6188,9 +6281,9 @@
             
             <tag> Java </tag>
             
-            <tag> Stream </tag>
-            
             <tag> JSON </tag>
+            
+            <tag> Stream </tag>
             
         </tags>
       
@@ -6317,9 +6410,9 @@
       
         <tags>
             
-            <tag> Collections </tag>
-            
             <tag> JSON </tag>
+            
+            <tag> Collections </tag>
             
         </tags>
       
