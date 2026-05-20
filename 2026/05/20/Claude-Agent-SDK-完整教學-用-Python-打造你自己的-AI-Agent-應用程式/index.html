@@ -1,0 +1,388 @@
+<!DOCTYPE html><html lang="zh-TW" data-theme="dark"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>Claude Agent SDK 完整教學 — 用 Python 打造你自己的 AI Agent 應用程式 | Cheng's Tech &amp; Life</title><meta name="author" content="Cheng®"><meta name="copyright" content="Cheng®"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#0d0d0d"><meta name="description" content="用 Anthropic 官方的 Agent SDK，幾十行 Python 就能造出一個會自己用工具、跑多輪對話、完成任務的 AI agent。六月十五號計費拆分前，先搞懂它能做什麼。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Claude Agent SDK 完整教學 — 用 Python 打造你自己的 AI Agent 應用程式">
+<meta property="og:url" content="https://mark22013333.github.io/2026/05/20/Claude-Agent-SDK-%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8-%E7%94%A8-Python-%E6%89%93%E9%80%A0%E4%BD%A0%E8%87%AA%E5%B7%B1%E7%9A%84-AI-Agent-%E6%87%89%E7%94%A8%E7%A8%8B%E5%BC%8F/index.html">
+<meta property="og:site_name" content="Cheng&#39;s Tech &amp; Life">
+<meta property="og:description" content="用 Anthropic 官方的 Agent SDK，幾十行 Python 就能造出一個會自己用工具、跑多輪對話、完成任務的 AI agent。六月十五號計費拆分前，先搞懂它能做什麼。">
+<meta property="og:locale" content="zh_TW">
+<meta property="og:image" content="https://mark22013333.github.io/img/20260520-03.webp">
+<meta property="article:published_time" content="2026-05-20T02:30:00.000Z">
+<meta property="article:modified_time" content="2026-05-20T13:30:05.967Z">
+<meta property="article:author" content="Cheng®">
+<meta property="article:tag" content="AI Agent">
+<meta property="article:tag" content="Claude">
+<meta property="article:tag" content="Claude Code">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://mark22013333.github.io/img/20260520-03.webp"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Claude Agent SDK 完整教學 — 用 Python 打造你自己的 AI Agent 應用程式",
+  "url": "https://mark22013333.github.io/2026/05/20/Claude-Agent-SDK-%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8-%E7%94%A8-Python-%E6%89%93%E9%80%A0%E4%BD%A0%E8%87%AA%E5%B7%B1%E7%9A%84-AI-Agent-%E6%87%89%E7%94%A8%E7%A8%8B%E5%BC%8F/",
+  "image": "https://mark22013333.github.io/img/20260520-03.webp",
+  "datePublished": "2026-05-20T02:30:00.000Z",
+  "dateModified": "2026-05-20T13:30:05.967Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "Cheng®",
+      "url": "https://mark22013333.github.io"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://mark22013333.github.io/2026/05/20/Claude-Agent-SDK-%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8-%E7%94%A8-Python-%E6%89%93%E9%80%A0%E4%BD%A0%E8%87%AA%E5%B7%B1%E7%9A%84-AI-Agent-%E6%87%89%E7%94%A8%E7%A8%8B%E5%BC%8F/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//www.google-analytics.com" crossorigin=""/><link rel="preconnect" href="//fonts.googleapis.com" crossorigin=""/><link rel="preconnect" href="//busuanzi.ibruce.info"/><meta name="google-site-verification" content="6ywUr8k2n_CT1PFYJzlSvI3CZ-JmJ55RYbA39VrFBDs"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!true && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          const hour = new Date().getHours()
+          const isNight = hour <= 9 || hour >= 18
+          if (theme === undefined) isNight ? activateDarkMode() : activateLightMode()
+          else theme === 'light' ? activateLightMode() : activateDarkMode()
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script async="async" src="https://www.googletagmanager.com/gtag/js?id=G-JBV14NRDH3"></script><script>window.dataLayer = window.dataLayer || []
+function gtag(){dataLayer.push(arguments)}
+gtag('js', new Date())
+gtag('config', 'G-JBV14NRDH3')
+btf.addGlobalFn('pjaxComplete', () => {
+  gtag('config', 'G-JBV14NRDH3', {'page_path': window.location.pathname})
+}, 'google_analytics')
+</script><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Titillium+Web&amp;display=swap" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"pagination":{"enable":false,"hitsPerPage":8},"languages":{"hits_empty":"找不到符合您查詢的內容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '複製成功',
+    error: '複製失敗',
+    noSupport: '瀏覽器不支援'
+  },
+  relativeDate: {
+    homepage: false,
+    post: true
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '剛剛',
+    min: '分鐘前',
+    hour: '小時前',
+    day: '天前',
+    month: '個月前'
+  },
+  copyright: {"limitCount":1,"languages":{"author":"作者: Cheng®","link":"連結: ","source":"來源: Cheng's Tech & Life","info":"著作權歸作者所有。如需商業轉載，請聯絡作者獲得授權，非商業轉載請註明出處😁。"}},
+  lightbox: 'fancybox',
+  Snackbar: {"chs_to_cht":"已切換為繁體中文","cht_to_chs":"已切換為簡體中文","day_to_night":"已切換為深色模式","night_to_day":"已切換為淺色模式","bgLight":"#49b1f5","bgDark":"#1f1f1f","position":"top-center"},
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid/dist/infinitegrid.min.js',
+    buttonText: '載入更多'
+  },
+  isPhotoFigcaption: true,
+  islazyloadPlugin: false,
+  isAnchor: true,
+  percent: {
+    toc: true,
+    rightside: true,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Claude Agent SDK 完整教學 — 用 Python 打造你自己的 AI Agent 應用程式',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><link rel="stylesheet" href="/css/kkbox-player.css"><link rel="stylesheet" href="/css/tag-cloud-fancy.css"><link rel="stylesheet" href="/css/font-resize.css"><link rel="stylesheet" href="/css/dark-palette.css"><link rel="stylesheet" href="/css/loading-override.css"><link rel="stylesheet" href="/css/series-showcase.css"><link rel="stylesheet" href="/css/search-tags.css"><link rel="alternate" href="/atom.xml" title="Cheng's Tech & Life" type="application/atom+xml">
+</head><body><div id="loading-box"><div class="loading-glass-overlay"></div><div class="loading-indicator"><div class="loading-dot"></div><div class="loading-dot"></div><div class="loading-dot"></div></div></div><script>(()=>{
+  const $loadingBox = document.getElementById('loading-box')
+  const $body = document.body
+  const preloader = {
+    endLoading: () => {
+      if ($loadingBox.classList.contains('loaded')) return
+      $body.style.overflow = ''
+      $loadingBox.classList.add('loaded')
+    },
+    initLoading: () => {
+      $body.style.overflow = 'hidden'
+      $loadingBox.classList.remove('loaded')
+    }
+  }
+
+  preloader.initLoading()
+
+  if (document.readyState === 'complete') {
+    preloader.endLoading()
+  } else {
+    window.addEventListener('load', preloader.endLoading)
+    document.addEventListener('DOMContentLoaded', preloader.endLoading)
+    setTimeout(preloader.endLoading, 7000)
+  }
+
+  if (true) {
+    btf.addGlobalFn('pjaxSend', preloader.initLoading, 'preloader_init')
+    btf.addGlobalFn('pjaxComplete', preloader.endLoading, 'preloader_end')
+  }
+})()</script><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="https://lh3.googleusercontent.com/pw/ABLVV87_po8nBc6F_tXcoYDmtzMGWxHuhhrbguYILCjmjWKLOS8DTpubm0YoQLKgjyjRIZyV5TjYe7XVEz_YU4squfr37GTZqPZP1hlMVZ_MIgXpTxWu73M=w1200" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">246</div></a><a href="/tags/"><div class="headline">標籤</div><div class="length-num">215</div></a><a href="/categories/"><div class="headline">分類</div><div class="length-num">18</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首頁-Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 時間軸-archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 標籤-tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分類-Categories</span></a></div><div class="menus_item"><a class="site-page" href="/series/"><i class="fa-fw fas fa-layer-group"></i><span> 系列-Series</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-list"></i><span> 其他列表</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音樂-Music</span></a></li><li><a class="site-page child" href="/gallery/"><i class="fa-fw fas fa-images"></i><span> 畫館-Gallery</span></a></li></ul></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg fixed" id="page-header" style="background-image: url(/img/20260520-03.webp);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><img class="site-icon" src="https://lh3.googleusercontent.com/pw/ABLVV87_po8nBc6F_tXcoYDmtzMGWxHuhhrbguYILCjmjWKLOS8DTpubm0YoQLKgjyjRIZyV5TjYe7XVEz_YU4squfr37GTZqPZP1hlMVZ_MIgXpTxWu73M=w1200" alt="Logo"><span class="site-name">Cheng's Tech &amp; Life</span></a><a class="nav-page-title" href="/"><span class="site-name">Claude Agent SDK 完整教學 — 用 Python 打造你自己的 AI Agent 應用程式</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首頁</span></span></a></span><div id="menus"><div id="search-button" title="Ctrl+K / Cmd+K"><span class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜尋</span></span></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首頁-Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 時間軸-archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 標籤-tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分類-Categories</span></a></div><div class="menus_item"><a class="site-page" href="/series/"><i class="fa-fw fas fa-layer-group"></i><span> 系列-Series</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-list"></i><span> 其他列表</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音樂-Music</span></a></li><li><a class="site-page child" href="/gallery/"><i class="fa-fw fas fa-images"></i><span> 畫館-Gallery</span></a></li></ul></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">Claude Agent SDK 完整教學 — 用 Python 打造你自己的 AI Agent 應用程式</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">發表於</span><time class="post-meta-date-created" datetime="2026-05-20T02:30:00.000Z" title="發表於 2026-05-20 10:30:00">2026-05-20</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新於</span><time class="post-meta-date-updated" datetime="2026-05-20T13:30:05.967Z" title="更新於 2026-05-20 21:30:05">2026-05-20</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Claude-Code/">Claude Code</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">總字數:</span><span class="word-count">2k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">閱讀時間:</span><span>7分鐘</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">瀏覽量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><p>你雇了一個很聰明的實習生。他什麼都懂，但你得告訴他三件事：可以用哪些工具、什麼時候該停下來問你、最後要交出什麼。</p>
+<p>Claude Agent SDK 做的事情差不多。它是一個 Python 套件，讓你用幾十行程式碼就能造出一個會自己用工具、跑多輪對話、遇到卡關會問你的 AI agent。不是 Claude Code 裡面的 sub-agent，不是 Managed Agents 的雲端服務——是你自己的程式，跑在你自己的機器上。</p>
+<h2 id="跟你已經知道的東西有什麼不同"><a href="#跟你已經知道的東西有什麼不同" class="headerlink" title="跟你已經知道的東西有什麼不同"></a>跟你已經知道的東西有什麼不同</h2><p>先釐清三個容易搞混的名詞。</p>
+<p><strong>Claude API Tool Use</strong> 是最底層的能力。你呼叫一次 API、Claude 回你一個 tool call、你執行完把結果丟回去。一來一回，你自己管 loop。</p>
+<p><strong>Claude Code Sub-agents</strong> 是 Claude Code 裡面的功能。你在 Claude Code 的對話中啟動一個子任務，它在 Claude Code 的環境裡跑。你沒辦法把它搬到自己的應用程式裡。</p>
+<p><strong>Agent SDK</strong> 在中間。它幫你把「收到 tool call → 執行 → 丟回去 → 再問一次」這整個迴圈包起來了。你定義工具、設定目標、按下啟動，agent 自己跑到完。</p>
+<p>用實習生的類比：API Tool Use 是你親手遞文件給實習生、看他做完、再遞下一份。Agent SDK 是你把一整疊文件丟到他桌上說「做完這些再跟我講」。</p>
+<h2 id="安裝"><a href="#安裝" class="headerlink" title="安裝"></a>安裝</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip install anthropic-agent-sdk</span><br></pre></td></tr></table></figure>
+
+<p>需要 Python 3.10 以上。安裝完設定環境變數：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">export</span> ANTHROPIC_API_KEY=<span class="string">&quot;sk-ant-...&quot;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="第一個-Agent：檔案摘要助手"><a href="#第一個-Agent：檔案摘要助手" class="headerlink" title="第一個 Agent：檔案摘要助手"></a>第一個 Agent：檔案摘要助手</h2><p>從最簡單的開始。這個 agent 能讀檔案、做摘要、寫結果：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> anthropic_agent_sdk <span class="keyword">import</span> Agent, Tool</span><br><span class="line"><span class="keyword">import</span> json</span><br><span class="line"></span><br><span class="line"><span class="comment"># 定義工具</span></span><br><span class="line">read_file = Tool(</span><br><span class="line">    name=<span class="string">&quot;read_file&quot;</span>,</span><br><span class="line">    description=<span class="string">&quot;讀取指定路徑的檔案內容&quot;</span>,</span><br><span class="line">    parameters=&#123;</span><br><span class="line">        <span class="string">&quot;type&quot;</span>: <span class="string">&quot;object&quot;</span>,</span><br><span class="line">        <span class="string">&quot;properties&quot;</span>: &#123;</span><br><span class="line">            <span class="string">&quot;path&quot;</span>: &#123;<span class="string">&quot;type&quot;</span>: <span class="string">&quot;string&quot;</span>, <span class="string">&quot;description&quot;</span>: <span class="string">&quot;檔案路徑&quot;</span>&#125;</span><br><span class="line">        &#125;,</span><br><span class="line">        <span class="string">&quot;required&quot;</span>: [<span class="string">&quot;path&quot;</span>]</span><br><span class="line">    &#125;,</span><br><span class="line">    handler=<span class="keyword">lambda</span> params: <span class="built_in">open</span>(params[<span class="string">&quot;path&quot;</span>]).read()</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">write_file = Tool(</span><br><span class="line">    name=<span class="string">&quot;write_file&quot;</span>,</span><br><span class="line">    description=<span class="string">&quot;將內容寫入指定路徑&quot;</span>,</span><br><span class="line">    parameters=&#123;</span><br><span class="line">        <span class="string">&quot;type&quot;</span>: <span class="string">&quot;object&quot;</span>,</span><br><span class="line">        <span class="string">&quot;properties&quot;</span>: &#123;</span><br><span class="line">            <span class="string">&quot;path&quot;</span>: &#123;<span class="string">&quot;type&quot;</span>: <span class="string">&quot;string&quot;</span>, <span class="string">&quot;description&quot;</span>: <span class="string">&quot;檔案路徑&quot;</span>&#125;,</span><br><span class="line">            <span class="string">&quot;content&quot;</span>: &#123;<span class="string">&quot;type&quot;</span>: <span class="string">&quot;string&quot;</span>, <span class="string">&quot;description&quot;</span>: <span class="string">&quot;寫入內容&quot;</span>&#125;</span><br><span class="line">        &#125;,</span><br><span class="line">        <span class="string">&quot;required&quot;</span>: [<span class="string">&quot;path&quot;</span>, <span class="string">&quot;content&quot;</span>]</span><br><span class="line">    &#125;,</span><br><span class="line">    handler=<span class="keyword">lambda</span> params: (</span><br><span class="line">        <span class="built_in">open</span>(params[<span class="string">&quot;path&quot;</span>], <span class="string">&quot;w&quot;</span>).write(params[<span class="string">&quot;content&quot;</span>]),</span><br><span class="line">        <span class="string">&quot;寫入完成&quot;</span></span><br><span class="line">    )[<span class="number">1</span>]</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 建立 agent</span></span><br><span class="line">agent = Agent(</span><br><span class="line">    model=<span class="string">&quot;claude-sonnet-4-6&quot;</span>,</span><br><span class="line">    tools=[read_file, write_file],</span><br><span class="line">    system=<span class="string">&quot;你是一個檔案摘要助手。讀取使用者指定的檔案，用繁體中文寫一份 200 字以內的摘要，存到指定位置。&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 跑一個任務</span></span><br><span class="line">result = agent.run(<span class="string">&quot;請讀取 ./report.txt，摘要後存到 ./summary.md&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(result.final_message)</span><br></pre></td></tr></table></figure>
+
+<p>這裡發生了什麼？<code>agent.run()</code> 啟動之後，SDK 自動跑一個迴圈：送 prompt 給 Claude → Claude 回 tool call → SDK 呼叫你定義的 handler → 把結果塞回 Claude → Claude 決定要繼續用工具還是給最終回覆。</p>
+<p>你不用自己寫 while loop，不用自己追蹤 conversation history，不用自己判斷什麼時候該停。</p>
+<h2 id="加上人機互動"><a href="#加上人機互動" class="headerlink" title="加上人機互動"></a>加上人機互動</h2><p>實習生遇到不確定的事情該怎麼辦？問你。Agent SDK 內建了 human-in-the-loop 機制：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> anthropic_agent_sdk <span class="keyword">import</span> Agent, Tool, HumanConfirmation</span><br><span class="line"></span><br><span class="line">agent = Agent(</span><br><span class="line">    model=<span class="string">&quot;claude-sonnet-4-6&quot;</span>,</span><br><span class="line">    tools=[read_file, write_file],</span><br><span class="line">    confirmation=HumanConfirmation(</span><br><span class="line">        require_for=[<span class="string">&quot;write_file&quot;</span>]</span><br><span class="line">    )</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<p>加了 <code>HumanConfirmation</code> 之後，agent 每次要呼叫 <code>write_file</code> 之前會暫停，在終端機印出它打算寫什麼、寫到哪裡，等你輸入 <code>y</code> 才繼續。讀取不需要確認，寫入需要——最小權限原則。</p>
+<h2 id="模型選擇策略"><a href="#模型選擇策略" class="headerlink" title="模型選擇策略"></a>模型選擇策略</h2><p>Agent SDK 支援所有 Claude 模型。怎麼選？</p>
+<p><strong>Haiku 4.5</strong> 適合高頻率、低複雜度的任務。分類、格式轉換、簡單的資料提取。成本是 Sonnet 的三分之一左右。</p>
+<p><strong>Sonnet 4.6</strong> 是甜蜜點。大部分 agent 任務用 Sonnet 就夠了——寫程式碼、分析文件、多步驟推理。</p>
+<p><strong>Opus 4.7</strong> 留給真正需要深度推理的場景。架構決策、複雜除錯、需要同時考慮很多約束條件的任務。</p>
+<p>一個省錢的技巧：在 agent 的 system prompt 裡寫清楚任務邊界。描述越精確，模型就越少花 token 在「搞懂你到底要什麼」上面。</p>
+<h2 id="多-Agent-編排"><a href="#多-Agent-編排" class="headerlink" title="多 Agent 編排"></a>多 Agent 編排</h2><p>當一個 agent 不夠用，你可以讓多個 agent 分工：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> anthropic_agent_sdk <span class="keyword">import</span> Agent, Orchestrator</span><br><span class="line"></span><br><span class="line">researcher = Agent(</span><br><span class="line">    model=<span class="string">&quot;claude-sonnet-4-6&quot;</span>,</span><br><span class="line">    tools=[web_search, read_url],</span><br><span class="line">    system=<span class="string">&quot;你是研究員。搜尋使用者指定的主題，整理成結構化筆記。&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">writer = Agent(</span><br><span class="line">    model=<span class="string">&quot;claude-sonnet-4-6&quot;</span>,</span><br><span class="line">    tools=[write_file],</span><br><span class="line">    system=<span class="string">&quot;你是技術寫手。根據研究筆記，寫一篇部落格文章。&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">orchestrator = Orchestrator(</span><br><span class="line">    agents=&#123;<span class="string">&quot;researcher&quot;</span>: researcher, <span class="string">&quot;writer&quot;</span>: writer&#125;,</span><br><span class="line">    workflow=[</span><br><span class="line">        &#123;<span class="string">&quot;agent&quot;</span>: <span class="string">&quot;researcher&quot;</span>, <span class="string">&quot;task&quot;</span>: <span class="string">&quot;搜尋 &#123;topic&#125; 的最新發展&quot;</span>&#125;,</span><br><span class="line">        &#123;<span class="string">&quot;agent&quot;</span>: <span class="string">&quot;writer&quot;</span>, <span class="string">&quot;task&quot;</span>: <span class="string">&quot;根據研究結果寫一篇 1500 字的文章&quot;</span>&#125;</span><br><span class="line">    ]</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">result = orchestrator.run(variables=&#123;<span class="string">&quot;topic&quot;</span>: <span class="string">&quot;WebMCP 開放標準&quot;</span>&#125;)</span><br></pre></td></tr></table></figure>
+
+<p>Orchestrator 按照 <code>workflow</code> 的順序執行。前一個 agent 的輸出自動變成下一個 agent 的輸入。</p>
+<p>更複雜的場景可以用條件分支和平行執行，但大部分時候線性 workflow 就夠了。</p>
+<h2 id="六月十五號計費變動"><a href="#六月十五號計費變動" class="headerlink" title="六月十五號計費變動"></a>六月十五號計費變動</h2><p>這個很重要。</p>
+<p>從六月十五號起，Agent SDK 的用量會從你的互動式配額中獨立出來。Pro 方案每月 $20 Agent SDK credit、Max 5x 每月 $100、Max 20x 每月 $200。</p>
+<p><strong>實際意義</strong>：你用 Agent SDK 跑背景任務不會再吃掉你在 Claude Code 裡面打字的配額。但 Agent SDK credit 用完就停，不會自動加購。</p>
+<p>如果你正在考慮用 Agent SDK 做 CI&#x2F;CD 自動化或排程任務，六月十五號之前先測好你的用量，確認月度 credit 夠不夠。</p>
+<h2 id="什麼時候該用-Agent-SDK"><a href="#什麼時候該用-Agent-SDK" class="headerlink" title="什麼時候該用 Agent SDK"></a>什麼時候該用 Agent SDK</h2><p><strong>該用的場景</strong>：你要建一個獨立的 AI 應用程式，跑在自己的伺服器或 CI 上，需要 Claude 自主使用工具完成任務。</p>
+<p><strong>不該用的場景</strong>：你只是想在 Claude Code 裡面加一個自訂指令——那用 Claude Code 的 custom agent（<code>.claude/agents/</code> 目錄下的 markdown 檔案）就好了。不需要寫 Python。</p>
+<p><strong>也不該用的場景</strong>：你要一個 24&#x2F;7 跑在雲端的 agent——那是 Managed Agents 的守備範圍，Anthropic 幫你管 infra。</p>
+<p>用一句話區分：Agent SDK 是給「我要把 Claude 嵌進我的程式裡」的人。Claude Code custom agent 是給「我要在 Claude Code 裡面客製化」的人。Managed Agents 是給「我不想管 infra」的人。</p>
+<h2 id="安全注意事項"><a href="#安全注意事項" class="headerlink" title="安全注意事項"></a>安全注意事項</h2><p>Agent SDK 讓你定義工具，工具的 handler 是你寫的 Python 函式。這代表 agent 能做的事情完全取決於你給它什麼工具。</p>
+<p>幾個原則：</p>
+<p><strong>最小權限</strong>。如果 agent 只需要讀檔案，就不要給它寫檔案的工具。聽起來很基本，但 PocketOS 事件就是因為一個 token 的權限範圍太廣，agent 九秒刪光了 production 資料庫。</p>
+<p><strong>輸入驗證</strong>。你的 handler 函式要驗證 agent 傳進來的參數。特別是檔案路徑——不要讓 agent 讀到 <code>/etc/passwd</code> 或寫到系統目錄。</p>
+<p><strong>人類確認</strong>。任何不可逆的操作（刪除、發送、支付）都該加 <code>HumanConfirmation</code>。</p>
+<h2 id="從這裡出發"><a href="#從這裡出發" class="headerlink" title="從這裡出發"></a>從這裡出發</h2><p>學完 Agent SDK 的基本用法之後，下一步有幾個方向：</p>
+<p>如果你想讓 agent 存取外部服務（資料庫、API、Slack），去看 <strong>MCP Server 開發</strong>——你可以把 MCP server 當成 Agent SDK 的工具來源。</p>
+<p>如果你想讓 agent 在雲端自動跑，去看 <strong>Managed Agents</strong>——它是 Agent SDK 的託管版，不用自己管伺服器。</p>
+<p>如果你想讓多個 agent 協作做更複雜的任務，去看 <strong>Agent Teams</strong> 的設計模式——雖然那是 Claude Code 裡的功能，但編排邏輯可以移植到 Agent SDK 的 Orchestrator 裡。</p>
+<blockquote>
+<p>參考來源：<a target="_blank" rel="noopener" href="https://code.claude.com/docs/en/agent-sdk/overview">Agent SDK overview — Claude Code Docs</a><br>參考來源：<a target="_blank" rel="noopener" href="https://github.com/anthropics/claude-agent-sdk-python">claude-agent-sdk-python — GitHub</a><br>參考來源：<a target="_blank" rel="noopener" href="https://devtoolpicks.com/blog/anthropic-splits-claude-subscriptions-agent-sdk-credit-june-2026">Anthropic Splits Claude Subscriptions — DevToolPicks</a></p>
+</blockquote>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://mark22013333.github.io">Cheng®</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章連結: </span><span class="post-copyright-info"><a href="https://mark22013333.github.io/2026/05/20/Claude-Agent-SDK-%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8-%E7%94%A8-Python-%E6%89%93%E9%80%A0%E4%BD%A0%E8%87%AA%E5%B7%B1%E7%9A%84-AI-Agent-%E6%87%89%E7%94%A8%E7%A8%8B%E5%BC%8F/">https://mark22013333.github.io/2026/05/20/Claude-Agent-SDK-完整教學-用-Python-打造你自己的-AI-Agent-應用程式/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版權聲明: </span><span class="post-copyright-info">本部落格所有文章除特別聲明外，均採用<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 授權協議。轉載請註明來源 <a href="https://mark22013333.github.io" target="_blank">Cheng's Tech & Life</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/AI-Agent/">AI Agent</a><a class="post-meta__tags" href="/tags/Claude/">Claude</a><a class="post-meta__tags" href="/tags/Claude-Code/">Claude Code</a></div><div class="post-share"><div class="social-share" data-image="/img/20260520-03.webp" data-sites="facebook,x"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><div class="post-reward"><div class="reward-badges"><a class="sponsor-glow-btn" href="https://www.buymeacoffee.com/mark22013333" target="_blank" rel="noopener noreferrer" title="Buy Me A Coffee"><img src="https://img.shields.io/badge/Buy_Me_A_Coffee-FFDD00?style=for-the-badge&amp;logo=buy-me-a-coffee&amp;logoColor=black" alt="Buy Me A Coffee"/></a><a class="sponsor-glow-btn" href="https://p.ecpay.com.tw/EFC3F8F" target="_blank" rel="noopener noreferrer" title="綠界贊助"><img src="https://img.shields.io/badge/☕_%E8%AB%8B%E6%88%91%E5%96%9D%E6%9D%AF%E5%92%96%E5%95%A1-Donate-11998e?style=for-the-badge&amp;logo=coffee&amp;logoColor=white" alt="綠界贊助"/></a><a class="sponsor-glow-btn" href="https://calendly.com/markcheng00806-intumit/15min" target="_blank" rel="noopener noreferrer" title="預約時間"><img src="https://img.shields.io/badge/📅_%E9%A0%90%E7%B4%84_15_%E5%88%86%E9%90%98-Book_Time-0072ff?style=for-the-badge" alt="預約時間"/></a><p class="reward-badges-note">你的鼓勵將被轉換為我明天繼續加班的動力（真的）。 ❤️</p></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related full-width" href="/2026/05/20/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260520/" title="AI 與科技新聞摘要 - 2026/05/20"><img class="cover" src="/img/20260520-02.webp" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">AI 與科技新聞摘要 - 2026/05/20</div></div><div class="info-2"><div class="info-item-1">Google 剛剛提議讓所有網站都能被 AI agent 直接操作。 不是透過螢幕截圖、不是用 Selenium 點按鈕。WebMCP 要讓 agent 繞過整個視覺介面，直接呼叫網站後端的 JavaScript 函式和 HTML 表單。你訂機票，不再是 agent 幫你一格一格填日期——它直接呼叫航空公司的查詢 API，30 秒內回來一份天氣最佳化的行程。 同一天，研究人員證明這些 agent 在拿到工具之後會作弊。Exchange 的零日漏洞正在被打。NGINX 一個藏了 18 年的洞被挖出來。Anthropic 宣布六月要把 Agent SDK 的帳單拆開算。 五條新聞，一個結構性矛盾：我們正在加速讓 AI agent 接管更多系統操作權，同時卻連現有的系統都守不住。  Google I&#x2F;O 2026：不是 Gemini 4，但可能更重要市場等了三個月，等的是 Gemini 4。Google 端出來的是 Gemini 3.5 Flash。 版本號比期待低了半代，但 Flash 做了一件更有意思的事：它跑 agentic task 的速度是同級 frontier m...</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相關推薦</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2026/04/22/claude-code-prompts-%E6%8B%86%E9%96%8B%E4%B8%80%E5%80%8B-AI-Coding-Agent-%E7%9A%84-Prompt-%E9%AA%A8%E6%9E%B6/" title="claude-code-prompts — 拆開一個 AI Coding Agent 的 Prompt 骨架"><img class="cover" src="/img/20260422-01.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-04-22</div><div class="info-item-2">claude-code-prompts — 拆開一個 AI Coding Agent 的 Prompt 骨架</div></div><div class="info-2"><div class="info-item-1">大部分 AI coding agent 教學的問題不是講錯，是從功能開始，不從問題開始。 「這個工具有幾個 tool call」「這個框架支援哪些 LLM」——這些都不是最重要的問題。最重要的問題是：你怎麼告訴一個 AI agent 它是誰、它能做什麼、它什麼時候該停下來問你？ 這個問題的答案，幾乎所有 agent 框架都藏在 prompt 裡——但很少有人完整把 prompt 架構攤開來講。claude-code-prompts 做的事情就是這件：把一個可以實際運作的 AI coding agent 的 prompt 架構整個拆開，38 個 Markdown 檔案，分 7 大類。  這不是「Awesome Prompts」清單先釐清這個專案跟你可能預期的有什麼不同。 awesome-chatgpt-prompts 是角色扮演清單——「你是一個 Linux 終端機」、「你是一個英文老師」。每個 prompt 獨立運作，彼此沒有關係。 claude-code-prompts 完全不是這個概念。它的 38 個 prompt 是互相連動的系統：system prompt 定義 agen...</div></div></div></a><a class="pagination-related" href="/2026/04/28/MCP-Server-%E9%96%8B%E7%99%BC%E5%85%A5%E9%96%80%E6%95%99%E5%AD%B8-%E7%94%A8-Python-%E5%BE%9E%E9%9B%B6%E6%89%93%E9%80%A0-AI-%E5%B7%A5%E5%85%B7%E9%80%A3%E6%8E%A5%E5%99%A8/" title="MCP Server 開發入門教學 — 用 Python 從零打造 AI 工具連接器"><img class="cover" src="/img/20260428-03.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-04-28</div><div class="info-item-2">MCP Server 開發入門教學 — 用 Python 從零打造 AI 工具連接器</div></div><div class="info-2"><div class="info-item-1">你家一定有 USB 轉接頭。Type-C 轉 HDMI、Lightning 轉 3.5mm、各種奇奇怪怪的接頭。轉接頭本身不做任何事，它只是讓兩個本來講不同語言的東西能接上。螢幕不需要知道你的筆電是什麼牌子，筆電也不需要知道螢幕的解析度怎麼設定 — 轉接頭搞定一切。 MCP（Model Context Protocol）就是 AI 世界的 USB 轉接頭。 Anthropic 開發了這個開放協定，現在已經捐給 Linux Foundation AAIF。它讓 AI model 連接外部工具和資料來源，不管是資料庫、API、檔案系統，接上就能用。目前生態系已經長到 164M 月下載量、超過 2,400 個 server，Microsoft、GitHub、Cloudflare、Stripe 都在用。Claude Code、Cursor、Kiro 這些 AI coding 工具也全部支援。 這不是什麼還在實驗階段的新玩意。這已經是事實標準了。 MCP 的三個核心原語在寫 code 之前，先搞懂 MCP 的三個核心概念。我用遙控器來比喻： Tools（工具） — 遙控器上的按鈕。按下「計...</div></div></div></a><a class="pagination-related" href="/2026/05/14/Claude-Code-Desktop-App-%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8-%E5%B9%B3%E8%A1%8C-Session-%E6%8B%96%E6%94%BE%E5%B7%A5%E4%BD%9C%E5%8D%80%E8%88%87%E6%95%B4%E5%90%88%E7%B5%82%E7%AB%AF%E6%A9%9F/" title="Claude Code Desktop App 完整教學 — 平行 Session、拖放工作區與整合終端機"><img class="cover" src="/img/20260514-03.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-05-14</div><div class="info-item-2">Claude Code Desktop App 完整教學 — 平行 Session、拖放工作區與整合終端機</div></div><div class="info-2"><div class="info-item-1">打開三個終端機視窗。一個跑前端 dev server，一個跑後端 API，一個跑測試。再開一個 Claude Code session 修 bug，另一個 session 寫新功能。Alt-Tab 按到手指抽筋，每次切回去都要花五秒重新定位「我剛才做到哪了」。 如果你有過這種經驗，Claude Code 的桌面版重新設計就是為你做的。  一個視窗，多個 Session2026 年四月，Anthropic 對 Claude Code 的桌面 app 做了一次大改版。核心改變只有一個：你可以在同一個視窗裡同時開多個 session，並排顯示。 聽起來很簡單。實際用起來的差距是這樣的——以前你要在不同視窗之間跳來跳去，每次切換都斷一次思路。現在你把兩個 session 並排放在螢幕上，左邊修 bug、右邊跑測試，眼睛掃一下就能看到兩邊的狀態。 這就像雙螢幕跟單螢幕的差距。技術上你用單螢幕也能做一樣的事。但雙螢幕省下的是每天幾百次的視窗切換，每次省一點點認知負擔，一天下來是真實的生產力差距。  Session Sidebar：所有工作，一個清單新版左側加了一個 Session Sideb...</div></div></div></a><a class="pagination-related" href="/2026/05/11/ClaudeBusiness-%E4%B8%80%E4%BB%BD%E7%94%A8-Claude-AI-%E5%89%B5%E6%A5%AD%E7%9A%84%E5%8F%8D%E9%9B%9E%E6%B9%AF%E6%89%8B%E5%86%8A/" title="ClaudeBusiness — 一份用 Claude AI 創業的反雞湯手冊"><img class="cover" src="/img/20260511-01.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-05-11</div><div class="info-item-2">ClaudeBusiness — 一份用 Claude AI 創業的反雞湯手冊</div></div><div class="info-2"><div class="info-item-1">大部分用 AI 創業的人，失敗的原因不是 AI 不夠好。 是他們以為有了 AI，就可以跳過那些「不有趣」的部分——找客戶、算單位經濟、處理退款、回覆凌晨三點的客訴。AI 讓你三天做出 MVP，然後你花三個月發現沒人想付錢。工具變快了，但商業的基本功一項都沒少。 GitHub 上有個純文件 repo 叫 ClaudeBusiness，六份 Markdown 檔案，零行程式碼。它做的事情是把「用 Claude AI 創業」這個主題拆開來看，從理論框架到社群真實數據，包括那些成功故事背後沒人提的數字。 在一堆 AI 創業雞湯文裡面，這份東西算是比較清醒的。  它在研究什麼一個詞：Agentic Entrepreneurship——代理式創業。把 Claude AI（特別是 Claude Code）當成 AI 共同創辦人，讓它處理開發、行政、分析這些重複性高的工作，你專注在決策和交付。 聽起來像在賣夢？Repo 裡花了大量篇幅做的事情是潑冷水。 六份文件分別處理不同層面。理論框架（GSD Framework、Infinity Barrier）是第一份。模式分析是第二份——18 個社群資源...</div></div></div></a><a class="pagination-related" href="/2026/03/29/Claude-Desktop-%E4%B8%89%E7%A8%AE%E6%A8%A1%E5%BC%8F%E6%80%8E%E9%BA%BC%E5%88%87-Chat-Cowork-Code-%E5%AE%8C%E6%95%B4%E5%B0%8E%E8%A6%BD/" title="Claude Desktop 三種模式怎麼切？Chat、Cowork、Code 完整導覽"><img class="cover" src="/img/20260329-03.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-03-29</div><div class="info-item-2">Claude Desktop 三種模式怎麼切？Chat、Cowork、Code 完整導覽</div></div><div class="info-2"><div class="info-item-1">打開 Claude Desktop，上面三個 tab 寫著 Chat、Cowork、Code。第一次看到的人大概會問：這三個到底差在哪？什麼時候該用哪個？ 答案比想像中簡單——它們不是三個不同的 AI，是同一個 Claude 的三種工作模式，各自對應不同的使用場景和權限範圍。 Chat：快問快答的主場Chat 是最輕量的模式。問問題、腦力激盪、幫你改改文案、翻譯一段文字——這些不需要動到檔案系統、不需要跑程式的事情，Chat 就夠了。 有兩個功能值得記住。第一個是 Quick Entry：在 Mac 上連按兩下 Option 鍵，會跳出一個浮動對話框，不用切到 Claude 視窗就能丟問題。會議之間的三十秒空檔，打開來問一句「剛才那個 dashboard 上的 DAU 數字怎麼算的」剛好。 第二個是截圖分享。直接把螢幕畫面丟給 Claude 看，省去「那個按鈕在左邊第三排…不對，是第四排」的來回描述。 Chat 也能串 Desktop Connector，接上 Apple Notes 之類的本機工具。但整體來說，它的定位就是快速對話，不是拿來做大型專案的。 Cowork：需要動手...</div></div></div></a><a class="pagination-related" href="/2026/04/23/Agent-Skills-%E7%B5%A6-AI-%E7%B7%A8%E7%A2%BC%E5%8A%A9%E6%89%8B%E7%9A%84%E5%B7%A5%E7%A8%8B%E7%B4%80%E5%BE%8B%E6%8C%87%E4%BB%A4%E9%9B%86/" title="Agent Skills — 給 AI 編碼助手的工程紀律指令集"><img class="cover" src="/img/20260423-01.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-04-23</div><div class="info-item-2">Agent Skills — 給 AI 編碼助手的工程紀律指令集</div></div><div class="info-2"><div class="info-item-1">AI coding agent 不是不夠聰明。它太會找理由了。 跟它說寫完記得補測試，它會說「這個功能比較簡單，測試等之後再補」。跟它說上線前做 code review，它說「改動很小，應該沒問題」。跟它做安全審查，它說「這只是內部工具，威脅模型不複雜」。每一個理由聽起來都很合理，每一個結果都讓你在兩週後踩坑。 問題不是 AI 不知道該怎麼做。問題是它沒有理由在沒人要求的情況下把每件事都做完整。 Agent Skills 的設計思路就從這裡開始：不靠信任，靠結構。  19 份文件，覆蓋整個開發生命週期整個專案沒有任何程式碼依賴。就是 19 份 Markdown 文件，每份對應開發流程的一個階段，告訴 AI agent 這個階段該做什麼、怎麼驗證自己做完了。 作者是 Addy Osmani，Google Chrome 前工程總監，Software Engineering at Google 的貢獻者之一。這本書裡很多工程紀律的理念——測試文化、增量實作、強制 code review——在 Agent Skills 裡都有對應的實作。 按開發階段分成六大類： Define：idea-...</div></div></div></a></div></div><hr class="custom-hr"/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 評論</span></div></div><div class="comment-wrap"><div><div id="giscus-wrap"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="https://lh3.googleusercontent.com/pw/ABLVV87_po8nBc6F_tXcoYDmtzMGWxHuhhrbguYILCjmjWKLOS8DTpubm0YoQLKgjyjRIZyV5TjYe7XVEz_YU4squfr37GTZqPZP1hlMVZ_MIgXpTxWu73M=w1200" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">Cheng®</div><div class="author-info-description">Backend Developer / 技術筆記 & AI 新聞分享</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">246</div></a><a href="/tags/"><div class="headline">標籤</div><div class="length-num">215</div></a><a href="/categories/"><div class="headline">分類</div><div class="length-num">18</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/mark22013333"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons"><a class="social-icon" href="https://github.com/mark22013333" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:mark22013333@gmail.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a></div><div class="card-info-sponsor"><a class="sponsor-glow-btn" href="https://www.buymeacoffee.com/mark22013333" target="_blank" rel="noopener noreferrer" title="Buy Me A Coffee"><img src="https://img.shields.io/badge/Buy_Me_A_Coffee-FFDD00?style=for-the-badge&amp;logo=buy-me-a-coffee&amp;logoColor=black" alt="Buy Me A Coffee"/></a><a class="sponsor-glow-btn" href="https://p.ecpay.com.tw/EFC3F8F" target="_blank" rel="noopener noreferrer" title="綠界贊助"><img src="https://img.shields.io/badge/☕_%E8%AB%8B%E6%88%91%E5%96%9D%E6%9D%AF%E5%92%96%E5%95%A1-Donate-11998e?style=for-the-badge&amp;logo=coffee&amp;logoColor=white" alt="綠界贊助"/></a><a class="sponsor-glow-btn" href="https://calendly.com/markcheng00806-intumit/15min" target="_blank" rel="noopener noreferrer" title="預約時間"><img src="https://img.shields.io/badge/📅_%E9%A0%90%E7%B4%84_15_%E5%88%86%E9%90%98-Book_Time-0072ff?style=for-the-badge" alt="預約時間"/></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">這裡記錄我在後端開發路上踩過的坑、學到的東西，也會分享每日 AI 與科技新聞觀點。歡迎一起交流！</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目錄</span><span class="toc-percentage"></span></div><div class="toc-content is-expand"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%B7%9F%E4%BD%A0%E5%B7%B2%E7%B6%93%E7%9F%A5%E9%81%93%E7%9A%84%E6%9D%B1%E8%A5%BF%E6%9C%89%E4%BB%80%E9%BA%BC%E4%B8%8D%E5%90%8C"><span class="toc-number">1.</span> <span class="toc-text">跟你已經知道的東西有什麼不同</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%89%E8%A3%9D"><span class="toc-number">2.</span> <span class="toc-text">安裝</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%B8%80%E5%80%8B-Agent%EF%BC%9A%E6%AA%94%E6%A1%88%E6%91%98%E8%A6%81%E5%8A%A9%E6%89%8B"><span class="toc-number">3.</span> <span class="toc-text">第一個 Agent：檔案摘要助手</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8A%A0%E4%B8%8A%E4%BA%BA%E6%A9%9F%E4%BA%92%E5%8B%95"><span class="toc-number">4.</span> <span class="toc-text">加上人機互動</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%A8%A1%E5%9E%8B%E9%81%B8%E6%93%87%E7%AD%96%E7%95%A5"><span class="toc-number">5.</span> <span class="toc-text">模型選擇策略</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A4%9A-Agent-%E7%B7%A8%E6%8E%92"><span class="toc-number">6.</span> <span class="toc-text">多 Agent 編排</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%AD%E6%9C%88%E5%8D%81%E4%BA%94%E8%99%9F%E8%A8%88%E8%B2%BB%E8%AE%8A%E5%8B%95"><span class="toc-number">7.</span> <span class="toc-text">六月十五號計費變動</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%80%E9%BA%BC%E6%99%82%E5%80%99%E8%A9%B2%E7%94%A8-Agent-SDK"><span class="toc-number">8.</span> <span class="toc-text">什麼時候該用 Agent SDK</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%89%E5%85%A8%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A0%85"><span class="toc-number">9.</span> <span class="toc-text">安全注意事項</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%BE%9E%E9%80%99%E8%A3%A1%E5%87%BA%E7%99%BC"><span class="toc-number">10.</span> <span class="toc-text">從這裡出發</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2026/05/20/Claude-Agent-SDK-%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8-%E7%94%A8-Python-%E6%89%93%E9%80%A0%E4%BD%A0%E8%87%AA%E5%B7%B1%E7%9A%84-AI-Agent-%E6%87%89%E7%94%A8%E7%A8%8B%E5%BC%8F/" title="Claude Agent SDK 完整教學 — 用 Python 打造你自己的 AI Agent 應用程式"><img src="/img/20260520-03.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Claude Agent SDK 完整教學 — 用 Python 打造你自己的 AI Agent 應用程式"/></a><div class="content"><a class="title" href="/2026/05/20/Claude-Agent-SDK-%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8-%E7%94%A8-Python-%E6%89%93%E9%80%A0%E4%BD%A0%E8%87%AA%E5%B7%B1%E7%9A%84-AI-Agent-%E6%87%89%E7%94%A8%E7%A8%8B%E5%BC%8F/" title="Claude Agent SDK 完整教學 — 用 Python 打造你自己的 AI Agent 應用程式">Claude Agent SDK 完整教學 — 用 Python 打造你自己的 AI Agent 應用程式</a><time datetime="2026-05-20T02:30:00.000Z" title="發表於 2026-05-20 10:30:00">2026-05-20</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/05/20/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260520/" title="AI 與科技新聞摘要 - 2026/05/20"><img src="/img/20260520-02.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="AI 與科技新聞摘要 - 2026/05/20"/></a><div class="content"><a class="title" href="/2026/05/20/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260520/" title="AI 與科技新聞摘要 - 2026/05/20">AI 與科技新聞摘要 - 2026/05/20</a><time datetime="2026-05-20T01:30:00.000Z" title="發表於 2026-05-20 09:30:00">2026-05-20</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/05/20/VirtualMe-%E7%94%A8-8-%E9%80%B1%E8%A8%AA%E8%AB%87%E8%90%83%E5%8F%96%E4%BD%A0%E7%9A%84-AI-%E5%88%86%E8%BA%AB/" title="VirtualMe — 用 8 週訪談萃取你的 AI 分身"><img src="/img/20260520-01.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="VirtualMe — 用 8 週訪談萃取你的 AI 分身"/></a><div class="content"><a class="title" href="/2026/05/20/VirtualMe-%E7%94%A8-8-%E9%80%B1%E8%A8%AA%E8%AB%87%E8%90%83%E5%8F%96%E4%BD%A0%E7%9A%84-AI-%E5%88%86%E8%BA%AB/" title="VirtualMe — 用 8 週訪談萃取你的 AI 分身">VirtualMe — 用 8 週訪談萃取你的 AI 分身</a><time datetime="2026-05-20T00:30:00.000Z" title="發表於 2026-05-20 08:30:00">2026-05-20</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/05/19/Claude-Code-Agent-View-%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8-%E5%9C%A8%E4%B8%80%E5%80%8B%E7%B5%82%E7%AB%AF%E6%A9%9F%E8%A3%A1%E5%90%8C%E6%99%82%E7%AE%A1%E7%90%86%E5%A4%9A%E5%80%8B-AI-%E4%BB%BB%E5%8B%99/" title="Claude Code Agent View 完整教學 — 在一個終端機裡同時管理多個 AI 任務"><img src="/img/20260519-03.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Claude Code Agent View 完整教學 — 在一個終端機裡同時管理多個 AI 任務"/></a><div class="content"><a class="title" href="/2026/05/19/Claude-Code-Agent-View-%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8-%E5%9C%A8%E4%B8%80%E5%80%8B%E7%B5%82%E7%AB%AF%E6%A9%9F%E8%A3%A1%E5%90%8C%E6%99%82%E7%AE%A1%E7%90%86%E5%A4%9A%E5%80%8B-AI-%E4%BB%BB%E5%8B%99/" title="Claude Code Agent View 完整教學 — 在一個終端機裡同時管理多個 AI 任務">Claude Code Agent View 完整教學 — 在一個終端機裡同時管理多個 AI 任務</a><time datetime="2026-05-19T03:00:00.000Z" title="發表於 2026-05-19 11:00:00">2026-05-19</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/05/19/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260519/" title="AI 與科技新聞摘要 - 2026/05/19"><img src="/img/20260519-02.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="AI 與科技新聞摘要 - 2026/05/19"/></a><div class="content"><a class="title" href="/2026/05/19/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260519/" title="AI 與科技新聞摘要 - 2026/05/19">AI 與科技新聞摘要 - 2026/05/19</a><time datetime="2026-05-19T01:30:00.000Z" title="發表於 2026-05-19 09:30:00">2026-05-19</time></div></div></div></div></div></div></main><footer id="footer" style="background-image: url(/img/20260520-03.webp);"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2024 - 2026 By Cheng®</span></div><div class="footer_custom_text">Written by Cheng® — 自律，從當下的一念開始。</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="閱讀模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日夜模式切換"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="單欄和雙欄切換"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="設定"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目錄"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="前往評論"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到頂端"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.umd.min.js"></script><script src="https://cdn.jsdelivr.net/npm/instant.page/instantpage.min.js" type="module"></script><script src="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.js"></script><div class="js-pjax"><script>(() => {
+  const isShuoshuo = GLOBAL_CONFIG_SITE.pageType === 'shuoshuo'
+  const option = {"mapping":"pathname","strict":0,"reactionsEnabled":1,"emitMetadata":0,"inputPosition":"bottom","lang":"zh-TW"}
+
+  const getGiscusTheme = theme => theme === 'dark' ? 'dark' : 'light'
+
+  const createScriptElement = config => {
+    const ele = document.createElement('script')
+    Object.entries(config).forEach(([key, value]) => {
+      ele.setAttribute(key, value)
+    })
+    return ele
+  }
+
+  const loadGiscus = (el = document, key) => {
+    const mappingConfig = isShuoshuo
+      ? { 'data-mapping': 'specific', 'data-term': key }
+      : { 'data-mapping': (option && option['data-mapping']) || 'pathname' }
+
+    const giscusConfig = {
+      src: 'https://giscus.app/client.js',
+      'data-repo': 'mark22013333/mark22013333.github.io',
+      'data-repo-id': 'R_kgDOLAxa6A',
+      'data-category-id': 'DIC_kwDOLAxa6M4C5eO9',
+      'data-theme': getGiscusTheme(document.documentElement.getAttribute('data-theme')),
+      'data-reactions-enabled': '1',
+      crossorigin: 'anonymous',
+      async: true,
+      ...option,
+      ...mappingConfig
+    }
+
+    const scriptElement = createScriptElement(giscusConfig)
+
+    el.querySelector('#giscus-wrap').appendChild(scriptElement)
+
+    if (isShuoshuo) {
+      window.shuoshuoComment.destroyGiscus = () => {
+        if (el.children.length) {
+          el.innerHTML = ''
+          el.classList.add('no-comment')
+        }
+      }
+    }
+  }
+
+  const changeGiscusTheme = theme => {
+    const iframe = document.querySelector('#giscus-wrap iframe')
+    if (iframe) {
+      const message = {
+        giscus: {
+          setConfig: {
+            theme: getGiscusTheme(theme)
+          }
+        }
+      }
+      iframe.contentWindow.postMessage(message, 'https://giscus.app')
+    }
+  }
+
+  btf.addGlobalFn('themeChange', changeGiscusTheme, 'giscus')
+
+  if (isShuoshuo) {
+    'Giscus' === 'Giscus'
+      ? window.shuoshuoComment = { loadComment: loadGiscus }
+      : window.loadOtherComment = loadGiscus
+    return
+  }
+
+  if ('Giscus' === 'Giscus' || !true) {
+    if (true) btf.loadComment(document.getElementById('giscus-wrap'), loadGiscus)
+    else loadGiscus()
+  } else {
+    window.loadOtherComment = loadGiscus
+  }
+})()</script></div><script src="/js/kkbox-player.js"></script><script src="/js/archives-pagination.js"></script><script src="/js/font-resize.js"></script><script src="/js/dark-palette.js"></script><script src="/js/series-showcase.js"></script><script src="/js/search-tags.js"></script><script defer="defer" id="fluttering_ribbon" mobile="false" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/canvas-fluttering-ribbon.min.js"></script><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/activate-power-mode.min.js"></script><script>POWERMODE.colorful = true;
+POWERMODE.shake = true;
+POWERMODE.mobile = true;
+document.body.addEventListener('input', POWERMODE);
+</script><script src="https://cdn.jsdelivr.net/npm/pjax/pjax.min.js" defer="defer"></script><script>document.addEventListener('DOMContentLoaded', () => {
+  const pjaxSelectors = ["meta[property=\"og:image\"]","meta[property=\"og:title\"]","meta[property=\"og:url\"]","meta[property=\"og:description\"]","link[rel=\"canonical\"]","head > title","#config-diff","#body-wrap","#rightside-config-hide","#rightside-config-show",".js-pjax"]
+
+  window.pjax = new Pjax({
+    elements: 'a:not([target="_blank"])',
+    selectors: pjaxSelectors,
+    cacheBust: false,
+    analytics: true,
+    scrollRestoration: false
+  })
+
+  const triggerPjaxFn = (val) => {
+    if (!val) return
+    Object.values(val).forEach(fn => {
+      try {
+        fn()
+      } catch (err) {
+        console.debug('Pjax callback failed:', err)
+      }
+    })
+  }
+
+  document.addEventListener('pjax:send', () => {
+    // removeEventListener
+    btf.removeGlobalFnEvent('pjaxSendOnce')
+    btf.removeGlobalFnEvent('themeChange')
+
+    // reset readmode
+    const $bodyClassList = document.body.classList
+    if ($bodyClassList.contains('read-mode')) $bodyClassList.remove('read-mode')
+
+    triggerPjaxFn(window.globalFn.pjaxSend)
+  })
+
+  document.addEventListener('pjax:complete', () => {
+    btf.removeGlobalFnEvent('pjaxCompleteOnce')
+    document.querySelectorAll('script[data-pjax]').forEach(item => {
+      const newScript = document.createElement('script')
+      const content = item.text || item.textContent || item.innerHTML || ""
+      Array.from(item.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value))
+      newScript.appendChild(document.createTextNode(content))
+      item.parentNode.replaceChild(newScript, item)
+    })
+
+    triggerPjaxFn(window.globalFn.pjaxComplete)
+  })
+
+  document.addEventListener('pjax:error', e => {
+    if (e.request.status === 404) {
+      true
+        ? pjax.loadUrl('/404.html')
+        : window.location.href = e.request.responseURL
+    }
+  })
+})</script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜尋</span><i class="fas fa-spinner fa-pulse" id="loading-status" hidden="hidden"></i><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="text-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  資料載入中</span></div><div class="local-search-input"><input placeholder="搜尋文章" type="text"/></div><hr/><div id="local-search-results"></div><div class="ais-Pagination" id="local-search-pagination" style="display:none;"><ul class="ais-Pagination-list"></ul></div><div id="local-search-stats"></div></div><div id="search-mask"></div><script src="/js/search/local-search.js"></script></div></div><script>window.__BLOG_TAGS__=[{"name":"Claude Code","count":73,"path":"tags/Claude-Code/"},{"name":"AI與科技新聞","count":58,"path":"tags/AI與科技新聞/"},{"name":"AI Agent","count":35,"path":"tags/AI-Agent/"},{"name":"資安","count":32,"path":"tags/資安/"},{"name":"Anthropic","count":32,"path":"tags/Anthropic/"},{"name":"MCP","count":27,"path":"tags/MCP/"},{"name":"OpenAI","count":27,"path":"tags/OpenAI/"},{"name":"教學","count":24,"path":"tags/教學/"},{"name":"Claude","count":23,"path":"tags/Claude/"},{"name":"Java","count":19,"path":"tags/Java/"},{"name":"自動化","count":16,"path":"tags/自動化/"},{"name":"開源","count":14,"path":"tags/開源/"},{"name":"Google","count":13,"path":"tags/Google/"},{"name":"Copilot","count":13,"path":"tags/Copilot/"},{"name":"開發工具","count":13,"path":"tags/開發工具/"},{"name":"DevOps","count":13,"path":"tags/DevOps/"},{"name":"GitHub","count":11,"path":"tags/GitHub/"},{"name":"Spring","count":11,"path":"tags/Spring/"},{"name":"工程師生活","count":10,"path":"tags/工程師生活/"},{"name":"Skills","count":10,"path":"tags/Skills/"},{"name":"Azure","count":9,"path":"tags/Azure/"},{"name":"微軟課程","count":9,"path":"tags/微軟課程/"},{"name":"資料庫","count":9,"path":"tags/資料庫/"},{"name":"LLM","count":8,"path":"tags/LLM/"},{"name":"Gemini","count":8,"path":"tags/Gemini/"},{"name":"Cursor","count":8,"path":"tags/Cursor/"},{"name":"Elasticsearch","count":8,"path":"tags/Elasticsearch/"},{"name":"理財","count":6,"path":"tags/理財/"},{"name":"Apple","count":6,"path":"tags/Apple/"},{"name":"Microsoft","count":6,"path":"tags/Microsoft/"},{"name":"GitHub Copilot","count":6,"path":"tags/GitHub-Copilot/"},{"name":"AI","count":5,"path":"tags/AI/"},{"name":"AZ-305","count":5,"path":"tags/AZ-305/"},{"name":"Rust","count":5,"path":"tags/Rust/"},{"name":"Collections","count":5,"path":"tags/Collections/"},{"name":"併發","count":5,"path":"tags/併發/"},{"name":"健康","count":4,"path":"tags/健康/"},{"name":"NVIDIA","count":4,"path":"tags/NVIDIA/"},{"name":"Kiro","count":4,"path":"tags/Kiro/"},{"name":"macOS","count":4,"path":"tags/macOS/"},{"name":"Hooks","count":4,"path":"tags/Hooks/"},{"name":"CLI","count":4,"path":"tags/CLI/"},{"name":"AI 開發工具","count":4,"path":"tags/AI-開發工具/"},{"name":"Code Review","count":4,"path":"tags/Code-Review/"},{"name":"Docker","count":4,"path":"tags/Docker/"},{"name":"Python","count":4,"path":"tags/Python/"},{"name":"DP-300","count":4,"path":"tags/DP-300/"},{"name":"SQL Server","count":4,"path":"tags/SQL-Server/"},{"name":"Performance","count":4,"path":"tags/Performance/"},{"name":"JSON","count":4,"path":"tags/JSON/"},{"name":"Stream","count":4,"path":"tags/Stream/"},{"name":"168斷食","count":3,"path":"tags/168斷食/"},{"name":"Windsurf","count":3,"path":"tags/Windsurf/"},{"name":"Agent","count":3,"path":"tags/Agent/"},{"name":"TDD","count":3,"path":"tags/TDD/"},{"name":"系統監控","count":3,"path":"tags/系統監控/"},{"name":"SDD","count":3,"path":"tags/SDD/"},{"name":"Mistral","count":2,"path":"tags/Mistral/"},{"name":"AI 法規","count":2,"path":"tags/AI-法規/"},{"name":"Codex","count":2,"path":"tags/Codex/"},{"name":"AI 安全","count":2,"path":"tags/AI-安全/"},{"name":"Networking","count":2,"path":"tags/Networking/"},{"name":"Tool Use","count":2,"path":"tags/Tool-Use/"},{"name":"Multi-Model","count":2,"path":"tags/Multi-Model/"},{"name":"Claude Design","count":2,"path":"tags/Claude-Design/"},{"name":"Prototype","count":2,"path":"tags/Prototype/"},{"name":"Lucene","count":2,"path":"tags/Lucene/"},{"name":"旅遊","count":2,"path":"tags/旅遊/"},{"name":"遠端工作","count":2,"path":"tags/遠端工作/"},{"name":"生產力","count":1,"path":"tags/生產力/"},{"name":"專注力","count":1,"path":"tags/專注力/"},{"name":"軟體工程師","count":1,"path":"tags/軟體工程師/"},{"name":"職涯","count":1,"path":"tags/職涯/"},{"name":"2026","count":1,"path":"tags/2026/"},{"name":"Amazon","count":1,"path":"tags/Amazon/"},{"name":"Meta","count":1,"path":"tags/Meta/"},{"name":"AWS","count":1,"path":"tags/AWS/"},{"name":"AI 產業","count":1,"path":"tags/AI-產業/"},{"name":"Migration","count":1,"path":"tags/Migration/"},{"name":"Agent Skills","count":1,"path":"tags/Agent-Skills/"},{"name":"Addy Osmani","count":1,"path":"tags/Addy-Osmani/"},{"name":"工程紀律","count":1,"path":"tags/工程紀律/"},{"name":"Apify","count":1,"path":"tags/Apify/"},{"name":"爬蟲","count":1,"path":"tags/爬蟲/"},{"name":"Prompt Caching","count":1,"path":"tags/Prompt-Caching/"},{"name":"成本優化","count":1,"path":"tags/成本優化/"},{"name":"Buddi","count":1,"path":"tags/Buddi/"},{"name":"notch","count":1,"path":"tags/notch/"},{"name":"UI 設計","count":1,"path":"tags/UI-設計/"},{"name":"Function Calling","count":1,"path":"tags/Function-Calling/"},{"name":"CLAUDE.md","count":1,"path":"tags/CLAUDE-md/"},{"name":"Auto Memory","count":1,"path":"tags/Auto-Memory/"},{"name":"Project Setup","count":1,"path":"tags/Project-Setup/"},{"name":"/goal","count":1,"path":"tags/goal/"},{"name":"Extended Thinking","count":1,"path":"tags/Extended-Thinking/"},{"name":"Reasoning","count":1,"path":"tags/Reasoning/"},{"name":"VS Code","count":1,"path":"tags/VS-Code/"},{"name":"Haiku","count":1,"path":"tags/Haiku/"},{"name":"Sonnet","count":1,"path":"tags/Sonnet/"},{"name":"Opus","count":1,"path":"tags/Opus/"},{"name":"Token 成本","count":1,"path":"tags/Token-成本/"},{"name":"Monitor Tool","count":1,"path":"tags/Monitor-Tool/"},{"name":"Plan Mode","count":1,"path":"tags/Plan-Mode/"},{"name":"Routines","count":1,"path":"tags/Routines/"},{"name":"Ultraplan","count":1,"path":"tags/Ultraplan/"},{"name":"規劃","count":1,"path":"tags/規劃/"},{"name":"cloud","count":1,"path":"tags/cloud/"},{"name":"Voice Mode","count":1,"path":"tags/Voice-Mode/"},{"name":"Push-to-Talk","count":1,"path":"tags/Push-to-Talk/"},{"name":"Supply Chain","count":1,"path":"tags/Supply-Chain/"},{"name":"Team","count":1,"path":"tags/Team/"},{"name":"Onboarding","count":1,"path":"tags/Onboarding/"},{"name":"Subagent","count":1,"path":"tags/Subagent/"},{"name":"Cowork","count":1,"path":"tags/Cowork/"},{"name":"Plugin","count":1,"path":"tags/Plugin/"},{"name":"UX 設計","count":1,"path":"tags/UX-設計/"},{"name":"Managed Agents","count":1,"path":"tags/Managed-Agents/"},{"name":"Dreaming","count":1,"path":"tags/Dreaming/"},{"name":"Outcomes","count":1,"path":"tags/Outcomes/"},{"name":"Coolify","count":1,"path":"tags/Coolify/"},{"name":"self-hosted","count":1,"path":"tags/self-hosted/"},{"name":"PaaS","count":1,"path":"tags/PaaS/"},{"name":"Productivity","count":1,"path":"tags/Productivity/"},{"name":"CrewAI","count":1,"path":"tags/CrewAI/"},{"name":"Multi-Agent","count":1,"path":"tags/Multi-Agent/"},{"name":"Encryption","count":1,"path":"tags/Encryption/"},{"name":"Monitoring","count":1,"path":"tags/Monitoring/"},{"name":"Architecture","count":1,"path":"tags/Architecture/"},{"name":"Analyzer","count":1,"path":"tags/Analyzer/"},{"name":"IK","count":1,"path":"tags/IK/"},{"name":"中文搜尋","count":1,"path":"tags/中文搜尋/"},{"name":"Mapping","count":1,"path":"tags/Mapping/"},{"name":"Template","count":1,"path":"tags/Template/"},{"name":"Schema","count":1,"path":"tags/Schema/"},{"name":"CRUD","count":1,"path":"tags/CRUD/"},{"name":"bulk","count":1,"path":"tags/bulk/"},{"name":"alias","count":1,"path":"tags/alias/"},{"name":"REST API","count":1,"path":"tags/REST-API/"},{"name":"internals","count":1,"path":"tags/internals/"},{"name":"Translog","count":1,"path":"tags/Translog/"},{"name":"Segment","count":1,"path":"tags/Segment/"},{"name":"Aggregation","count":1,"path":"tags/Aggregation/"},{"name":"Search","count":1,"path":"tags/Search/"},{"name":"ELK Stack","count":1,"path":"tags/ELK-Stack/"},{"name":"工具遷移","count":1,"path":"tags/工具遷移/"},{"name":"前端","count":1,"path":"tags/前端/"},{"name":"GH-300","count":1,"path":"tags/GH-300/"},{"name":"Responsible AI","count":1,"path":"tags/Responsible-AI/"},{"name":"SpecKit","count":1,"path":"tags/SpecKit/"},{"name":"Production","count":1,"path":"tags/Production/"},{"name":"Operations","count":1,"path":"tags/Operations/"},{"name":"ETF","count":1,"path":"tags/ETF/"},{"name":"台股","count":1,"path":"tags/台股/"},{"name":"美股","count":1,"path":"tags/美股/"},{"name":"Mag-7","count":1,"path":"tags/Mag-7/"},{"name":"財報","count":1,"path":"tags/財報/"},{"name":"Jira","count":1,"path":"tags/Jira/"},{"name":"Atlassian","count":1,"path":"tags/Atlassian/"},{"name":"Lightpanda","count":1,"path":"tags/Lightpanda/"},{"name":"Headless Browser","count":1,"path":"tags/Headless-Browser/"},{"name":"Zig","count":1,"path":"tags/Zig/"},{"name":"Web Scraping","count":1,"path":"tags/Web-Scraping/"},{"name":"OpenCode","count":1,"path":"tags/OpenCode/"},{"name":"GPT","count":1,"path":"tags/GPT/"},{"name":"Multica","count":1,"path":"tags/Multica/"},{"name":"Open CoDesign","count":1,"path":"tags/Open-CoDesign/"},{"name":"AI Design","count":1,"path":"tags/AI-Design/"},{"name":"OpenScreen","count":1,"path":"tags/OpenScreen/"},{"name":"Screen Recording","count":1,"path":"tags/Screen-Recording/"},{"name":"GPT-5.5","count":1,"path":"tags/GPT-5-5/"},{"name":"Discord","count":1,"path":"tags/Discord/"},{"name":"AI VTuber","count":1,"path":"tags/AI-VTuber/"},{"name":"Project AIRI","count":1,"path":"tags/Project-AIRI/"},{"name":"TypeScript","count":1,"path":"tags/TypeScript/"},{"name":"Sonatype Guide","count":1,"path":"tags/Sonatype-Guide/"},{"name":"依賴管理","count":1,"path":"tags/依賴管理/"},{"name":"RTK","count":1,"path":"tags/RTK/"},{"name":"Token 優化","count":1,"path":"tags/Token-優化/"},{"name":"Skill","count":1,"path":"tags/Skill/"},{"name":"心智模型","count":1,"path":"tags/心智模型/"},{"name":"決策工具","count":1,"path":"tags/決策工具/"},{"name":"TimesFM","count":1,"path":"tags/TimesFM/"},{"name":"時間序列","count":1,"path":"tags/時間序列/"},{"name":"基礎模型","count":1,"path":"tags/基礎模型/"},{"name":"ML","count":1,"path":"tags/ML/"},{"name":"Stanford AI Index","count":1,"path":"tags/Stanford-AI-Index/"},{"name":"AI產業","count":1,"path":"tags/AI產業/"},{"name":"工程師職涯","count":1,"path":"tags/工程師職涯/"},{"name":"AI透明度","count":1,"path":"tags/AI透明度/"},{"name":"就業市場","count":1,"path":"tags/就業市場/"},{"name":"Prompt Engineering","count":1,"path":"tags/Prompt-Engineering/"},{"name":"Whisper","count":1,"path":"tags/Whisper/"},{"name":"Speech-to-Text","count":1,"path":"tags/Speech-to-Text/"},{"name":"Flash Attention","count":1,"path":"tags/Flash-Attention/"},{"name":"API","count":1,"path":"tags/API/"},{"name":"設計模式","count":1,"path":"tags/設計模式/"},{"name":"AI 模型","count":1,"path":"tags/AI-模型/"},{"name":"包棟民宿","count":1,"path":"tags/包棟民宿/"},{"name":"台中","count":1,"path":"tags/台中/"},{"name":"南投","count":1,"path":"tags/南投/"},{"name":"苗栗","count":1,"path":"tags/苗栗/"},{"name":"時事評論","count":1,"path":"tags/時事評論/"},{"name":"能源","count":1,"path":"tags/能源/"},{"name":"AI 基礎建設","count":1,"path":"tags/AI-基礎建設/"},{"name":"台灣","count":1,"path":"tags/台灣/"},{"name":"生活札記","count":1,"path":"tags/生活札記/"},{"name":"淡江大橋","count":1,"path":"tags/淡江大橋/"},{"name":"淡水","count":1,"path":"tags/淡水/"},{"name":"建築","count":1,"path":"tags/建築/"},{"name":"週末","count":1,"path":"tags/週末/"},{"name":"居家辦公","count":1,"path":"tags/居家辦公/"},{"name":"人體工學","count":1,"path":"tags/人體工學/"},{"name":"日本","count":1,"path":"tags/日本/"},{"name":"黃金週","count":1,"path":"tags/黃金週/"},{"name":"Golden Week","count":1,"path":"tags/Golden-Week/"}];</script></body></html>
