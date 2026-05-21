@@ -4,6 +4,99 @@
   
     
     <entry>
+      <title>Claude Code Headless Mode 完整教學 — 讓 AI 在腳本裡自己跑任務</title>
+      <link href="/2026/05/21/Claude-Code-Headless-Mode-%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8-%E8%AE%93-AI-%E5%9C%A8%E8%85%B3%E6%9C%AC%E8%A3%A1%E8%87%AA%E5%B7%B1%E8%B7%91%E4%BB%BB%E5%8B%99/"/>
+      <url>/2026/05/21/Claude-Code-Headless-Mode-%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8-%E8%AE%93-AI-%E5%9C%A8%E8%85%B3%E6%9C%AC%E8%A3%A1%E8%87%AA%E5%B7%B1%E8%B7%91%E4%BB%BB%E5%8B%99/</url>
+      
+        <content type="html"><![CDATA[<p>你在終端機裡跟 Claude Code 對話，它很聰明。但你不可能 24 小時坐在終端機前面。</p><p>每次跑 CI 的時候自動讓 AI review PR、每天凌晨三點自動掃描 codebase 裡的安全問題、每週一早上自動生成上週的開發報告——這些事情需要 Claude Code 在沒有人坐在前面的情況下自己跑。</p><p>這就是 Headless Mode。一個 <code>-p</code> flag，把互動式的 AI 助手變成可以塞進任何腳本的命令列工具。</p><hr><h2 id="什麼是-Headless-Mode"><a href="#什麼是-Headless-Mode" class="headerlink" title="什麼是 Headless Mode"></a>什麼是 Headless Mode</h2><p>想像你平常跟 Claude Code 的互動方式像打電話：你說一句，它回一句，你可以隨時插嘴改方向。Headless Mode 像寄信：你把要做的事寫清楚，封好信封寄出去，它做完把結果寄回來。中間不會打電話問你。</p><p>技術上就是加一個 <code>-p</code>（或 <code>--print</code>）flag：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">claude -p <span class="string">&quot;找出 auth.py 裡的 bug 並修復&quot;</span></span><br></pre></td></tr></table></figure><p>Claude 收到 prompt，跑完整個 agent loop——思考、呼叫工具、編輯檔案——然後把結果輸出到 stdout，程序結束。不會開互動式介面，不會等你輸入。</p><p>跑完就退出。這一點很重要，因為它代表你可以把 <code>claude -p</code> 當成任何其他 CLI 工具來用：串在 pipe 裡、放進 shell script、排進 cron job。</p><hr><h2 id="最基本的用法"><a href="#最基本的用法" class="headerlink" title="最基本的用法"></a>最基本的用法</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 最簡單的形式</span></span><br><span class="line">claude -p <span class="string">&quot;解釋 src/utils/cache.ts 的設計&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 指定輸出格式</span></span><br><span class="line">claude -p <span class="string">&quot;列出所有 TODO 註解&quot;</span> --output-format json</span><br><span class="line"></span><br><span class="line"><span class="comment"># 限制可用工具（安全性關鍵）</span></span><br><span class="line">claude -p <span class="string">&quot;Review 這個 PR 的變更&quot;</span> --allowedTools <span class="string">&quot;Read,Bash(grep:*)&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 限制執行步數和花費</span></span><br><span class="line">claude -p <span class="string">&quot;重構 auth module&quot;</span> --max-turns 20 --max-budget-usd 5.00</span><br></pre></td></tr></table></figure><p><code>--output-format</code> 有三個選項：<code>text</code>（預設，人類可讀）、<code>json</code>（結構化輸出，方便程式處理）、<code>stream-json</code>（串流式，即時拿到每一步的輸出）。</p><p>如果你要在腳本裡解析結果，<code>json</code> 是最穩的選擇。如果你想做即時監控面板，<code>stream-json</code> 配合 <code>jq</code> 可以即時抓取每一個 tool call 和回應。</p><hr><h2 id="安全控制：不設限的-AI-在凌晨三點能幹什麼"><a href="#安全控制：不設限的-AI-在凌晨三點能幹什麼" class="headerlink" title="安全控制：不設限的 AI 在凌晨三點能幹什麼"></a>安全控制：不設限的 AI 在凌晨三點能幹什麼</h2><p>Headless Mode 最重要的設計決策不是「怎麼跑」，而是「怎麼限制」。</p><p>一個沒有人盯著的 AI agent 拿到完整的檔案系統存取權限和 shell 執行能力——凌晨三點它 <code>rm -rf</code> 了你的原始碼怎麼辦？不是開玩笑，PocketOS 事件裡 Cursor agent 就是在九秒內刪光了正式資料庫加備份。</p><p><code>--allowedTools</code> 是安全的核心。它用白名單的方式定義 Claude 能用什麼工具：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 只能讀檔案和跑 grep</span></span><br><span class="line">claude -p <span class="string">&quot;分析 codebase 結構&quot;</span> --allowedTools <span class="string">&quot;Read,Bash(grep:*)&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 可以讀寫檔案，可以跑 npm test，其他 shell 指令都不行</span></span><br><span class="line">claude -p <span class="string">&quot;修復失敗的測試&quot;</span> --allowedTools <span class="string">&quot;Read,Edit,Write,Bash(npm test:*)&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 完全禁止 shell 存取</span></span><br><span class="line">claude -p <span class="string">&quot;Review 這段 code&quot;</span> --allowedTools <span class="string">&quot;Read&quot;</span></span><br></pre></td></tr></table></figure><p><code>--max-turns</code> 限制 agent 可以執行幾步。一個 review 任務 10 步夠了，一個重構任務可能要 50 步。設太低會中斷未完成的工作，設太高等於沒限制。</p><p><code>--max-budget-usd</code> 設花費上限。跑到上限就停。六月十五號之後 <code>claude -p</code> 的用量會從新的 Agent SDK credit 扣，跟互動式使用分開計費。</p><p>三個限制一起用才完整：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">claude -p <span class="string">&quot;掃描安全漏洞&quot;</span> \</span><br><span class="line">  --allowedTools <span class="string">&quot;Read,Bash(grep:*),Bash(find:*)&quot;</span> \</span><br><span class="line">  --max-turns 30 \</span><br><span class="line">  --max-budget-usd 2.00</span><br></pre></td></tr></table></figure><hr><h2 id="實戰場景一：CI-CD-自動-Code-Review"><a href="#實戰場景一：CI-CD-自動-Code-Review" class="headerlink" title="實戰場景一：CI&#x2F;CD 自動 Code Review"></a>實戰場景一：CI&#x2F;CD 自動 Code Review</h2><p>每次有人開 PR，GitHub Actions 自動跑一次 Claude review：</p><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># .github/workflows/ai-review.yml</span></span><br><span class="line"><span class="attr">name:</span> <span class="string">AI</span> <span class="string">Code</span> <span class="string">Review</span></span><br><span class="line"><span class="attr">on:</span></span><br><span class="line">  <span class="attr">pull_request:</span></span><br><span class="line">    <span class="attr">types:</span> [<span class="string">opened</span>, <span class="string">synchronize</span>]</span><br><span class="line"></span><br><span class="line"><span class="attr">jobs:</span></span><br><span class="line">  <span class="attr">review:</span></span><br><span class="line">    <span class="attr">runs-on:</span> <span class="string">ubuntu-latest</span></span><br><span class="line">    <span class="attr">steps:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">uses:</span> <span class="string">actions/checkout@v4</span></span><br><span class="line">        <span class="attr">with:</span></span><br><span class="line">          <span class="attr">fetch-depth:</span> <span class="number">0</span></span><br><span class="line"></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">AI</span> <span class="string">Review</span></span><br><span class="line">        <span class="attr">env:</span></span><br><span class="line">          <span class="attr">ANTHROPIC_API_KEY:</span> <span class="string">$&#123;&#123;</span> <span class="string">secrets.ANTHROPIC_API_KEY</span> <span class="string">&#125;&#125;</span></span><br><span class="line">        <span class="attr">run:</span> <span class="string">|</span></span><br><span class="line"><span class="string">          npm install -g @anthropic-ai/claude-code</span></span><br><span class="line"><span class="string">          DIFF=$(git diff origin/main...HEAD)</span></span><br><span class="line"><span class="string">          claude -p &quot;Review 以下 PR diff，找出潛在問題：\n\n$DIFF&quot; \</span></span><br><span class="line"><span class="string">            --allowedTools &quot;Read&quot; \</span></span><br><span class="line"><span class="string">            --max-turns 10 \</span></span><br><span class="line"><span class="string">            --output-format json &gt; review.json</span></span><br></pre></td></tr></table></figure><p>重點在 <code>--allowedTools &quot;Read&quot;</code>：CI 環境裡 Claude 只能讀不能寫。它的工作是找問題不是修問題。</p><hr><h2 id="實戰場景二：排程安全掃描"><a href="#實戰場景二：排程安全掃描" class="headerlink" title="實戰場景二：排程安全掃描"></a>實戰場景二：排程安全掃描</h2><p>每天凌晨跑一次安全檢查，結果寄到 Slack：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line"><span class="comment"># daily-security-scan.sh</span></span><br><span class="line"></span><br><span class="line">RESULT=$(claude -p <span class="string">&quot;掃描 src/ 目錄的所有檔案，找出以下問題：</span></span><br><span class="line"><span class="string">1. 硬編碼的 API key 或密碼</span></span><br><span class="line"><span class="string">2. SQL injection 風險</span></span><br><span class="line"><span class="string">3. 未驗證的使用者輸入</span></span><br><span class="line"><span class="string">4. 過時的依賴套件（檢查 package.json）</span></span><br><span class="line"><span class="string">輸出 JSON 格式，包含 severity、file、line、description。&quot;</span> \</span><br><span class="line">  --allowedTools <span class="string">&quot;Read,Bash(grep:*),Bash(find:*),Bash(npm audit:*)&quot;</span> \</span><br><span class="line">  --max-turns 30 \</span><br><span class="line">  --max-budget-usd 3.00 \</span><br><span class="line">  --output-format json)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 有發現就通知</span></span><br><span class="line"><span class="keyword">if</span> <span class="built_in">echo</span> <span class="string">&quot;<span class="variable">$RESULT</span>&quot;</span> | jq -e <span class="string">&#x27;.issues | length &gt; 0&#x27;</span> &gt; /dev/null 2&gt;&amp;1; <span class="keyword">then</span></span><br><span class="line">  curl -X POST <span class="string">&quot;<span class="variable">$SLACK_WEBHOOK</span>&quot;</span> \</span><br><span class="line">    -H <span class="string">&#x27;Content-Type: application/json&#x27;</span> \</span><br><span class="line">    -d <span class="string">&quot;&#123;\&quot;text\&quot;: \&quot;🔍 安全掃描發現問題：\n<span class="subst">$(echo $RESULT | jq -r &#x27;.issues[] | \&quot;- [\(.severity)</span>] \(.file):\(.line) - \(.description)\&quot;&#x27;)\&quot;&#125;&quot;</span></span><br><span class="line"><span class="keyword">fi</span></span><br></pre></td></tr></table></figure><p>放進 crontab：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">0 3 * * * <span class="built_in">cd</span> /path/to/project &amp;&amp; ./daily-security-scan.sh</span><br></pre></td></tr></table></figure><hr><h2 id="實戰場景三：批次處理多個任務"><a href="#實戰場景三：批次處理多個任務" class="headerlink" title="實戰場景三：批次處理多個任務"></a>實戰場景三：批次處理多個任務</h2><p>Headless Mode 的一個強項是可以用迴圈批次跑：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 幫每個模組生成文件</span></span><br><span class="line"><span class="keyword">for</span> <span class="built_in">dir</span> <span class="keyword">in</span> src/modules/*/; <span class="keyword">do</span></span><br><span class="line">  module=$(<span class="built_in">basename</span> <span class="string">&quot;<span class="variable">$dir</span>&quot;</span>)</span><br><span class="line">  claude -p <span class="string">&quot;讀取 <span class="variable">$&#123;dir&#125;</span> 下的所有檔案，生成一份 README.md 包含：模組用途、主要 API、使用範例&quot;</span> \</span><br><span class="line">    --allowedTools <span class="string">&quot;Read,Write&quot;</span> \</span><br><span class="line">    --max-turns 15</span><br><span class="line">  <span class="built_in">echo</span> <span class="string">&quot;✅ <span class="variable">$&#123;module&#125;</span> 文件已生成&quot;</span></span><br><span class="line"><span class="keyword">done</span></span><br></pre></td></tr></table></figure><hr><h2 id="–bare：極速模式"><a href="#–bare：極速模式" class="headerlink" title="–bare：極速模式"></a>–bare：極速模式</h2><p>如果你只是要跑一個簡單的查詢，不需要 hooks、skills、plugins、MCP servers、auto memory 那些東西，<code>--bare</code> 可以跳過所有自動發現流程：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">claude -p <span class="string">&quot;這段 code 有什麼問題？<span class="subst">$(cat bug.py)</span>&quot;</span> --bare</span><br></pre></td></tr></table></figure><p>啟動時間從幾秒壓到幾乎即時。適合大量短任務的批次場景。</p><hr><h2 id="串流輸出：即時監控"><a href="#串流輸出：即時監控" class="headerlink" title="串流輸出：即時監控"></a>串流輸出：即時監控</h2><p><code>stream-json</code> 格式讓你可以即時看到 Claude 正在做什麼：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">claude -p <span class="string">&quot;重構 auth module&quot;</span> \</span><br><span class="line">  --output-format stream-json \</span><br><span class="line">  --verbose \</span><br><span class="line">  | jq -r <span class="string">&#x27;select(.type == &quot;stream_event&quot;) | .event.delta.text // empty&#x27;</span></span><br></pre></td></tr></table></figure><p>每一步的思考、工具呼叫、檔案編輯都會即時串流出來。拿來做監控面板或者 debug 長時間任務很好用。</p><hr><h2 id="常見的坑"><a href="#常見的坑" class="headerlink" title="常見的坑"></a>常見的坑</h2><p>**忘記設 <code>--allowedTools</code>**。預設情況下 Claude 有完整的工具存取權限。在無人看管的環境裡這等於開著門離開家。</p><p><strong>Prompt 太模糊</strong>。互動模式裡你可以來回澄清。Headless Mode 你只有一次機會把需求講清楚。寫 prompt 的時候假設對方是一個聰明但什麼背景資訊都沒有的同事——把目標、範圍、限制都講明。</p><p><strong>沒有處理失敗</strong>。Claude 可能遇到權限問題、檔案不存在、或者 token 用完而中途停止。腳本裡要檢查 exit code 和輸出內容。</p><p><strong><code>--max-turns</code> 設太低</strong>。一個看起來簡單的任務可能需要 Claude 讀五個檔案、跑兩次測試、修一個 bug。每個工具呼叫算一步。10 步很快就用完了。建議先互動模式跑一次看需要幾步，再設限制。</p><hr><h2 id="跟-Routines-有什麼不同"><a href="#跟-Routines-有什麼不同" class="headerlink" title="跟 Routines 有什麼不同"></a>跟 Routines 有什麼不同</h2><p>Routines 是 Claude Code 的雲端排程功能——你設定好觸發條件（時間、GitHub event、API call），Claude 在 Anthropic 的雲端容器裡跑。你的電腦可以關機。</p><p>Headless Mode 是你自己的機器上跑的。你控制環境、你控制網路、你控制存取權限。適合需要存取本地檔案、內部 API、或者有資安限制不能把 code 送到雲端的場景。</p><p>兩者互補，不是替代。CI&#x2F;CD 通常用 Headless Mode（跑在你自己的 runner 上）；定期的背景任務如果不涉及敏感資料，Routines 更方便。</p><hr><h2 id="學完之後"><a href="#學完之後" class="headerlink" title="學完之後"></a>學完之後</h2><p>Headless Mode 打開的是自動化的大門。一旦 Claude Code 可以在腳本裡跑，你能做的事就不受限於「人坐在終端機前面的時間」了。</p><p>下一步可以看 <a href="/2026/04/07/Claude-Code-GitHub-Actions-%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8-%E8%AE%93-AI-%E8%87%AA%E5%8B%95%E5%B9%AB%E4%BD%A0-Review-PR-%E4%BF%AE-Bug-%E5%AF%AB%E6%B8%AC%E8%A9%A6/">Claude Code GitHub Actions 教學</a> 了解怎麼在 CI 裡整合，或者看 <a href="/2026/04/30/Claude-Code-Routines-%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8-%E8%AE%93-AI-%E5%9C%A8%E4%BD%A0%E7%9D%A1%E8%A6%BA%E6%99%82%E8%87%AA%E5%8B%95%E8%B7%91%E4%BB%BB%E5%8B%99/">Claude Code Routines 教學</a> 了解雲端排程的做法。兩個加起來就是一個完整的「人不在也能持續運作」的 AI 工作流。</p><blockquote><p>參考來源：<a href="https://code.claude.com/docs/en/headless">Run Claude Code programmatically — Claude Code Docs</a><br>參考來源：<a href="https://www.codewithseb.com/blog/claude-code-headless-mode-cicd-automation-playbook">Claude Code Headless Mode: The CI&#x2F;CD Automation Playbook — Code With Seb</a></p></blockquote>]]></content>
+      
+      
+      <categories>
+          
+          <category> Claude Code </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> Claude Code </tag>
+            
+            <tag> 自動化 </tag>
+            
+            <tag> CLI </tag>
+            
+            <tag> 教學 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>AI 與科技新聞摘要 - 2026/05/21</title>
+      <link href="/2026/05/21/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260521/"/>
+      <url>/2026/05/21/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260521/</url>
+      
+        <content type="html"><![CDATA[<p>10.0。滿分。</p><p>這不是什麼考試成績。CVE-2026-20182，Cisco SD-WAN 控制器的認證繞過漏洞，CVSS 嚴重度評分拿到了理論上的天花板。遠端、不需認證、可取得管理員權限——而且已經被國家級駭客利用了。</p><p>同一週，OpenAI 承認 Sora 每天燒 1,500 萬美金的 GPU 算力是一場昂貴的錯誤。Anthropic 跟四大會計事務所 KPMG 簽了全球聯盟。Q1 全球創投金額破了 3,000 億美金的歷史紀錄。Windows BitLocker 被一個零日漏洞撕開了一個口。</p><p>五條新聞，一個共通的結構：錢往 AI 倒得越來越兇，但基礎設施的裂縫也越來越多。</p><hr><h2 id="Cisco-SD-WAN：CVSS-滿分不是開玩笑"><a href="#Cisco-SD-WAN：CVSS-滿分不是開玩笑" class="headerlink" title="Cisco SD-WAN：CVSS 滿分不是開玩笑"></a>Cisco SD-WAN：CVSS 滿分不是開玩笑</h2><p>CVE-2026-20182 影響的是 Cisco Catalyst SD-WAN Controller 和 SD-WAN Manager 的認證流程。漏洞出在 vdaemon 服務處理 DTLS 連線（UDP port 12346）時對認證請求的驗證不足。</p><p>白話說：攻擊者送一個特製的控制連線請求過去，不需要帳號密碼，就能拿到管理員等級的存取權限。進去之後可以操作 NETCONF，直接改整個 SD-WAN 網路的配置。</p><p>Cisco Talos 追蹤到積極利用此漏洞的威脅組織 <strong>UAT-8616</strong>，一個從 2023 年就開始鎖定 Cisco SD-WAN 基礎設施的高度成熟團隊。CISA 已經把這個 CVE 加入 Known Exploited Vulnerabilities 目錄。</p><p>沒有 workaround。唯一的修復方式是升級。</p><p>換個角度想：SD-WAN 是企業把分散的辦公室網路串在一起的核心骨幹。一旦控制面被打穿，攻擊者不只進了一台機器——他進了整個網路拓撲。這就是為什麼 CVSS 給了滿分。影響的不是一個節點，是整個架構。</p><blockquote><p>原文來源：<a href="https://www.csoonline.com/article/4171694/cisco-warns-of-an-actively-exploited-sd-wan-flaw-with-max-severity.html">Cisco warns of an actively exploited SD-WAN flaw with max severity — CSO Online</a><br>原文來源：<a href="https://blog.talosintelligence.com/sd-wan-ongoing-exploitation/">Ongoing exploitation of Cisco Catalyst SD-WAN vulnerabilities — Cisco Talos</a><br>原文來源：<a href="https://thehackernews.com/2026/05/cisa-adds-cisco-sd-wan-cve-2026-20182.html">CISA Adds Cisco SD-WAN CVE-2026-20182 to KEV — The Hacker News</a></p></blockquote><p>網路骨幹被打穿是基礎設施的問題。接下來這個，是商業模式的問題。</p><hr><h2 id="OpenAI-Sora-終結記：每天燒-1-500-萬美金的-GPU-做了什麼"><a href="#OpenAI-Sora-終結記：每天燒-1-500-萬美金的-GPU-做了什麼" class="headerlink" title="OpenAI Sora 終結記：每天燒 1,500 萬美金的 GPU 做了什麼"></a>OpenAI Sora 終結記：每天燒 1,500 萬美金的 GPU 做了什麼</h2><p>Sora 在四月二十六日正式關閉。從公開發布到收攤，不到 18 個月。</p><p>死因很直接：算力成本。根據 The Information 的報導，Sora 的推論成本每天超過 1,500 萬美金——光是讓使用者生成那些 10 秒鐘的影片，就把 GPU 燒成字面意義上的「融化」。而留存率呢？Pro 用戶 30 天後的留存率不到 8%。花了上億美金建的東西，用了一次覺得新鮮，第二次就不回來了。</p><p>更慘的是連帶效應。Disney 在 2025 年十二月簽了 10 億美金的三年授權合約，讓 Sora 可以用 200 多個 Disney、Marvel、Pixar、Star Wars 角色生成內容。Sora 一關，這筆交易直接崩盤。</p><p>怎樣讓一個 AI 產品一定失敗？答案是你的成本結構要求每天都有大量活躍用戶，但你的產品本質是一個「用一次就夠了」的玩具。影片生成不像聊天機器人——它沒有每天回來的理由。OpenAI 把一個 demo 級的體驗包裝成商業產品推出去，市場用留存率投了反對票。</p><blockquote><p>原文來源：<a href="https://www.msn.com/en-us/news/other/openai-shuts-down-sora-amid-costs-and-shifting-ai-video-market/gm-GMDC8C441A">OpenAI shuts down Sora amid costs and shifting AI video market — MSN</a><br>原文來源：<a href="https://miraflow.ai/blog/why-openai-shut-down-sora-2026">Why OpenAI Killed Sora: The $15 Million Per Day Disaster — Miraflow</a><br>原文來源：<a href="https://variety.com/2026/digital/news/openai-shutting-down-sora-video-disney-1236698277/">OpenAI Will Shut Down Sora; Disney Drops $1B Investment — Variety</a></p></blockquote><p>有人在燒錢，有人在擴版圖。Anthropic 這週的動作屬於後者。</p><hr><h2 id="Anthropic-×-KPMG-全球聯盟-開發者平台三連更"><a href="#Anthropic-×-KPMG-全球聯盟-開發者平台三連更" class="headerlink" title="Anthropic × KPMG 全球聯盟 + 開發者平台三連更"></a>Anthropic × KPMG 全球聯盟 + 開發者平台三連更</h2><p>KPMG 跟 Anthropic 簽了全球聯盟，推出「Digital Gateway Powered by Claude」。四大會計事務所裡第一個跟 AI 公司簽這種等級合約的。</p><p>同一時間，Claude 開發者平台連續推出三個更新：</p><p><strong>Opus 4.7 Fast mode</strong> 進入 research preview。不是換小模型，是同一個 Opus 4.7 用更快的 output token 生成速度跑。開發者終於不用在「要品質」和「要速度」之間做選擇。</p><p><strong>Cache miss diagnostics</strong> 進入 public beta。用過 Claude API prompt caching 的人都知道，cache hit 和 miss 之間的成本差是 10 倍。問題是之前 cache miss 的時候你只知道「沒中」，不知道為什麼。現在 API 會回傳 <code>cache_miss_reason</code>，告訴你是 prefix 不一致、TTL 過期、還是 cache 容量滿了。除錯成本直接砍半。</p><p><strong>20+ 法律 MCP 連接器 + 12 個執業領域 Plugin</strong>。研究、合約、證據開示、案件管理、法律扶助——每個領域一組專門的連接器。法律是目前 AI 落地最積極的垂直產業之一，Anthropic 顯然想把這塊市場吃死。</p><p>把 KPMG 聯盟和法律 MCP 放在一起看，Anthropic 的策略很清楚：不跟 OpenAI 比消費者產品，專攻專業服務業。會計、法律、顧問——這些領域的付費意願高、使用場景明確、而且對準確性的要求可以自然限制幻覺問題。</p><blockquote><p>原文來源：<a href="https://kpmg.com/us/en/media/news/kpmg-anthropic-global-alliance.html">KPMG and Anthropic sign global alliance and launch Digital Gateway Powered by Claude — KPMG</a><br>原文來源：<a href="https://releasebot.io/updates/anthropic">Anthropic Release Notes — May 2026 — Releasebot</a></p></blockquote><p>企業在押注 AI，創投也沒在客氣。</p><hr><h2 id="Q1-2026-全球創投-3-000-億美金：歷史紀錄"><a href="#Q1-2026-全球創投-3-000-億美金：歷史紀錄" class="headerlink" title="Q1 2026 全球創投 3,000 億美金：歷史紀錄"></a>Q1 2026 全球創投 3,000 億美金：歷史紀錄</h2><p>Crunchbase 的數據顯示，2026 年第一季全球創投總額突破 3,000 億美金，打破所有歷史紀錄。推升的主力毫不意外——AI。</p><p>錢的流向很集中：frontier research teams、agent infrastructure、國防軟體、以及受監管產業的垂直工具。Seed round 的中位數規模持續膨脹，一些 AI 公司的種子輪已經來到 10 億美金等級（Ineffable Intelligence 的 11 億美金是近期最極端的例子）。</p><p>Shield AI 的 15 億美金 Series G（估值 127 億美金）、Anthropic 累計數百億的融資、OpenAI 的天文數字——頂端的集中度越來越高。</p><p>逆向問一下：怎樣讓這波 AI 投資一定虧錢？</p><p>答案是你把錢投給那些「用 AI 包裝但本質是傳統 SaaS」的公司。如果一家公司的護城河只是「我們有一個 AI 功能」，那它的護城河會在每一次模型更新時被沖掉一點。真正有防禦力的是資料飛輪、垂直產業 know-how、和強制的合規壁壘。</p><p>3,000 億美金裡面有多少投在前者、多少投在後者，要等 2028 年才會知道答案。</p><blockquote><p>原文來源：<a href="https://news.crunchbase.com/venture/record-breaking-funding-ai-global-q1-2026/">Q1 2026 Shatters Venture Funding Records As AI Boom Pushes Startup Investment To $300B — Crunchbase</a></p></blockquote><p>錢在流，漏洞也在長。最後一條回到資安。</p><hr><h2 id="CVE-2026-45585：Windows-BitLocker-零日繞過"><a href="#CVE-2026-45585：Windows-BitLocker-零日繞過" class="headerlink" title="CVE-2026-45585：Windows BitLocker 零日繞過"></a>CVE-2026-45585：Windows BitLocker 零日繞過</h2><p>CVE-2026-45585 是一個 Windows BitLocker 安全功能繞過漏洞，CVSS 6.8。攻擊者在實體存取裝置的情況下，可以繞過 BitLocker 加密保護讀取硬碟內容。</p><p>6.8 聽起來不高。但這個分數低估了真實風險。</p><p>BitLocker 是 Windows 裝置最後一道防線——你筆電被偷了，至少硬碟是加密的，資料拿不走。這個零日漏洞把這道防線撕開了。對企業來說，每一台遺失或被竊的筆電現在都變成了潛在的資料外洩事件。</p><p>這不是那種「伺服器被遠端打穿」的高調漏洞。它更像是你家大門鎖被發現有瑕疵——平常不會有事，但一旦出事就是全部的東西都暴露。低調、廣泛、而且影響的是物理世界。</p><p>微軟尚未釋出完整修補。</p><blockquote><p>原文來源：<a href="https://nvd.nist.gov/vuln/detail/CVE-2026-45585">CVE-2026-45585: Windows BitLocker Security Feature Bypass — NVD</a></p></blockquote><hr><p>今天的五條新聞指向同一個矛盾。</p><p>AI 投資破紀錄、企業聯盟在擴張、開發者工具在進化——但 Cisco 的網路骨幹被打穿了、Windows 的加密被繞過了、OpenAI 最有野心的產品之一燒掉了數十億美金後關門了。</p><p>系統越複雜，脆弱點越多。這不是悲觀，這是物理定律。管理複雜系統的方式不是祈禱它不會壞，而是假設它一定會壞，然後設計讓它壞的時候不會全部一起倒。</p><p>如果你的安全策略裡有任何一環的假設是「這個應該不會被攻擊」——今天是個好日子去把那個假設拿掉。</p>]]></content>
+      
+      
+      <categories>
+          
+          <category> AI與科技新聞 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> AI與科技新聞 </tag>
+            
+            <tag> OpenAI </tag>
+            
+            <tag> 資安 </tag>
+            
+            <tag> Anthropic </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>Garden Skills — 給 AI Agent 裝上設計品味的四個 Skill</title>
+      <link href="/2026/05/21/Garden-Skills-%E7%B5%A6-AI-Agent-%E8%A3%9D%E4%B8%8A%E8%A8%AD%E8%A8%88%E5%93%81%E5%91%B3%E7%9A%84%E5%9B%9B%E5%80%8B-Skill/"/>
+      <url>/2026/05/21/Garden-Skills-%E7%B5%A6-AI-Agent-%E8%A3%9D%E4%B8%8A%E8%A8%AD%E8%A8%88%E5%93%81%E5%91%B3%E7%9A%84%E5%9B%9B%E5%80%8B-Skill/</url>
+      
+        <content type="html"><![CDATA[<p>大部分 AI coding agent 生出來的網頁，長得都像同一個人做的。</p><p>紫粉漸層、圓角卡片、到處都是 emoji、千篇一律的 hero section 加上一句「Welcome to the future」。你說不出哪裡錯，但就是一秒認出「這是 AI 做的」。問題不在模型不夠聰明——問題在沒有人告訴它什麼叫品味。</p><p>Garden Skills 做的事很簡單：它不改模型、不改框架，它改的是 Agent 對「好的設計」的理解。四份 Markdown 檔案，零 runtime 依賴，裝上去之後 Agent 的設計輸出品質會好到你不太敢相信它是 AI 做的。</p><hr><h2 id="為什麼-AI-做的網頁都長一樣"><a href="#為什麼-AI-做的網頁都長一樣" class="headerlink" title="為什麼 AI 做的網頁都長一樣"></a>為什麼 AI 做的網頁都長一樣</h2><p>你讓 Claude Code 做一個 landing page，它會給你一個「安全」的答案：漸層背景、卡片排版、icon 配文字三欄並排。不是因為它不會做別的，是因為沒有人告訴它「這些是陳腔濫調，你要避開」。</p><p>想像你找一個剛畢業的設計師。他技巧到位、Figma 用得很熟，但做出來的東西永遠是 Dribbble 上那種——好看，但沒有靈魂。你需要的不是教他更多技巧，是給他一套判斷標準：什麼該做、什麼不該做、為什麼。</p><p>Garden Skills 就是這套判斷標準。</p><hr><h2 id="這東西怎麼運作"><a href="#這東西怎麼運作" class="headerlink" title="這東西怎麼運作"></a>這東西怎麼運作</h2><p>Garden Skills 是中國前端技術部落客 ConardLi（「code 秘密花園」博主）開源的 Skill 套件包。遵循 Anthropic 的 Agent Skills 規範，每個 skill 就是一份 SKILL.md，用 Markdown 告訴 Agent 遇到特定任務該怎麼思考、怎麼行動。</p><p>不是程式庫，不需要 import 任何東西。純粹是方法論。</p><p>安裝一行搞定：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npx skills add ConardLi/garden-skills</span><br></pre></td></tr></table></figure><p>裝完放在 <code>.claude/skills/</code> 目錄下，Agent 自動偵測。你跟它說「幫我做一個 landing page」，它就會讀取對應的 SKILL.md 開始工作——你不需要手動啟動任何東西。</p><p>除了 Claude Code，Cursor、Codex CLI、Gemini CLI、OpenCode 都能用。</p><hr><h2 id="核心武器：Anti-AI-Slop"><a href="#核心武器：Anti-AI-Slop" class="headerlink" title="核心武器：Anti-AI Slop"></a>核心武器：Anti-AI Slop</h2><p>整個套件最有意思的設計是「黑名單」。</p><p>web-design-engineer 這個 skill 裡面維護了一份 Agent 常犯的設計錯誤清單：紫粉漸層、假插圖 placeholder、emoji 濫用、毫無意義的裝飾動畫。這些在 AI 生成的網頁裡幾乎是標配，但拿去給任何一個真正的設計師看都會被退回來。</p><p>光有黑名單不夠，它還強制 Agent 在動手之前走完一套流程：</p><p>確認品牌資產（Logo、配色、產品圖）→ 釐清需求類型 → 參考目標產業的設計語言 → 建立 spacing、typography、color 規範 → 出 v0 草稿 → 精修 → 跑 5 維度評分。</p><p>最後那個評分有五個軸：哲學一致性、視覺層級、工藝品質、功能性、原創性。每個軸 0-10 分，不及格就打回去重做。</p><p>這套流程的設計邏輯其實很直覺——你不是在教 Agent 怎麼設計，你是在教它怎麼<strong>判斷</strong>設計。知道什麼是好的只是第一步，知道什麼是爛的才是真正的品味。</p><hr><h2 id="四個-Skill-分別做什麼"><a href="#四個-Skill-分別做什麼" class="headerlink" title="四個 Skill 分別做什麼"></a>四個 Skill 分別做什麼</h2><h3 id="web-design-engineer：品味注入器"><a href="#web-design-engineer：品味注入器" class="headerlink" title="web-design-engineer：品味注入器"></a>web-design-engineer：品味注入器</h3><p>497 行的 SKILL.md，附 3 份 reference 文件。這是核心 skill。</p><p>它的靈感來自 Claude Design（Anthropic Labs 內部的設計系統提示詞），加上 ConardLi 自己的反陳腔濫調經驗。除了主流程，還有幾個值得一提的功能：品牌資產協議讓 Agent 優先用你的 Logo 和產品圖而不是自己亂編；Design Direction Advisor 在需求模糊時先推薦三種設計方向讓你選；生成的頁面內建 Tweaks 面板，可以即時切換配色和間距。</p><h3 id="web-video-presentation：文章變影片"><a href="#web-video-presentation：文章變影片" class="headerlink" title="web-video-presentation：文章變影片"></a>web-video-presentation：文章變影片</h3><p>概念很妙——它不做影片剪輯，而是把技術文章轉成「偽裝成影片的互動式網頁」。Vite + React + TypeScript 建構，固定 1920×1080，點擊翻頁，用瀏覽器錄屏就是一支教學影片。</p><p>內建 10 個視覺主題（paper-press、midnight-press、terminal-green），搭配 MiniMax CLI 做語音合成。你寫完一篇技術文章，跑一次這個 skill，省掉學 Premiere 或 DaVinci Resolve 的時間。</p><h3 id="gpt-image-2：94-個-Prompt-模板庫"><a href="#gpt-image-2：94-個-Prompt-模板庫" class="headerlink" title="gpt-image-2：94 個 Prompt 模板庫"></a>gpt-image-2：94 個 Prompt 模板庫</h3><p>不只是「幫你生圖」的 skill，更像一本 prompt 工程手冊。94 個結構化模板，18 大類——UI Mockups、Product Visuals、Academic Figures、Technical Diagrams、Poster &amp; Campaigns，一路到 Infographics 和 Branding。</p><p>學術論文配圖那一塊特別值得看。Pipeline 圖、神經網路架構圖、Graphical Abstract，規格對準 Nature&#x2F;IEEE。做過學術海報的人應該知道，光是讓圖片格式符合出版要求就能花掉半天。</p><h3 id="kb-retriever：本地知識庫檢索"><a href="#kb-retriever：本地知識庫檢索" class="headerlink" title="kb-retriever：本地知識庫檢索"></a>kb-retriever：本地知識庫檢索</h3><p>如果你公司有一堆內部文件散落在某個目錄裡——Markdown、PDF、Excel 什麼都有——這個 skill 讓 Agent 用漸進式檢索的方式回答問題。先讀索引檔定位相關文件，再逐層深入，最多迭代 5 輪，最後帶來源引用回答。</p><p>不用架 RAG pipeline，不用裝向量資料庫。Agent 直接讀本地檔案。</p><hr><h2 id="限制在哪"><a href="#限制在哪" class="headerlink" title="限制在哪"></a>限制在哪</h2><p>四個 skill 集中在前端視覺和內容製作。後端、資料庫、DevOps——這個套件幫不上忙。</p><p>gpt-image-2 的 Mode A 需要 OpenAI API Key，生成的是 PNG 點陣圖不是 SVG。web-video-presentation 的語音合成只預設支援 MiniMax CLI。每個 SKILL.md 都有 400-500 行加上 references，同時啟用多個 skill 會吃掉不少 context window。</p><p>還有一點：SKILL.md 原文是簡體中文撰寫的。Agent 一樣能理解，但如果你自己要讀指令檔參考，得習慣一下。</p><hr><h2 id="值不值得裝"><a href="#值不值得裝" class="headerlink" title="值不值得裝"></a>值不值得裝</h2><p>背後的核心洞察其實就一件事：AI Agent 的輸出品質瓶頸不在模型能力，在方法論。</p><p>一個沒有設計標準的 Agent，跟一個沒有 code review 流程的團隊一樣——不是人（或模型）不行，是流程沒有逼出好的結果。Garden Skills 用 Markdown 文件做到了這件事，而且是零成本、零依賴、可組合的方式。</p><p>如果你用 Claude Code 做過前端然後覺得「差了點什麼」，大概就是少了這層。裝上去試一次，跑一個 landing page 對比看看——區別會很明顯。</p><blockquote><p>相關資源：<a href="https://github.com/ConardLi/garden-skills">ConardLi&#x2F;garden-skills（GitHub）</a> &#x2F; 授權：MIT License</p></blockquote>]]></content>
+      
+      
+      <categories>
+          
+          <category> Claude Code </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> AI Agent </tag>
+            
+            <tag> 開源 </tag>
+            
+            <tag> Claude Code </tag>
+            
+            <tag> Skills </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>Claude Agent SDK 完整教學 — 用 Python 打造你自己的 AI Agent 應用程式</title>
       <link href="/2026/05/20/Claude-Agent-SDK-%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8-%E7%94%A8-Python-%E6%89%93%E9%80%A0%E4%BD%A0%E8%87%AA%E5%B7%B1%E7%9A%84-AI-Agent-%E6%87%89%E7%94%A8%E7%A8%8B%E5%BC%8F/"/>
       <url>/2026/05/20/Claude-Agent-SDK-%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8-%E7%94%A8-Python-%E6%89%93%E9%80%A0%E4%BD%A0%E8%87%AA%E5%B7%B1%E7%9A%84-AI-Agent-%E6%87%89%E7%94%A8%E7%A8%8B%E5%BC%8F/</url>
@@ -53,9 +146,9 @@
             
             <tag> 資安 </tag>
             
-            <tag> Google </tag>
-            
             <tag> Anthropic </tag>
+            
+            <tag> Google </tag>
             
         </tags>
       
@@ -326,9 +419,9 @@
             
             <tag> 資安 </tag>
             
-            <tag> Google </tag>
-            
             <tag> Anthropic </tag>
+            
+            <tag> Google </tag>
             
         </tags>
       
@@ -417,9 +510,9 @@
             
             <tag> 資安 </tag>
             
-            <tag> Google </tag>
-            
             <tag> Anthropic </tag>
+            
+            <tag> Google </tag>
             
         </tags>
       
@@ -603,9 +696,9 @@
             
             <tag> OpenAI </tag>
             
-            <tag> Google </tag>
-            
             <tag> Anthropic </tag>
+            
+            <tag> Google </tag>
             
         </tags>
       
@@ -1189,37 +1282,6 @@
     
     
     <entry>
-      <title>AI 與科技新聞摘要 - 2026/05/07</title>
-      <link href="/2026/05/07/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260507/"/>
-      <url>/2026/05/07/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260507/</url>
-      
-        <content type="html"><![CDATA[<p>220,000 顆 GPU。</p><p>Anthropic 昨天簽下 SpaceX Colossus 1 資料中心的全部算力——300 百萬瓦、超過 22 萬顆 GPU，一個月內全面上線。同一天的開發者大會上，他們讓 AI agent 學會「做夢」：回顧過去的失敗，自己修正自己。</p><p>這兩件事要放在一起看。</p><p>算力是油門，自我修正是方向盤。光踩油門會撞牆，光有方向盤走不快。但兩個同時到位——你得認真想一下這台車會開到哪裡去。同一時間，企業防火牆被打穿、Copilot 開始限縮用戶、OpenAI 終於認真做帳號安全。加速和失控，永遠是一體兩面。</p><hr><h2 id="Anthropic-Code-w-Claude-2026-SF-—-AI-Agent-學會做夢"><a href="#Anthropic-Code-w-Claude-2026-SF-—-AI-Agent-學會做夢" class="headerlink" title="Anthropic Code w&#x2F; Claude 2026 SF — AI Agent 學會做夢"></a>Anthropic Code w&#x2F; Claude 2026 SF — AI Agent 學會做夢</h2><p>「做夢」這個詞不是行銷話術，是功能名稱。</p><p>Anthropic 在 5 月 6 日舊金山開發者大會上發表了 Managed Agents 的三個新能力：Dreaming、Outcomes、Multi-agent orchestration。其中 Dreaming 最值得仔細看。</p><p>運作方式是這樣的：agent 跑完任務之後，不是直接歸零。一個排程背景程序會定期回顧過去的 sessions，萃取出反覆出現的模式——哪些工具組合有效、哪些步驟總是卡住、哪些錯誤一直重演——然後把這些模式寫進記憶庫。下次接到類似任務，agent 帶著這些記憶上工。</p><p>Harvey，那家用 Claude 做法律文件的公司，內測 Dreaming 之後報告任務完成率提升了 6 倍。不是 6%，是 6 倍。agent 記住了不同檔案格式的 workaround、記住了特定工具的使用模式，不再每次從零開始踩同樣的坑。</p><p>Outcomes 同時進入公測。概念很直白：你寫一份 rubric 定義「成功長什麼樣」，一個獨立的 Claude 實例拿這份 rubric 替 agent 的產出打分。不及格？回去重做，直到過關。早期採用者的數據是任務成功率提升約 10 個百分點。</p><p>Multi-agent orchestration 則是讓一個主 agent 把複雜任務拆成子任務，分配給不同的子 agents 並行處理。</p><p>三個功能加在一起，描繪的是一個方向：agent 不再是跑一次就結束的腳本，而是會學習、會被評分、會協作的持續性實體。這件事的上行很明確——企業自動化的品質天花板大幅提高。下行呢？一個會自我修正的系統，修正的方向如果偏了，它會越修越偏，而且越來越有信心自己是對的。</p><blockquote><p>原文來源：<a href="https://simonwillison.net/2026/May/6/code-w-claude-2026/">Live blog: Code w&#x2F; Claude 2026 — Simon Willison</a><br>原文來源：<a href="https://siliconangle.com/2026/05/06/anthropic-letting-claude-agents-dream-dont-sleep-job/">Anthropic is letting Claude agents ‘dream’ so they don’t sleep on the job — SiliconANGLE</a><br>原文來源：<a href="https://www.artiverse.ca/highlights-from-anthropics-code-w-claude-2026-conference/">Highlights from Anthropic’s Code w&#x2F; Claude 2026 Conference — Artiverse</a></p></blockquote><hr><h2 id="Anthropic-SpaceX-Colossus-1：300MW-算力，外加太空野心"><a href="#Anthropic-SpaceX-Colossus-1：300MW-算力，外加太空野心" class="headerlink" title="Anthropic + SpaceX Colossus 1：300MW 算力，外加太空野心"></a>Anthropic + SpaceX Colossus 1：300MW 算力，外加太空野心</h2><p>Bloomberg 和 CNBC 同日報導：Anthropic 簽下 SpaceX 旗下 Colossus 1 資料中心的 100% 算力容量。</p><p>數字拆開來看——300 百萬瓦以上的電力、超過 220,000 顆 GPU。一個月內全面啟用。這批算力直接灌進 Claude Pro、Max 訂閱用戶和 API 開發者的配額裡，意味著更少的速率限制、更快的回應、更能扛高負載。</p><p>但真正讓人抬頭的是協議裡的最後一段：雙方表達了共同開發「數 GW 級軌道 AI 算力」的興趣。軌道。太空裡的資料中心。</p><p>聽起來像科幻？地面上的 AI 算力正在撞上兩個實體天花板——電力和散熱。地球表面的電網有極限，冷卻系統的效率有極限。太空沒有散熱問題（真空是最好的隔熱層，但也可以用輻射散熱），太陽能在軌道上 24 小時不間斷。物理上說得通。經濟上？目前完全說不通。但五年前把整片晶圓做成一顆晶片也沒人信。</p><p>同場加映：Anthropic 同步發布了 10 個金融專用 AI agents，搭配 Microsoft 365 整合和新的 MCP connector。金融業是 AI agent 最早能大規模落地的垂直領域之一——交易有明確規則、合規有明確標準、成本節省算得出來。</p><p>換個角度問：怎樣做 Anthropic 一定會踩坑？把所有算力都壓在單一供應商。Colossus 1 如果有任何斷電、政策變動、或 SpaceX 自身的優先順序調整，Anthropic 就會直接感受到。算力的集中度和模型的強大，是同一枚硬幣的兩面。</p><blockquote><p>原文來源：<a href="https://www.bloomberg.com/news/articles/2026-05-06/anthropic-inks-computing-deal-with-spacex-to-meet-ai-demand">Anthropic, SpaceX Sign Deal to Boost AI Computing Power for Claude Software — Bloomberg</a><br>原文來源：<a href="https://www.cnbc.com/2026/05/06/anthropic-spacex-data-center-capacity.html">Anthropic, SpaceX announce compute deal that includes space development — CNBC</a><br>原文來源：<a href="https://www.anthropic.com/news/higher-limits-spacex">Higher usage limits for Claude and a compute deal — Anthropic</a></p></blockquote><hr><h2 id="CVE-2026-0300：Palo-Alto-防火牆零日，root-權限直接拿"><a href="#CVE-2026-0300：Palo-Alto-防火牆零日，root-權限直接拿" class="headerlink" title="CVE-2026-0300：Palo Alto 防火牆零日，root 權限直接拿"></a>CVE-2026-0300：Palo Alto 防火牆零日，root 權限直接拿</h2><p>CVSS 9.3。未修補。PoC 已公開。正在被利用。</p><p>四個條件同時成立的 CVE 不常見。CVE-2026-0300 是 Palo Alto Networks PAN-OS 的 User-ID Authentication Portal（也就是 Captive Portal）裡的 buffer overflow。攻擊者送出特製封包，不需要任何認證，就能以 root 權限在防火牆上執行任意程式碼。</p><p>影響範圍是 PA-Series 和 VM-Series 防火牆——只要開了 User-ID Authentication Portal 對外。Cloud NGFW 和 Panorama 不受影響。</p><p>時間線很殘酷。5 月 6 日，Palo Alto 發布資安公告，同日公開 PoC exploit 就出現了。修補程式最快 5 月 13 日才開始分批釋出，部分版本要等到 5 月 28 日。中間這兩週多的空窗期，所有暴露在公網的受影響防火牆都是活靶。</p><p>Palo Alto 自己用了「limited exploitation」的措辭，但 Wiz 和 Help Net Security 的分析都指出，PoC 的品質很高——「reliably trigger」是他們的原話。有夠猛的漏洞配有夠完整的武器，唯一缺的是修補。</p><p>緩解方式只有兩個：把 User-ID Authentication Portal 的存取限制在內網信任區域，或者直接關掉。如果你的防火牆開了這個功能面對公網，現在就去改。不是明天，是現在。</p><p>這是一個經典的系統性脆弱點：企業花大錢買的邊界防護設備，本身就是攻擊面。防火牆不是牆，是門——門上如果有洞，攻擊者不會費心爬牆。</p><blockquote><p>原文來源：<a href="https://thehackernews.com/2026/05/palo-alto-pan-os-flaw-under-active.html">Palo Alto PAN-OS Flaw Under Active Exploitation Enables Remote Code Execution — The Hacker News</a><br>原文來源：<a href="https://www.bleepingcomputer.com/news/security/palo-alto-networks-warns-of-actively-exploited-firewall-zero-day/">Palo Alto Networks warns of firewall RCE zero-day exploited in attacks — BleepingComputer</a><br>原文來源：<a href="https://www.wiz.io/blog/critical-vulnerability-in-pan-os-exploited-in-the-wild-cve-2026-0300">Critical Buffer Overflow Vulnerability in PAN-OS Exploited in-the-Wild — Wiz Blog</a></p></blockquote><hr><h2 id="GitHub-Copilot-Individual-方案大改：暫停新註冊、砍掉-Opus"><a href="#GitHub-Copilot-Individual-方案大改：暫停新註冊、砍掉-Opus" class="headerlink" title="GitHub Copilot Individual 方案大改：暫停新註冊、砍掉 Opus"></a>GitHub Copilot Individual 方案大改：暫停新註冊、砍掉 Opus</h2><p>GitHub 官方部落格這週宣布了 Copilot Individual 方案的重大調整，而且不是升級——是限縮。</p><p>第一刀：暫停新用戶註冊。理由是「保護現有用戶的使用體驗」。翻譯：算力不夠了，先停賣門票。</p><p>第二刀：Opus 4.7 從 Pro 方案移除，僅 Pro+（更貴的方案）保留。Pro 用戶想用最強的模型？加錢。</p><p>第三刀：轉向 usage-based billing。吃到飽的時代要結束了。</p><p>這三刀砍的方向很一致：AI coding 工具的「免費午餐」階段正式收攤。過去兩年靠低價和免費試用搶市佔率的策略，撞上了算力成本的硬牆。每一次 agent 呼叫、每一次模型推論都是真金白銀的 GPU 時間。當用戶量成長到某個臨界點，吃到飽就是虧到飽。</p><p>同日釋出的 v1.0.42 版更新倒是相對低調——改善了 MCP server 連線失敗時的警告訊息，會建議直接可執行的 <code>/mcp show</code> 指令。小修補，但暗示 MCP 整合的穩定性仍在打磨中。</p><p>逆向想：怎樣做 GitHub Copilot 一定會流失用戶？就是在競爭對手（Claude Code、Cursor）還在擴張的時候開始限縮。GitHub 選在 Claude 剛簽下 22 萬顆 GPU 的同一週宣布限縮，timing 有夠微妙。</p><blockquote><p>原文來源：<a href="https://github.blog/news-insights/company-news/changes-to-github-copilot-individual-plans/">Changes to GitHub Copilot Individual plans — The GitHub Blog</a><br>原文來源：<a href="https://dev.to/techsifted/github-copilot-may-2026-changes-sign-ups-paused-opus-removed-rate-limits-visible-2ip8">GitHub Copilot May 2026 Changes — DEV Community</a></p></blockquote><hr><h2 id="OpenAI-Advanced-Account-Security：ChatGPT-終於認真做安全"><a href="#OpenAI-Advanced-Account-Security：ChatGPT-終於認真做安全" class="headerlink" title="OpenAI Advanced Account Security：ChatGPT 終於認真做安全"></a>OpenAI Advanced Account Security：ChatGPT 終於認真做安全</h2><p>OpenAI 推出了 ChatGPT 的進階帳號安全機制。遲到了，但方向對。</p><p>新功能包括：phishing-resistant sign-in（防釣魚登入）、更嚴格的帳號恢復控制、更短的 session 有效期、登入提醒通知、以及自動從訓練資料中排除受保護帳號的對話紀錄。整套安全升級也延伸到 Codex，並且提供 Yubico 安全金鑰的優惠套組。</p><p>「phishing-resistant」是關鍵字。傳統的密碼加 SMS 驗證碼早就不夠用了——SIM swap 攻擊讓手機驗證碼形同虛設，而 AI 生成的釣魚郵件品質越來越高，人眼越來越難辨別。FIDO2&#x2F;WebAuthn 等硬體金鑰方案是目前唯一能真正抵抗釣魚的認證方式。</p><p>為什麼現在做？因為 ChatGPT 和 Codex 裡存的東西越來越值錢。企業用戶丟進去的程式碼、策略文件、財務資料——一旦帳號被接管，等於把公司機密雙手奉上。</p><p>不過，opt-in 是一個值得注意的設計選擇。進階安全不是預設開啟，使用者得自己去開。歷史告訴我們，opt-in 的安全功能採用率通常不到 5%。95% 的人會繼續用弱密碼加 SMS。安全機制存在，不等於安全。</p><blockquote><p>原文來源：<a href="https://releasebot.io/updates/openai">OpenAI Release Notes - May 2026 — Releasebot</a></p></blockquote><hr><h2 id="拉遠看：加速與脆弱的賽跑"><a href="#拉遠看：加速與脆弱的賽跑" class="headerlink" title="拉遠看：加速與脆弱的賽跑"></a>拉遠看：加速與脆弱的賽跑</h2><p>五條新聞指向同一個結構：AI 基礎設施正在以前所未有的速度膨脹，而保護這些基礎設施的機制跟不上。</p><p>Anthropic 拿到 22 萬顆 GPU，agent 學會做夢和自我修正。但同一週，企業級防火牆被打穿了——而且修補還要等兩週。GitHub 開始限縮 AI coding 工具的使用量，因為成本撐不住。OpenAI 終於推出硬體金鑰認證，但設定成 opt-in——大部分人不會去開。</p><p>每一個加速的決策都帶著一個隱含的假設：「我們能在出事之前補上防護」。CVE-2026-0300 證明了這個假設的荒謬——漏洞被利用的時間點，比修補程式釋出還早一週。</p><p>系統越複雜、越快、越自主，它出錯時的影響範圍就越大。AI agent 會做夢、會學習、會協作——這些全是好事。但一個會從錯誤中學習的系統，前提是有人在盯著它學到的是對的東西。</p><p>跑得快很好。問題是煞車裝好了沒有。</p>]]></content>
-      
-      
-      <categories>
-          
-          <category> AI與科技新聞 </category>
-          
-      </categories>
-      
-      
-        <tags>
-            
-            <tag> AI與科技新聞 </tag>
-            
-            <tag> OpenAI </tag>
-            
-            <tag> Anthropic </tag>
-            
-            <tag> GitHub Copilot </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    
-    
-    <entry>
       <title>Claude Managed Agents Dreaming + Outcomes 完整教學 — 讓 AI Agent 從自己的失敗中學習進化</title>
       <link href="/2026/05/07/Claude-Managed-Agents-Dreaming-Outcomes-%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8-%E8%AE%93-AI-Agent-%E5%BE%9E%E8%87%AA%E5%B7%B1%E7%9A%84%E5%A4%B1%E6%95%97%E4%B8%AD%E5%AD%B8%E7%BF%92%E9%80%B2%E5%8C%96/"/>
       <url>/2026/05/07/Claude-Managed-Agents-Dreaming-Outcomes-%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8-%E8%AE%93-AI-Agent-%E5%BE%9E%E8%87%AA%E5%B7%B1%E7%9A%84%E5%A4%B1%E6%95%97%E4%B8%AD%E5%AD%B8%E7%BF%92%E9%80%B2%E5%8C%96/</url>
@@ -1243,6 +1305,37 @@
             <tag> Dreaming </tag>
             
             <tag> Outcomes </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>AI 與科技新聞摘要 - 2026/05/07</title>
+      <link href="/2026/05/07/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260507/"/>
+      <url>/2026/05/07/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260507/</url>
+      
+        <content type="html"><![CDATA[<p>220,000 顆 GPU。</p><p>Anthropic 昨天簽下 SpaceX Colossus 1 資料中心的全部算力——300 百萬瓦、超過 22 萬顆 GPU，一個月內全面上線。同一天的開發者大會上，他們讓 AI agent 學會「做夢」：回顧過去的失敗，自己修正自己。</p><p>這兩件事要放在一起看。</p><p>算力是油門，自我修正是方向盤。光踩油門會撞牆，光有方向盤走不快。但兩個同時到位——你得認真想一下這台車會開到哪裡去。同一時間，企業防火牆被打穿、Copilot 開始限縮用戶、OpenAI 終於認真做帳號安全。加速和失控，永遠是一體兩面。</p><hr><h2 id="Anthropic-Code-w-Claude-2026-SF-—-AI-Agent-學會做夢"><a href="#Anthropic-Code-w-Claude-2026-SF-—-AI-Agent-學會做夢" class="headerlink" title="Anthropic Code w&#x2F; Claude 2026 SF — AI Agent 學會做夢"></a>Anthropic Code w&#x2F; Claude 2026 SF — AI Agent 學會做夢</h2><p>「做夢」這個詞不是行銷話術，是功能名稱。</p><p>Anthropic 在 5 月 6 日舊金山開發者大會上發表了 Managed Agents 的三個新能力：Dreaming、Outcomes、Multi-agent orchestration。其中 Dreaming 最值得仔細看。</p><p>運作方式是這樣的：agent 跑完任務之後，不是直接歸零。一個排程背景程序會定期回顧過去的 sessions，萃取出反覆出現的模式——哪些工具組合有效、哪些步驟總是卡住、哪些錯誤一直重演——然後把這些模式寫進記憶庫。下次接到類似任務，agent 帶著這些記憶上工。</p><p>Harvey，那家用 Claude 做法律文件的公司，內測 Dreaming 之後報告任務完成率提升了 6 倍。不是 6%，是 6 倍。agent 記住了不同檔案格式的 workaround、記住了特定工具的使用模式，不再每次從零開始踩同樣的坑。</p><p>Outcomes 同時進入公測。概念很直白：你寫一份 rubric 定義「成功長什麼樣」，一個獨立的 Claude 實例拿這份 rubric 替 agent 的產出打分。不及格？回去重做，直到過關。早期採用者的數據是任務成功率提升約 10 個百分點。</p><p>Multi-agent orchestration 則是讓一個主 agent 把複雜任務拆成子任務，分配給不同的子 agents 並行處理。</p><p>三個功能加在一起，描繪的是一個方向：agent 不再是跑一次就結束的腳本，而是會學習、會被評分、會協作的持續性實體。這件事的上行很明確——企業自動化的品質天花板大幅提高。下行呢？一個會自我修正的系統，修正的方向如果偏了，它會越修越偏，而且越來越有信心自己是對的。</p><blockquote><p>原文來源：<a href="https://simonwillison.net/2026/May/6/code-w-claude-2026/">Live blog: Code w&#x2F; Claude 2026 — Simon Willison</a><br>原文來源：<a href="https://siliconangle.com/2026/05/06/anthropic-letting-claude-agents-dream-dont-sleep-job/">Anthropic is letting Claude agents ‘dream’ so they don’t sleep on the job — SiliconANGLE</a><br>原文來源：<a href="https://www.artiverse.ca/highlights-from-anthropics-code-w-claude-2026-conference/">Highlights from Anthropic’s Code w&#x2F; Claude 2026 Conference — Artiverse</a></p></blockquote><hr><h2 id="Anthropic-SpaceX-Colossus-1：300MW-算力，外加太空野心"><a href="#Anthropic-SpaceX-Colossus-1：300MW-算力，外加太空野心" class="headerlink" title="Anthropic + SpaceX Colossus 1：300MW 算力，外加太空野心"></a>Anthropic + SpaceX Colossus 1：300MW 算力，外加太空野心</h2><p>Bloomberg 和 CNBC 同日報導：Anthropic 簽下 SpaceX 旗下 Colossus 1 資料中心的 100% 算力容量。</p><p>數字拆開來看——300 百萬瓦以上的電力、超過 220,000 顆 GPU。一個月內全面啟用。這批算力直接灌進 Claude Pro、Max 訂閱用戶和 API 開發者的配額裡，意味著更少的速率限制、更快的回應、更能扛高負載。</p><p>但真正讓人抬頭的是協議裡的最後一段：雙方表達了共同開發「數 GW 級軌道 AI 算力」的興趣。軌道。太空裡的資料中心。</p><p>聽起來像科幻？地面上的 AI 算力正在撞上兩個實體天花板——電力和散熱。地球表面的電網有極限，冷卻系統的效率有極限。太空沒有散熱問題（真空是最好的隔熱層，但也可以用輻射散熱），太陽能在軌道上 24 小時不間斷。物理上說得通。經濟上？目前完全說不通。但五年前把整片晶圓做成一顆晶片也沒人信。</p><p>同場加映：Anthropic 同步發布了 10 個金融專用 AI agents，搭配 Microsoft 365 整合和新的 MCP connector。金融業是 AI agent 最早能大規模落地的垂直領域之一——交易有明確規則、合規有明確標準、成本節省算得出來。</p><p>換個角度問：怎樣做 Anthropic 一定會踩坑？把所有算力都壓在單一供應商。Colossus 1 如果有任何斷電、政策變動、或 SpaceX 自身的優先順序調整，Anthropic 就會直接感受到。算力的集中度和模型的強大，是同一枚硬幣的兩面。</p><blockquote><p>原文來源：<a href="https://www.bloomberg.com/news/articles/2026-05-06/anthropic-inks-computing-deal-with-spacex-to-meet-ai-demand">Anthropic, SpaceX Sign Deal to Boost AI Computing Power for Claude Software — Bloomberg</a><br>原文來源：<a href="https://www.cnbc.com/2026/05/06/anthropic-spacex-data-center-capacity.html">Anthropic, SpaceX announce compute deal that includes space development — CNBC</a><br>原文來源：<a href="https://www.anthropic.com/news/higher-limits-spacex">Higher usage limits for Claude and a compute deal — Anthropic</a></p></blockquote><hr><h2 id="CVE-2026-0300：Palo-Alto-防火牆零日，root-權限直接拿"><a href="#CVE-2026-0300：Palo-Alto-防火牆零日，root-權限直接拿" class="headerlink" title="CVE-2026-0300：Palo Alto 防火牆零日，root 權限直接拿"></a>CVE-2026-0300：Palo Alto 防火牆零日，root 權限直接拿</h2><p>CVSS 9.3。未修補。PoC 已公開。正在被利用。</p><p>四個條件同時成立的 CVE 不常見。CVE-2026-0300 是 Palo Alto Networks PAN-OS 的 User-ID Authentication Portal（也就是 Captive Portal）裡的 buffer overflow。攻擊者送出特製封包，不需要任何認證，就能以 root 權限在防火牆上執行任意程式碼。</p><p>影響範圍是 PA-Series 和 VM-Series 防火牆——只要開了 User-ID Authentication Portal 對外。Cloud NGFW 和 Panorama 不受影響。</p><p>時間線很殘酷。5 月 6 日，Palo Alto 發布資安公告，同日公開 PoC exploit 就出現了。修補程式最快 5 月 13 日才開始分批釋出，部分版本要等到 5 月 28 日。中間這兩週多的空窗期，所有暴露在公網的受影響防火牆都是活靶。</p><p>Palo Alto 自己用了「limited exploitation」的措辭，但 Wiz 和 Help Net Security 的分析都指出，PoC 的品質很高——「reliably trigger」是他們的原話。有夠猛的漏洞配有夠完整的武器，唯一缺的是修補。</p><p>緩解方式只有兩個：把 User-ID Authentication Portal 的存取限制在內網信任區域，或者直接關掉。如果你的防火牆開了這個功能面對公網，現在就去改。不是明天，是現在。</p><p>這是一個經典的系統性脆弱點：企業花大錢買的邊界防護設備，本身就是攻擊面。防火牆不是牆，是門——門上如果有洞，攻擊者不會費心爬牆。</p><blockquote><p>原文來源：<a href="https://thehackernews.com/2026/05/palo-alto-pan-os-flaw-under-active.html">Palo Alto PAN-OS Flaw Under Active Exploitation Enables Remote Code Execution — The Hacker News</a><br>原文來源：<a href="https://www.bleepingcomputer.com/news/security/palo-alto-networks-warns-of-actively-exploited-firewall-zero-day/">Palo Alto Networks warns of firewall RCE zero-day exploited in attacks — BleepingComputer</a><br>原文來源：<a href="https://www.wiz.io/blog/critical-vulnerability-in-pan-os-exploited-in-the-wild-cve-2026-0300">Critical Buffer Overflow Vulnerability in PAN-OS Exploited in-the-Wild — Wiz Blog</a></p></blockquote><hr><h2 id="GitHub-Copilot-Individual-方案大改：暫停新註冊、砍掉-Opus"><a href="#GitHub-Copilot-Individual-方案大改：暫停新註冊、砍掉-Opus" class="headerlink" title="GitHub Copilot Individual 方案大改：暫停新註冊、砍掉 Opus"></a>GitHub Copilot Individual 方案大改：暫停新註冊、砍掉 Opus</h2><p>GitHub 官方部落格這週宣布了 Copilot Individual 方案的重大調整，而且不是升級——是限縮。</p><p>第一刀：暫停新用戶註冊。理由是「保護現有用戶的使用體驗」。翻譯：算力不夠了，先停賣門票。</p><p>第二刀：Opus 4.7 從 Pro 方案移除，僅 Pro+（更貴的方案）保留。Pro 用戶想用最強的模型？加錢。</p><p>第三刀：轉向 usage-based billing。吃到飽的時代要結束了。</p><p>這三刀砍的方向很一致：AI coding 工具的「免費午餐」階段正式收攤。過去兩年靠低價和免費試用搶市佔率的策略，撞上了算力成本的硬牆。每一次 agent 呼叫、每一次模型推論都是真金白銀的 GPU 時間。當用戶量成長到某個臨界點，吃到飽就是虧到飽。</p><p>同日釋出的 v1.0.42 版更新倒是相對低調——改善了 MCP server 連線失敗時的警告訊息，會建議直接可執行的 <code>/mcp show</code> 指令。小修補，但暗示 MCP 整合的穩定性仍在打磨中。</p><p>逆向想：怎樣做 GitHub Copilot 一定會流失用戶？就是在競爭對手（Claude Code、Cursor）還在擴張的時候開始限縮。GitHub 選在 Claude 剛簽下 22 萬顆 GPU 的同一週宣布限縮，timing 有夠微妙。</p><blockquote><p>原文來源：<a href="https://github.blog/news-insights/company-news/changes-to-github-copilot-individual-plans/">Changes to GitHub Copilot Individual plans — The GitHub Blog</a><br>原文來源：<a href="https://dev.to/techsifted/github-copilot-may-2026-changes-sign-ups-paused-opus-removed-rate-limits-visible-2ip8">GitHub Copilot May 2026 Changes — DEV Community</a></p></blockquote><hr><h2 id="OpenAI-Advanced-Account-Security：ChatGPT-終於認真做安全"><a href="#OpenAI-Advanced-Account-Security：ChatGPT-終於認真做安全" class="headerlink" title="OpenAI Advanced Account Security：ChatGPT 終於認真做安全"></a>OpenAI Advanced Account Security：ChatGPT 終於認真做安全</h2><p>OpenAI 推出了 ChatGPT 的進階帳號安全機制。遲到了，但方向對。</p><p>新功能包括：phishing-resistant sign-in（防釣魚登入）、更嚴格的帳號恢復控制、更短的 session 有效期、登入提醒通知、以及自動從訓練資料中排除受保護帳號的對話紀錄。整套安全升級也延伸到 Codex，並且提供 Yubico 安全金鑰的優惠套組。</p><p>「phishing-resistant」是關鍵字。傳統的密碼加 SMS 驗證碼早就不夠用了——SIM swap 攻擊讓手機驗證碼形同虛設，而 AI 生成的釣魚郵件品質越來越高，人眼越來越難辨別。FIDO2&#x2F;WebAuthn 等硬體金鑰方案是目前唯一能真正抵抗釣魚的認證方式。</p><p>為什麼現在做？因為 ChatGPT 和 Codex 裡存的東西越來越值錢。企業用戶丟進去的程式碼、策略文件、財務資料——一旦帳號被接管，等於把公司機密雙手奉上。</p><p>不過，opt-in 是一個值得注意的設計選擇。進階安全不是預設開啟，使用者得自己去開。歷史告訴我們，opt-in 的安全功能採用率通常不到 5%。95% 的人會繼續用弱密碼加 SMS。安全機制存在，不等於安全。</p><blockquote><p>原文來源：<a href="https://releasebot.io/updates/openai">OpenAI Release Notes - May 2026 — Releasebot</a></p></blockquote><hr><h2 id="拉遠看：加速與脆弱的賽跑"><a href="#拉遠看：加速與脆弱的賽跑" class="headerlink" title="拉遠看：加速與脆弱的賽跑"></a>拉遠看：加速與脆弱的賽跑</h2><p>五條新聞指向同一個結構：AI 基礎設施正在以前所未有的速度膨脹，而保護這些基礎設施的機制跟不上。</p><p>Anthropic 拿到 22 萬顆 GPU，agent 學會做夢和自我修正。但同一週，企業級防火牆被打穿了——而且修補還要等兩週。GitHub 開始限縮 AI coding 工具的使用量，因為成本撐不住。OpenAI 終於推出硬體金鑰認證，但設定成 opt-in——大部分人不會去開。</p><p>每一個加速的決策都帶著一個隱含的假設：「我們能在出事之前補上防護」。CVE-2026-0300 證明了這個假設的荒謬——漏洞被利用的時間點，比修補程式釋出還早一週。</p><p>系統越複雜、越快、越自主，它出錯時的影響範圍就越大。AI agent 會做夢、會學習、會協作——這些全是好事。但一個會從錯誤中學習的系統，前提是有人在盯著它學到的是對的東西。</p><p>跑得快很好。問題是煞車裝好了沒有。</p>]]></content>
+      
+      
+      <categories>
+          
+          <category> AI與科技新聞 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> AI與科技新聞 </tag>
+            
+            <tag> OpenAI </tag>
+            
+            <tag> Anthropic </tag>
+            
+            <tag> GitHub Copilot </tag>
             
         </tags>
       
@@ -1602,9 +1695,9 @@
             
             <tag> NVIDIA </tag>
             
-            <tag> Gemini </tag>
-            
             <tag> Mistral </tag>
+            
+            <tag> Gemini </tag>
             
         </tags>
       
@@ -1850,9 +1943,9 @@
             
             <tag> AI與科技新聞 </tag>
             
-            <tag> NVIDIA </tag>
-            
             <tag> Google </tag>
+            
+            <tag> NVIDIA </tag>
             
             <tag> Microsoft </tag>
             
@@ -2076,39 +2169,6 @@
     
     
     <entry>
-      <title>RTK — 讓 Claude Code 少燒 80% Token 的 Rust 壓縮代理</title>
-      <link href="/2026/04/28/RTK-%E8%AE%93-Claude-Code-%E5%B0%91%E7%87%92-80-Token-%E7%9A%84-Rust-%E5%A3%93%E7%B8%AE%E4%BB%A3%E7%90%86/"/>
-      <url>/2026/04/28/RTK-%E8%AE%93-Claude-Code-%E5%B0%91%E7%87%92-80-Token-%E7%9A%84-Rust-%E5%A3%93%E7%B8%AE%E4%BB%A3%E7%90%86/</url>
-      
-        <content type="html"><![CDATA[<p>你以為 token 是被 AI 的思考燒掉的。其實不是。</p><p>跑一個長時間的 Claude Code 會話，打開帳單看一下，你會發現大部分 token 花在「讀」而不是「想」。更精確地說，花在讀 shell 吐回來的那坨東西——git diff 的路徑前綴、pytest 的進度條、docker logs 的時間戳、一堆空行跟重複行。這些資訊對 LLM 來說毫無意義，但每一個字元都在燒你的錢。</p><p><strong>118k token 的會話，真正有用的資訊大概只有 24k。</strong></p><p>剩下的 94k 是噪音。</p><h2 id="RTK-在幹嘛"><a href="#RTK-在幹嘛" class="headerlink" title="RTK 在幹嘛"></a>RTK 在幹嘛</h2><p>RTK（Rust Token Killer）是一個用 Rust 寫的 CLI 代理層，架在 Claude Code 跟你的 shell 之間。想像一下你家水管接了一個濾水器——水還是會流過去，但泥沙會被擋住。RTK 就是那個濾水器，只是它過濾的不是泥沙，是 token。</p><p>每次 Claude Code 要執行 shell 指令，RTK 會先攔截輸出，用針對特定指令的壓縮模組把冗餘資訊砍掉，只留下 LLM 真正需要的部分，再傳回 context window。壓縮率大概在 60-90%，取決於指令類型。git status 的壓縮效果跟 docker logs 差很多，這很直覺。</p><p>它內建了 100+ 個指令模組——git、pytest、jest、docker、kubectl、terraform，基本上你在開發中會用到的指令都有。不是通用壓縮，是每個指令有自己的規則。知道什麼該留什麼該砍。</p><h2 id="怎麼裝進去"><a href="#怎麼裝進去" class="headerlink" title="怎麼裝進去"></a>怎麼裝進去</h2><p>macOS 推薦 Homebrew：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">brew install rtk</span><br></pre></td></tr></table></figure><p>裝完跑一行設定：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rtk init -g --auto-patch</span><br></pre></td></tr></table></figure><p>這行會幫你設好 Claude Code 的 PreToolUse hook。之後所有 Bash 指令都會自動走 RTK 代理，你什麼都不用改。</p><p>有幾個常見的坑要先避開。<code>npm install -g rtk-ai</code>——npm 上沒這個套件，裝了會炸。<code>cargo install rtk</code>——crates.io 上有同名套件，但那是完全不同的東西。只有 Homebrew 跟官方安裝腳本是對的。</p><h2 id="它怎麼知道該砍什麼"><a href="#它怎麼知道該砍什麼" class="headerlink" title="它怎麼知道該砍什麼"></a>它怎麼知道該砍什麼</h2><p>這是最聰明的部分。RTK 不是瞎砍，它知道每個指令的輸出結構。</p><p>跑 <code>git diff</code> 的時候，它會砍掉那些又臭又長的路徑前綴（<code>a/src/main/java/com/company/project/module/submodule/...</code>），但保留變更的行數跟內容。跑 pytest 的時候，進度條（<code>...........</code>）直接消失，但測試結果和失敗的 traceback 原封不動。Docker logs 的重複行會被折疊成「×N」的格式，但第一次出現的完整內容會保留。</p><p>這就像你在茶水間跟同事轉述 log 一樣——你不會把每一行時間戳都念出來，你會說「這個 error 出現了 47 次」然後念一次完整的 stack trace。RTK 就是在做這件事，只是它做得更快、更穩定。</p><p>有個安全機制：<strong>12 行以下的輸出自動跳過不處理。</strong> 小型輸出通常每一行都是關鍵資訊，壓了反而會掉東西。</p><h2 id="80-是怎麼來的"><a href="#80-是怎麼來的" class="headerlink" title="80% 是怎麼來的"></a>80% 是怎麼來的</h2><p>數字不是亂喊的。</p><p>我自己跑一個典型的 Claude Code 開發會話——改 code、跑測試、看 diff、查 log——原本一個 session 下來 token 消耗 118k。裝上 RTK 之後，同樣的工作流，24k。省了接近 80%。</p><p>這個差距的來源很好理解。一次 <code>git diff</code> 輸出可能有 2000 行，但真正有意義的變更可能只有 200 行。一次 <code>docker logs --tail 500</code> 裡面可能有 400 行是重複的 health check。一次 pytest 的完整輸出裡，進度指示器佔了一半的字元數。這些東西疊起來很恐怖。</p><p>API 費用是按 token 計費的。少送 80% 的 token 進去，就是少付 80% 的錢。數學就這麼簡單。</p><h2 id="什麼時候不該用它"><a href="#什麼時候不該用它" class="headerlink" title="什麼時候不該用它"></a>什麼時候不該用它</h2><p>壓縮是有損的。這三個字很重要。</p><p>RTK 砍掉的東西在大多數情況下是垃圾，但不是所有情況。追查 production incident 的時候，每一行 log 的時間戳和順序都是線索。對 trace ID 的時候，被折疊的重複行裡可能藏了一個微妙的差異。做 performance 分析的時候，你需要看到完整的 latency 分佈。</p><p>這時候用 <code>rtk proxy</code>：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rtk proxy docker logs mycontainer --since <span class="string">&quot;30 min ago&quot;</span></span><br></pre></td></tr></table></figure><p><code>rtk proxy</code> 會繞過所有壓縮邏輯，原封不動地把輸出傳回去。Claude Code 的 Read、Grep、Glob 這些內建工具本來就不走 Bash，所以 hook 也攔不到它們——直接用就好。</p><p>老實說，日常開發 95% 的時間走壓縮都沒問題。只有在精確除錯的場景才需要繞過去。</p><h2 id="兩個好用的子指令"><a href="#兩個好用的子指令" class="headerlink" title="兩個好用的子指令"></a>兩個好用的子指令</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rtk discover</span><br></pre></td></tr></table></figure><p>這個會掃描你的 shell 歷史，找出哪些指令的輸出特別肥、特別適合壓縮，然後告訴你預估能省多少 token。裝完之後先跑一次，心裡有個底。</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">rtk gain</span><br><span class="line">rtk gain --<span class="built_in">history</span></span><br></pre></td></tr></table></figure><p>查看累積省下多少 token 和費用。<code>--history</code> 會列出每個指令的歷史壓縮率。這個數字看了會真香——你會知道自己到底省了多少錢。</p><h2 id="背後就兩條線"><a href="#背後就兩條線" class="headerlink" title="背後就兩條線"></a>背後就兩條線</h2><p>軟體工程裡有一個被低估的問題：<strong>我們送給工具的資訊裡，有多少是真正需要的？</strong></p><p>大多數人優化 LLM 的思路是「讓模型更聰明」或「讓 prompt 更精確」。但 RTK 指向的是一個更基礎的槓桿點——在資訊進入模型之前，先把噪音砍掉。這不是什麼新觀念。Unix 哲學的 pipe 和 filter 就是在做這件事。grep、awk、sed 存在了幾十年，本質上就是在回答同一個問題：什麼是訊號，什麼是噪音。</p><p>RTK 只是把這個古老的問題帶到 LLM 時代。</p><p>而且答案出乎意料地明確：你的 shell 輸出裡，六到九成都是噪音。</p><hr><p><strong>相關連結</strong></p><ul><li>GitHub：<a href="https://github.com/rtk-ai/rtk">https://github.com/rtk-ai/rtk</a></li><li>官方網站：<a href="https://www.rtk-ai.app/">https://www.rtk-ai.app</a></li></ul>]]></content>
-      
-      
-      <categories>
-          
-          <category> Claude Code </category>
-          
-      </categories>
-      
-      
-        <tags>
-            
-            <tag> Claude Code </tag>
-            
-            <tag> CLI </tag>
-            
-            <tag> Rust </tag>
-            
-            <tag> RTK </tag>
-            
-            <tag> Token 優化 </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    
-    
-    <entry>
       <title>MCP Server 開發入門教學 — 用 Python 從零打造 AI 工具連接器</title>
       <link href="/2026/04/28/MCP-Server-%E9%96%8B%E7%99%BC%E5%85%A5%E9%96%80%E6%95%99%E5%AD%B8-%E7%94%A8-Python-%E5%BE%9E%E9%9B%B6%E6%89%93%E9%80%A0-AI-%E5%B7%A5%E5%85%B7%E9%80%A3%E6%8E%A5%E5%99%A8/"/>
       <url>/2026/04/28/MCP-Server-%E9%96%8B%E7%99%BC%E5%85%A5%E9%96%80%E6%95%99%E5%AD%B8-%E7%94%A8-Python-%E5%BE%9E%E9%9B%B6%E6%89%93%E9%80%A0-AI-%E5%B7%A5%E5%85%B7%E9%80%A3%E6%8E%A5%E5%99%A8/</url>
@@ -2134,6 +2194,39 @@
             <tag> 教學 </tag>
             
             <tag> Python </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>RTK — 讓 Claude Code 少燒 80% Token 的 Rust 壓縮代理</title>
+      <link href="/2026/04/28/RTK-%E8%AE%93-Claude-Code-%E5%B0%91%E7%87%92-80-Token-%E7%9A%84-Rust-%E5%A3%93%E7%B8%AE%E4%BB%A3%E7%90%86/"/>
+      <url>/2026/04/28/RTK-%E8%AE%93-Claude-Code-%E5%B0%91%E7%87%92-80-Token-%E7%9A%84-Rust-%E5%A3%93%E7%B8%AE%E4%BB%A3%E7%90%86/</url>
+      
+        <content type="html"><![CDATA[<p>你以為 token 是被 AI 的思考燒掉的。其實不是。</p><p>跑一個長時間的 Claude Code 會話，打開帳單看一下，你會發現大部分 token 花在「讀」而不是「想」。更精確地說，花在讀 shell 吐回來的那坨東西——git diff 的路徑前綴、pytest 的進度條、docker logs 的時間戳、一堆空行跟重複行。這些資訊對 LLM 來說毫無意義，但每一個字元都在燒你的錢。</p><p><strong>118k token 的會話，真正有用的資訊大概只有 24k。</strong></p><p>剩下的 94k 是噪音。</p><h2 id="RTK-在幹嘛"><a href="#RTK-在幹嘛" class="headerlink" title="RTK 在幹嘛"></a>RTK 在幹嘛</h2><p>RTK（Rust Token Killer）是一個用 Rust 寫的 CLI 代理層，架在 Claude Code 跟你的 shell 之間。想像一下你家水管接了一個濾水器——水還是會流過去，但泥沙會被擋住。RTK 就是那個濾水器，只是它過濾的不是泥沙，是 token。</p><p>每次 Claude Code 要執行 shell 指令，RTK 會先攔截輸出，用針對特定指令的壓縮模組把冗餘資訊砍掉，只留下 LLM 真正需要的部分，再傳回 context window。壓縮率大概在 60-90%，取決於指令類型。git status 的壓縮效果跟 docker logs 差很多，這很直覺。</p><p>它內建了 100+ 個指令模組——git、pytest、jest、docker、kubectl、terraform，基本上你在開發中會用到的指令都有。不是通用壓縮，是每個指令有自己的規則。知道什麼該留什麼該砍。</p><h2 id="怎麼裝進去"><a href="#怎麼裝進去" class="headerlink" title="怎麼裝進去"></a>怎麼裝進去</h2><p>macOS 推薦 Homebrew：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">brew install rtk</span><br></pre></td></tr></table></figure><p>裝完跑一行設定：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rtk init -g --auto-patch</span><br></pre></td></tr></table></figure><p>這行會幫你設好 Claude Code 的 PreToolUse hook。之後所有 Bash 指令都會自動走 RTK 代理，你什麼都不用改。</p><p>有幾個常見的坑要先避開。<code>npm install -g rtk-ai</code>——npm 上沒這個套件，裝了會炸。<code>cargo install rtk</code>——crates.io 上有同名套件，但那是完全不同的東西。只有 Homebrew 跟官方安裝腳本是對的。</p><h2 id="它怎麼知道該砍什麼"><a href="#它怎麼知道該砍什麼" class="headerlink" title="它怎麼知道該砍什麼"></a>它怎麼知道該砍什麼</h2><p>這是最聰明的部分。RTK 不是瞎砍，它知道每個指令的輸出結構。</p><p>跑 <code>git diff</code> 的時候，它會砍掉那些又臭又長的路徑前綴（<code>a/src/main/java/com/company/project/module/submodule/...</code>），但保留變更的行數跟內容。跑 pytest 的時候，進度條（<code>...........</code>）直接消失，但測試結果和失敗的 traceback 原封不動。Docker logs 的重複行會被折疊成「×N」的格式，但第一次出現的完整內容會保留。</p><p>這就像你在茶水間跟同事轉述 log 一樣——你不會把每一行時間戳都念出來，你會說「這個 error 出現了 47 次」然後念一次完整的 stack trace。RTK 就是在做這件事，只是它做得更快、更穩定。</p><p>有個安全機制：<strong>12 行以下的輸出自動跳過不處理。</strong> 小型輸出通常每一行都是關鍵資訊，壓了反而會掉東西。</p><h2 id="80-是怎麼來的"><a href="#80-是怎麼來的" class="headerlink" title="80% 是怎麼來的"></a>80% 是怎麼來的</h2><p>數字不是亂喊的。</p><p>我自己跑一個典型的 Claude Code 開發會話——改 code、跑測試、看 diff、查 log——原本一個 session 下來 token 消耗 118k。裝上 RTK 之後，同樣的工作流，24k。省了接近 80%。</p><p>這個差距的來源很好理解。一次 <code>git diff</code> 輸出可能有 2000 行，但真正有意義的變更可能只有 200 行。一次 <code>docker logs --tail 500</code> 裡面可能有 400 行是重複的 health check。一次 pytest 的完整輸出裡，進度指示器佔了一半的字元數。這些東西疊起來很恐怖。</p><p>API 費用是按 token 計費的。少送 80% 的 token 進去，就是少付 80% 的錢。數學就這麼簡單。</p><h2 id="什麼時候不該用它"><a href="#什麼時候不該用它" class="headerlink" title="什麼時候不該用它"></a>什麼時候不該用它</h2><p>壓縮是有損的。這三個字很重要。</p><p>RTK 砍掉的東西在大多數情況下是垃圾，但不是所有情況。追查 production incident 的時候，每一行 log 的時間戳和順序都是線索。對 trace ID 的時候，被折疊的重複行裡可能藏了一個微妙的差異。做 performance 分析的時候，你需要看到完整的 latency 分佈。</p><p>這時候用 <code>rtk proxy</code>：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rtk proxy docker logs mycontainer --since <span class="string">&quot;30 min ago&quot;</span></span><br></pre></td></tr></table></figure><p><code>rtk proxy</code> 會繞過所有壓縮邏輯，原封不動地把輸出傳回去。Claude Code 的 Read、Grep、Glob 這些內建工具本來就不走 Bash，所以 hook 也攔不到它們——直接用就好。</p><p>老實說，日常開發 95% 的時間走壓縮都沒問題。只有在精確除錯的場景才需要繞過去。</p><h2 id="兩個好用的子指令"><a href="#兩個好用的子指令" class="headerlink" title="兩個好用的子指令"></a>兩個好用的子指令</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rtk discover</span><br></pre></td></tr></table></figure><p>這個會掃描你的 shell 歷史，找出哪些指令的輸出特別肥、特別適合壓縮，然後告訴你預估能省多少 token。裝完之後先跑一次，心裡有個底。</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">rtk gain</span><br><span class="line">rtk gain --<span class="built_in">history</span></span><br></pre></td></tr></table></figure><p>查看累積省下多少 token 和費用。<code>--history</code> 會列出每個指令的歷史壓縮率。這個數字看了會真香——你會知道自己到底省了多少錢。</p><h2 id="背後就兩條線"><a href="#背後就兩條線" class="headerlink" title="背後就兩條線"></a>背後就兩條線</h2><p>軟體工程裡有一個被低估的問題：<strong>我們送給工具的資訊裡，有多少是真正需要的？</strong></p><p>大多數人優化 LLM 的思路是「讓模型更聰明」或「讓 prompt 更精確」。但 RTK 指向的是一個更基礎的槓桿點——在資訊進入模型之前，先把噪音砍掉。這不是什麼新觀念。Unix 哲學的 pipe 和 filter 就是在做這件事。grep、awk、sed 存在了幾十年，本質上就是在回答同一個問題：什麼是訊號，什麼是噪音。</p><p>RTK 只是把這個古老的問題帶到 LLM 時代。</p><p>而且答案出乎意料地明確：你的 shell 輸出裡，六到九成都是噪音。</p><hr><p><strong>相關連結</strong></p><ul><li>GitHub：<a href="https://github.com/rtk-ai/rtk">https://github.com/rtk-ai/rtk</a></li><li>官方網站：<a href="https://www.rtk-ai.app/">https://www.rtk-ai.app</a></li></ul>]]></content>
+      
+      
+      <categories>
+          
+          <category> Claude Code </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> Claude Code </tag>
+            
+            <tag> Rust </tag>
+            
+            <tag> CLI </tag>
+            
+            <tag> RTK </tag>
+            
+            <tag> Token 優化 </tag>
             
         </tags>
       
@@ -2360,9 +2453,9 @@
             
             <tag> 資安 </tag>
             
-            <tag> Google </tag>
-            
             <tag> Anthropic </tag>
+            
+            <tag> Google </tag>
             
         </tags>
       
@@ -2389,9 +2482,9 @@
             
             <tag> Claude Code </tag>
             
-            <tag> 自動化 </tag>
-            
             <tag> Hooks </tag>
+            
+            <tag> 自動化 </tag>
             
             <tag> 教學 </tag>
             
@@ -2488,9 +2581,9 @@
             
             <tag> Claude Code </tag>
             
-            <tag> Codex </tag>
-            
             <tag> Windsurf </tag>
+            
+            <tag> Codex </tag>
             
         </tags>
       
@@ -2678,9 +2771,9 @@
             
             <tag> AI與科技新聞 </tag>
             
-            <tag> Google </tag>
-            
             <tag> Anthropic </tag>
+            
+            <tag> Google </tag>
             
             <tag> Claude Code </tag>
             
@@ -3132,9 +3225,9 @@
             
             <tag> 資安 </tag>
             
-            <tag> Microsoft </tag>
-            
             <tag> Cursor </tag>
+            
+            <tag> Microsoft </tag>
             
         </tags>
       
@@ -4049,9 +4142,9 @@
       
         <tags>
             
-            <tag> Copilot </tag>
-            
             <tag> Cursor </tag>
+            
+            <tag> Copilot </tag>
             
             <tag> Claude Code </tag>
             
@@ -4301,9 +4394,9 @@
             
             <tag> MCP </tag>
             
-            <tag> Microsoft </tag>
-            
             <tag> Copilot </tag>
+            
+            <tag> Microsoft </tag>
             
         </tags>
       
@@ -4599,9 +4692,9 @@
             
             <tag> 資安 </tag>
             
-            <tag> Microsoft </tag>
-            
             <tag> Copilot </tag>
+            
+            <tag> Microsoft </tag>
             
         </tags>
       
@@ -4686,9 +4779,9 @@
             
             <tag> 資安 </tag>
             
-            <tag> Copilot </tag>
-            
             <tag> Cursor </tag>
+            
+            <tag> Copilot </tag>
             
         </tags>
       
@@ -5069,9 +5162,9 @@
             
             <tag> Claude </tag>
             
-            <tag> 自動化 </tag>
-            
             <tag> macOS </tag>
+            
+            <tag> 自動化 </tag>
             
         </tags>
       
@@ -5247,9 +5340,9 @@
             
             <tag> Claude Code </tag>
             
-            <tag> 自動化 </tag>
-            
             <tag> macOS </tag>
+            
+            <tag> 自動化 </tag>
             
             <tag> 教學 </tag>
             
@@ -5545,9 +5638,9 @@
             
             <tag> OpenAI </tag>
             
-            <tag> Google </tag>
-            
             <tag> Anthropic </tag>
+            
+            <tag> Google </tag>
             
         </tags>
       
@@ -5636,9 +5729,9 @@
             
             <tag> 資安 </tag>
             
-            <tag> NVIDIA </tag>
-            
             <tag> Google </tag>
+            
+            <tag> NVIDIA </tag>
             
         </tags>
       
@@ -5698,9 +5791,9 @@
             
             <tag> 資安 </tag>
             
-            <tag> Google </tag>
-            
             <tag> Anthropic </tag>
+            
+            <tag> Google </tag>
             
         </tags>
       
