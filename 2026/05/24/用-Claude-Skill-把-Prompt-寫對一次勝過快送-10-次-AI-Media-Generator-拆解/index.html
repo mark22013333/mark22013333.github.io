@@ -1,0 +1,421 @@
+<!DOCTYPE html><html lang="zh-TW" data-theme="dark"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>用 Claude Skill 把 Prompt 寫對一次勝過快送 10 次｜AI Media Generator 拆解 | Cheng's Tech &amp; Life</title><meta name="author" content="Cheng®"><meta name="copyright" content="Cheng®"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#0d0d0d"><meta name="description" content="一個 markdown 寫好的 Claude Skill，讓你一句中文需求自動產出 14 個 AI 生成平台各自聽得懂的 prompt">
+<meta property="og:type" content="article">
+<meta property="og:title" content="用 Claude Skill 把 Prompt 寫對一次勝過快送 10 次｜AI Media Generator 拆解">
+<meta property="og:url" content="https://mark22013333.github.io/2026/05/24/%E7%94%A8-Claude-Skill-%E6%8A%8A-Prompt-%E5%AF%AB%E5%B0%8D%E4%B8%80%E6%AC%A1%E5%8B%9D%E9%81%8E%E5%BF%AB%E9%80%81-10-%E6%AC%A1-AI-Media-Generator-%E6%8B%86%E8%A7%A3/index.html">
+<meta property="og:site_name" content="Cheng&#39;s Tech &amp; Life">
+<meta property="og:description" content="一個 markdown 寫好的 Claude Skill，讓你一句中文需求自動產出 14 個 AI 生成平台各自聽得懂的 prompt">
+<meta property="og:locale" content="zh_TW">
+<meta property="og:image" content="https://mark22013333.github.io/img/20260524-01.webp">
+<meta property="article:published_time" content="2026-05-24T01:30:00.000Z">
+<meta property="article:modified_time" content="2026-05-24T09:23:31.803Z">
+<meta property="article:author" content="Cheng®">
+<meta property="article:tag" content="AI Agent">
+<meta property="article:tag" content="MCP">
+<meta property="article:tag" content="Claude Code">
+<meta property="article:tag" content="Prompt Engineering">
+<meta property="article:tag" content="Claude Skills">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://mark22013333.github.io/img/20260524-01.webp"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "用 Claude Skill 把 Prompt 寫對一次勝過快送 10 次｜AI Media Generator 拆解",
+  "url": "https://mark22013333.github.io/2026/05/24/%E7%94%A8-Claude-Skill-%E6%8A%8A-Prompt-%E5%AF%AB%E5%B0%8D%E4%B8%80%E6%AC%A1%E5%8B%9D%E9%81%8E%E5%BF%AB%E9%80%81-10-%E6%AC%A1-AI-Media-Generator-%E6%8B%86%E8%A7%A3/",
+  "image": "https://mark22013333.github.io/img/20260524-01.webp",
+  "datePublished": "2026-05-24T01:30:00.000Z",
+  "dateModified": "2026-05-24T09:23:31.803Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "Cheng®",
+      "url": "https://mark22013333.github.io"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://mark22013333.github.io/2026/05/24/%E7%94%A8-Claude-Skill-%E6%8A%8A-Prompt-%E5%AF%AB%E5%B0%8D%E4%B8%80%E6%AC%A1%E5%8B%9D%E9%81%8E%E5%BF%AB%E9%80%81-10-%E6%AC%A1-AI-Media-Generator-%E6%8B%86%E8%A7%A3/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//www.google-analytics.com" crossorigin=""/><link rel="preconnect" href="//fonts.googleapis.com" crossorigin=""/><link rel="preconnect" href="//busuanzi.ibruce.info"/><meta name="google-site-verification" content="6ywUr8k2n_CT1PFYJzlSvI3CZ-JmJ55RYbA39VrFBDs"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!true && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          const hour = new Date().getHours()
+          const isNight = hour <= 9 || hour >= 18
+          if (theme === undefined) isNight ? activateDarkMode() : activateLightMode()
+          else theme === 'light' ? activateLightMode() : activateDarkMode()
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script async="async" src="https://www.googletagmanager.com/gtag/js?id=G-JBV14NRDH3"></script><script>window.dataLayer = window.dataLayer || []
+function gtag(){dataLayer.push(arguments)}
+gtag('js', new Date())
+gtag('config', 'G-JBV14NRDH3')
+btf.addGlobalFn('pjaxComplete', () => {
+  gtag('config', 'G-JBV14NRDH3', {'page_path': window.location.pathname})
+}, 'google_analytics')
+</script><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Titillium+Web&amp;display=swap" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"pagination":{"enable":false,"hitsPerPage":8},"languages":{"hits_empty":"找不到符合您查詢的內容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '複製成功',
+    error: '複製失敗',
+    noSupport: '瀏覽器不支援'
+  },
+  relativeDate: {
+    homepage: false,
+    post: true
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '剛剛',
+    min: '分鐘前',
+    hour: '小時前',
+    day: '天前',
+    month: '個月前'
+  },
+  copyright: {"limitCount":1,"languages":{"author":"作者: Cheng®","link":"連結: ","source":"來源: Cheng's Tech & Life","info":"著作權歸作者所有。如需商業轉載，請聯絡作者獲得授權，非商業轉載請註明出處😁。"}},
+  lightbox: 'fancybox',
+  Snackbar: {"chs_to_cht":"已切換為繁體中文","cht_to_chs":"已切換為簡體中文","day_to_night":"已切換為深色模式","night_to_day":"已切換為淺色模式","bgLight":"#49b1f5","bgDark":"#1f1f1f","position":"top-center"},
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid/dist/infinitegrid.min.js',
+    buttonText: '載入更多'
+  },
+  isPhotoFigcaption: true,
+  islazyloadPlugin: false,
+  isAnchor: true,
+  percent: {
+    toc: true,
+    rightside: true,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '用 Claude Skill 把 Prompt 寫對一次勝過快送 10 次｜AI Media Generator 拆解',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><link rel="stylesheet" href="/css/kkbox-player.css"><link rel="stylesheet" href="/css/tag-cloud-fancy.css"><link rel="stylesheet" href="/css/font-resize.css"><link rel="stylesheet" href="/css/dark-palette.css"><link rel="stylesheet" href="/css/loading-override.css"><link rel="stylesheet" href="/css/series-showcase.css"><link rel="stylesheet" href="/css/search-tags.css"><link rel="alternate" href="/atom.xml" title="Cheng's Tech & Life" type="application/atom+xml">
+</head><body><div id="loading-box"><div class="loading-glass-overlay"></div><div class="loading-indicator"><div class="loading-dot"></div><div class="loading-dot"></div><div class="loading-dot"></div></div></div><script>(()=>{
+  const $loadingBox = document.getElementById('loading-box')
+  const $body = document.body
+  const preloader = {
+    endLoading: () => {
+      if ($loadingBox.classList.contains('loaded')) return
+      $body.style.overflow = ''
+      $loadingBox.classList.add('loaded')
+    },
+    initLoading: () => {
+      $body.style.overflow = 'hidden'
+      $loadingBox.classList.remove('loaded')
+    }
+  }
+
+  preloader.initLoading()
+
+  if (document.readyState === 'complete') {
+    preloader.endLoading()
+  } else {
+    window.addEventListener('load', preloader.endLoading)
+    document.addEventListener('DOMContentLoaded', preloader.endLoading)
+    setTimeout(preloader.endLoading, 7000)
+  }
+
+  if (true) {
+    btf.addGlobalFn('pjaxSend', preloader.initLoading, 'preloader_init')
+    btf.addGlobalFn('pjaxComplete', preloader.endLoading, 'preloader_end')
+  }
+})()</script><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="https://lh3.googleusercontent.com/pw/ABLVV87_po8nBc6F_tXcoYDmtzMGWxHuhhrbguYILCjmjWKLOS8DTpubm0YoQLKgjyjRIZyV5TjYe7XVEz_YU4squfr37GTZqPZP1hlMVZ_MIgXpTxWu73M=w1200" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">258</div></a><a href="/tags/"><div class="headline">標籤</div><div class="length-num">218</div></a><a href="/categories/"><div class="headline">分類</div><div class="length-num">19</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首頁-Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 時間軸-archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 標籤-tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分類-Categories</span></a></div><div class="menus_item"><a class="site-page" href="/series/"><i class="fa-fw fas fa-layer-group"></i><span> 系列-Series</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-list"></i><span> 其他列表</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音樂-Music</span></a></li><li><a class="site-page child" href="/gallery/"><i class="fa-fw fas fa-images"></i><span> 畫館-Gallery</span></a></li></ul></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg fixed" id="page-header" style="background-image: url(/img/20260524-01.webp);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><img class="site-icon" src="https://lh3.googleusercontent.com/pw/ABLVV87_po8nBc6F_tXcoYDmtzMGWxHuhhrbguYILCjmjWKLOS8DTpubm0YoQLKgjyjRIZyV5TjYe7XVEz_YU4squfr37GTZqPZP1hlMVZ_MIgXpTxWu73M=w1200" alt="Logo"><span class="site-name">Cheng's Tech &amp; Life</span></a><a class="nav-page-title" href="/"><span class="site-name">用 Claude Skill 把 Prompt 寫對一次勝過快送 10 次｜AI Media Generator 拆解</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首頁</span></span></a></span><div id="menus"><div id="search-button" title="Ctrl+K / Cmd+K"><span class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜尋</span></span></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首頁-Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 時間軸-archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 標籤-tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分類-Categories</span></a></div><div class="menus_item"><a class="site-page" href="/series/"><i class="fa-fw fas fa-layer-group"></i><span> 系列-Series</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-list"></i><span> 其他列表</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音樂-Music</span></a></li><li><a class="site-page child" href="/gallery/"><i class="fa-fw fas fa-images"></i><span> 畫館-Gallery</span></a></li></ul></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">用 Claude Skill 把 Prompt 寫對一次勝過快送 10 次｜AI Media Generator 拆解</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">發表於</span><time class="post-meta-date-created" datetime="2026-05-24T01:30:00.000Z" title="發表於 2026-05-24 09:30:00">2026-05-24</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新於</span><time class="post-meta-date-updated" datetime="2026-05-24T09:23:31.803Z" title="更新於 2026-05-24 17:23:31">2026-05-24</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Claude-Code/">Claude Code</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">總字數:</span><span class="word-count">2k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">閱讀時間:</span><span>6分鐘</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">瀏覽量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><p>大部分人寫 prompt 的時候，腦袋裡只有一張表：那張表叫做「英文形容詞越多越好」。<code>cinematic, 8k, masterpiece, beautiful, hyper-detailed</code>，一路堆到 token 上限。</p>
+<p>這套打法在 Midjourney v4 時代還算管用，到了現在已經是純粹的雜訊。Seedance 看到 <code>fast</code> 會擺爛，要寫 <code>extreme speed</code> 它才動；Flux 看到任何藝術家名字直接拒絕；Midjourney v7 看到 <code>cinematic</code> 已經當你沒講話。<strong>同一句 prompt 在 14 個平台會拍出 14 種天壤之別的結果</strong>，這個事實沒人在意，因為大家都假設「我寫得越用力，模型就越聽話」。</p>
+<p>反過來才對。</p>
+<h2 id="真正的問題不是-prompt-寫得不夠長"><a href="#真正的問題不是-prompt-寫得不夠長" class="headerlink" title="真正的問題不是 prompt 寫得不夠長"></a>真正的問題不是 prompt 寫得不夠長</h2><p>最近翻到一個 repo 叫 <a target="_blank" rel="noopener" href="https://github.com/Hao0321/ai-media-generator">ai-media-generator</a>，作者 Hao0321，2026-05-13 才開的 repo，28 顆星、5 個 fork、0 個 issue。從外觀看就是一個無人聞問的個人專案，但裡面藏了一個我覺得很值得拿出來講的觀察：</p>
+<blockquote>
+<p>Writing the prompt correctly once ≫ submitting it fast 10 times。</p>
+</blockquote>
+<p>寫對一次，勝過快速送 10 次。因為失敗的 prompt 不只是浪費 8 到 10 分鐘的 cycle time，還要燒真金白銀的 credits。Seedance 2.0 pro 一秒約 NT$0.24，一支 15 秒的廣告短片光是「跑錯一次」就是 NT$50 起跳。CHANGELOG 裡作者揭露自己 v1.4.0 和 v1.4.1 各失敗一次、燒掉約 NT$100 才總結出 image-to-video 的 80–150 字 golden formula。這種把失敗金額直接寫進 release note 的開發風格，比那些「大幅提升 30%」的官方部落格實在太多。</p>
+<p>整個 Skill 沒有一行程式碼。全部都是 markdown。</p>
+<h2 id="它本質上是一本字典"><a href="#它本質上是一本字典" class="headerlink" title="它本質上是一本字典"></a>它本質上是一本字典</h2><p>把這個 Skill 想成兩件事的組合就懂了。</p>
+<p><strong>第一件：14 個 AI 平台的 prompt 字典</strong>。每個平台有自己的一份 reference markdown，列出它吃哪些詞、禁用哪些詞、攝影機運動要怎麼描述才會被解析。就像你去日本不會把英文當成日文丟出去——你得先查那一家店的菜單。Skill 就是那本菜單。</p>
+<p><strong>第二件：一個瀏覽器機器手</strong>。透過 <code>claude-in-chrome</code> 這個 MCP server，Claude 可以打開 OiiOii、Google Flow、Kling、Suno 的網頁，照著預先記錄好的 UI 座標點按鈕、填表單、按送出。這部分很笨——靠絕對座標而不是語意選擇器，網站改版就死了——但因為笨，所以可靠。</p>
+<p>repo 三層結構分得很乾淨：</p>
+<table>
+<thead>
+<tr>
+<th>目錄</th>
+<th>角色</th>
+<th>內容</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>references/</code></td>
+<td>知識層</td>
+<td>每個平台怎麼吃 prompt（25 個檔、167 KB）</td>
+</tr>
+<tr>
+<td><code>templates/</code></td>
+<td>執行層</td>
+<td>把使用者意圖轉成 prompt 的範本（含 60 KB preset-packs）</td>
+</tr>
+<tr>
+<td><code>automation/</code></td>
+<td>I&#x2F;O 層</td>
+<td>瀏覽器 site-profiles，記錄各平台 UI 座標</td>
+</tr>
+</tbody></table>
+<p>主入口是根目錄的 <code>SKILL.md</code>（20 KB），Claude Code 從這裡開始讀，再依需要懶載入其他章節。<code>automation/site-profiles/oiioii.md</code> 是最深的一個，70 KB，把 OiiOii 的 UI 整個 map 完整記錄下來——這是該專案最有耐心的部分。</p>
+<h2 id="寫一句中文就跑起來"><a href="#寫一句中文就跑起來" class="headerlink" title="寫一句中文就跑起來"></a>寫一句中文就跑起來</h2><p>安裝就 <code>git clone</code>，沒有 pip、npm、cargo、docker。clone 到 <code>~/.claude/skills/ai-media-generator</code> 就是全域，clone 到 <code>./.claude/skills/</code> 就是專案層。我自己偏好專案層，免得 context window 被各種 Skill 灌爆。</p>
+<p>裝完直接對 Claude 講話：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">你：make a 15-second cinematic ad of running shoes on a rainy street</span><br></pre></td></tr></table></figure>
+
+<p>接下來 Skill 會做這幾件事：</p>
+<ol>
+<li>解析 9 個 slot：media &#x2F; duration &#x2F; aspect &#x2F; topic &#x2F; style &#x2F; character &#x2F; setting &#x2F; audio &#x2F; language</li>
+<li>缺的就補預設值（16:9、10s、BGM+SFX、English）</li>
+<li>跑 <code>references/selector.md</code> 的決策樹自動挑平台 → 本例命中 Seedance 2.0 pro（OiiOii）</li>
+<li>產 storyboard 加平台專屬 prompt</li>
+<li>顯示 30 秒 override 預覽：logline、shot breakdown、預估成本（217 STAR ≈ NT$52）、給你改風格或平台的機會</li>
+<li>你按 go 或沉默超時 → 自動點瀏覽器送出</li>
+<li>回報產物路徑、實際成本、耗時、下一步建議</li>
+</ol>
+<p>產出的 prompt 不是堆形容詞，而是導演風格的結構化描述：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[shot 1 / wide / 24mm] 一名身著金色鎧甲的將軍策馬奔馳在雨夜街道</span><br><span class="line">追蹤鏡頭，金色路燈反光，地面積水濺起</span><br><span class="line">不抖動、不變形、不多肢、穩定地平線</span><br></pre></td></tr></table></figure>
+
+<p>注意這個 prompt 的形狀：</p>
+<ul>
+<li>有 shot 標號（鏡次 &#x2F; 景別 &#x2F; 焦距）</li>
+<li>有具體攝影機運動指令</li>
+<li>有負面詞清單（不抖動、不變形…）——大多數人會漏這段</li>
+<li>完全沒有 <code>cinematic</code> <code>beautiful</code> <code>masterpiece</code> 這類會稀釋信號的詞</li>
+</ul>
+<p>這跟一般人「腦補式 prompt」最大的差別在哪？大概就像你跟導演講「拍得有質感一點」對上「24mm 廣角、雨夜逆光、穩定追蹤鏡頭」的差別。質感是結果，不是輸入。輸入要描述機制。</p>
+<h2 id="14-個平台只有-4-個是真自動化"><a href="#14-個平台只有-4-個是真自動化" class="headerlink" title="14 個平台只有 4 個是真自動化"></a>14 個平台只有 4 個是真自動化</h2><p>這點作者很誠實，在 README 寫得清清楚楚。</p>
+<p>OiiOii (Seedance)、Google Flow (Veo 3.1)、Kling 3.0、Suno v5 是完整自動化——有座標 map、有 UI 點擊序列。其餘 10 個（Midjourney、Flux、Sora、Runway、Ideogram、Seedream、Nano Banana、Vidu、SD…）只能拿到「平台對味的 prompt」，要自己貼到網頁送出。</p>
+<p>這個取捨我覺得是這個 repo 最值得學的地方。一個個人開發者要把 14 個平台全部都做到完整自動化，就是把自己累死。所以他用 80&#x2F;20 法則：<strong>最常用的 4 個做到底，其他 10 個只解最難的那一塊（也就是 prompt 怎麼寫對）</strong>。剩下「貼到瀏覽器」這種純機械動作，留給使用者自己做。這比那種「我們支援 50 個平台」但每個都半套的工具誠實太多。</p>
+<h2 id="為什麼這個-repo-適合拿來臨摹"><a href="#為什麼這個-repo-適合拿來臨摹" class="headerlink" title="為什麼這個 repo 適合拿來臨摹"></a>為什麼這個 repo 適合拿來臨摹</h2><p>如果你最近想自己寫 Claude Skill 但不知道結構怎麼切，這個 repo 是少見的乾淨範本。原因有三：</p>
+<p><strong>第一是零程式碼</strong>。全部是 markdown 領域知識，看不到任何 <code>.py</code> <code>.js</code> <code>.ts</code>。這證明了 Claude Skill 的設計哲學：把工具當作可被 LLM 讀懂的「介面」，不是當作可被 LLM 呼叫的「函式」。這個觀念翻轉，是 Skill 跟傳統 plugin 最大的差異。</p>
+<p><strong>第二是分層乾淨</strong>。knowledge &#x2F; template &#x2F; automation 三層各司其職。要更新某個平台的 prompt 規則，去動 <code>references/</code>；要加新平台，去動 <code>selector.md</code>；要修自動化，去動 <code>automation/</code>。每一層都可以獨立改而不影響其他層——把程式碼當文章寫的人才會這樣分層，每個段落都能單獨讀。</p>
+<p><strong>第三是 CHANGELOG 寫得像戰場日誌</strong>。哪一次失敗、退款多少、修了什麼 hard rule，全部寫進去。<code>v1.4.1</code> 之後甚至訂了一條 hard rule：「不准自評生成品質為 good 或棒」——因為作者之前自我吹捧曾經掩蓋了實際的爛片。這種對自己誠實到極致的開發風格，在開源圈現在很少見。</p>
+<h2 id="它告訴你的事，跟它做的事一樣多"><a href="#它告訴你的事，跟它做的事一樣多" class="headerlink" title="它告訴你的事，跟它做的事一樣多"></a>它告訴你的事，跟它做的事一樣多</h2><p>回到最初那句話：寫對一次勝過快送 10 次。</p>
+<p>這話聽起來像是在講 AI 生成的成本，但真正的意思更廣。<strong>任何一個高摩擦的動作，你應該花更多時間在「下手前」，而不是「下手後修補」</strong>。寫程式是這樣，寫文章也是，連發 Slack 訊息問同事問題都是。</p>
+<p><code>ai-media-generator</code> 之所以值得看一眼，不是因為它支援 14 個平台，而是因為它把「下手前要查的東西」全部蒸餾成 markdown，丟給 Claude 當前置作業。下手前花 5 秒讓 Claude 查 <code>references/seedance.md</code>，比下手後花 10 分鐘等一支爛片強太多。</p>
+<p>下次再想隨手塞 <code>cinematic, 8k, beautiful</code> 進 prompt 框的時候，停一下。問自己：這個平台真的吃這套嗎？</p>
+<hr>
+<p><strong>參考連結</strong>：</p>
+<ul>
+<li>GitHub Repo：<a target="_blank" rel="noopener" href="https://github.com/Hao0321/ai-media-generator">Hao0321&#x2F;ai-media-generator</a></li>
+<li>平台選擇邏輯：<code>references/selector.md</code></li>
+<li>配合使用：<code>claude-in-chrome</code> MCP server</li>
+<li>License：MIT</li>
+</ul>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://mark22013333.github.io">Cheng®</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章連結: </span><span class="post-copyright-info"><a href="https://mark22013333.github.io/2026/05/24/%E7%94%A8-Claude-Skill-%E6%8A%8A-Prompt-%E5%AF%AB%E5%B0%8D%E4%B8%80%E6%AC%A1%E5%8B%9D%E9%81%8E%E5%BF%AB%E9%80%81-10-%E6%AC%A1-AI-Media-Generator-%E6%8B%86%E8%A7%A3/">https://mark22013333.github.io/2026/05/24/用-Claude-Skill-把-Prompt-寫對一次勝過快送-10-次-AI-Media-Generator-拆解/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版權聲明: </span><span class="post-copyright-info">本部落格所有文章除特別聲明外，均採用<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 授權協議。轉載請註明來源 <a href="https://mark22013333.github.io" target="_blank">Cheng's Tech & Life</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/AI-Agent/">AI Agent</a><a class="post-meta__tags" href="/tags/MCP/">MCP</a><a class="post-meta__tags" href="/tags/Claude-Code/">Claude Code</a><a class="post-meta__tags" href="/tags/Prompt-Engineering/">Prompt Engineering</a><a class="post-meta__tags" href="/tags/Claude-Skills/">Claude Skills</a></div><div class="post-share"><div class="social-share" data-image="/img/20260524-01.webp" data-sites="facebook,x"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><div class="post-reward"><div class="reward-badges"><a class="sponsor-glow-btn" href="https://www.buymeacoffee.com/mark22013333" target="_blank" rel="noopener noreferrer" title="Buy Me A Coffee"><img src="https://img.shields.io/badge/Buy_Me_A_Coffee-FFDD00?style=for-the-badge&amp;logo=buy-me-a-coffee&amp;logoColor=black" alt="Buy Me A Coffee"/></a><a class="sponsor-glow-btn" href="https://p.ecpay.com.tw/EFC3F8F" target="_blank" rel="noopener noreferrer" title="綠界贊助"><img src="https://img.shields.io/badge/☕_%E8%AB%8B%E6%88%91%E5%96%9D%E6%9D%AF%E5%92%96%E5%95%A1-Donate-11998e?style=for-the-badge&amp;logo=coffee&amp;logoColor=white" alt="綠界贊助"/></a><a class="sponsor-glow-btn" href="https://calendly.com/markcheng00806-intumit/15min" target="_blank" rel="noopener noreferrer" title="預約時間"><img src="https://img.shields.io/badge/📅_%E9%A0%90%E7%B4%84_15_%E5%88%86%E9%90%98-Book_Time-0072ff?style=for-the-badge" alt="預約時間"/></a><p class="reward-badges-note">你的鼓勵將被轉換為我明天繼續加班的動力（真的）。 ❤️</p></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2026/05/23/%E5%86%B7%E6%B0%A3%E6%98%AF%E5%B7%A5%E7%A8%8B%E5%B8%AB%E6%9C%80%E4%BE%BF%E5%AE%9C%E7%9A%84%E8%A4%87%E5%88%A9%E6%8A%95%E8%B3%87-2026-%E8%AE%8A%E9%A0%BB-CSPF-%E8%88%87%E8%A3%9C%E5%8A%A9%E7%AD%96%E7%95%A5/" title="冷氣是工程師最便宜的複利投資 — 2026 變頻、CSPF 與補助策略"><img class="cover" src="/img/20260523-03.webp" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">冷氣是工程師最便宜的複利投資 — 2026 變頻、CSPF 與補助策略</div></div><div class="info-2"><div class="info-item-1">便宜的冷氣其實是貴的。 這不是文字遊戲。一台 15,000 塊定頻冷氣，跟一台 32,000 塊一級變頻冷氣，買的時候差 17,000。乍看貴了一倍。但如果你跟我一樣，整天在家寫 code，夏天從五月吹到十月，一天平均開十二小時——那台便宜冷氣多吃掉的電費，三年內會超過 17,000 的差價。 從第四年開始，你每年都在用前面累積的差額，幫自己付電費。 這就是工程師最便宜的複利投資。不是 ETF，不是定存——是你頭頂上那台機器。  為什麼今年的選購邏輯完全變了如果你還在用「看不看一級變頻」當買冷氣的標準，那你已經落後一個世代。 2026 年起，台灣全面套用新版 MEPS 能效制度，CSPF（Cooling Seasonal Performance Factor，季節性能源效率比）才是真正能反映省電的指標。一級變頻只代表「比同類產品省電」，但它沒告訴你「整個夏天平均能省多少」。CSPF 數字越大代表整季運轉下來越省。 舉個實際的對比。同樣標示「一級變頻」的兩台機器，CSPF 可能差 0.5 到 1.0。一年下來，這個小小的數字差距會變成幾千塊的電費差。 換個角度想。冷氣不是廚房裡的烤...</div></div></div></a><a class="pagination-related" href="/2026/05/24/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260524/" title="AI 與科技新聞摘要 20260524｜漏洞利用首次擠掉憑證、Claude 進駐 SaaS、ChatGPT 變廣告平台"><img class="cover" src="/img/20260524-02.webp" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">AI 與科技新聞摘要 20260524｜漏洞利用首次擠掉憑證、Claude 進駐 SaaS、ChatGPT 變廣告平台</div></div><div class="info-2"><div class="info-item-1">19 年。Verizon 的資料外洩調查報告（DBIR）做了 19 年，每一年「憑證濫用」都穩穩坐在初始入侵向量榜首。直到今年。 今年漏洞利用以 31% 拿下第一，憑證濫用直接掉到 13%。中間 18 個百分點不是慢慢挪過去的，是一個季度內翻過去的。這種等級的結構性翻轉，過去要等到「典範轉移」這四個字才有資格用。 當一個用 19 年資料追蹤的趨勢忽然反過來，重點從來不是去爭論排名，而是去問：那個讓 it 翻過來的力量是什麼？接下來會往哪個方向繼續推？ 今天 5 則新聞，挑出來的標準很簡單——能不能讓我們看到那股力量。  漏洞利用躍居 #1：攻防失衡正在加速2026 Verizon DBIR 把這個趨勢的細節攤開講。漏洞利用佔了 31% 的初始入侵向量，憑證濫用降到 13%。中位數修補時間從前年的 32 天延長到 43 天，CISA KEV（已知被利用漏洞）目錄裡企業真正修掉的比例，從 2024 年的 38% 掉到 2025 年的 26%。 這幾個數字單獨看都很無聊。組合起來就是一張清晰的攻防失衡圖：攻擊端的時鐘從月跑到小時，防守端的時鐘從週跑到月。原因報告也講白了——AI 在縮短...</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相關推薦</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2026/04/28/MCP-Server-%E9%96%8B%E7%99%BC%E5%85%A5%E9%96%80%E6%95%99%E5%AD%B8-%E7%94%A8-Python-%E5%BE%9E%E9%9B%B6%E6%89%93%E9%80%A0-AI-%E5%B7%A5%E5%85%B7%E9%80%A3%E6%8E%A5%E5%99%A8/" title="MCP Server 開發入門教學 — 用 Python 從零打造 AI 工具連接器"><img class="cover" src="/img/20260428-03.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-04-28</div><div class="info-item-2">MCP Server 開發入門教學 — 用 Python 從零打造 AI 工具連接器</div></div><div class="info-2"><div class="info-item-1">你家一定有 USB 轉接頭。Type-C 轉 HDMI、Lightning 轉 3.5mm、各種奇奇怪怪的接頭。轉接頭本身不做任何事，它只是讓兩個本來講不同語言的東西能接上。螢幕不需要知道你的筆電是什麼牌子，筆電也不需要知道螢幕的解析度怎麼設定 — 轉接頭搞定一切。 MCP（Model Context Protocol）就是 AI 世界的 USB 轉接頭。 Anthropic 開發了這個開放協定，現在已經捐給 Linux Foundation AAIF。它讓 AI model 連接外部工具和資料來源，不管是資料庫、API、檔案系統，接上就能用。目前生態系已經長到 164M 月下載量、超過 2,400 個 server，Microsoft、GitHub、Cloudflare、Stripe 都在用。Claude Code、Cursor、Kiro 這些 AI coding 工具也全部支援。 這不是什麼還在實驗階段的新玩意。這已經是事實標準了。 MCP 的三個核心原語在寫 code 之前，先搞懂 MCP 的三個核心概念。我用遙控器來比喻： Tools（工具） — 遙控器上的按鈕。按下「計...</div></div></div></a><a class="pagination-related" href="/2026/04/09/OpenSoul-%E4%BB%A5%E5%A4%A7%E8%85%A6%E7%A5%9E%E7%B6%93%E7%B5%90%E6%A7%8B%E7%82%BA%E9%9D%88%E6%84%9F%E7%9A%84%E8%AA%8D%E7%9F%A5-AI-%E6%A1%86%E6%9E%B6/" title="OpenSoul - 以大腦神經結構為靈感的認知 AI 框架"><img class="cover" src="/img/20260409-01.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-04-09</div><div class="info-item-2">OpenSoul - 以大腦神經結構為靈感的認知 AI 框架</div></div><div class="info-2"><div class="info-item-1">每次開新的 ChatGPT 對話，它都不記得你昨天講了什麼。用 Claude Code 開新 session，前一輪的 debug 心得全部歸零。LLM 的記憶，基本上跟金魚差不多。 OpenSoul 試圖改變這件事。它在 LLM 之上疊了一層認知架構，靈感來自人腦的神經結構——海馬迴管情節記憶、新皮質管語意記憶、基底核管程序記憶，甚至還有多巴胺和血清素的虛擬版本來調控 AI 的「情緒」。聽起來很科幻？確實，但它的設計文件讀起來比大多數「AI 認知」專案都嚴謹得多。 三層記憶圖譜OpenSoul 把記憶存在 FalkorDB（基於 Redis 的圖資料庫）裡，分成三層： 情節記憶（Episodic Memory）對應海馬迴，記錄具體的對話片段。「你上次說你喜歡喝咖啡」——就是這一層在運作。 語意記憶（Semantic Memory）對應新皮質，儲存從對話中提煉出來的通用知識。「Python 是程式語言」這種事實性資訊住在這裡。 程序記憶（Procedural Memory）對應基底核，記住「這個使用者常犯的錯」之類的行為模式。 每次對話時，系統用 EcphoryRAG 做聯想檢索...</div></div></div></a><a class="pagination-related" href="/2026/04/06/Self-Evolving-Agents-%E8%AE%93-AI-Agent-%E8%87%AA%E5%B7%B1%E9%80%B2%E5%8C%96%E7%9A%84%E5%AE%8C%E6%95%B4%E6%8A%80%E8%A1%93%E5%9C%B0%E5%9C%96/" title="Self-Evolving Agents - 讓 AI Agent 自己進化的完整技術地圖"><img class="cover" src="/img/20260406-01.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-04-06</div><div class="info-item-2">Self-Evolving Agents - 讓 AI Agent 自己進化的完整技術地圖</div></div><div class="info-2"><div class="info-item-1">前陣子在看 University of Glasgow 的研究，發現一個有夠猛的方向：AI Agent 能夠自己進化，不用人類干預就越來越強。以前我們都以為模型 deploy 下去就固定了，沒想到還有這麼多角度可以自我優化。 Agent 自己進化，到底在進化什麼？Self-Evolving Agent 的核心概念其實很簡單：讓系統在運作過程中自動改善自己。但「改善」這個詞太寬泛了。這波操作跨越 4 個維度： 第一個維度是 LLM 本身的行為。透過 Reinforcement Learning 和 self-play 這類技巧，模型能從自己的嘗試裡學習。STaR（Self-Taught Reasoner）就是代表作，它讓模型從推理過程中的成功案例自動學習。Absolute Zero 是今年新出的，直接從零資料開始自我對弈，效果炸了。 第二個維度是 Prompt 優化。有人用進化演算法，有人用梯度下降，用 TextGrad 或 OPRO 這樣的框架，系統能自動調整提示詞。不用人類手工調整，程式自己試出更有效的 prompt。 第三個維度是記憶機制。A-MEM 和 Mem0 專注在怎麼...</div></div></div></a><a class="pagination-related" href="/2026/04/22/claude-code-prompts-%E6%8B%86%E9%96%8B%E4%B8%80%E5%80%8B-AI-Coding-Agent-%E7%9A%84-Prompt-%E9%AA%A8%E6%9E%B6/" title="claude-code-prompts — 拆開一個 AI Coding Agent 的 Prompt 骨架"><img class="cover" src="/img/20260422-01.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-04-22</div><div class="info-item-2">claude-code-prompts — 拆開一個 AI Coding Agent 的 Prompt 骨架</div></div><div class="info-2"><div class="info-item-1">大部分 AI coding agent 教學的問題不是講錯，是從功能開始，不從問題開始。 「這個工具有幾個 tool call」「這個框架支援哪些 LLM」——這些都不是最重要的問題。最重要的問題是：你怎麼告訴一個 AI agent 它是誰、它能做什麼、它什麼時候該停下來問你？ 這個問題的答案，幾乎所有 agent 框架都藏在 prompt 裡——但很少有人完整把 prompt 架構攤開來講。claude-code-prompts 做的事情就是這件：把一個可以實際運作的 AI coding agent 的 prompt 架構整個拆開，38 個 Markdown 檔案，分 7 大類。  這不是「Awesome Prompts」清單先釐清這個專案跟你可能預期的有什麼不同。 awesome-chatgpt-prompts 是角色扮演清單——「你是一個 Linux 終端機」、「你是一個英文老師」。每個 prompt 獨立運作，彼此沒有關係。 claude-code-prompts 完全不是這個概念。它的 38 個 prompt 是互相連動的系統：system prompt 定義 agen...</div></div></div></a><a class="pagination-related" href="/2026/04/04/Agent-Broker-%E7%94%A8-Discord-%E6%93%8D%E6%8E%A7-AI-Coding-Agent-%E7%9A%84-Rust-%E6%A9%8B%E6%8E%A5%E6%9C%8D%E5%8B%99/" title="Agent Broker - 用 Discord 操控 AI Coding Agent 的 Rust 橋接服務"><img class="cover" src="/img/20260404-01.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-04-04</div><div class="info-item-2">Agent Broker - 用 Discord 操控 AI Coding Agent 的 Rust 橋接服務</div></div><div class="info-2"><div class="info-item-1">Discord 頻道裡 @mention 一個 bot，它就能幫你寫程式、code review、分析架構。背後串接的是 Claude Code、Kiro CLI、Codex 這些 AI coding agent。Agent Broker 就是那個站在中間的翻譯官——用 Rust 寫的橋接服務，把 Discord 和任何支援 ACP 協定的 coding CLI 串在一起。 這東西解決什麼問題團隊裡不是每個人都習慣開終端機跟 AI 互動。有些人就是活在 Discord 裡面，開會在 Discord、討論在 Discord、連摸魚都在 Discord。Agent Broker 的邏輯很直接：既然人在 Discord，那 AI 也該在 Discord。 核心架構長這樣：使用者在 Discord 打字 → Agent Broker 收到後轉成 ACP 協定的 JSON-RPC → 丟給後端 CLI（Claude Code、Kiro、Codex 都行）→ AI 回應串流回 Discord 即時顯示。每個 Discord thread 會 spawn 一個獨立的 CLI process，多...</div></div></div></a><a class="pagination-related" href="/2026/04/19/Cinematic-UI-%E8%AE%93-AI-%E5%83%8F%E9%9B%BB%E5%BD%B1%E5%B0%8E%E6%BC%94%E4%B8%80%E6%A8%A3%E5%81%9A%E7%B6%B2%E9%A0%81%E8%A8%AD%E8%A8%88%E7%9A%84%E6%8E%A8%E7%90%86%E6%A1%86%E6%9E%B6/" title="Cinematic UI — 讓 AI 像電影導演一樣做網頁設計的推理框架"><img class="cover" src="/img/20260419-01.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-04-19</div><div class="info-item-2">Cinematic UI — 讓 AI 像電影導演一樣做網頁設計的推理框架</div></div><div class="info-2"><div class="info-item-1">200 位導演、80 種構圖、1,486 個網站 DNA、2.9MB 的設計資料庫——這是一個 npm 套件會塞的東西嗎？不是，它根本不是套件。 大部分 AI 設計工具的問題，不是 AI 不夠聰明，是我們讓它做錯的事。你給它一個色板、一組元件、一套排版模板，叫它「挑一個」。結果就是你看到的 AI 首頁千篇一律——Hero 配大標題、三欄 Features、CTA 按鈕、footer 放社群 icon。Cinematic UI 這個專案的切入角度很反直覺：問題不在素材不夠多，是 AI 根本不該在「挑選」這一層做事。 你以為的 AI 設計 vs 它想做的事想像一下這個對比。一個設計師接到「幫我做一個有電影感的網站」，他會怎麼開始？如果他是個懂設計的人，大概會先問你——「你說的電影感是王家衛那種、還是 Fincher 那種？」然後打開 Mubi 看半天，把某部片的色調、節奏、構圖邏輯拆解出來，再開始畫 wireframe。 換成 AI 呢？它直接打開元件庫，挑一個叫做「cinematic」的預設主題，套上去給你。成品當然有模有樣，但不會有靈魂——因為它根本沒做過「拆解一位導演的視覺語言...</div></div></div></a></div></div><hr class="custom-hr"/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 評論</span></div></div><div class="comment-wrap"><div><div id="giscus-wrap"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="https://lh3.googleusercontent.com/pw/ABLVV87_po8nBc6F_tXcoYDmtzMGWxHuhhrbguYILCjmjWKLOS8DTpubm0YoQLKgjyjRIZyV5TjYe7XVEz_YU4squfr37GTZqPZP1hlMVZ_MIgXpTxWu73M=w1200" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">Cheng®</div><div class="author-info-description">Backend Developer / 技術筆記 & AI 新聞分享</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">258</div></a><a href="/tags/"><div class="headline">標籤</div><div class="length-num">218</div></a><a href="/categories/"><div class="headline">分類</div><div class="length-num">19</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/mark22013333"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons"><a class="social-icon" href="https://github.com/mark22013333" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:mark22013333@gmail.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a></div><div class="card-info-sponsor"><a class="sponsor-glow-btn" href="https://www.buymeacoffee.com/mark22013333" target="_blank" rel="noopener noreferrer" title="Buy Me A Coffee"><img src="https://img.shields.io/badge/Buy_Me_A_Coffee-FFDD00?style=for-the-badge&amp;logo=buy-me-a-coffee&amp;logoColor=black" alt="Buy Me A Coffee"/></a><a class="sponsor-glow-btn" href="https://p.ecpay.com.tw/EFC3F8F" target="_blank" rel="noopener noreferrer" title="綠界贊助"><img src="https://img.shields.io/badge/☕_%E8%AB%8B%E6%88%91%E5%96%9D%E6%9D%AF%E5%92%96%E5%95%A1-Donate-11998e?style=for-the-badge&amp;logo=coffee&amp;logoColor=white" alt="綠界贊助"/></a><a class="sponsor-glow-btn" href="https://calendly.com/markcheng00806-intumit/15min" target="_blank" rel="noopener noreferrer" title="預約時間"><img src="https://img.shields.io/badge/📅_%E9%A0%90%E7%B4%84_15_%E5%88%86%E9%90%98-Book_Time-0072ff?style=for-the-badge" alt="預約時間"/></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">這裡記錄我在後端開發路上踩過的坑、學到的東西，也會分享每日 AI 與科技新聞觀點。歡迎一起交流！</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目錄</span><span class="toc-percentage"></span></div><div class="toc-content is-expand"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%9C%9F%E6%AD%A3%E7%9A%84%E5%95%8F%E9%A1%8C%E4%B8%8D%E6%98%AF-prompt-%E5%AF%AB%E5%BE%97%E4%B8%8D%E5%A4%A0%E9%95%B7"><span class="toc-number">1.</span> <span class="toc-text">真正的問題不是 prompt 寫得不夠長</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%83%E6%9C%AC%E8%B3%AA%E4%B8%8A%E6%98%AF%E4%B8%80%E6%9C%AC%E5%AD%97%E5%85%B8"><span class="toc-number">2.</span> <span class="toc-text">它本質上是一本字典</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AF%AB%E4%B8%80%E5%8F%A5%E4%B8%AD%E6%96%87%E5%B0%B1%E8%B7%91%E8%B5%B7%E4%BE%86"><span class="toc-number">3.</span> <span class="toc-text">寫一句中文就跑起來</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#14-%E5%80%8B%E5%B9%B3%E5%8F%B0%E5%8F%AA%E6%9C%89-4-%E5%80%8B%E6%98%AF%E7%9C%9F%E8%87%AA%E5%8B%95%E5%8C%96"><span class="toc-number">4.</span> <span class="toc-text">14 個平台只有 4 個是真自動化</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%82%BA%E4%BB%80%E9%BA%BC%E9%80%99%E5%80%8B-repo-%E9%81%A9%E5%90%88%E6%8B%BF%E4%BE%86%E8%87%A8%E6%91%B9"><span class="toc-number">5.</span> <span class="toc-text">為什麼這個 repo 適合拿來臨摹</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%83%E5%91%8A%E8%A8%B4%E4%BD%A0%E7%9A%84%E4%BA%8B%EF%BC%8C%E8%B7%9F%E5%AE%83%E5%81%9A%E7%9A%84%E4%BA%8B%E4%B8%80%E6%A8%A3%E5%A4%9A"><span class="toc-number">6.</span> <span class="toc-text">它告訴你的事，跟它做的事一樣多</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2026/05/24/%E5%B7%A5%E7%A8%8B%E5%B8%AB%E5%A4%8F%E5%A4%A9%E7%BA%8C%E8%88%AA%E6%8C%87%E5%8D%97-MacBook-%E7%87%99%E6%89%8B-%E4%BA%BA%E8%85%A6%E9%81%8E%E7%86%B1-%E5%92%96%E5%95%A1%E5%9B%A0%E5%A4%B1%E9%9D%88-%E4%B8%89%E5%80%8B%E7%B3%BB%E7%B5%B1%E8%A6%81%E5%88%86%E9%96%8B%E8%AA%BF/" title="工程師夏天續航指南｜MacBook 燙手、人腦過熱、咖啡因失靈，三個系統要分開調"><img src="/img/20260524-03.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="工程師夏天續航指南｜MacBook 燙手、人腦過熱、咖啡因失靈，三個系統要分開調"/></a><div class="content"><a class="title" href="/2026/05/24/%E5%B7%A5%E7%A8%8B%E5%B8%AB%E5%A4%8F%E5%A4%A9%E7%BA%8C%E8%88%AA%E6%8C%87%E5%8D%97-MacBook-%E7%87%99%E6%89%8B-%E4%BA%BA%E8%85%A6%E9%81%8E%E7%86%B1-%E5%92%96%E5%95%A1%E5%9B%A0%E5%A4%B1%E9%9D%88-%E4%B8%89%E5%80%8B%E7%B3%BB%E7%B5%B1%E8%A6%81%E5%88%86%E9%96%8B%E8%AA%BF/" title="工程師夏天續航指南｜MacBook 燙手、人腦過熱、咖啡因失靈，三個系統要分開調">工程師夏天續航指南｜MacBook 燙手、人腦過熱、咖啡因失靈，三個系統要分開調</a><time datetime="2026-05-24T07:00:00.000Z" title="發表於 2026-05-24 15:00:00">2026-05-24</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/05/24/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260524/" title="AI 與科技新聞摘要 20260524｜漏洞利用首次擠掉憑證、Claude 進駐 SaaS、ChatGPT 變廣告平台"><img src="/img/20260524-02.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="AI 與科技新聞摘要 20260524｜漏洞利用首次擠掉憑證、Claude 進駐 SaaS、ChatGPT 變廣告平台"/></a><div class="content"><a class="title" href="/2026/05/24/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260524/" title="AI 與科技新聞摘要 20260524｜漏洞利用首次擠掉憑證、Claude 進駐 SaaS、ChatGPT 變廣告平台">AI 與科技新聞摘要 20260524｜漏洞利用首次擠掉憑證、Claude 進駐 SaaS、ChatGPT 變廣告平台</a><time datetime="2026-05-24T03:00:00.000Z" title="發表於 2026-05-24 11:00:00">2026-05-24</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/05/24/%E7%94%A8-Claude-Skill-%E6%8A%8A-Prompt-%E5%AF%AB%E5%B0%8D%E4%B8%80%E6%AC%A1%E5%8B%9D%E9%81%8E%E5%BF%AB%E9%80%81-10-%E6%AC%A1-AI-Media-Generator-%E6%8B%86%E8%A7%A3/" title="用 Claude Skill 把 Prompt 寫對一次勝過快送 10 次｜AI Media Generator 拆解"><img src="/img/20260524-01.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="用 Claude Skill 把 Prompt 寫對一次勝過快送 10 次｜AI Media Generator 拆解"/></a><div class="content"><a class="title" href="/2026/05/24/%E7%94%A8-Claude-Skill-%E6%8A%8A-Prompt-%E5%AF%AB%E5%B0%8D%E4%B8%80%E6%AC%A1%E5%8B%9D%E9%81%8E%E5%BF%AB%E9%80%81-10-%E6%AC%A1-AI-Media-Generator-%E6%8B%86%E8%A7%A3/" title="用 Claude Skill 把 Prompt 寫對一次勝過快送 10 次｜AI Media Generator 拆解">用 Claude Skill 把 Prompt 寫對一次勝過快送 10 次｜AI Media Generator 拆解</a><time datetime="2026-05-24T01:30:00.000Z" title="發表於 2026-05-24 09:30:00">2026-05-24</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/05/23/%E5%86%B7%E6%B0%A3%E6%98%AF%E5%B7%A5%E7%A8%8B%E5%B8%AB%E6%9C%80%E4%BE%BF%E5%AE%9C%E7%9A%84%E8%A4%87%E5%88%A9%E6%8A%95%E8%B3%87-2026-%E8%AE%8A%E9%A0%BB-CSPF-%E8%88%87%E8%A3%9C%E5%8A%A9%E7%AD%96%E7%95%A5/" title="冷氣是工程師最便宜的複利投資 — 2026 變頻、CSPF 與補助策略"><img src="/img/20260523-03.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="冷氣是工程師最便宜的複利投資 — 2026 變頻、CSPF 與補助策略"/></a><div class="content"><a class="title" href="/2026/05/23/%E5%86%B7%E6%B0%A3%E6%98%AF%E5%B7%A5%E7%A8%8B%E5%B8%AB%E6%9C%80%E4%BE%BF%E5%AE%9C%E7%9A%84%E8%A4%87%E5%88%A9%E6%8A%95%E8%B3%87-2026-%E8%AE%8A%E9%A0%BB-CSPF-%E8%88%87%E8%A3%9C%E5%8A%A9%E7%AD%96%E7%95%A5/" title="冷氣是工程師最便宜的複利投資 — 2026 變頻、CSPF 與補助策略">冷氣是工程師最便宜的複利投資 — 2026 變頻、CSPF 與補助策略</a><time datetime="2026-05-23T01:30:00.000Z" title="發表於 2026-05-23 09:30:00">2026-05-23</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/05/23/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260523/" title="AI 與科技新聞摘要 - 2026/05/23"><img src="/img/20260523-02.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="AI 與科技新聞摘要 - 2026/05/23"/></a><div class="content"><a class="title" href="/2026/05/23/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260523/" title="AI 與科技新聞摘要 - 2026/05/23">AI 與科技新聞摘要 - 2026/05/23</a><time datetime="2026-05-23T01:15:00.000Z" title="發表於 2026-05-23 09:15:00">2026-05-23</time></div></div></div></div></div></div></main><footer id="footer" style="background-image: url(/img/20260524-01.webp);"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2024 - 2026 By Cheng®</span></div><div class="footer_custom_text">Written by Cheng® — 自律，從當下的一念開始。</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="閱讀模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日夜模式切換"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="單欄和雙欄切換"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="設定"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目錄"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="前往評論"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到頂端"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.umd.min.js"></script><script src="https://cdn.jsdelivr.net/npm/instant.page/instantpage.min.js" type="module"></script><script src="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.js"></script><div class="js-pjax"><script>(() => {
+  const isShuoshuo = GLOBAL_CONFIG_SITE.pageType === 'shuoshuo'
+  const option = {"mapping":"pathname","strict":0,"reactionsEnabled":1,"emitMetadata":0,"inputPosition":"bottom","lang":"zh-TW"}
+
+  const getGiscusTheme = theme => theme === 'dark' ? 'dark' : 'light'
+
+  const createScriptElement = config => {
+    const ele = document.createElement('script')
+    Object.entries(config).forEach(([key, value]) => {
+      ele.setAttribute(key, value)
+    })
+    return ele
+  }
+
+  const loadGiscus = (el = document, key) => {
+    const mappingConfig = isShuoshuo
+      ? { 'data-mapping': 'specific', 'data-term': key }
+      : { 'data-mapping': (option && option['data-mapping']) || 'pathname' }
+
+    const giscusConfig = {
+      src: 'https://giscus.app/client.js',
+      'data-repo': 'mark22013333/mark22013333.github.io',
+      'data-repo-id': 'R_kgDOLAxa6A',
+      'data-category-id': 'DIC_kwDOLAxa6M4C5eO9',
+      'data-theme': getGiscusTheme(document.documentElement.getAttribute('data-theme')),
+      'data-reactions-enabled': '1',
+      crossorigin: 'anonymous',
+      async: true,
+      ...option,
+      ...mappingConfig
+    }
+
+    const scriptElement = createScriptElement(giscusConfig)
+
+    el.querySelector('#giscus-wrap').appendChild(scriptElement)
+
+    if (isShuoshuo) {
+      window.shuoshuoComment.destroyGiscus = () => {
+        if (el.children.length) {
+          el.innerHTML = ''
+          el.classList.add('no-comment')
+        }
+      }
+    }
+  }
+
+  const changeGiscusTheme = theme => {
+    const iframe = document.querySelector('#giscus-wrap iframe')
+    if (iframe) {
+      const message = {
+        giscus: {
+          setConfig: {
+            theme: getGiscusTheme(theme)
+          }
+        }
+      }
+      iframe.contentWindow.postMessage(message, 'https://giscus.app')
+    }
+  }
+
+  btf.addGlobalFn('themeChange', changeGiscusTheme, 'giscus')
+
+  if (isShuoshuo) {
+    'Giscus' === 'Giscus'
+      ? window.shuoshuoComment = { loadComment: loadGiscus }
+      : window.loadOtherComment = loadGiscus
+    return
+  }
+
+  if ('Giscus' === 'Giscus' || !true) {
+    if (true) btf.loadComment(document.getElementById('giscus-wrap'), loadGiscus)
+    else loadGiscus()
+  } else {
+    window.loadOtherComment = loadGiscus
+  }
+})()</script></div><script src="/js/kkbox-player.js"></script><script src="/js/archives-pagination.js"></script><script src="/js/font-resize.js"></script><script src="/js/dark-palette.js"></script><script src="/js/series-showcase.js"></script><script src="/js/search-tags.js"></script><script defer="defer" id="fluttering_ribbon" mobile="false" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/canvas-fluttering-ribbon.min.js"></script><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/activate-power-mode.min.js"></script><script>POWERMODE.colorful = true;
+POWERMODE.shake = true;
+POWERMODE.mobile = true;
+document.body.addEventListener('input', POWERMODE);
+</script><script src="https://cdn.jsdelivr.net/npm/pjax/pjax.min.js" defer="defer"></script><script>document.addEventListener('DOMContentLoaded', () => {
+  const pjaxSelectors = ["meta[property=\"og:image\"]","meta[property=\"og:title\"]","meta[property=\"og:url\"]","meta[property=\"og:description\"]","link[rel=\"canonical\"]","head > title","#config-diff","#body-wrap","#rightside-config-hide","#rightside-config-show",".js-pjax"]
+
+  window.pjax = new Pjax({
+    elements: 'a:not([target="_blank"])',
+    selectors: pjaxSelectors,
+    cacheBust: false,
+    analytics: true,
+    scrollRestoration: false
+  })
+
+  const triggerPjaxFn = (val) => {
+    if (!val) return
+    Object.values(val).forEach(fn => {
+      try {
+        fn()
+      } catch (err) {
+        console.debug('Pjax callback failed:', err)
+      }
+    })
+  }
+
+  document.addEventListener('pjax:send', () => {
+    // removeEventListener
+    btf.removeGlobalFnEvent('pjaxSendOnce')
+    btf.removeGlobalFnEvent('themeChange')
+
+    // reset readmode
+    const $bodyClassList = document.body.classList
+    if ($bodyClassList.contains('read-mode')) $bodyClassList.remove('read-mode')
+
+    triggerPjaxFn(window.globalFn.pjaxSend)
+  })
+
+  document.addEventListener('pjax:complete', () => {
+    btf.removeGlobalFnEvent('pjaxCompleteOnce')
+    document.querySelectorAll('script[data-pjax]').forEach(item => {
+      const newScript = document.createElement('script')
+      const content = item.text || item.textContent || item.innerHTML || ""
+      Array.from(item.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value))
+      newScript.appendChild(document.createTextNode(content))
+      item.parentNode.replaceChild(newScript, item)
+    })
+
+    triggerPjaxFn(window.globalFn.pjaxComplete)
+  })
+
+  document.addEventListener('pjax:error', e => {
+    if (e.request.status === 404) {
+      true
+        ? pjax.loadUrl('/404.html')
+        : window.location.href = e.request.responseURL
+    }
+  })
+})</script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜尋</span><i class="fas fa-spinner fa-pulse" id="loading-status" hidden="hidden"></i><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="text-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  資料載入中</span></div><div class="local-search-input"><input placeholder="搜尋文章" type="text"/></div><hr/><div id="local-search-results"></div><div class="ais-Pagination" id="local-search-pagination" style="display:none;"><ul class="ais-Pagination-list"></ul></div><div id="local-search-stats"></div></div><div id="search-mask"></div><script src="/js/search/local-search.js"></script></div></div><script>window.__BLOG_TAGS__=[{"name":"Claude Code","count":78,"path":"tags/Claude-Code/"},{"name":"AI與科技新聞","count":61,"path":"tags/AI與科技新聞/"},{"name":"AI Agent","count":38,"path":"tags/AI-Agent/"},{"name":"資安","count":35,"path":"tags/資安/"},{"name":"Anthropic","count":35,"path":"tags/Anthropic/"},{"name":"OpenAI","count":30,"path":"tags/OpenAI/"},{"name":"MCP","count":28,"path":"tags/MCP/"},{"name":"Claude","count":26,"path":"tags/Claude/"},{"name":"教學","count":26,"path":"tags/教學/"},{"name":"Java","count":19,"path":"tags/Java/"},{"name":"自動化","count":18,"path":"tags/自動化/"},{"name":"開源","count":17,"path":"tags/開源/"},{"name":"開發工具","count":16,"path":"tags/開發工具/"},{"name":"Google","count":14,"path":"tags/Google/"},{"name":"Copilot","count":13,"path":"tags/Copilot/"},{"name":"DevOps","count":13,"path":"tags/DevOps/"},{"name":"工程師生活","count":12,"path":"tags/工程師生活/"},{"name":"GitHub","count":12,"path":"tags/GitHub/"},{"name":"Skills","count":11,"path":"tags/Skills/"},{"name":"Spring","count":11,"path":"tags/Spring/"},{"name":"LLM","count":9,"path":"tags/LLM/"},{"name":"Azure","count":9,"path":"tags/Azure/"},{"name":"微軟課程","count":9,"path":"tags/微軟課程/"},{"name":"資料庫","count":9,"path":"tags/資料庫/"},{"name":"Gemini","count":8,"path":"tags/Gemini/"},{"name":"Cursor","count":8,"path":"tags/Cursor/"},{"name":"Elasticsearch","count":8,"path":"tags/Elasticsearch/"},{"name":"健康","count":6,"path":"tags/健康/"},{"name":"理財","count":6,"path":"tags/理財/"},{"name":"Apple","count":6,"path":"tags/Apple/"},{"name":"Microsoft","count":6,"path":"tags/Microsoft/"},{"name":"GitHub Copilot","count":6,"path":"tags/GitHub-Copilot/"},{"name":"AI","count":5,"path":"tags/AI/"},{"name":"AZ-305","count":5,"path":"tags/AZ-305/"},{"name":"Rust","count":5,"path":"tags/Rust/"},{"name":"CLI","count":5,"path":"tags/CLI/"},{"name":"Collections","count":5,"path":"tags/Collections/"},{"name":"併發","count":5,"path":"tags/併發/"},{"name":"NVIDIA","count":4,"path":"tags/NVIDIA/"},{"name":"Kiro","count":4,"path":"tags/Kiro/"},{"name":"macOS","count":4,"path":"tags/macOS/"},{"name":"Hooks","count":4,"path":"tags/Hooks/"},{"name":"AI 開發工具","count":4,"path":"tags/AI-開發工具/"},{"name":"Code Review","count":4,"path":"tags/Code-Review/"},{"name":"Docker","count":4,"path":"tags/Docker/"},{"name":"Python","count":4,"path":"tags/Python/"},{"name":"DP-300","count":4,"path":"tags/DP-300/"},{"name":"SQL Server","count":4,"path":"tags/SQL-Server/"},{"name":"Performance","count":4,"path":"tags/Performance/"},{"name":"JSON","count":4,"path":"tags/JSON/"},{"name":"Stream","count":4,"path":"tags/Stream/"},{"name":"168斷食","count":3,"path":"tags/168斷食/"},{"name":"Windsurf","count":3,"path":"tags/Windsurf/"},{"name":"TDD","count":3,"path":"tags/TDD/"},{"name":"Agent","count":3,"path":"tags/Agent/"},{"name":"SDD","count":3,"path":"tags/SDD/"},{"name":"系統監控","count":3,"path":"tags/系統監控/"},{"name":"遠端工作","count":3,"path":"tags/遠端工作/"},{"name":"生產力","count":2,"path":"tags/生產力/"},{"name":"Mistral","count":2,"path":"tags/Mistral/"},{"name":"AI 法規","count":2,"path":"tags/AI-法規/"},{"name":"Codex","count":2,"path":"tags/Codex/"},{"name":"AI 安全","count":2,"path":"tags/AI-安全/"},{"name":"AI 產業","count":2,"path":"tags/AI-產業/"},{"name":"Networking","count":2,"path":"tags/Networking/"},{"name":"Tool Use","count":2,"path":"tags/Tool-Use/"},{"name":"Multi-Model","count":2,"path":"tags/Multi-Model/"},{"name":"Claude Design","count":2,"path":"tags/Claude-Design/"},{"name":"Prototype","count":2,"path":"tags/Prototype/"},{"name":"Lucene","count":2,"path":"tags/Lucene/"},{"name":"Prompt Engineering","count":2,"path":"tags/Prompt-Engineering/"},{"name":"生活札記","count":2,"path":"tags/生活札記/"},{"name":"旅遊","count":2,"path":"tags/旅遊/"},{"name":"專注力","count":1,"path":"tags/專注力/"},{"name":"軟體工程師","count":1,"path":"tags/軟體工程師/"},{"name":"職涯","count":1,"path":"tags/職涯/"},{"name":"2026","count":1,"path":"tags/2026/"},{"name":"Meta","count":1,"path":"tags/Meta/"},{"name":"Amazon","count":1,"path":"tags/Amazon/"},{"name":"AWS","count":1,"path":"tags/AWS/"},{"name":"資訊安全","count":1,"path":"tags/資訊安全/"},{"name":"Migration","count":1,"path":"tags/Migration/"},{"name":"Agent Skills","count":1,"path":"tags/Agent-Skills/"},{"name":"Addy Osmani","count":1,"path":"tags/Addy-Osmani/"},{"name":"工程紀律","count":1,"path":"tags/工程紀律/"},{"name":"Apify","count":1,"path":"tags/Apify/"},{"name":"爬蟲","count":1,"path":"tags/爬蟲/"},{"name":"Buddi","count":1,"path":"tags/Buddi/"},{"name":"notch","count":1,"path":"tags/notch/"},{"name":"UI 設計","count":1,"path":"tags/UI-設計/"},{"name":"Prompt Caching","count":1,"path":"tags/Prompt-Caching/"},{"name":"成本優化","count":1,"path":"tags/成本優化/"},{"name":"Function Calling","count":1,"path":"tags/Function-Calling/"},{"name":"CLAUDE.md","count":1,"path":"tags/CLAUDE-md/"},{"name":"Auto Memory","count":1,"path":"tags/Auto-Memory/"},{"name":"Project Setup","count":1,"path":"tags/Project-Setup/"},{"name":"Extended Thinking","count":1,"path":"tags/Extended-Thinking/"},{"name":"Reasoning","count":1,"path":"tags/Reasoning/"},{"name":"/goal","count":1,"path":"tags/goal/"},{"name":"Monitor Tool","count":1,"path":"tags/Monitor-Tool/"},{"name":"VS Code","count":1,"path":"tags/VS-Code/"},{"name":"Haiku","count":1,"path":"tags/Haiku/"},{"name":"Sonnet","count":1,"path":"tags/Sonnet/"},{"name":"Opus","count":1,"path":"tags/Opus/"},{"name":"Token 成本","count":1,"path":"tags/Token-成本/"},{"name":"Plan Mode","count":1,"path":"tags/Plan-Mode/"},{"name":"Routines","count":1,"path":"tags/Routines/"},{"name":"Ultraplan","count":1,"path":"tags/Ultraplan/"},{"name":"規劃","count":1,"path":"tags/規劃/"},{"name":"cloud","count":1,"path":"tags/cloud/"},{"name":"Voice Mode","count":1,"path":"tags/Voice-Mode/"},{"name":"Push-to-Talk","count":1,"path":"tags/Push-to-Talk/"},{"name":"Team","count":1,"path":"tags/Team/"},{"name":"Onboarding","count":1,"path":"tags/Onboarding/"},{"name":"Supply Chain","count":1,"path":"tags/Supply-Chain/"},{"name":"Subagent","count":1,"path":"tags/Subagent/"},{"name":"Cowork","count":1,"path":"tags/Cowork/"},{"name":"Plugin","count":1,"path":"tags/Plugin/"},{"name":"UX 設計","count":1,"path":"tags/UX-設計/"},{"name":"Managed Agents","count":1,"path":"tags/Managed-Agents/"},{"name":"Dreaming","count":1,"path":"tags/Dreaming/"},{"name":"Outcomes","count":1,"path":"tags/Outcomes/"},{"name":"Coolify","count":1,"path":"tags/Coolify/"},{"name":"self-hosted","count":1,"path":"tags/self-hosted/"},{"name":"PaaS","count":1,"path":"tags/PaaS/"},{"name":"Productivity","count":1,"path":"tags/Productivity/"},{"name":"CrewAI","count":1,"path":"tags/CrewAI/"},{"name":"Multi-Agent","count":1,"path":"tags/Multi-Agent/"},{"name":"Encryption","count":1,"path":"tags/Encryption/"},{"name":"ELK Stack","count":1,"path":"tags/ELK-Stack/"},{"name":"Monitoring","count":1,"path":"tags/Monitoring/"},{"name":"Analyzer","count":1,"path":"tags/Analyzer/"},{"name":"IK","count":1,"path":"tags/IK/"},{"name":"中文搜尋","count":1,"path":"tags/中文搜尋/"},{"name":"Architecture","count":1,"path":"tags/Architecture/"},{"name":"Production","count":1,"path":"tags/Production/"},{"name":"Operations","count":1,"path":"tags/Operations/"},{"name":"Mapping","count":1,"path":"tags/Mapping/"},{"name":"Template","count":1,"path":"tags/Template/"},{"name":"Schema","count":1,"path":"tags/Schema/"},{"name":"CRUD","count":1,"path":"tags/CRUD/"},{"name":"bulk","count":1,"path":"tags/bulk/"},{"name":"alias","count":1,"path":"tags/alias/"},{"name":"REST API","count":1,"path":"tags/REST-API/"},{"name":"internals","count":1,"path":"tags/internals/"},{"name":"Translog","count":1,"path":"tags/Translog/"},{"name":"Segment","count":1,"path":"tags/Segment/"},{"name":"Aggregation","count":1,"path":"tags/Aggregation/"},{"name":"Search","count":1,"path":"tags/Search/"},{"name":"GH-300","count":1,"path":"tags/GH-300/"},{"name":"Responsible AI","count":1,"path":"tags/Responsible-AI/"},{"name":"SpecKit","count":1,"path":"tags/SpecKit/"},{"name":"前端","count":1,"path":"tags/前端/"},{"name":"工具遷移","count":1,"path":"tags/工具遷移/"},{"name":"Jira","count":1,"path":"tags/Jira/"},{"name":"Atlassian","count":1,"path":"tags/Atlassian/"},{"name":"Lightpanda","count":1,"path":"tags/Lightpanda/"},{"name":"Headless Browser","count":1,"path":"tags/Headless-Browser/"},{"name":"Zig","count":1,"path":"tags/Zig/"},{"name":"Web Scraping","count":1,"path":"tags/Web-Scraping/"},{"name":"ETF","count":1,"path":"tags/ETF/"},{"name":"台股","count":1,"path":"tags/台股/"},{"name":"美股","count":1,"path":"tags/美股/"},{"name":"Mag-7","count":1,"path":"tags/Mag-7/"},{"name":"財報","count":1,"path":"tags/財報/"},{"name":"Skill","count":1,"path":"tags/Skill/"},{"name":"心智模型","count":1,"path":"tags/心智模型/"},{"name":"決策工具","count":1,"path":"tags/決策工具/"},{"name":"Multica","count":1,"path":"tags/Multica/"},{"name":"Open CoDesign","count":1,"path":"tags/Open-CoDesign/"},{"name":"AI Design","count":1,"path":"tags/AI-Design/"},{"name":"Discord","count":1,"path":"tags/Discord/"},{"name":"OpenCode","count":1,"path":"tags/OpenCode/"},{"name":"GPT","count":1,"path":"tags/GPT/"},{"name":"GPT-5.5","count":1,"path":"tags/GPT-5-5/"},{"name":"OpenScreen","count":1,"path":"tags/OpenScreen/"},{"name":"Screen Recording","count":1,"path":"tags/Screen-Recording/"},{"name":"AI VTuber","count":1,"path":"tags/AI-VTuber/"},{"name":"Project AIRI","count":1,"path":"tags/Project-AIRI/"},{"name":"TypeScript","count":1,"path":"tags/TypeScript/"},{"name":"RTK","count":1,"path":"tags/RTK/"},{"name":"Token 優化","count":1,"path":"tags/Token-優化/"},{"name":"Sonatype Guide","count":1,"path":"tags/Sonatype-Guide/"},{"name":"依賴管理","count":1,"path":"tags/依賴管理/"},{"name":"Stanford AI Index","count":1,"path":"tags/Stanford-AI-Index/"},{"name":"AI產業","count":1,"path":"tags/AI產業/"},{"name":"工程師職涯","count":1,"path":"tags/工程師職涯/"},{"name":"AI透明度","count":1,"path":"tags/AI透明度/"},{"name":"就業市場","count":1,"path":"tags/就業市場/"},{"name":"API","count":1,"path":"tags/API/"},{"name":"設計模式","count":1,"path":"tags/設計模式/"},{"name":"TimesFM","count":1,"path":"tags/TimesFM/"},{"name":"時間序列","count":1,"path":"tags/時間序列/"},{"name":"基礎模型","count":1,"path":"tags/基礎模型/"},{"name":"ML","count":1,"path":"tags/ML/"},{"name":"Whisper","count":1,"path":"tags/Whisper/"},{"name":"Speech-to-Text","count":1,"path":"tags/Speech-to-Text/"},{"name":"Flash Attention","count":1,"path":"tags/Flash-Attention/"},{"name":"AI 模型","count":1,"path":"tags/AI-模型/"},{"name":"包棟民宿","count":1,"path":"tags/包棟民宿/"},{"name":"台中","count":1,"path":"tags/台中/"},{"name":"南投","count":1,"path":"tags/南投/"},{"name":"苗栗","count":1,"path":"tags/苗栗/"},{"name":"時事評論","count":1,"path":"tags/時事評論/"},{"name":"能源","count":1,"path":"tags/能源/"},{"name":"AI 基礎建設","count":1,"path":"tags/AI-基礎建設/"},{"name":"台灣","count":1,"path":"tags/台灣/"},{"name":"MacBook","count":1,"path":"tags/MacBook/"},{"name":"淡江大橋","count":1,"path":"tags/淡江大橋/"},{"name":"淡水","count":1,"path":"tags/淡水/"},{"name":"建築","count":1,"path":"tags/建築/"},{"name":"週末","count":1,"path":"tags/週末/"},{"name":"Claude Skills","count":1,"path":"tags/Claude-Skills/"},{"name":"日本","count":1,"path":"tags/日本/"},{"name":"黃金週","count":1,"path":"tags/黃金週/"},{"name":"Golden Week","count":1,"path":"tags/Golden-Week/"},{"name":"居家辦公","count":1,"path":"tags/居家辦公/"},{"name":"人體工學","count":1,"path":"tags/人體工學/"}];</script></body></html>
