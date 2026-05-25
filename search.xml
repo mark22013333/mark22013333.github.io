@@ -4,6 +4,107 @@
   
     
     <entry>
+      <title>Claude Managed Agents 自架沙箱與 MCP Tunnels 完整教學 — 讓 AI Agent 在你自己的基礎設施上跑</title>
+      <link href="/2026/05/25/Claude-Managed-Agents-%E8%87%AA%E6%9E%B6%E6%B2%99%E7%AE%B1%E8%88%87-MCP-Tunnels-%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8/"/>
+      <url>/2026/05/25/Claude-Managed-Agents-%E8%87%AA%E6%9E%B6%E6%B2%99%E7%AE%B1%E8%88%87-MCP-Tunnels-%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8/</url>
+      
+        <content type="html"><![CDATA[<p>你要跑一個 Claude agent 自動處理 Jira ticket。</p><p>問題是這個 Jira 在公司 VPN 後面、沒有 public endpoint，外面打不進來。傳統做法你會做什麼？開個反向代理、租個跳板機、塞個 OAuth proxy 在 DMZ、然後跟資安部門吵兩個月。最後上線時候那個架構複雜到沒人敢動。</p><p><a href="https://claude.com/blog/claude-managed-agents-updates">Anthropic 5 月 19 日為 Claude Managed Agents 加了兩個東西</a>，讓上面那段話可以縮成「裝個 daemon、跑一個指令、收工」：<strong>Self-hosted sandboxes</strong>（自架沙箱）和 <strong>MCP Tunnels</strong>（私有通道）。前者把 tool 執行搬回你自己的機房，後者讓 Anthropic 那邊的 agent 不開外網就能連你內網的 MCP server。</p><p>要看懂這兩個功能設計上的精巧之處，要先把「Claude agent 到底由幾塊組成」這件事拆開來。</p><hr><h2 id="一個-AI-Agent-拆成兩塊：思考-vs-動手"><a href="#一個-AI-Agent-拆成兩塊：思考-vs-動手" class="headerlink" title="一個 AI Agent 拆成兩塊：思考 vs 動手"></a>一個 AI Agent 拆成兩塊：思考 vs 動手</h2><p>把 agent 想成餐廳：</p><p><strong>主廚</strong>坐在中央廚房想菜單、看訂單、決定接下來該炒哪盤——這是 agent loop，負責 orchestration（決定下一步）、context management（記得目前進度）、error recovery（菜炒壞了怎麼辦）。</p><p><strong>雜工</strong>是真正動手切菜、開瓦斯、洗鍋子的人——這對應 tool execution，實際把 <code>read_file</code>、<code>write_file</code>、<code>run_shell</code> 這些指令跑出來。</p><p>過去 Anthropic 的設計是把主廚跟雜工綁在同一個 sandbox 裡，全部跑在 Anthropic 的基礎設施上。這對「給 Claude 一個任意題目讓它自己玩」沒問題，但只要你的 agent 要碰公司資料——客戶清單、財報草稿、內網檔案——這套架構就會讓資安團隊馬上跳出來：「我們的資料怎麼會跑到 Anthropic 的機器上？」</p><p>Self-hosted sandboxes 做的事很簡單：<strong>雜工搬回你家</strong>。主廚還是在 Anthropic 的中央廚房（agent loop），但所有實際碰資料的動作都在你自己控制的環境跑。</p><p>MCP Tunnels 解決的是另一個問題：<strong>主廚怎麼問你家冰箱有什麼</strong>。MCP server 是 agent 拿到「外部知識」的橋——可能是公司的內部知識庫、Jira、PostgreSQL。但這些東西放在你 VPN 裡面，主廚一打過去就被防火牆擋掉。</p><hr><h2 id="Self-hosted-Sandboxes：把-tool-執行搬回自己機房"><a href="#Self-hosted-Sandboxes：把-tool-執行搬回自己機房" class="headerlink" title="Self-hosted Sandboxes：把 tool 執行搬回自己機房"></a>Self-hosted Sandboxes：把 tool 執行搬回自己機房</h2><p>機制比直覺更簡單。你在自己機房（或雲端 VM）跑一個叫 <strong>environment worker</strong> 的 process，它的工作只有一件事：接收 Anthropic 那邊 agent loop 發過來的 tool 執行請求，在本地跑掉，把結果回傳。</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">[Anthropic 雲端 Agent Loop]</span><br><span class="line">        ↓ &quot;請執行: read_file(&#x27;/secret/q4_report.pdf&#x27;)&quot;</span><br><span class="line">        ↓</span><br><span class="line">[你機房的 environment worker]</span><br><span class="line">        ↓ 真的去讀檔案</span><br><span class="line">        ↓</span><br><span class="line">        ↑ 回傳檔案內容</span><br><span class="line">        ↑</span><br><span class="line">[Anthropic 雲端 Agent Loop]</span><br><span class="line">        ↓ 根據檔案內容決定下一步</span><br><span class="line">        ↓ ...</span><br></pre></td></tr></table></figure><p>關鍵設計是「敏感資料永遠不離開你的網路邊界」。檔案在你機房被讀，內容被當作 tool 結果送回 agent——但那個檔案本身、那個 Python package、那個 service 連線，都還在你家。</p><p><a href="https://platform.claude.com/docs/en/managed-agents/self-hosted-sandboxes">官方公開測試版本</a>目前認證了四家 managed provider，各自定位不同：</p><h3 id="四家認證-provider-怎麼選"><a href="#四家認證-provider-怎麼選" class="headerlink" title="四家認證 provider 怎麼選"></a>四家認證 provider 怎麼選</h3><p><strong>Cloudflare</strong> — 推出時就最完整：除了基礎 sandbox 還加了 egress control（控制 sandbox 對外連線白名單）、browser access（agent 可以開瀏覽器）、custom tool 支援。<a href="https://developers.cloudflare.com/sandbox/tutorials/claude-managed-agents/">Cloudflare 的 Sandbox SDK</a> 是這四家裡 lift-and-shift 摩擦力最低的選擇。</p><p><strong>Daytona</strong> — 完整的可組裝電腦（full composable computers）。每個 sandbox 都是長期運行、有狀態的——你可以 SSH 進去看 agent 操作到哪、可以 pause + restore 保留所有狀態。適合需要「人類接手 debug」的場景。</p><p><strong>Modal</strong> — Anthropic 文件直接寫「為 AI workload 而生」。sandbox 跟 Modal 既有的 functions、storage、networking primitives 共享底層。custom container runtime 號稱任何 image 都 sub-second 啟動，可以擴到上萬個並發 sandbox，CPU&#x2F;GPU 隨點隨開。</p><p><strong>Vercel</strong> — 沒在搜尋結果裡單獨展開，但定位是給 Next.js + serverless 已經 all-in 在 Vercel 的團隊一個「不換 vendor 就能加 agent」的選項。</p><p>選哪家的問題比想像中單純：你公司現在主要雲端基礎設施在哪邊，就選哪邊。換 vendor 加 agent 的複雜度遠高於 agent 本身。</p><h3 id="從零部署：以-Cloudflare-為例"><a href="#從零部署：以-Cloudflare-為例" class="headerlink" title="從零部署：以 Cloudflare 為例"></a>從零部署：以 Cloudflare 為例</h3><p>最完整且摩擦力最低的路徑是 Cloudflare。流程不到十分鐘：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 1. 安裝 Cloudflare Sandbox SDK</span></span><br><span class="line">npm install @cloudflare/sandbox</span><br><span class="line"></span><br><span class="line"><span class="comment"># 2. 設定 wrangler.toml 加上 sandbox binding</span></span><br><span class="line"><span class="built_in">cat</span> &gt;&gt; wrangler.toml &lt;&lt;<span class="string">EOF</span></span><br><span class="line"><span class="string">[[services]]</span></span><br><span class="line"><span class="string">binding = &quot;SANDBOX&quot;</span></span><br><span class="line"><span class="string">service = &quot;claude-sandbox&quot;</span></span><br><span class="line"><span class="string">EOF</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 3. 部署 environment worker 到 Cloudflare</span></span><br><span class="line">wrangler deploy</span><br><span class="line"></span><br><span class="line"><span class="comment"># 4. 在 Claude Console 註冊這個 sandbox</span></span><br><span class="line"><span class="comment"># Workspace Settings → Managed Agents → Sandbox Providers → Add Cloudflare</span></span><br></pre></td></tr></table></figure><p>註冊成功後，下次你建立 agent 時可以指定：</p><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> anthropic</span><br><span class="line"></span><br><span class="line">client = anthropic.Anthropic()</span><br><span class="line">response = client.managed_agents.create(</span><br><span class="line">    name=<span class="string">&quot;財報摘要 agent&quot;</span>,</span><br><span class="line">    sandbox_provider=<span class="string">&quot;cloudflare&quot;</span>,</span><br><span class="line">    sandbox_config=&#123;</span><br><span class="line">        <span class="string">&quot;egress_allowlist&quot;</span>: [<span class="string">&quot;api.internal.example.com&quot;</span>],</span><br><span class="line">        <span class="string">&quot;tools&quot;</span>: [<span class="string">&quot;read_file&quot;</span>, <span class="string">&quot;write_file&quot;</span>, <span class="string">&quot;shell&quot;</span>],</span><br><span class="line">    &#125;,</span><br><span class="line">    instructions=<span class="string">&quot;你是一個內部財報處理 agent...&quot;</span>,</span><br><span class="line">)</span><br></pre></td></tr></table></figure><p><code>egress_allowlist</code> 是 Cloudflare 整合的賣點之一：你可以白名單化 sandbox 能對外連到哪幾個 host。Agent 想偷打去其他地方？被 Cloudflare 擋掉。這對於資安部門要簽核的時候差很多——你能拿出一個 host 清單講「就只能去這幾個地方」。</p><h3 id="自己手搓-environment-worker（不用-managed-provider）"><a href="#自己手搓-environment-worker（不用-managed-provider）" class="headerlink" title="自己手搓 environment worker（不用 managed provider）"></a>自己手搓 environment worker（不用 managed provider）</h3><p>如果你不想綁 Cloudflare&#x2F;Modal 這類 provider，自己跑 environment worker 也可以。Anthropic 提供了 Python SDK：</p><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># environment_worker.py</span></span><br><span class="line"><span class="keyword">from</span> anthropic.managed_agents <span class="keyword">import</span> EnvironmentWorker</span><br><span class="line"></span><br><span class="line">worker = EnvironmentWorker(</span><br><span class="line">    api_key=<span class="string">&quot;sk-ant-...&quot;</span>,</span><br><span class="line">    workspace_id=<span class="string">&quot;ws_xxx&quot;</span>,</span><br><span class="line">    sandbox_root=<span class="string">&quot;/var/lib/claude-sandbox&quot;</span>,</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="meta">@worker.tool(<span class="params"><span class="string">&quot;read_file&quot;</span></span>)</span></span><br><span class="line"><span class="keyword">async</span> <span class="keyword">def</span> <span class="title function_">read_file</span>(<span class="params">path: <span class="built_in">str</span></span>) -&gt; <span class="built_in">str</span>:</span><br><span class="line">    <span class="comment"># 你可以在這裡加任意檢查邏輯</span></span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> path.startswith(<span class="string">&quot;/var/lib/claude-sandbox/&quot;</span>):</span><br><span class="line">        <span class="keyword">raise</span> PermissionError(<span class="string">&quot;路徑超出 sandbox 範圍&quot;</span>)</span><br><span class="line">    <span class="keyword">with</span> <span class="built_in">open</span>(path) <span class="keyword">as</span> f:</span><br><span class="line">        <span class="keyword">return</span> f.read()</span><br><span class="line"></span><br><span class="line"><span class="meta">@worker.tool(<span class="params"><span class="string">&quot;query_db&quot;</span></span>)</span></span><br><span class="line"><span class="keyword">async</span> <span class="keyword">def</span> <span class="title function_">query_db</span>(<span class="params">sql: <span class="built_in">str</span></span>) -&gt; <span class="built_in">list</span>[<span class="built_in">dict</span>]:</span><br><span class="line">    <span class="comment"># 連到內網 PostgreSQL，這個連線永遠在你機房</span></span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">await</span> db.fetch_all(sql)</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&quot;__main__&quot;</span>:</span><br><span class="line">    worker.run()</span><br></pre></td></tr></table></figure><p>跑起來這個 process，它會跟 Anthropic 建立一個 outbound 長連線、等待 agent loop 派發 tool 執行請求。沒有 inbound port、沒有對外公開的 endpoint。這是核心安全設計。</p><hr><h2 id="MCP-Tunnels：讓-Agent-連進你的內網而不需要開門"><a href="#MCP-Tunnels：讓-Agent-連進你的內網而不需要開門" class="headerlink" title="MCP Tunnels：讓 Agent 連進你的內網而不需要開門"></a>MCP Tunnels：讓 Agent 連進你的內網而不需要開門</h2><p>Self-hosted sandbox 解決了「tool 執行在哪跑」，但還沒解決一個常見場景：<strong>你的 MCP server 在 VPN 後面</strong>。</p><p>MCP server 是 agent 拿到「外部知識」的橋。可能是你公司自己寫的 Jira 連接器、可能是接你內部知識庫的 RAG server、可能是接 PostgreSQL 的 query MCP。問題是這些東西放在內網，Anthropic 那邊的 agent loop 怎麼打進來？</p><p>過去的解決方案讓資安部門很頭痛：</p><ul><li>開個反向代理在 DMZ → 增加攻擊面</li><li>把 MCP server 部署到公雲 → 資料離開公司</li><li>跑 ngrok 或 cloudflared → 流量不受控</li></ul><p>MCP Tunnels 走的是相反的方向：<strong>讓 tunnel 是你打出去的、不是 Anthropic 打進來的</strong>。</p><h3 id="工作原理（用打電話來類比）"><a href="#工作原理（用打電話來類比）" class="headerlink" title="工作原理（用打電話來類比）"></a>工作原理（用打電話來類比）</h3><p>想像你要跟外面某個人講話，但你家門禁森嚴不讓人按門鈴。怎麼辦？你自己打電話出去——電話線是你拉的、你決定什麼時候掛、你看得到對方號碼。對方雖然能透過這條電話線跟你講話，但他沒辦法在你家門口出現。</p><p>MCP Tunnel 就是這條電話線：</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">[你機房]</span><br><span class="line">  ├── 你的內網 MCP server (postgres-mcp:3000)</span><br><span class="line">  └── 你部署的 lightweight gateway</span><br><span class="line">        ↓</span><br><span class="line">        ↓ 主動建立 outbound TLS 長連線</span><br><span class="line">        ↓</span><br><span class="line">   [Anthropic Workspace]</span><br><span class="line">        ↑</span><br><span class="line">        ↑ Agent loop 透過這條 tunnel 呼叫 MCP server</span><br></pre></td></tr></table></figure><p>關鍵設計：</p><ul><li><strong>single outbound connection</strong>：你機房對外只開一個 outbound TLS 連線</li><li><strong>no inbound firewall rules</strong>：不需要在防火牆開洞讓 Anthropic 打進來</li><li><strong>no public endpoints</strong>：你的 MCP server 沒有 public IP、沒有 public DNS</li><li><strong>end-to-end encrypted</strong>：tunnel 內所有 traffic TLS 加密</li></ul><p>如果你熟悉 SSH reverse tunnel 或 Cloudflare Tunnel，這個概念你已經懂了——只是這次的對端是 Anthropic Workspace、語意層是 MCP。</p><h3 id="設定-MCP-Tunnel"><a href="#設定-MCP-Tunnel" class="headerlink" title="設定 MCP Tunnel"></a>設定 MCP Tunnel</h3><p>整個操作在 Claude Console 走完。MCP Tunnels 目前是 research preview，要先在 workspace settings 申請存取權。拿到權限後流程：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 1. 在 Claude Console 建立一個 tunnel</span></span><br><span class="line"><span class="comment"># Workspace Settings → MCP Tunnels → Create Tunnel</span></span><br><span class="line"><span class="comment"># 拿到 tunnel_id 和 secret token</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 2. 在你機房跑 gateway</span></span><br><span class="line">docker run -d \</span><br><span class="line">  --name claude-mcp-tunnel \</span><br><span class="line">  --restart unless-stopped \</span><br><span class="line">  -e TUNNEL_ID=tnl_xxx \</span><br><span class="line">  -e TUNNEL_TOKEN=...secret... \</span><br><span class="line">  -e MCP_SERVER_URL=http://postgres-mcp.internal:3000 \</span><br><span class="line">  anthropic/mcp-tunnel-gateway:latest</span><br><span class="line"></span><br><span class="line"><span class="comment"># 3. 在 Claude Console 把這個 tunnel 連到你要用的 agent</span></span><br><span class="line"><span class="comment"># Workspace Settings → Managed Agents → Add MCP Server → Use Tunnel</span></span><br></pre></td></tr></table></figure><p>接下來你建 agent 的時候，MCP server 就像直接掛在 Anthropic workspace 上一樣可用：</p><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">response = client.managed_agents.create(</span><br><span class="line">    name=<span class="string">&quot;Jira ticket triage agent&quot;</span>,</span><br><span class="line">    mcp_servers=[</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="string">&quot;type&quot;</span>: <span class="string">&quot;tunnel&quot;</span>,</span><br><span class="line">            <span class="string">&quot;tunnel_id&quot;</span>: <span class="string">&quot;tnl_xxx&quot;</span>,</span><br><span class="line">            <span class="string">&quot;endpoint&quot;</span>: <span class="string">&quot;/jira&quot;</span>,  <span class="comment"># tunnel 內走到 Jira MCP</span></span><br><span class="line">        &#125;,</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="string">&quot;type&quot;</span>: <span class="string">&quot;tunnel&quot;</span>,</span><br><span class="line">            <span class="string">&quot;tunnel_id&quot;</span>: <span class="string">&quot;tnl_xxx&quot;</span>,</span><br><span class="line">            <span class="string">&quot;endpoint&quot;</span>: <span class="string">&quot;/postgres&quot;</span>,  <span class="comment"># tunnel 內走到 PostgreSQL MCP</span></span><br><span class="line">        &#125;,</span><br><span class="line">    ],</span><br><span class="line">    instructions=<span class="string">&quot;你是一個 ticket 分流 agent...&quot;</span>,</span><br><span class="line">)</span><br></pre></td></tr></table></figure><p>注意一個 tunnel 可以代理多個 MCP server（用 path 區分），不需要每個 server 拉一條 tunnel。</p><h3 id="MCP-Tunnel-不限於-Managed-Agents"><a href="#MCP-Tunnel-不限於-Managed-Agents" class="headerlink" title="MCP Tunnel 不限於 Managed Agents"></a>MCP Tunnel 不限於 Managed Agents</h3><p>文件裡有個容易被忽略但很重要的細節：<a href="https://platform.claude.com/docs/en/managed-agents/quickstart">MCP Tunnels 同時支援 Messages API</a>。意思是即使你不用 Managed Agents（你用自己的 Anthropic SDK 應用程式呼叫 Claude），一樣可以透過 MCP Tunnel 給 Claude 接到你內網的 MCP server。</p><p>這個彈性把整個 Anthropic 開發者平台變成「你內網的延伸」——只要你有 outbound 網路，內網資料就能被 Claude 用上。</p><hr><h2 id="Claude-Code-的引導設定指令"><a href="#Claude-Code-的引導設定指令" class="headerlink" title="Claude Code 的引導設定指令"></a>Claude Code 的引導設定指令</h2><p>如果你嫌 console 點來點去太累，最新版 Claude Code 內建了一個 slash command 把整個設定流程包起來：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ claude</span><br><span class="line">&gt; /claude-api managed-agents-onboard</span><br></pre></td></tr></table></figure><p>這個 command 會用對話的方式問你：</p><ol><li>你是要設定 sandbox 還是 MCP tunnel？</li><li>用哪家 provider？</li><li>要連到內網哪個 service？</li></ol><p>回答完之後它會自動產出設定檔、跑必要的 deploy command、把結果驗證一遍。對於第一次設定的人來講，這比讀文件快兩倍。</p><hr><h2 id="該選哪個？決策框架"><a href="#該選哪個？決策框架" class="headerlink" title="該選哪個？決策框架"></a>該選哪個？決策框架</h2><p>工程師最容易犯的錯是「兩個都裝」——不需要。先想清楚你解的是哪個問題：</p><p><strong>只用 self-hosted sandbox</strong>：你需要 agent 跑 tool（讀檔、跑 shell、改檔），且這些動作要在你機房做。但 MCP server 你沒有，agent 不需要連內網其他 service。</p><p><strong>只用 MCP tunnel</strong>：你的 agent 跑 Anthropic-managed sandbox 就好，沒有 tool 要在你機房跑。但你有內網 MCP server（Jira、Postgres、ticketing system）要給 agent 用。</p><p><strong>兩個都用</strong>：完整的「內部 agent」場景——agent 要碰你的檔案、跑你的 service、又要連你的 MCP server。這時兩個一起裝。</p><p>決策的核心是「資料的最遠流動範圍」。資料只在 agent loop 出現過、實體不離開你機房 → self-hosted sandbox 就好。資料在 MCP query 裡進出、但 tool execution 不碰它 → MCP tunnel 就好。兩種狀況同時存在 → 兩個都要。</p><hr><h2 id="限制與該留意的事"><a href="#限制與該留意的事" class="headerlink" title="限制與該留意的事"></a>限制與該留意的事</h2><p>公開測試版本還有幾個值得知道的限制：</p><p><strong>Self-hosted sandbox</strong>：是 public beta、可以正式使用，但建議在 staging 環境先壓過幾天再上 production。Anthropic 那邊的 agent loop 跟你 environment worker 之間 latency 會反映在 user-facing 速度上。你機房離 Anthropic data center 越遠、agent 反應就越慢——美西的 AWS 跟 Anthropic 美西 region 之間是 30-50ms RTT，台灣機房直連大概 150-200ms。延遲對 multi-step agent 來說會放大十倍以上。</p><p><strong>MCP Tunnels</strong>：還在 research preview，要排隊申請存取權。Anthropic 沒公開 SLA，正式 Production-grade SLA 要等 GA 階段。</p><p><strong>Audit 跟稽核</strong>：如果你公司有合規需求要記錄每一次 tool 呼叫，environment worker 需要自己接 logging pipeline。Anthropic 的 audit log 只記到 agent loop 那層、看不到 tool 內部的 input&#x2F;output。</p><p><strong>provider lock-in 風險</strong>：四家認證 provider 各自的 API 不完全相容。如果你今天選 Cloudflare、明天想換 Daytona，environment worker 邏輯要重寫。建議把業務邏輯（讀檔、查 DB、呼叫 service）跟 provider SDK 分開包，換 vendor 的時候只動 adapter 那層。</p><hr><h2 id="上手練習：你可以今天試什麼"><a href="#上手練習：你可以今天試什麼" class="headerlink" title="上手練習：你可以今天試什麼"></a>上手練習：你可以今天試什麼</h2><p>不用等到有正式案件再學。今晚就可以跑一個玩具實驗：</p><ol><li>在 <a href="https://console.anthropic.com/">Anthropic Console</a> 申請 Managed Agents 存取</li><li>在你 Mac 上跑一個 Python environment worker（不用真機房，本機就行）</li><li>註冊一個本地 sandbox 到 console</li><li>建一個 agent，讓它讀你 <code>~/Documents/</code> 的一個檔案、用內容寫一個摘要回來</li><li>觀察 Anthropic Workspace 的 audit log，確認 agent loop 跟 tool execution 確實分離</li></ol><p>你會在五分鐘內感受到「agent 在外面想、檔案永遠在我家」是什麼意思。這個感覺一旦建立，後面跟資安部門解釋自架 sandbox 的好處就會容易很多。</p><hr><h2 id="延伸閱讀"><a href="#延伸閱讀" class="headerlink" title="延伸閱讀"></a>延伸閱讀</h2><ul><li><a href="https://claude.com/blog/claude-managed-agents-updates">Claude Managed Agents 公告 — Anthropic Blog</a></li><li><a href="https://platform.claude.com/docs/en/managed-agents/self-hosted-sandboxes">Self-hosted sandboxes 官方文件 — Claude API Docs</a></li><li><a href="https://platform.claude.com/docs/en/managed-agents/quickstart">Managed Agents Quickstart — Claude API Docs</a></li><li><a href="https://developers.cloudflare.com/sandbox/tutorials/claude-managed-agents/">Cloudflare Sandbox SDK + Managed Agents 教學 — Cloudflare Developers</a></li><li><a href="https://blog.cloudflare.com/claude-managed-agents/">Announcing Claude Managed Agents on Cloudflare — Cloudflare Blog</a></li><li><a href="https://www.infoq.com/news/2026/05/claude-mcp-tunnels/">Anthropic Introduces MCP Tunnels — InfoQ</a></li><li><a href="https://github.com/cloudflare/claude-managed-agents">Cloudflare claude-managed-agents GitHub repo</a></li></ul>]]></content>
+      
+      
+      <categories>
+          
+          <category> Claude Code </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> Claude </tag>
+            
+            <tag> MCP </tag>
+            
+            <tag> AI Agent </tag>
+            
+            <tag> Anthropic </tag>
+            
+            <tag> Claude Code </tag>
+            
+            <tag> 教學 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>AI 與科技新聞摘要 - 2026/05/25</title>
+      <link href="/2026/05/25/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260525/"/>
+      <url>/2026/05/25/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260525/</url>
+      
+        <content type="html"><![CDATA[<p>OpenAI 的共同創辦人，現在在 Anthropic 上班。</p><p>Andrej Karpathy——你可能記得他在 Tesla 帶過 Autopilot AI、後來離開做 nanoGPT 教學影片紅遍 ML 圈、再前面更早他是 OpenAI 創始八人組之一——上禮拜公開宣布他要加入 Anthropic 的 pre-training team。這是 frontier lab 之間人才流動的一個極端案例：不是 senior engineer 跳槽，是創辦人等級的人跳到對家。</p><p>同一週，Ramp 釋出 2026 年 4 月的企業 AI 採用率數據——Anthropic 34.4%、OpenAI 32.3%。第一次反超。Anthropic 公開了 Claude for Small Business 把 AI 塞進中小企業工具鏈的策略。OpenAI 機密遞了 IPO 文件給 SEC，Anthropic 同期預告首季營業利潤。Drupal 核心爆出 CVSS 高危的 SQL injection 漏洞，CISA 三天內加進 KEV catalog。</p><p>五件事的共通底色：上一波 AI 浪潮是技術競賽，這一波是制度競賽——人從哪流到哪、企業預算的指針指向誰、IPO 的窗口給誰先開、安全責任由誰扛。</p><hr><h2 id="一、Karpathy-加入-Anthropic-的-pre-training-team"><a href="#一、Karpathy-加入-Anthropic-的-pre-training-team" class="headerlink" title="一、Karpathy 加入 Anthropic 的 pre-training team"></a>一、Karpathy 加入 Anthropic 的 pre-training team</h2><p><a href="https://www.cnbc.com/2026/05/19/anthropic-hires-openai-cofounder-andrej-karpathy-former-tesla-ai-lead.html">Andrej Karpathy 在 5 月 19 日於 X 公開宣布加入 Anthropic</a>。職位是 pre-training team 成員，並協助啟動一個用 Claude 加速 pretraining 研究的新團隊——簡單講就是「用 Claude 訓練下一代 Claude」。</p><p>對外宣稱的是技術理由：他想做的研究方向跟 Anthropic 對齊。但底層的訊號不只這樣。</p><p>第一個訊號是頂級人才的流動方向已經偏掉了。過去三年從 OpenAI 流出的研究員、安全團隊負責人、IP 律師、產品 lead 加起來超過二十位，去向幾乎都是 Anthropic。同樣的位置反過來——從 Anthropic 跳到 OpenAI 的——數字一隻手數得完。這不是巧合，是研究文化跟組織節奏的累積差異。</p><p>第二個訊號更難量化但更重要：當「創辦人等級」的人物願意以員工身分加入對手，產業圈的人會解讀為「他押注 Anthropic 會贏」。這種敘事一旦形成，後面找人會容易兩倍——其他研究員會用 Karpathy 的選擇當參考點。</p><p>對工程師日常的影響短期看不到。但中長期值得留意的是：Anthropic 用 Claude 加速自己 pretraining 這件事如果跑通，模型迭代速度可能跟你想的不一樣。</p><hr><h2 id="二、企業採用率-Anthropic-34-4-反超-OpenAI-32-3"><a href="#二、企業採用率-Anthropic-34-4-反超-OpenAI-32-3" class="headerlink" title="二、企業採用率 Anthropic 34.4% 反超 OpenAI 32.3%"></a>二、企業採用率 Anthropic 34.4% 反超 OpenAI 32.3%</h2><p><a href="https://ramp.com/leading-indicators/ai-index-may-2026">Ramp 5 月 13 日發布 4 月份 AI Index</a>：Anthropic 在 Ramp 平台追蹤的企業客戶採用率攀到 34.4%，OpenAI 跌到 32.3%。這是生成式 AI 走入企業以來 OpenAI 第一次在這個指標上被超車。</p><p>值得放在脈絡裡看的是過去三年的曲線：Anthropic 2023 年 6 月企業採用率只有 0.03%、2025 年 4 月也才 7.94%，到 2026 年 4 月直接拉到 34.44%——一年翻四倍。OpenAI 同期只增加了 0.3 個百分點，幾乎打平。</p><p>引擎是什麼？Ramp 跟 Axios、TechCrunch、VentureBeat 的分析說法一致：<a href="https://techcrunch.com/2026/05/13/anthropic-now-has-more-business-customers-than-openai-according-to-ramp-data/">Claude Code</a> 帶著走。Anthropic 史上成長最快的產品，把開發者用戶從個人帳號升級成企業帳號，再把企業帳號裡其他角色（PM、設計師、IT）拉進 Claude 生態。</p><p><a href="https://venturebeat.com/technology/anthropic-finally-beat-openai-in-business-ai-adoption-but-3-big-threats-could-erase-its-lead">VentureBeat 的後續報導</a>點出三個會把這個領先吃掉的威脅：第一是 token 計費商業模式本身——客戶 ARPU 暴衝靠的是 token 用量暴衝，但相應的算力成本也在暴衝；第二是算力供給卡住，需要 Colossus 1 那種規模的合約撐起來；第三是 OpenAI 的 ChatGPT Enterprise 還是個流量入口，反擊空間很大。</p><p>工程師視角的判讀：這份數據驗證的不是「誰的模型比較強」，是「誰的工具鏈黏度比較高」。Claude Code 把 IDE 跟 terminal 變成黏住企業客戶的場域，這比 chatbot 黏度高一個量級。</p><hr><h2 id="三、Claude-for-Small-Business：把-AI-塞進中小企業工具鏈"><a href="#三、Claude-for-Small-Business：把-AI-塞進中小企業工具鏈" class="headerlink" title="三、Claude for Small Business：把 AI 塞進中小企業工具鏈"></a>三、Claude for Small Business：把 AI 塞進中小企業工具鏈</h2><p><a href="https://www.anthropic.com/news/claude-for-small-business">Anthropic 5 月 21 日推出 Claude for Small Business</a>——一個 connectors 包加上一系列預設工作流，目標是讓 Claude 直接坐在小型企業日常用的工具裡（會計軟體、CRM、HR、文件管理）。</p><p>要看懂這條新聞，不能只看「又一個產品」。要看 Anthropic 的市場分層在做什麼動作。</p><p>對照他們既有的三條線：（一）Claude API + Claude Code 給開發者跟工程團隊、（二）Claude Enterprise 給 Fortune 500、（三）Claude Pro &#x2F; Max 給個人重度用戶。Small Business 補的是「沒有 IT 部門、買不起 Enterprise 整合服務，但又比個人用戶大」的中間層。這層在台灣特別多——50 人以下的軟體公司、外貿公司、製造業中小廠、會計事務所。</p><p>關鍵不是「Anthropic 進中小企業市場」，是這個動作如果跑通，會把「用 AI 自動化」這件事的進入門檻從「需要 prompt 工程師」降到「裝個 connector 就會跑」。連動的是工具市場——FastTrack、Notion、HubSpot、QuickBooks 這些中小企業常用 SaaS 會被迫釋出更多 connector hook，這也是為什麼 Anthropic 的 MCP 生態今年下半年值得繼續追蹤。</p><hr><h2 id="四、OpenAI-機密遞-IPO-Anthropic-首季營業利潤"><a href="#四、OpenAI-機密遞-IPO-Anthropic-首季營業利潤" class="headerlink" title="四、OpenAI 機密遞 IPO + Anthropic 首季營業利潤"></a>四、OpenAI 機密遞 IPO + Anthropic 首季營業利潤</h2><p><a href="https://www.cnbc.com/2026/05/19/anthropic-hires-openai-cofounder-andrej-karpathy-former-tesla-ai-lead.html">OpenAI 上週機密遞交 IPO 文件給 SEC</a>——這代表他們進入 SEC 審查流程，正式上市時間預估在 2026 Q4 到 2027 Q1。</p><p>同一週 Anthropic 對外溝通另一件事：<a href="https://techcrunch.com/2026/05/13/anthropic-now-has-more-business-customers-than-openai-according-to-ramp-data/">他們預計 2026 Q2 將達成首個季度 operating profit</a>。注意這個數字是 operating profit、不是淨利——還沒扣掉巨額的算力資本支出折舊。但能達到營運層級獲利已經是 frontier lab 圈裡很罕見的訊號，OpenAI 至今仍在虧損。</p><p>兩家公司一前一後的動作，可以放進同一個敘事去看：誰先把資本市場故事說圓。IPO 是燒錢公司的最後一個提款機，OpenAI 急著 Q4 把這條路打開；Anthropic 預告獲利是要證明「就算不 IPO 我也撐得住」——這在融資談判上是極強的籌碼。</p><p>對工程師有什麼意義？短期是定價會變得更尖銳——IPO 前的 OpenAI 會更傾向給優惠搶用戶（API 降價、Plus 用戶送額度），上市後則可能反過來緊縮免費額度衝財報。Anthropic 維持獲利路線意味著定價結構可能會更穩定但也更貴。如果你公司在挑長期 API 供應商，這個分歧線值得納入決策。</p><hr><h2 id="五、Drupal-核心-SQL-injection-漏洞-CVE-2026-9082"><a href="#五、Drupal-核心-SQL-injection-漏洞-CVE-2026-9082" class="headerlink" title="五、Drupal 核心 SQL injection 漏洞 CVE-2026-9082"></a>五、Drupal 核心 SQL injection 漏洞 CVE-2026-9082</h2><p><a href="https://www.drupal.org/sa-core-2026-004">Drupal 安全公告 SA-CORE-2026-004</a>在 5 月 20 日標為 Highly Critical 級別釋出。漏洞是 Drupal core 資料庫抽象層裡的 SQL injection——CVE-2026-9082——影響 8.9.0 一直到 11.3.9。匿名使用者可以利用，僅影響使用 PostgreSQL 的站台。</p><p>數字的嚴重程度：<a href="https://thehackernews.com/2026/05/cisa-adds-cisco-sd-wan-cve-2026-20182.html">CISA 5 月 22 日把它加進 KEV catalog</a>、聯邦機構修補截止日訂 5 月 27 日。一週修補窗口意味著漏洞已經被武器化、不是「未來可能會」而是「正在發生」。</p><p>技術細節值得細看的點：這不是某個邊角模組的漏洞，是 core 的 database abstraction API。意思是只要你用 Drupal 加 PostgreSQL，幾乎沒有「不受影響的設定」這條退路。攻擊者可以做的事——資料外洩是基本盤，配上 PostgreSQL 的 <code>COPY ... PROGRAM</code> 還能升級成 RCE。<a href="https://orca.security/resources/blog/drupal-sql-injection-cve-2026-9082-postgresql-rce/">Orca Security 的分析</a>寫得很清楚。</p><p>修補版本：Drupal 10.4.10、10.5.10、10.6.9、11.1.10、11.2.12、11.3.10。</p><p>更深層的問題是 SQL injection 在 2026 年還能在主流 CMS 拿到 highly critical——而且是核心抽象層。Drupal 這層程式碼經過十幾年迭代，理論上是最不該出這種事的地方。資料庫抽象設計本來就是為了把 SQL injection 擋掉，現在反過來自己成了 injection vector，諷刺到不行。台灣政府機關跟教育單位有大量 Drupal 站台，這條值得轉發給對的人。</p><hr><h2 id="結語：別只看新聞，看新聞背後的指針"><a href="#結語：別只看新聞，看新聞背後的指針" class="headerlink" title="結語：別只看新聞，看新聞背後的指針"></a>結語：別只看新聞，看新聞背後的指針</h2><p>這週五條新聞拼起來，方向其實是一致的：AI 產業從「技術爭奪戰」轉進「制度卡位戰」。Karpathy 的人事案、企業採用率反超、Small Business 產品線、IPO 文件、Drupal 漏洞——每一條表面是獨立事件，底層都是同一件事：誰拿下下一階段的標準、生態、收費機制、安全責任分配。</p><p>技術人在這種季節最該做的事，不是追每一個發表會的 keynote，而是盯三個指針：頂級研究員的流向、企業預算的流向、安全責任的劃分。這三個指針穩定指向同一邊的話，那邊就是未來三年的主場。</p><hr><h2 id="來源"><a href="#來源" class="headerlink" title="來源"></a>來源</h2><ul><li><a href="https://www.cnbc.com/2026/05/19/anthropic-hires-openai-cofounder-andrej-karpathy-former-tesla-ai-lead.html">Anthropic hires OpenAI cofounder Andrej Karpathy — CNBC</a></li><li><a href="https://www.axios.com/2026/05/19/anthropic-openai-karpathy-andrej-claude">OpenAI co-founder Karpathy joins Anthropic — Axios</a></li><li><a href="https://ramp.com/leading-indicators/ai-index-may-2026">Anthropic beats OpenAI on business adoption — Ramp</a></li><li><a href="https://techcrunch.com/2026/05/13/anthropic-now-has-more-business-customers-than-openai-according-to-ramp-data/">Anthropic now has more business customers than OpenAI — TechCrunch</a></li><li><a href="https://venturebeat.com/technology/anthropic-finally-beat-openai-in-business-ai-adoption-but-3-big-threats-could-erase-its-lead">Anthropic finally beat OpenAI in business AI adoption — VentureBeat</a></li><li><a href="https://www.anthropic.com/news/claude-for-small-business">Introducing Claude for Small Business — Anthropic</a></li><li><a href="https://www.drupal.org/sa-core-2026-004">Drupal SA-CORE-2026-004 — Drupal.org</a></li><li><a href="https://www.tenable.com/blog/cve-2026-9082-highly-critical-sql-injection-vulnerability-in-drupal-core-sa-core-2026-004">CVE-2026-9082 Highly Critical SQL Injection in Drupal Core — Tenable</a></li><li><a href="https://securityaffairs.com/192557/security/cve-2026-9082-drupals-highly-critical-sql-injection-flaw-is-already-under-active-attack.html">Drupal SQL injection actively exploited — Security Affairs</a></li><li><a href="https://orca.security/resources/blog/drupal-sql-injection-cve-2026-9082-postgresql-rce/">Drupal SQL injection + PostgreSQL RCE risk — Orca Security</a></li></ul>]]></content>
+      
+      
+      <categories>
+          
+          <category> AI與科技新聞 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> AI與科技新聞 </tag>
+            
+            <tag> OpenAI </tag>
+            
+            <tag> 資安 </tag>
+            
+            <tag> Anthropic </tag>
+            
+            <tag> AI 產業 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>notebooklm-py — 用 Python 程式驅動 Google NotebookLM</title>
+      <link href="/2026/05/25/notebooklm-py-%E7%94%A8-Python-%E7%A8%8B%E5%BC%8F%E9%A9%85%E5%8B%95-Google-NotebookLM/"/>
+      <url>/2026/05/25/notebooklm-py-%E7%94%A8-Python-%E7%A8%8B%E5%BC%8F%E9%A9%85%E5%8B%95-Google-NotebookLM/</url>
+      
+        <content type="html"><![CDATA[<p>Google NotebookLM 沒有公開 API。</p><p>按理說，這種情況下你只剩兩條路：要嘛開瀏覽器自動化點按鈕，要嘛放棄自動化。但是 GitHub 上有個 14.9k star 的 repo 選了第三條——它打開 Chrome DevTools，把網頁裡每一次點擊背後的 XHR 請求抓下來，逆向出 Google 內部的 RPC 端點和那些被混淆過的 method ID，然後包成一個 Python SDK。</p><p>這個專案叫 <a href="https://github.com/teng-lin/notebooklm-py">notebooklm-py</a>。它今天還在合併 PR，是少見的「非官方 Google 服務客戶端」做到專業到誇張的案例：6,186 unit tests、90% coverage、嚴格 SemVer、完整 ADR 記錄。Teng Lin 一個人寫的。</p><p>很多人聽到「沒有 API」會反射性想到 Selenium、Playwright、Puppeteer 那一套。但這個 repo 給了一個更值得想清楚的答案：瀏覽器自動化是為了當人，不是為了當機器。如果你能直接跟對方的 RPC 講話，為什麼還要假裝自己是個會點滑鼠的人？</p><hr><h2 id="它到底怎麼跟-NotebookLM-講話"><a href="#它到底怎麼跟-NotebookLM-講話" class="headerlink" title="它到底怎麼跟 NotebookLM 講話"></a>它到底怎麼跟 NotebookLM 講話</h2><p>你打開 NotebookLM 網頁時，Chrome DevTools 看到的所有 XHR 請求都打到同一個 endpoint：</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">https://notebooklm.google.com/_/LabsTailwindUi/data/batchexecute</span><br></pre></td></tr></table></figure><p>這是 Google 內部用的 batchexecute RPC 通訊協定。每個操作對應一個被混淆過的 method ID——例如「建立 notebook」是某串看起來像亂碼的字串、「上傳 source」是另一串、「產生 podcast」又是另一串。這些 ID 是作者透過抓網路流量逆向出來的。</p><p>notebooklm-py 做的事情其實很單純：把這些 ID 包成 Python method，加上 retry、auth refresh、idempotency 保護，就成了一個完整的 SDK。</p><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> asyncio</span><br><span class="line"><span class="keyword">from</span> notebooklm <span class="keyword">import</span> NotebookLMClient</span><br><span class="line"></span><br><span class="line"><span class="keyword">async</span> <span class="keyword">def</span> <span class="title function_">main</span>():</span><br><span class="line">    <span class="keyword">async</span> <span class="keyword">with</span> NotebookLMClient.from_storage() <span class="keyword">as</span> client:</span><br><span class="line">        notebook = <span class="keyword">await</span> client.notebooks.create(<span class="string">&quot;週報研究&quot;</span>)</span><br><span class="line">        <span class="keyword">await</span> client.sources.add_url(notebook.<span class="built_in">id</span>, <span class="string">&quot;https://example.com/article&quot;</span>)</span><br><span class="line">        audio = <span class="keyword">await</span> client.audio.generate(notebook.<span class="built_in">id</span>, language=<span class="string">&quot;zh-TW&quot;</span>)</span><br><span class="line">        <span class="built_in">print</span>(audio.download_url)</span><br><span class="line"></span><br><span class="line">asyncio.run(main())</span><br></pre></td></tr></table></figure><p>注意整個 API 是純 async。NotebookLMClient 綁定到開啟它的 event loop，跨 loop 重用會直接 raise RuntimeError、也不 thread-safe——每個 thread 或每個 loop 都要建自己的 client。這個設計選擇背後的理由很明顯：高頻 RPC 場景下，async 是必選項，不是裝飾品。</p><hr><h2 id="Playwright-只用在登入那一刻"><a href="#Playwright-只用在登入那一刻" class="headerlink" title="Playwright 只用在登入那一刻"></a>Playwright 只用在登入那一刻</h2><p>這個 repo 最值得學的設計決策，是它沒有讓 Playwright 變成主流程。</p><p>很多人寫到「沒有 API」就會反射性 <code>pip install playwright</code>，然後從那一刻開始所有事情都會在瀏覽器裡跑。但 notebooklm-py 的選擇是：只有第一次互動式登入時用 Playwright——開個 Chromium 視窗讓你登 Google、把 cookies 抽出來存到 <code>storage_state.json</code>，之後所有 RPC 都直接走 httpx，根本不需要瀏覽器。</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">notebooklm login</span><br><span class="line"><span class="comment"># 開瀏覽器 → 登入 Google → cookies 存到</span></span><br><span class="line"><span class="comment"># ~/.notebooklm/profiles/default/storage_state.json</span></span><br></pre></td></tr></table></figure><p>如果你本地已經登入過 NotebookLM 的 Chrome、Edge、Firefox、Safari、Brave，還可以用 <a href="https://github.com/thewh1teagle/rookiepy">rookiepy</a> 直接從本地瀏覽器 cookie store 抽憑證，連 Playwright 都不用裝：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">notebooklm login --browser-cookies chrome</span><br></pre></td></tr></table></figure><p>把瀏覽器當「拿到 cookies 的工具」，而不是「跑 RPC 的執行環境」。這個分界線一畫下去，整個系統的可靠性立刻不一樣——RPC 走 httpx 是純 HTTP 呼叫，可以放進 CI、可以併發、可以背景跑；如果整條路都靠 Playwright，光是 Chromium 佔的記憶體就會讓你不想開太多平行任務。</p><hr><h2 id="9-種-web-UI-不給你的-artifact"><a href="#9-種-web-UI-不給你的-artifact" class="headerlink" title="9 種 web UI 不給你的 artifact"></a>9 種 web UI 不給你的 artifact</h2><p>如果 SDK 提供的功能跟網頁上一樣，那其實用 Playwright 也可以做。notebooklm-py 真正值錢的地方，是它把 NotebookLM 後端能生但前端不給下載的東西全部打開了：</p><table><thead><tr><th>Artifact</th><th>Web UI 給嗎</th><th>SDK 給的格式</th></tr></thead><tbody><tr><td>Podcast (audio)</td><td>限線上播放</td><td>MP3 直接下載</td></tr><tr><td>Video overview</td><td>限線上看</td><td>MP4 直接下載</td></tr><tr><td>Briefing doc</td><td>給</td><td>Markdown</td></tr><tr><td>Mind map</td><td>限線上展開</td><td>樹狀 JSON 結構</td></tr><tr><td>Study guide</td><td>給</td><td>Markdown</td></tr><tr><td>Quiz</td><td>限線上做</td><td>JSON &#x2F; Markdown &#x2F; HTML</td></tr><tr><td>Flashcards</td><td>限線上看</td><td>JSON 結構化資料</td></tr><tr><td>Data table</td><td>限線上看</td><td>CSV</td></tr><tr><td>Slide deck</td><td>限線上展示</td><td>PPTX 檔</td></tr></tbody></table><p>PPTX、Quiz JSON、Mind map 樹狀結構這三個是關鍵。web UI 是不給你的——你只能在頁面上看。如果你要把 NotebookLM 生成的內容餵到別的系統，例如把 quiz 匯進 Anki、把 mind map 接到 Obsidian 的知識圖譜、把 slide deck 套到自家簡報模板——這個 SDK 才是出口。</p><p>換句話說：NotebookLM 自己的網頁是給「個人用戶看完就好」的介面。notebooklm-py 是給「想把 NotebookLM 當生產線」的人用的。兩種使用者要的東西本來就不一樣，只是 Google 沒興趣同時服務後者。</p><hr><h2 id="認證機制是這個-repo-最棘手的部分"><a href="#認證機制是這個-repo-最棘手的部分" class="headerlink" title="認證機制是這個 repo 最棘手的部分"></a>認證機制是這個 repo 最棘手的部分</h2><p>沒有 OAuth、沒有 API key，全靠 Google 帳號 cookies——<code>SID</code>、<code>HSID</code>、<code>__Secure-1PSID</code>、<code>__Secure-1PSIDTS</code> 這幾個。三種取得方式：</p><ol><li><strong>互動式登入</strong>：<code>notebooklm login</code> 開 Playwright 視窗，登完存 storage_state.json</li><li><strong>抽本地瀏覽器</strong>：<code>notebooklm login --browser-cookies chrome</code></li><li><strong>環境變數</strong>：<code>NOTEBOOKLM_AUTH_JSON</code> 直接放 JSON（CI&#x2F;CD 用）</li></ol><p>棘手的地方在於 cookies 會過期，特別是 <code>__Secure-1PSIDTS</code> 會不定期旋轉。SDK 處理了這幾件事：</p><ul><li>每次 RPC 前自動檢查 CSRF token 是否仍有效</li><li>Cold-start 時主動呼叫 <code>accounts.google.com/RotateCookies</code> 補齊失效 token</li><li>長時間執行的 client 可傳 <code>keepalive=&lt;seconds&gt;</code> 啟動背景 task 定期 rotate</li><li>CLI 提供 <code>notebooklm auth refresh</code>，搭配 cron &#x2F; launchd &#x2F; systemd 排程跑</li></ul><p>Headless server 沒辦法跑 Playwright 登入，標準做法是先在有顯示器的機器登一次，把 storage_state.json 搬到伺服器或塞進 CI secret。<code>storage_state.json</code> 在系統裡的權重等同密碼——POSIX 系統記得 <code>chmod 600</code>，CI 一律走 secret。</p><p>如果你要管多個 Google 帳號，profile 機制把 storage_state 隔開來：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">notebooklm profile create work          <span class="comment"># 建立 &quot;work&quot; profile</span></span><br><span class="line">notebooklm -p work login                <span class="comment"># 用 work profile 登入</span></span><br><span class="line">notebooklm -p work notebooks list       <span class="comment"># 用 work 帳號列 notebooks</span></span><br></pre></td></tr></table></figure><p>或設 <code>NOTEBOOKLM_PROFILE=work</code> 環境變數切換。</p><hr><h2 id="Middleware-Chain：可靠性是設計出來的"><a href="#Middleware-Chain：可靠性是設計出來的" class="headerlink" title="Middleware Chain：可靠性是設計出來的"></a>Middleware Chain：可靠性是設計出來的</h2><p>這個 repo 有一套 7-stage middleware chain 包在每個 RPC 外面：</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Drain → Metrics → Semaphore → Retry → AuthRefresh → ErrorInjection → Tracing</span><br></pre></td></tr></table></figure><p>每一層都解決一個具體問題。預設行為：</p><ul><li><strong>429 限流</strong>：尊重 <code>Retry-After</code> header（capped 300 秒），fallback 指數退避 <code>min(2^attempt, 30)s + ±20% jitter</code>，重試 3 次</li><li><strong>5xx &#x2F; 網路錯誤</strong>：同樣指數退避 3 次</li><li><strong>併發控制</strong>：<code>max_concurrent_rpcs=16</code>（一般 RPC）、<code>max_concurrent_uploads=4</code>（上傳，防 FD 耗盡）</li><li><strong>Idempotency</strong>：建立類 RPC（建 notebook、加 source）用 probe-then-retry——網路斷線導致回應丟失時，先 list 一次找出已建立的資源，避免重複建立</li></ul><p><code>add_text</code> 是個值得單獨拉出來講的例外：它無法 dedupe，預設標記為 non-idempotent。如果你想強制重試，要明確傳 <code>idempotent=True</code>，否則會 raise <code>NonIdempotentRetryError</code>。這個設計擋住了一個常見的工程意外——同樣的文字被重試到變成三份。</p><hr><h2 id="端到端範例：從主題到-Podcast-一條龍"><a href="#端到端範例：從主題到-Podcast-一條龍" class="headerlink" title="端到端範例：從主題到 Podcast 一條龍"></a>端到端範例：從主題到 Podcast 一條龍</h2><p>repo 附帶的 <code>docs/examples/research-to-podcast.py</code> 是個經典的串接範例。輸入一個主題，自動深度研究後生 podcast：</p><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> asyncio</span><br><span class="line"><span class="keyword">import</span> sys</span><br><span class="line"><span class="keyword">from</span> notebooklm <span class="keyword">import</span> NotebookLMClient</span><br><span class="line"></span><br><span class="line"><span class="keyword">async</span> <span class="keyword">def</span> <span class="title function_">main</span>(<span class="params">topic: <span class="built_in">str</span></span>):</span><br><span class="line">    <span class="keyword">async</span> <span class="keyword">with</span> NotebookLMClient.from_storage() <span class="keyword">as</span> client:</span><br><span class="line">        <span class="comment"># 1. 建 notebook</span></span><br><span class="line">        notebook = <span class="keyword">await</span> client.notebooks.create(<span class="string">f&quot;研究：<span class="subst">&#123;topic&#125;</span>&quot;</span>)</span><br><span class="line">        <span class="comment"># 2. 啟動深度研究（會自動爬 20+ 來源加進來）</span></span><br><span class="line">        research = <span class="keyword">await</span> client.research.deep(notebook.<span class="built_in">id</span>, topic)</span><br><span class="line">        <span class="keyword">await</span> research.wait()</span><br><span class="line">        <span class="comment"># 3. 用累積起來的 sources 生 podcast</span></span><br><span class="line">        audio = <span class="keyword">await</span> client.audio.generate(</span><br><span class="line">            notebook.<span class="built_in">id</span>,</span><br><span class="line">            language=<span class="string">&quot;zh-TW&quot;</span>,</span><br><span class="line">            style=<span class="string">&quot;deep_dive&quot;</span>,</span><br><span class="line">        )</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">f&quot;Podcast: <span class="subst">&#123;audio.download_url&#125;</span>&quot;</span>)</span><br><span class="line"></span><br><span class="line">asyncio.run(main(sys.argv[<span class="number">1</span>]))</span><br></pre></td></tr></table></figure><p>單一指令 <code>python research-to-podcast.py &quot;量子計算最新進展&quot;</code> 就能生出一集 podcast。主流程全程不到 30 行——而這 30 行做的事，如果你硬走 Playwright 路線，光是處理「等深度研究跑完」這個 polling 就會寫到一百行還處理不完。</p><hr><h2 id="它真正適合的使用情境"><a href="#它真正適合的使用情境" class="headerlink" title="它真正適合的使用情境"></a>它真正適合的使用情境</h2><p>寫完 SDK 不代表所有人都該用。比較值得花力氣串的場景有這幾個：</p><p><strong>自動化 Podcast 工廠</strong>：餵入 RSS 或新聞 URL 清單，自動跑 <code>generate_audio</code> 產出 MP3，上傳到 podcast host。每日新聞摘要、研究週報廣播這種重複性高、人工成本不划算的內容，跑這個流程很適合。</p><p><strong>企業知識庫研究 pipeline</strong>：使用者輸入主題 → 跑深度 research → 自動 import 20+ 來源 → 同時產 briefing doc + mind map + study guide → 寫進 Confluence 或 Notion。比走 RAG 系統好的地方是 source citation 是 NotebookLM 親自爬的，引用準確度比 fragmented chunk 強很多。</p><p><strong>教育與學習工具</strong>：學生上傳教科書 PDF，自動 <code>generate_quiz</code> 加 <code>generate_flashcards</code> 產生練習題，匯出 JSON 餵 Anki 或自家學習平台。把「讀完一章 → 出題」的時間從幾小時壓到幾分鐘。</p><p><strong>競爭情報監控</strong>：排程定期爬競品官網跟部落格，加進 NotebookLM 後問「跟上週相比訊息策略有什麼變化？」自動產生週報。NotebookLM 對長文做差異比較和總結的能力，比一般 LLM 直接接 prompt 強得多，因為它有完整的 source-grounded context。</p><p><strong>AI Agent 整合</strong>：repo 附帶 <code>SKILL.md</code>（35KB 完整使用說明），可以註冊給 Claude Code、OpenClaw、Codex 這些 agent，讓 LLM 用自然語言驅動 NotebookLM：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">notebooklm skill install</span><br><span class="line"><span class="comment"># 會寫入 ~/.claude/skills/notebooklm 與 ~/.agents/skills/notebooklm</span></span><br></pre></td></tr></table></figure><p>一句話「幫我把這 5 個 URL 變成 30 分鐘的 deep-dive podcast」就能跑完。</p><p><strong>多語言內容本地化</strong>：英文 source 直接 <code>generate_audio(language=&quot;ja&quot;)</code> 產日語 podcast，支援 50+ 語言。比走「英文 podcast → 字幕翻譯 → TTS 重錄」的傳統 pipeline 短得多。</p><hr><h2 id="該擔心的事情"><a href="#該擔心的事情" class="headerlink" title="該擔心的事情"></a>該擔心的事情</h2><p>帳號封鎖風險是這個 SDK 最大的不確定性。用未公開 API 加自動高頻 RPC，Google 可能視為自動化濫用。建議用次要帳號跑 batch，主帳號只做手動操作。</p><p>API 隨時可能變動：Google 的 RPC method ID 是逆向出來的，端點變了 SDK 就掛了。repo 有個聰明的設計——<code>NOTEBOOKLM_RPC_OVERRIDES</code> 環境變數允許社群熱修補不需等發版，但這也代表你不能假設「SDK 永遠跟得上 Google」。</p><p>不穩定的操作有幾類：audio、video、quiz、flashcard、infographic、slide-deck 容易因 Google rate limit 而 <code>GENERATION_FAILED</code>，需要 5-10 分鐘後重試。處理時間長：audio 10-20 分鐘、video 15-45 分鐘、deep research 15-30+ 分鐘。生產環境建議用 subagent 背景等待，不要在主流程同步阻塞使用者請求。</p><p>Source 上限依方案而定：Standard 50、Plus 100、Pro 300、Ultra 600。批次 import 前先查方案配額，跑到一半被 cap 住會很尷尬。</p><p>Python 3.13 + cookies extra 編譯失敗（已知限制），需要 rookiepy 的話請用 3.10–3.12。</p><hr><h2 id="真正值得帶走的觀察"><a href="#真正值得帶走的觀察" class="headerlink" title="真正值得帶走的觀察"></a>真正值得帶走的觀察</h2><p>「沒有公開 API」不等於「不能程式化」。RPC 端點都在那邊，只是 Google 沒貼說明書。如果一個服務的 web 介面跑得動，背後一定有 HTTP 流量可以分析。問題只是「值不值得花這個逆向工程的力氣」。</p><p>notebooklm-py 證明了一件事：當 web UI 卡住生產力的時候，把 Chrome DevTools Network panel 打開來看，往往比繼續用 Playwright 模擬點擊更接近正確答案。瀏覽器自動化是模擬人，但你不是人。</p><hr><h2 id="延伸閱讀"><a href="#延伸閱讀" class="headerlink" title="延伸閱讀"></a>延伸閱讀</h2><ul><li>GitHub: <a href="https://github.com/teng-lin/notebooklm-py">teng-lin&#x2F;notebooklm-py</a></li><li>PyPI: <a href="https://pypi.org/project/notebooklm-py/">notebooklm-py</a></li><li>Google NotebookLM: <a href="https://notebooklm.google.com/">notebooklm.google.com</a></li><li>License: MIT</li></ul>]]></content>
+      
+      
+      <categories>
+          
+          <category> Claude Code </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> AI Agent </tag>
+            
+            <tag> 開源 </tag>
+            
+            <tag> Google </tag>
+            
+            <tag> 自動化 </tag>
+            
+            <tag> Python </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>工程師夏天續航指南｜MacBook 燙手、人腦過熱、咖啡因失靈，三個系統要分開調</title>
       <link href="/2026/05/24/%E5%B7%A5%E7%A8%8B%E5%B8%AB%E5%A4%8F%E5%A4%A9%E7%BA%8C%E8%88%AA%E6%8C%87%E5%8D%97-MacBook-%E7%87%99%E6%89%8B-%E4%BA%BA%E8%85%A6%E9%81%8E%E7%86%B1-%E5%92%96%E5%95%A1%E5%9B%A0%E5%A4%B1%E9%9D%88-%E4%B8%89%E5%80%8B%E7%B3%BB%E7%B5%B1%E8%A6%81%E5%88%86%E9%96%8B%E8%AA%BF/"/>
       <url>/2026/05/24/%E5%B7%A5%E7%A8%8B%E5%B8%AB%E5%A4%8F%E5%A4%A9%E7%BA%8C%E8%88%AA%E6%8C%87%E5%8D%97-MacBook-%E7%87%99%E6%89%8B-%E4%BA%BA%E8%85%A6%E9%81%8E%E7%86%B1-%E5%92%96%E5%95%A1%E5%9B%A0%E5%A4%B1%E9%9D%88-%E4%B8%89%E5%80%8B%E7%B3%BB%E7%B5%B1%E8%A6%81%E5%88%86%E9%96%8B%E8%AA%BF/</url>
@@ -86,9 +187,9 @@
       
         <tags>
             
-            <tag> AI Agent </tag>
-            
             <tag> MCP </tag>
+            
+            <tag> AI Agent </tag>
             
             <tag> Claude Code </tag>
             
@@ -152,9 +253,9 @@
             
             <tag> AI與科技新聞 </tag>
             
-            <tag> 資安 </tag>
-            
             <tag> OpenAI </tag>
+            
+            <tag> 資安 </tag>
             
             <tag> Google </tag>
             
@@ -274,11 +375,11 @@
       
         <tags>
             
+            <tag> Claude </tag>
+            
             <tag> AI Agent </tag>
             
             <tag> 開源 </tag>
-            
-            <tag> Claude </tag>
             
             <tag> 開發工具 </tag>
             
@@ -338,9 +439,9 @@
             
             <tag> AI與科技新聞 </tag>
             
-            <tag> 資安 </tag>
-            
             <tag> OpenAI </tag>
+            
+            <tag> 資安 </tag>
             
             <tag> Anthropic </tag>
             
@@ -398,9 +499,9 @@
       
         <tags>
             
-            <tag> AI Agent </tag>
-            
             <tag> Claude </tag>
+            
+            <tag> AI Agent </tag>
             
             <tag> Claude Code </tag>
             
@@ -520,9 +621,9 @@
             
             <tag> AI與科技新聞 </tag>
             
-            <tag> 資安 </tag>
-            
             <tag> OpenAI </tag>
+            
+            <tag> 資安 </tag>
             
             <tag> Google </tag>
             
@@ -700,9 +801,9 @@
             
             <tag> AI與科技新聞 </tag>
             
-            <tag> 資安 </tag>
-            
             <tag> OpenAI </tag>
+            
+            <tag> 資安 </tag>
             
             <tag> Anthropic </tag>
             
@@ -731,9 +832,9 @@
       
         <tags>
             
-            <tag> 開源 </tag>
-            
             <tag> 資安 </tag>
+            
+            <tag> 開源 </tag>
             
             <tag> CLI </tag>
             
@@ -791,9 +892,9 @@
             
             <tag> AI與科技新聞 </tag>
             
-            <tag> 資安 </tag>
-            
             <tag> OpenAI </tag>
+            
+            <tag> 資安 </tag>
             
             <tag> Anthropic </tag>
             
@@ -882,9 +983,9 @@
       
         <tags>
             
-            <tag> AI Agent </tag>
-            
             <tag> AI與科技新聞 </tag>
+            
+            <tag> AI Agent </tag>
             
             <tag> Apple </tag>
             
@@ -975,11 +1076,11 @@
       
         <tags>
             
-            <tag> AI Agent </tag>
-            
             <tag> AI與科技新聞 </tag>
             
             <tag> OpenAI </tag>
+            
+            <tag> AI Agent </tag>
             
             <tag> Anthropic </tag>
             
@@ -1254,11 +1355,11 @@
             
             <tag> AI與科技新聞 </tag>
             
-            <tag> 資安 </tag>
+            <tag> MCP </tag>
             
             <tag> OpenAI </tag>
             
-            <tag> MCP </tag>
+            <tag> 資安 </tag>
             
             <tag> Anthropic </tag>
             
@@ -1732,9 +1833,9 @@
       
         <tags>
             
-            <tag> Elasticsearch </tag>
-            
             <tag> Performance </tag>
+            
+            <tag> Elasticsearch </tag>
             
             <tag> Production </tag>
             
@@ -1823,9 +1924,9 @@
       
         <tags>
             
-            <tag> Elasticsearch </tag>
-            
             <tag> Performance </tag>
+            
+            <tag> Elasticsearch </tag>
             
             <tag> Aggregation </tag>
             
@@ -1978,9 +2079,9 @@
             
             <tag> OpenAI </tag>
             
-            <tag> Mistral </tag>
-            
             <tag> NVIDIA </tag>
+            
+            <tag> Mistral </tag>
             
             <tag> Gemini </tag>
             
@@ -2096,9 +2197,9 @@
       
         <tags>
             
-            <tag> Elasticsearch </tag>
-            
             <tag> Performance </tag>
+            
+            <tag> Elasticsearch </tag>
             
             <tag> Lucene </tag>
             
@@ -2439,46 +2540,13 @@
             
             <tag> AI與科技新聞 </tag>
             
-            <tag> 資安 </tag>
-            
             <tag> MCP </tag>
+            
+            <tag> 資安 </tag>
             
             <tag> Cursor </tag>
             
             <tag> Meta </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    
-    
-    <entry>
-      <title>MCP Server 開發入門教學 — 用 Python 從零打造 AI 工具連接器</title>
-      <link href="/2026/04/28/MCP-Server-%E9%96%8B%E7%99%BC%E5%85%A5%E9%96%80%E6%95%99%E5%AD%B8-%E7%94%A8-Python-%E5%BE%9E%E9%9B%B6%E6%89%93%E9%80%A0-AI-%E5%B7%A5%E5%85%B7%E9%80%A3%E6%8E%A5%E5%99%A8/"/>
-      <url>/2026/04/28/MCP-Server-%E9%96%8B%E7%99%BC%E5%85%A5%E9%96%80%E6%95%99%E5%AD%B8-%E7%94%A8-Python-%E5%BE%9E%E9%9B%B6%E6%89%93%E9%80%A0-AI-%E5%B7%A5%E5%85%B7%E9%80%A3%E6%8E%A5%E5%99%A8/</url>
-      
-        <content type="html"><![CDATA[<p>你家一定有 USB 轉接頭。Type-C 轉 HDMI、Lightning 轉 3.5mm、各種奇奇怪怪的接頭。轉接頭本身不做任何事，它只是讓兩個本來講不同語言的東西能接上。螢幕不需要知道你的筆電是什麼牌子，筆電也不需要知道螢幕的解析度怎麼設定 — 轉接頭搞定一切。</p><p>MCP（Model Context Protocol）就是 AI 世界的 USB 轉接頭。</p><p>Anthropic 開發了這個開放協定，現在已經捐給 Linux Foundation AAIF。它讓 AI model 連接外部工具和資料來源，不管是資料庫、API、檔案系統，接上就能用。目前生態系已經長到 <strong>164M 月下載量、超過 2,400 個 server</strong>，Microsoft、GitHub、Cloudflare、Stripe 都在用。Claude Code、Cursor、Kiro 這些 AI coding 工具也全部支援。</p><p>這不是什麼還在實驗階段的新玩意。這已經是事實標準了。</p><h2 id="MCP-的三個核心原語"><a href="#MCP-的三個核心原語" class="headerlink" title="MCP 的三個核心原語"></a>MCP 的三個核心原語</h2><p>在寫 code 之前，先搞懂 MCP 的三個核心概念。我用遙控器來比喻：</p><p><strong>Tools（工具）</strong> — 遙控器上的按鈕。按下「計算」，AI 就去算數學；按下「查天氣」，AI 就去打 API。每個按鈕定義了一個動作，AI 決定什麼時候按。</p><p><strong>Resources（資源）</strong> — 書架上的參考資料。AI 可以翻閱這些資料來回答問題，但它不會去修改書架上的東西。適合放設定檔、文件、靜態資料。</p><p><strong>Prompts（提示）</strong> — 預設的操作手冊。你幫 AI 寫好一套 SOP，它可以直接拿來用，省去每次都要重新描述需求的麻煩。</p><p>技術上的定義是：MCP Server 透過 JSON-RPC 2.0 協定，向 MCP Client（像是 Claude Code）暴露 tools、resources 和 prompts。Client 負責呼叫，Server 負責執行。</p><h2 id="環境準備"><a href="#環境準備" class="headerlink" title="環境準備"></a>環境準備</h2><p>需要的東西很簡單：</p><ol><li><strong>Python 3.10 以上</strong>（asyncio 的一些語法需要）</li><li><strong>MCP Python SDK</strong></li></ol><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip install mcp</span><br></pre></td></tr></table></figure><p>就這樣。沒有其他依賴。</p><h2 id="第一個-MCP-Server：計算機"><a href="#第一個-MCP-Server：計算機" class="headerlink" title="第一個 MCP Server：計算機"></a>第一個 MCP Server：計算機</h2><p>先從最小的東西開始。我們要做一個計算機 MCP Server，讓 AI 可以做加減乘除。</p><p>為什麼選計算機？因為邏輯簡單到不需要花腦力理解業務需求，可以把注意力全部放在 MCP 的架構上。</p><p>建一個 <code>calculator_server.py</code>：</p><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> mcp.server <span class="keyword">import</span> Server</span><br><span class="line"><span class="keyword">from</span> mcp.server.stdio <span class="keyword">import</span> stdio_server</span><br><span class="line"><span class="keyword">from</span> mcp.types <span class="keyword">import</span> Tool, TextContent</span><br><span class="line"></span><br><span class="line">app = Server(<span class="string">&quot;calculator&quot;</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="meta">@app.list_tools()</span></span><br><span class="line"><span class="keyword">async</span> <span class="keyword">def</span> <span class="title function_">list_tools</span>():</span><br><span class="line">    <span class="string">&quot;&quot;&quot;告訴 Client 我們有哪些工具可以用&quot;&quot;&quot;</span></span><br><span class="line">    <span class="keyword">return</span> [</span><br><span class="line">        Tool(</span><br><span class="line">            name=<span class="string">&quot;calculate&quot;</span>,</span><br><span class="line">            description=<span class="string">&quot;Perform basic arithmetic&quot;</span>,</span><br><span class="line">            inputSchema=&#123;</span><br><span class="line">                <span class="string">&quot;type&quot;</span>: <span class="string">&quot;object&quot;</span>,</span><br><span class="line">                <span class="string">&quot;properties&quot;</span>: &#123;</span><br><span class="line">                    <span class="string">&quot;expression&quot;</span>: &#123;</span><br><span class="line">                        <span class="string">&quot;type&quot;</span>: <span class="string">&quot;string&quot;</span>,</span><br><span class="line">                        <span class="string">&quot;description&quot;</span>: <span class="string">&quot;Math expression like &#x27;2 + 3&#x27;&quot;</span></span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;,</span><br><span class="line">                <span class="string">&quot;required&quot;</span>: [<span class="string">&quot;expression&quot;</span>]</span><br><span class="line">            &#125;</span><br><span class="line">        )</span><br><span class="line">    ]</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="meta">@app.call_tool()</span></span><br><span class="line"><span class="keyword">async</span> <span class="keyword">def</span> <span class="title function_">call_tool</span>(<span class="params">name: <span class="built_in">str</span>, arguments: <span class="built_in">dict</span></span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;Client 呼叫工具時，這裡處理邏輯&quot;&quot;&quot;</span></span><br><span class="line">    <span class="keyword">if</span> name == <span class="string">&quot;calculate&quot;</span>:</span><br><span class="line">        <span class="keyword">try</span>:</span><br><span class="line">            result = <span class="built_in">eval</span>(arguments[<span class="string">&quot;expression&quot;</span>])</span><br><span class="line">            <span class="keyword">return</span> [TextContent(<span class="built_in">type</span>=<span class="string">&quot;text&quot;</span>, text=<span class="built_in">str</span>(result))]</span><br><span class="line">        <span class="keyword">except</span> Exception <span class="keyword">as</span> e:</span><br><span class="line">            <span class="keyword">return</span> [TextContent(<span class="built_in">type</span>=<span class="string">&quot;text&quot;</span>, text=<span class="string">f&quot;計算錯誤：<span class="subst">&#123;e&#125;</span>&quot;</span>)]</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">async</span> <span class="keyword">def</span> <span class="title function_">main</span>():</span><br><span class="line">    <span class="keyword">async</span> <span class="keyword">with</span> stdio_server() <span class="keyword">as</span> (read, write):</span><br><span class="line">        <span class="keyword">await</span> app.run(read, write, app.create_initialization_options())</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&quot;__main__&quot;</span>:</span><br><span class="line">    <span class="keyword">import</span> asyncio</span><br><span class="line">    asyncio.run(main())</span><br></pre></td></tr></table></figure><blockquote><p>⚠️ <code>eval()</code> 在這裡純粹是教學用。正式環境請用 <code>ast.literal_eval()</code> 或數學解析器，不然使用者傳一段惡意程式碼進來你就去吃泡麵了。</p></blockquote><p>拆解一下這段 code 在做什麼：</p><ul><li><code>Server(&quot;calculator&quot;)</code> — 建立一個叫 <code>calculator</code> 的 MCP Server 實例</li><li><code>@app.list_tools()</code> — 註冊一個 handler，當 Client 問「你有什麼工具？」時回應。這裡回傳一個 <code>Tool</code> 物件，定義工具名稱、描述、參數的 JSON Schema</li><li><code>@app.call_tool()</code> — 註冊另一個 handler，當 Client 說「幫我執行這個工具」時處理。回傳 <code>TextContent</code> 包著結果</li><li><code>stdio_server()</code> — 用標準輸入輸出做傳輸。MCP 支援 stdio 和 SSE 兩種傳輸方式，stdio 最簡單，本機開發直接用</li></ul><p>整個流程就是：Client 連上 → 問有什麼工具 → 選一個工具呼叫 → Server 執行 → 回傳結果。跟你按遙控器一模一樣。</p><h2 id="接上-Claude-Code"><a href="#接上-Claude-Code" class="headerlink" title="接上 Claude Code"></a>接上 Claude Code</h2><p>Server 寫好了，接下來讓 Claude Code 認識它。</p><p>打開 Claude Code 的設定，把 MCP server 加進去。在你的專案根目錄建立 <code>.claude/settings.json</code>，或是加到全域設定 <code>~/.claude/settings.json</code>：</p><figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;mcpServers&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;calculator&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;command&quot;</span><span class="punctuation">:</span> <span class="string">&quot;python3&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;args&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span><span class="string">&quot;/absolute/path/to/calculator_server.py&quot;</span><span class="punctuation">]</span></span><br><span class="line">    <span class="punctuation">&#125;</span></span><br><span class="line">  <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure><p>注意 <code>args</code> 裡面的路徑要用絕對路徑。弄了半天 server 連不上，結果是相對路徑的問題 — 這種坑真的會讓人懷疑人生。</p><p>設定好之後，重新啟動 Claude Code，你應該會看到它自動偵測到 calculator 這個 MCP Server。這時候你可以直接跟 Claude 說「幫我算 1024 * 768」，它就會透過 MCP 呼叫你寫的計算機工具。</p><p>跑起來那一刻蠻爽的。你寫的 Python 程式，被 AI 當成自己的工具在用。</p><h2 id="進階：加上-Resources"><a href="#進階：加上-Resources" class="headerlink" title="進階：加上 Resources"></a>進階：加上 Resources</h2><p>Tools 是讓 AI 「做事」，Resources 是讓 AI 「讀資料」。</p><p>來提供一份數學公式表給 AI 參考。在同一個 server 裡加上 resource handler：</p><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> mcp.types <span class="keyword">import</span> Resource</span><br><span class="line"></span><br><span class="line"><span class="meta">@app.list_resources()</span></span><br><span class="line"><span class="keyword">async</span> <span class="keyword">def</span> <span class="title function_">list_resources</span>():</span><br><span class="line">    <span class="keyword">return</span> [</span><br><span class="line">        Resource(</span><br><span class="line">            uri=<span class="string">&quot;math://formulas&quot;</span>,</span><br><span class="line">            name=<span class="string">&quot;常用數學公式&quot;</span>,</span><br><span class="line">            description=<span class="string">&quot;基礎數學公式速查表&quot;</span>,</span><br><span class="line">            mimeType=<span class="string">&quot;text/plain&quot;</span></span><br><span class="line">        )</span><br><span class="line">    ]</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="meta">@app.read_resource()</span></span><br><span class="line"><span class="keyword">async</span> <span class="keyword">def</span> <span class="title function_">read_resource</span>(<span class="params">uri: <span class="built_in">str</span></span>):</span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">str</span>(uri) == <span class="string">&quot;math://formulas&quot;</span>:</span><br><span class="line">        content = <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">        面積公式：</span></span><br><span class="line"><span class="string">        - 圓形：π × r²</span></span><br><span class="line"><span class="string">        - 三角形：底 × 高 ÷ 2</span></span><br><span class="line"><span class="string">        - 梯形：(上底 + 下底) × 高 ÷ 2</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">        體積公式：</span></span><br><span class="line"><span class="string">        - 球體：4/3 × π × r³</span></span><br><span class="line"><span class="string">        - 圓柱：π × r² × h</span></span><br><span class="line"><span class="string">        &quot;&quot;&quot;</span></span><br><span class="line">        <span class="keyword">return</span> content</span><br></pre></td></tr></table></figure><p>這樣 AI 在需要的時候，可以自己去讀這份公式表，不用你每次都在 prompt 裡貼一大段。Resource 的 URI 格式是自定義的，你可以用 <code>math://</code>、<code>db://</code>、<code>file://</code>，只要 Client 和 Server 說好就行。</p><h2 id="完整的-Server-長什麼樣"><a href="#完整的-Server-長什麼樣" class="headerlink" title="完整的 Server 長什麼樣"></a>完整的 Server 長什麼樣</h2><p>把 tools 和 resources 組合起來，完整的 <code>calculator_server.py</code> 如下：</p><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> mcp.server <span class="keyword">import</span> Server</span><br><span class="line"><span class="keyword">from</span> mcp.server.stdio <span class="keyword">import</span> stdio_server</span><br><span class="line"><span class="keyword">from</span> mcp.types <span class="keyword">import</span> Tool, TextContent, Resource</span><br><span class="line"></span><br><span class="line">app = Server(<span class="string">&quot;calculator&quot;</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="meta">@app.list_tools()</span></span><br><span class="line"><span class="keyword">async</span> <span class="keyword">def</span> <span class="title function_">list_tools</span>():</span><br><span class="line">    <span class="keyword">return</span> [</span><br><span class="line">        Tool(</span><br><span class="line">            name=<span class="string">&quot;calculate&quot;</span>,</span><br><span class="line">            description=<span class="string">&quot;Perform basic arithmetic&quot;</span>,</span><br><span class="line">            inputSchema=&#123;</span><br><span class="line">                <span class="string">&quot;type&quot;</span>: <span class="string">&quot;object&quot;</span>,</span><br><span class="line">                <span class="string">&quot;properties&quot;</span>: &#123;</span><br><span class="line">                    <span class="string">&quot;expression&quot;</span>: &#123;</span><br><span class="line">                        <span class="string">&quot;type&quot;</span>: <span class="string">&quot;string&quot;</span>,</span><br><span class="line">                        <span class="string">&quot;description&quot;</span>: <span class="string">&quot;Math expression like &#x27;2 + 3&#x27;&quot;</span></span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;,</span><br><span class="line">                <span class="string">&quot;required&quot;</span>: [<span class="string">&quot;expression&quot;</span>]</span><br><span class="line">            &#125;</span><br><span class="line">        )</span><br><span class="line">    ]</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="meta">@app.call_tool()</span></span><br><span class="line"><span class="keyword">async</span> <span class="keyword">def</span> <span class="title function_">call_tool</span>(<span class="params">name: <span class="built_in">str</span>, arguments: <span class="built_in">dict</span></span>):</span><br><span class="line">    <span class="keyword">if</span> name == <span class="string">&quot;calculate&quot;</span>:</span><br><span class="line">        <span class="keyword">try</span>:</span><br><span class="line">            result = <span class="built_in">eval</span>(arguments[<span class="string">&quot;expression&quot;</span>])</span><br><span class="line">            <span class="keyword">return</span> [TextContent(<span class="built_in">type</span>=<span class="string">&quot;text&quot;</span>, text=<span class="built_in">str</span>(result))]</span><br><span class="line">        <span class="keyword">except</span> Exception <span class="keyword">as</span> e:</span><br><span class="line">            <span class="keyword">return</span> [TextContent(<span class="built_in">type</span>=<span class="string">&quot;text&quot;</span>, text=<span class="string">f&quot;計算錯誤：<span class="subst">&#123;e&#125;</span>&quot;</span>)]</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="meta">@app.list_resources()</span></span><br><span class="line"><span class="keyword">async</span> <span class="keyword">def</span> <span class="title function_">list_resources</span>():</span><br><span class="line">    <span class="keyword">return</span> [</span><br><span class="line">        Resource(</span><br><span class="line">            uri=<span class="string">&quot;math://formulas&quot;</span>,</span><br><span class="line">            name=<span class="string">&quot;常用數學公式&quot;</span>,</span><br><span class="line">            description=<span class="string">&quot;基礎數學公式速查表&quot;</span>,</span><br><span class="line">            mimeType=<span class="string">&quot;text/plain&quot;</span></span><br><span class="line">        )</span><br><span class="line">    ]</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="meta">@app.read_resource()</span></span><br><span class="line"><span class="keyword">async</span> <span class="keyword">def</span> <span class="title function_">read_resource</span>(<span class="params">uri: <span class="built_in">str</span></span>):</span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">str</span>(uri) == <span class="string">&quot;math://formulas&quot;</span>:</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">面積公式：</span></span><br><span class="line"><span class="string">- 圓形：π × r²</span></span><br><span class="line"><span class="string">- 三角形：底 × 高 ÷ 2</span></span><br><span class="line"><span class="string">- 梯形：(上底 + 下底) × 高 ÷ 2</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">體積公式：</span></span><br><span class="line"><span class="string">- 球體：4/3 × π × r³</span></span><br><span class="line"><span class="string">- 圓柱：π × r² × h</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">async</span> <span class="keyword">def</span> <span class="title function_">main</span>():</span><br><span class="line">    <span class="keyword">async</span> <span class="keyword">with</span> stdio_server() <span class="keyword">as</span> (read, write):</span><br><span class="line">        <span class="keyword">await</span> app.run(read, write, app.create_initialization_options())</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&quot;__main__&quot;</span>:</span><br><span class="line">    <span class="keyword">import</span> asyncio</span><br><span class="line">    asyncio.run(main())</span><br></pre></td></tr></table></figure><p>一個檔案，70 行不到，你就有一個完整的 MCP Server，同時提供計算工具和參考資料。</p><h2 id="接下來的路"><a href="#接下來的路" class="headerlink" title="接下來的路"></a>接下來的路</h2><p>你現在有了一個能跑的 MCP Server。計算機當然只是起點。</p><p>真正有趣的事情在後面。MCP 的價值不在於讓 AI 做加法，而在於你可以把任何系統變成 AI 的工具。資料庫、內部 API、CI&#x2F;CD pipeline、監控系統 — 只要你能寫 Python 去操作它，你就能把它包成 MCP Server，讓 AI 直接用。</p><p>幾個值得探索的方向：</p><ul><li><strong>Database MCP</strong> — 讓 AI 直接查資料庫。不用再複製貼上 SQL 結果。MCP 生態系已經有現成的 DBHub 可以用</li><li><strong>API MCP</strong> — 包裝你公司的內部 API。AI 能直接呼叫，省掉人工轉介</li><li><strong>認證機制</strong> — MCP 的 OAuth 2.1 授權框架，讓 remote server 安全地接受外部連線</li><li><strong>Remote MCP Server</strong> — 用 SSE（Server-Sent Events）傳輸，部署到雲端，多個 Client 共用</li></ul><p>這些東西有一個共通的思維模式：<strong>你不是在寫「給人用的工具」，你是在寫「給 AI 用的介面」</strong>。設計 inputSchema 的時候，你在想的不是 UI 怎麼排版，而是 AI 怎麼理解參數的意義。Tool 的 description 不是給人讀的說明文件，是給 AI 判斷「這個工具能不能解決當前問題」的依據。</p><p>這是一種完全不同的軟體設計思維。當你掌握了這個框架，你看待自己寫的每一個 function、每一個 API endpoint 的眼光都會不一樣。不是「使用者會怎麼操作」，而是「AI 會怎麼理解和使用」。</p><p>Anthropic Academy 有免費的 MCP 課程，想深入的話可以從那邊開始。</p><hr><blockquote><p>參考來源：<a href="https://anthropic.skilljar.com/">Model Context Protocol (MCP) - Anthropic Academy</a><br>官方文件：<a href="https://modelcontextprotocol.io/">MCP Documentation</a></p></blockquote>]]></content>
-      
-      
-      <categories>
-          
-          <category> Claude Code </category>
-          
-      </categories>
-      
-      
-        <tags>
-            
-            <tag> AI Agent </tag>
-            
-            <tag> MCP </tag>
-            
-            <tag> Claude Code </tag>
-            
-            <tag> 教學 </tag>
-            
-            <tag> Python </tag>
             
         </tags>
       
@@ -2512,6 +2580,39 @@
             <tag> RTK </tag>
             
             <tag> Token 優化 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>MCP Server 開發入門教學 — 用 Python 從零打造 AI 工具連接器</title>
+      <link href="/2026/04/28/MCP-Server-%E9%96%8B%E7%99%BC%E5%85%A5%E9%96%80%E6%95%99%E5%AD%B8-%E7%94%A8-Python-%E5%BE%9E%E9%9B%B6%E6%89%93%E9%80%A0-AI-%E5%B7%A5%E5%85%B7%E9%80%A3%E6%8E%A5%E5%99%A8/"/>
+      <url>/2026/04/28/MCP-Server-%E9%96%8B%E7%99%BC%E5%85%A5%E9%96%80%E6%95%99%E5%AD%B8-%E7%94%A8-Python-%E5%BE%9E%E9%9B%B6%E6%89%93%E9%80%A0-AI-%E5%B7%A5%E5%85%B7%E9%80%A3%E6%8E%A5%E5%99%A8/</url>
+      
+        <content type="html"><![CDATA[<p>你家一定有 USB 轉接頭。Type-C 轉 HDMI、Lightning 轉 3.5mm、各種奇奇怪怪的接頭。轉接頭本身不做任何事，它只是讓兩個本來講不同語言的東西能接上。螢幕不需要知道你的筆電是什麼牌子，筆電也不需要知道螢幕的解析度怎麼設定 — 轉接頭搞定一切。</p><p>MCP（Model Context Protocol）就是 AI 世界的 USB 轉接頭。</p><p>Anthropic 開發了這個開放協定，現在已經捐給 Linux Foundation AAIF。它讓 AI model 連接外部工具和資料來源，不管是資料庫、API、檔案系統，接上就能用。目前生態系已經長到 <strong>164M 月下載量、超過 2,400 個 server</strong>，Microsoft、GitHub、Cloudflare、Stripe 都在用。Claude Code、Cursor、Kiro 這些 AI coding 工具也全部支援。</p><p>這不是什麼還在實驗階段的新玩意。這已經是事實標準了。</p><h2 id="MCP-的三個核心原語"><a href="#MCP-的三個核心原語" class="headerlink" title="MCP 的三個核心原語"></a>MCP 的三個核心原語</h2><p>在寫 code 之前，先搞懂 MCP 的三個核心概念。我用遙控器來比喻：</p><p><strong>Tools（工具）</strong> — 遙控器上的按鈕。按下「計算」，AI 就去算數學；按下「查天氣」，AI 就去打 API。每個按鈕定義了一個動作，AI 決定什麼時候按。</p><p><strong>Resources（資源）</strong> — 書架上的參考資料。AI 可以翻閱這些資料來回答問題，但它不會去修改書架上的東西。適合放設定檔、文件、靜態資料。</p><p><strong>Prompts（提示）</strong> — 預設的操作手冊。你幫 AI 寫好一套 SOP，它可以直接拿來用，省去每次都要重新描述需求的麻煩。</p><p>技術上的定義是：MCP Server 透過 JSON-RPC 2.0 協定，向 MCP Client（像是 Claude Code）暴露 tools、resources 和 prompts。Client 負責呼叫，Server 負責執行。</p><h2 id="環境準備"><a href="#環境準備" class="headerlink" title="環境準備"></a>環境準備</h2><p>需要的東西很簡單：</p><ol><li><strong>Python 3.10 以上</strong>（asyncio 的一些語法需要）</li><li><strong>MCP Python SDK</strong></li></ol><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip install mcp</span><br></pre></td></tr></table></figure><p>就這樣。沒有其他依賴。</p><h2 id="第一個-MCP-Server：計算機"><a href="#第一個-MCP-Server：計算機" class="headerlink" title="第一個 MCP Server：計算機"></a>第一個 MCP Server：計算機</h2><p>先從最小的東西開始。我們要做一個計算機 MCP Server，讓 AI 可以做加減乘除。</p><p>為什麼選計算機？因為邏輯簡單到不需要花腦力理解業務需求，可以把注意力全部放在 MCP 的架構上。</p><p>建一個 <code>calculator_server.py</code>：</p><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> mcp.server <span class="keyword">import</span> Server</span><br><span class="line"><span class="keyword">from</span> mcp.server.stdio <span class="keyword">import</span> stdio_server</span><br><span class="line"><span class="keyword">from</span> mcp.types <span class="keyword">import</span> Tool, TextContent</span><br><span class="line"></span><br><span class="line">app = Server(<span class="string">&quot;calculator&quot;</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="meta">@app.list_tools()</span></span><br><span class="line"><span class="keyword">async</span> <span class="keyword">def</span> <span class="title function_">list_tools</span>():</span><br><span class="line">    <span class="string">&quot;&quot;&quot;告訴 Client 我們有哪些工具可以用&quot;&quot;&quot;</span></span><br><span class="line">    <span class="keyword">return</span> [</span><br><span class="line">        Tool(</span><br><span class="line">            name=<span class="string">&quot;calculate&quot;</span>,</span><br><span class="line">            description=<span class="string">&quot;Perform basic arithmetic&quot;</span>,</span><br><span class="line">            inputSchema=&#123;</span><br><span class="line">                <span class="string">&quot;type&quot;</span>: <span class="string">&quot;object&quot;</span>,</span><br><span class="line">                <span class="string">&quot;properties&quot;</span>: &#123;</span><br><span class="line">                    <span class="string">&quot;expression&quot;</span>: &#123;</span><br><span class="line">                        <span class="string">&quot;type&quot;</span>: <span class="string">&quot;string&quot;</span>,</span><br><span class="line">                        <span class="string">&quot;description&quot;</span>: <span class="string">&quot;Math expression like &#x27;2 + 3&#x27;&quot;</span></span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;,</span><br><span class="line">                <span class="string">&quot;required&quot;</span>: [<span class="string">&quot;expression&quot;</span>]</span><br><span class="line">            &#125;</span><br><span class="line">        )</span><br><span class="line">    ]</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="meta">@app.call_tool()</span></span><br><span class="line"><span class="keyword">async</span> <span class="keyword">def</span> <span class="title function_">call_tool</span>(<span class="params">name: <span class="built_in">str</span>, arguments: <span class="built_in">dict</span></span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;Client 呼叫工具時，這裡處理邏輯&quot;&quot;&quot;</span></span><br><span class="line">    <span class="keyword">if</span> name == <span class="string">&quot;calculate&quot;</span>:</span><br><span class="line">        <span class="keyword">try</span>:</span><br><span class="line">            result = <span class="built_in">eval</span>(arguments[<span class="string">&quot;expression&quot;</span>])</span><br><span class="line">            <span class="keyword">return</span> [TextContent(<span class="built_in">type</span>=<span class="string">&quot;text&quot;</span>, text=<span class="built_in">str</span>(result))]</span><br><span class="line">        <span class="keyword">except</span> Exception <span class="keyword">as</span> e:</span><br><span class="line">            <span class="keyword">return</span> [TextContent(<span class="built_in">type</span>=<span class="string">&quot;text&quot;</span>, text=<span class="string">f&quot;計算錯誤：<span class="subst">&#123;e&#125;</span>&quot;</span>)]</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">async</span> <span class="keyword">def</span> <span class="title function_">main</span>():</span><br><span class="line">    <span class="keyword">async</span> <span class="keyword">with</span> stdio_server() <span class="keyword">as</span> (read, write):</span><br><span class="line">        <span class="keyword">await</span> app.run(read, write, app.create_initialization_options())</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&quot;__main__&quot;</span>:</span><br><span class="line">    <span class="keyword">import</span> asyncio</span><br><span class="line">    asyncio.run(main())</span><br></pre></td></tr></table></figure><blockquote><p>⚠️ <code>eval()</code> 在這裡純粹是教學用。正式環境請用 <code>ast.literal_eval()</code> 或數學解析器，不然使用者傳一段惡意程式碼進來你就去吃泡麵了。</p></blockquote><p>拆解一下這段 code 在做什麼：</p><ul><li><code>Server(&quot;calculator&quot;)</code> — 建立一個叫 <code>calculator</code> 的 MCP Server 實例</li><li><code>@app.list_tools()</code> — 註冊一個 handler，當 Client 問「你有什麼工具？」時回應。這裡回傳一個 <code>Tool</code> 物件，定義工具名稱、描述、參數的 JSON Schema</li><li><code>@app.call_tool()</code> — 註冊另一個 handler，當 Client 說「幫我執行這個工具」時處理。回傳 <code>TextContent</code> 包著結果</li><li><code>stdio_server()</code> — 用標準輸入輸出做傳輸。MCP 支援 stdio 和 SSE 兩種傳輸方式，stdio 最簡單，本機開發直接用</li></ul><p>整個流程就是：Client 連上 → 問有什麼工具 → 選一個工具呼叫 → Server 執行 → 回傳結果。跟你按遙控器一模一樣。</p><h2 id="接上-Claude-Code"><a href="#接上-Claude-Code" class="headerlink" title="接上 Claude Code"></a>接上 Claude Code</h2><p>Server 寫好了，接下來讓 Claude Code 認識它。</p><p>打開 Claude Code 的設定，把 MCP server 加進去。在你的專案根目錄建立 <code>.claude/settings.json</code>，或是加到全域設定 <code>~/.claude/settings.json</code>：</p><figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;mcpServers&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;calculator&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;command&quot;</span><span class="punctuation">:</span> <span class="string">&quot;python3&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;args&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span><span class="string">&quot;/absolute/path/to/calculator_server.py&quot;</span><span class="punctuation">]</span></span><br><span class="line">    <span class="punctuation">&#125;</span></span><br><span class="line">  <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure><p>注意 <code>args</code> 裡面的路徑要用絕對路徑。弄了半天 server 連不上，結果是相對路徑的問題 — 這種坑真的會讓人懷疑人生。</p><p>設定好之後，重新啟動 Claude Code，你應該會看到它自動偵測到 calculator 這個 MCP Server。這時候你可以直接跟 Claude 說「幫我算 1024 * 768」，它就會透過 MCP 呼叫你寫的計算機工具。</p><p>跑起來那一刻蠻爽的。你寫的 Python 程式，被 AI 當成自己的工具在用。</p><h2 id="進階：加上-Resources"><a href="#進階：加上-Resources" class="headerlink" title="進階：加上 Resources"></a>進階：加上 Resources</h2><p>Tools 是讓 AI 「做事」，Resources 是讓 AI 「讀資料」。</p><p>來提供一份數學公式表給 AI 參考。在同一個 server 裡加上 resource handler：</p><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> mcp.types <span class="keyword">import</span> Resource</span><br><span class="line"></span><br><span class="line"><span class="meta">@app.list_resources()</span></span><br><span class="line"><span class="keyword">async</span> <span class="keyword">def</span> <span class="title function_">list_resources</span>():</span><br><span class="line">    <span class="keyword">return</span> [</span><br><span class="line">        Resource(</span><br><span class="line">            uri=<span class="string">&quot;math://formulas&quot;</span>,</span><br><span class="line">            name=<span class="string">&quot;常用數學公式&quot;</span>,</span><br><span class="line">            description=<span class="string">&quot;基礎數學公式速查表&quot;</span>,</span><br><span class="line">            mimeType=<span class="string">&quot;text/plain&quot;</span></span><br><span class="line">        )</span><br><span class="line">    ]</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="meta">@app.read_resource()</span></span><br><span class="line"><span class="keyword">async</span> <span class="keyword">def</span> <span class="title function_">read_resource</span>(<span class="params">uri: <span class="built_in">str</span></span>):</span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">str</span>(uri) == <span class="string">&quot;math://formulas&quot;</span>:</span><br><span class="line">        content = <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">        面積公式：</span></span><br><span class="line"><span class="string">        - 圓形：π × r²</span></span><br><span class="line"><span class="string">        - 三角形：底 × 高 ÷ 2</span></span><br><span class="line"><span class="string">        - 梯形：(上底 + 下底) × 高 ÷ 2</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">        體積公式：</span></span><br><span class="line"><span class="string">        - 球體：4/3 × π × r³</span></span><br><span class="line"><span class="string">        - 圓柱：π × r² × h</span></span><br><span class="line"><span class="string">        &quot;&quot;&quot;</span></span><br><span class="line">        <span class="keyword">return</span> content</span><br></pre></td></tr></table></figure><p>這樣 AI 在需要的時候，可以自己去讀這份公式表，不用你每次都在 prompt 裡貼一大段。Resource 的 URI 格式是自定義的，你可以用 <code>math://</code>、<code>db://</code>、<code>file://</code>，只要 Client 和 Server 說好就行。</p><h2 id="完整的-Server-長什麼樣"><a href="#完整的-Server-長什麼樣" class="headerlink" title="完整的 Server 長什麼樣"></a>完整的 Server 長什麼樣</h2><p>把 tools 和 resources 組合起來，完整的 <code>calculator_server.py</code> 如下：</p><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> mcp.server <span class="keyword">import</span> Server</span><br><span class="line"><span class="keyword">from</span> mcp.server.stdio <span class="keyword">import</span> stdio_server</span><br><span class="line"><span class="keyword">from</span> mcp.types <span class="keyword">import</span> Tool, TextContent, Resource</span><br><span class="line"></span><br><span class="line">app = Server(<span class="string">&quot;calculator&quot;</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="meta">@app.list_tools()</span></span><br><span class="line"><span class="keyword">async</span> <span class="keyword">def</span> <span class="title function_">list_tools</span>():</span><br><span class="line">    <span class="keyword">return</span> [</span><br><span class="line">        Tool(</span><br><span class="line">            name=<span class="string">&quot;calculate&quot;</span>,</span><br><span class="line">            description=<span class="string">&quot;Perform basic arithmetic&quot;</span>,</span><br><span class="line">            inputSchema=&#123;</span><br><span class="line">                <span class="string">&quot;type&quot;</span>: <span class="string">&quot;object&quot;</span>,</span><br><span class="line">                <span class="string">&quot;properties&quot;</span>: &#123;</span><br><span class="line">                    <span class="string">&quot;expression&quot;</span>: &#123;</span><br><span class="line">                        <span class="string">&quot;type&quot;</span>: <span class="string">&quot;string&quot;</span>,</span><br><span class="line">                        <span class="string">&quot;description&quot;</span>: <span class="string">&quot;Math expression like &#x27;2 + 3&#x27;&quot;</span></span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;,</span><br><span class="line">                <span class="string">&quot;required&quot;</span>: [<span class="string">&quot;expression&quot;</span>]</span><br><span class="line">            &#125;</span><br><span class="line">        )</span><br><span class="line">    ]</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="meta">@app.call_tool()</span></span><br><span class="line"><span class="keyword">async</span> <span class="keyword">def</span> <span class="title function_">call_tool</span>(<span class="params">name: <span class="built_in">str</span>, arguments: <span class="built_in">dict</span></span>):</span><br><span class="line">    <span class="keyword">if</span> name == <span class="string">&quot;calculate&quot;</span>:</span><br><span class="line">        <span class="keyword">try</span>:</span><br><span class="line">            result = <span class="built_in">eval</span>(arguments[<span class="string">&quot;expression&quot;</span>])</span><br><span class="line">            <span class="keyword">return</span> [TextContent(<span class="built_in">type</span>=<span class="string">&quot;text&quot;</span>, text=<span class="built_in">str</span>(result))]</span><br><span class="line">        <span class="keyword">except</span> Exception <span class="keyword">as</span> e:</span><br><span class="line">            <span class="keyword">return</span> [TextContent(<span class="built_in">type</span>=<span class="string">&quot;text&quot;</span>, text=<span class="string">f&quot;計算錯誤：<span class="subst">&#123;e&#125;</span>&quot;</span>)]</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="meta">@app.list_resources()</span></span><br><span class="line"><span class="keyword">async</span> <span class="keyword">def</span> <span class="title function_">list_resources</span>():</span><br><span class="line">    <span class="keyword">return</span> [</span><br><span class="line">        Resource(</span><br><span class="line">            uri=<span class="string">&quot;math://formulas&quot;</span>,</span><br><span class="line">            name=<span class="string">&quot;常用數學公式&quot;</span>,</span><br><span class="line">            description=<span class="string">&quot;基礎數學公式速查表&quot;</span>,</span><br><span class="line">            mimeType=<span class="string">&quot;text/plain&quot;</span></span><br><span class="line">        )</span><br><span class="line">    ]</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="meta">@app.read_resource()</span></span><br><span class="line"><span class="keyword">async</span> <span class="keyword">def</span> <span class="title function_">read_resource</span>(<span class="params">uri: <span class="built_in">str</span></span>):</span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">str</span>(uri) == <span class="string">&quot;math://formulas&quot;</span>:</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">面積公式：</span></span><br><span class="line"><span class="string">- 圓形：π × r²</span></span><br><span class="line"><span class="string">- 三角形：底 × 高 ÷ 2</span></span><br><span class="line"><span class="string">- 梯形：(上底 + 下底) × 高 ÷ 2</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">體積公式：</span></span><br><span class="line"><span class="string">- 球體：4/3 × π × r³</span></span><br><span class="line"><span class="string">- 圓柱：π × r² × h</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">async</span> <span class="keyword">def</span> <span class="title function_">main</span>():</span><br><span class="line">    <span class="keyword">async</span> <span class="keyword">with</span> stdio_server() <span class="keyword">as</span> (read, write):</span><br><span class="line">        <span class="keyword">await</span> app.run(read, write, app.create_initialization_options())</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&quot;__main__&quot;</span>:</span><br><span class="line">    <span class="keyword">import</span> asyncio</span><br><span class="line">    asyncio.run(main())</span><br></pre></td></tr></table></figure><p>一個檔案，70 行不到，你就有一個完整的 MCP Server，同時提供計算工具和參考資料。</p><h2 id="接下來的路"><a href="#接下來的路" class="headerlink" title="接下來的路"></a>接下來的路</h2><p>你現在有了一個能跑的 MCP Server。計算機當然只是起點。</p><p>真正有趣的事情在後面。MCP 的價值不在於讓 AI 做加法，而在於你可以把任何系統變成 AI 的工具。資料庫、內部 API、CI&#x2F;CD pipeline、監控系統 — 只要你能寫 Python 去操作它，你就能把它包成 MCP Server，讓 AI 直接用。</p><p>幾個值得探索的方向：</p><ul><li><strong>Database MCP</strong> — 讓 AI 直接查資料庫。不用再複製貼上 SQL 結果。MCP 生態系已經有現成的 DBHub 可以用</li><li><strong>API MCP</strong> — 包裝你公司的內部 API。AI 能直接呼叫，省掉人工轉介</li><li><strong>認證機制</strong> — MCP 的 OAuth 2.1 授權框架，讓 remote server 安全地接受外部連線</li><li><strong>Remote MCP Server</strong> — 用 SSE（Server-Sent Events）傳輸，部署到雲端，多個 Client 共用</li></ul><p>這些東西有一個共通的思維模式：<strong>你不是在寫「給人用的工具」，你是在寫「給 AI 用的介面」</strong>。設計 inputSchema 的時候，你在想的不是 UI 怎麼排版，而是 AI 怎麼理解參數的意義。Tool 的 description 不是給人讀的說明文件，是給 AI 判斷「這個工具能不能解決當前問題」的依據。</p><p>這是一種完全不同的軟體設計思維。當你掌握了這個框架，你看待自己寫的每一個 function、每一個 API endpoint 的眼光都會不一樣。不是「使用者會怎麼操作」，而是「AI 會怎麼理解和使用」。</p><p>Anthropic Academy 有免費的 MCP 課程，想深入的話可以從那邊開始。</p><hr><blockquote><p>參考來源：<a href="https://anthropic.skilljar.com/">Model Context Protocol (MCP) - Anthropic Academy</a><br>官方文件：<a href="https://modelcontextprotocol.io/">MCP Documentation</a></p></blockquote>]]></content>
+      
+      
+      <categories>
+          
+          <category> Claude Code </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> MCP </tag>
+            
+            <tag> AI Agent </tag>
+            
+            <tag> Claude Code </tag>
+            
+            <tag> 教學 </tag>
+            
+            <tag> Python </tag>
             
         </tags>
       
@@ -2701,11 +2802,11 @@
       
         <tags>
             
-            <tag> AI Agent </tag>
+            <tag> MCP </tag>
             
             <tag> 資安 </tag>
             
-            <tag> MCP </tag>
+            <tag> AI Agent </tag>
             
             <tag> Sonatype Guide </tag>
             
@@ -2767,9 +2868,9 @@
             
             <tag> Claude Code </tag>
             
-            <tag> Hooks </tag>
-            
             <tag> 自動化 </tag>
+            
+            <tag> Hooks </tag>
             
             <tag> 教學 </tag>
             
@@ -2959,11 +3060,11 @@
             
             <tag> AI與科技新聞 </tag>
             
-            <tag> 資安 </tag>
+            <tag> MCP </tag>
             
             <tag> OpenAI </tag>
             
-            <tag> MCP </tag>
+            <tag> 資安 </tag>
             
             <tag> AI 安全 </tag>
             
@@ -2990,9 +3091,9 @@
       
         <tags>
             
-            <tag> AI Agent </tag>
-            
             <tag> OpenAI </tag>
+            
+            <tag> AI Agent </tag>
             
             <tag> Codex </tag>
             
@@ -3250,9 +3351,9 @@
             
             <tag> AI與科技新聞 </tag>
             
-            <tag> OpenAI </tag>
-            
             <tag> MCP </tag>
+            
+            <tag> OpenAI </tag>
             
             <tag> Claude Code </tag>
             
@@ -3506,9 +3607,9 @@
             
             <tag> AI與科技新聞 </tag>
             
-            <tag> 資安 </tag>
-            
             <tag> OpenAI </tag>
+            
+            <tag> 資安 </tag>
             
             <tag> Cursor </tag>
             
@@ -3634,9 +3735,9 @@
             
             <tag> AI與科技新聞 </tag>
             
-            <tag> 資安 </tag>
-            
             <tag> OpenAI </tag>
+            
+            <tag> 資安 </tag>
             
             <tag> Google </tag>
             
@@ -4305,9 +4406,9 @@
       
         <tags>
             
-            <tag> AI Agent </tag>
-            
             <tag> Claude </tag>
+            
+            <tag> AI Agent </tag>
             
             <tag> Multi-Model </tag>
             
@@ -4427,11 +4528,11 @@
       
         <tags>
             
-            <tag> Claude Code </tag>
-            
             <tag> Cursor </tag>
             
             <tag> Copilot </tag>
+            
+            <tag> Claude Code </tag>
             
             <tag> 開發工具 </tag>
             
@@ -4760,13 +4861,13 @@
       
         <tags>
             
-            <tag> AI Agent </tag>
-            
             <tag> AI與科技新聞 </tag>
             
             <tag> Claude </tag>
             
             <tag> OpenAI </tag>
+            
+            <tag> AI Agent </tag>
             
             <tag> Copilot </tag>
             
@@ -4822,9 +4923,9 @@
       
         <tags>
             
-            <tag> LLM </tag>
-            
             <tag> MCP </tag>
+            
+            <tag> LLM </tag>
             
             <tag> Microsoft </tag>
             
@@ -4853,13 +4954,13 @@
       
         <tags>
             
-            <tag> 理財 </tag>
-            
             <tag> AI與科技新聞 </tag>
             
-            <tag> Claude Code </tag>
+            <tag> 理財 </tag>
             
             <tag> Gemini </tag>
+            
+            <tag> Claude Code </tag>
             
         </tags>
       
@@ -4913,9 +5014,9 @@
       
         <tags>
             
-            <tag> AI Agent </tag>
-            
             <tag> MCP </tag>
+            
+            <tag> AI Agent </tag>
             
             <tag> Claude Code </tag>
             
@@ -4973,9 +5074,9 @@
             
             <tag> AI與科技新聞 </tag>
             
-            <tag> 資安 </tag>
-            
             <tag> Claude </tag>
+            
+            <tag> 資安 </tag>
             
             <tag> Copilot </tag>
             
@@ -5151,9 +5252,9 @@
             
             <tag> AI與科技新聞 </tag>
             
-            <tag> 資安 </tag>
-            
             <tag> OpenAI </tag>
+            
+            <tag> 資安 </tag>
             
             <tag> NVIDIA </tag>
             
@@ -5207,11 +5308,11 @@
       
         <tags>
             
+            <tag> MCP </tag>
+            
             <tag> LLM </tag>
             
             <tag> AI Agent </tag>
-            
-            <tag> MCP </tag>
             
             <tag> Claude Code </tag>
             
@@ -5265,11 +5366,11 @@
       
         <tags>
             
-            <tag> LLM </tag>
-            
             <tag> AI與科技新聞 </tag>
             
             <tag> 資安 </tag>
+            
+            <tag> LLM </tag>
             
         </tags>
       
@@ -5356,9 +5457,9 @@
       
         <tags>
             
-            <tag> AI Agent </tag>
-            
             <tag> MCP </tag>
+            
+            <tag> AI Agent </tag>
             
             <tag> Claude Code </tag>
             
@@ -5416,11 +5517,11 @@
             
             <tag> AI與科技新聞 </tag>
             
-            <tag> 資安 </tag>
+            <tag> MCP </tag>
             
             <tag> OpenAI </tag>
             
-            <tag> MCP </tag>
+            <tag> 資安 </tag>
             
         </tags>
       
@@ -5447,9 +5548,9 @@
             
             <tag> Claude </tag>
             
-            <tag> macOS </tag>
-            
             <tag> 自動化 </tag>
+            
+            <tag> macOS </tag>
             
         </tags>
       
@@ -5503,11 +5604,11 @@
       
         <tags>
             
-            <tag> 理財 </tag>
-            
             <tag> AI與科技新聞 </tag>
             
             <tag> 資安 </tag>
+            
+            <tag> 理財 </tag>
             
             <tag> Gemini </tag>
             
@@ -5592,9 +5693,9 @@
       
         <tags>
             
-            <tag> 開源 </tag>
-            
             <tag> 資安 </tag>
+            
+            <tag> 開源 </tag>
             
             <tag> 開發工具 </tag>
             
@@ -5625,9 +5726,9 @@
             
             <tag> Claude Code </tag>
             
-            <tag> macOS </tag>
-            
             <tag> 自動化 </tag>
+            
+            <tag> macOS </tag>
             
             <tag> 教學 </tag>
             
@@ -5656,9 +5757,9 @@
             
             <tag> AI與科技新聞 </tag>
             
-            <tag> 資安 </tag>
-            
             <tag> MCP </tag>
+            
+            <tag> 資安 </tag>
             
             <tag> Anthropic </tag>
             
@@ -5780,9 +5881,9 @@
             
             <tag> AI與科技新聞 </tag>
             
-            <tag> Apple </tag>
-            
             <tag> MCP </tag>
+            
+            <tag> Apple </tag>
             
             <tag> Anthropic </tag>
             
@@ -6010,9 +6111,9 @@
             
             <tag> AI與科技新聞 </tag>
             
-            <tag> 資安 </tag>
-            
             <tag> MCP </tag>
+            
+            <tag> 資安 </tag>
             
             <tag> Google </tag>
             
@@ -6072,9 +6173,9 @@
             
             <tag> AI與科技新聞 </tag>
             
-            <tag> 資安 </tag>
-            
             <tag> MCP </tag>
+            
+            <tag> 資安 </tag>
             
             <tag> Anthropic </tag>
             
@@ -6188,9 +6289,9 @@
             
             <tag> AI與科技新聞 </tag>
             
-            <tag> 資安 </tag>
-            
             <tag> OpenAI </tag>
+            
+            <tag> 資安 </tag>
             
         </tags>
       
@@ -6271,13 +6372,13 @@
       
         <tags>
             
-            <tag> LLM </tag>
-            
             <tag> AI與科技新聞 </tag>
             
             <tag> Claude </tag>
             
             <tag> OpenAI </tag>
+            
+            <tag> LLM </tag>
             
             <tag> Apple </tag>
             
@@ -6362,13 +6463,13 @@
             
             <tag> AI與科技新聞 </tag>
             
-            <tag> 資安 </tag>
-            
             <tag> Claude </tag>
+            
+            <tag> MCP </tag>
             
             <tag> OpenAI </tag>
             
-            <tag> MCP </tag>
+            <tag> 資安 </tag>
             
         </tags>
       
@@ -6501,11 +6602,11 @@
       
         <tags>
             
-            <tag> LLM </tag>
-            
             <tag> AI與科技新聞 </tag>
             
             <tag> 資安 </tag>
+            
+            <tag> LLM </tag>
             
         </tags>
       

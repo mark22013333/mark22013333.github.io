@@ -1,0 +1,447 @@
+<!DOCTYPE html><html lang="zh-TW" data-theme="dark"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>Claude Managed Agents 自架沙箱與 MCP Tunnels 完整教學 — 讓 AI Agent 在你自己的基礎設施上跑 | Cheng's Tech &amp; Life</title><meta name="author" content="Cheng®"><meta name="copyright" content="Cheng®"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#0d0d0d"><meta name="description" content="Anthropic 5&#x2F;19 公開測試 Claude Managed Agents 兩個關鍵新功能：Self-hosted sandboxes 把 tool 執行搬回自己機房、MCP Tunnels 讓 agent 不開外網就能連內網 MCP server。完整拆解設計原理、四家認證 provider 比較、從零部署實作。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Claude Managed Agents 自架沙箱與 MCP Tunnels 完整教學 — 讓 AI Agent 在你自己的基礎設施上跑">
+<meta property="og:url" content="https://mark22013333.github.io/2026/05/25/Claude-Managed-Agents-%E8%87%AA%E6%9E%B6%E6%B2%99%E7%AE%B1%E8%88%87-MCP-Tunnels-%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8/index.html">
+<meta property="og:site_name" content="Cheng&#39;s Tech &amp; Life">
+<meta property="og:description" content="Anthropic 5&#x2F;19 公開測試 Claude Managed Agents 兩個關鍵新功能：Self-hosted sandboxes 把 tool 執行搬回自己機房、MCP Tunnels 讓 agent 不開外網就能連內網 MCP server。完整拆解設計原理、四家認證 provider 比較、從零部署實作。">
+<meta property="og:locale" content="zh_TW">
+<meta property="og:image" content="https://mark22013333.github.io/img/20260525-03.webp">
+<meta property="article:published_time" content="2026-05-25T01:30:00.000Z">
+<meta property="article:modified_time" content="2026-05-25T13:40:12.303Z">
+<meta property="article:author" content="Cheng®">
+<meta property="article:tag" content="Claude">
+<meta property="article:tag" content="MCP">
+<meta property="article:tag" content="AI Agent">
+<meta property="article:tag" content="Anthropic">
+<meta property="article:tag" content="Claude Code">
+<meta property="article:tag" content="教學">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://mark22013333.github.io/img/20260525-03.webp"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Claude Managed Agents 自架沙箱與 MCP Tunnels 完整教學 — 讓 AI Agent 在你自己的基礎設施上跑",
+  "url": "https://mark22013333.github.io/2026/05/25/Claude-Managed-Agents-%E8%87%AA%E6%9E%B6%E6%B2%99%E7%AE%B1%E8%88%87-MCP-Tunnels-%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8/",
+  "image": "https://mark22013333.github.io/img/20260525-03.webp",
+  "datePublished": "2026-05-25T01:30:00.000Z",
+  "dateModified": "2026-05-25T13:40:12.303Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "Cheng®",
+      "url": "https://mark22013333.github.io"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://mark22013333.github.io/2026/05/25/Claude-Managed-Agents-%E8%87%AA%E6%9E%B6%E6%B2%99%E7%AE%B1%E8%88%87-MCP-Tunnels-%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//www.google-analytics.com" crossorigin=""/><link rel="preconnect" href="//fonts.googleapis.com" crossorigin=""/><link rel="preconnect" href="//busuanzi.ibruce.info"/><meta name="google-site-verification" content="6ywUr8k2n_CT1PFYJzlSvI3CZ-JmJ55RYbA39VrFBDs"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!true && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          const hour = new Date().getHours()
+          const isNight = hour <= 9 || hour >= 18
+          if (theme === undefined) isNight ? activateDarkMode() : activateLightMode()
+          else theme === 'light' ? activateLightMode() : activateDarkMode()
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script async="async" src="https://www.googletagmanager.com/gtag/js?id=G-JBV14NRDH3"></script><script>window.dataLayer = window.dataLayer || []
+function gtag(){dataLayer.push(arguments)}
+gtag('js', new Date())
+gtag('config', 'G-JBV14NRDH3')
+btf.addGlobalFn('pjaxComplete', () => {
+  gtag('config', 'G-JBV14NRDH3', {'page_path': window.location.pathname})
+}, 'google_analytics')
+</script><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Titillium+Web&amp;display=swap" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"pagination":{"enable":false,"hitsPerPage":8},"languages":{"hits_empty":"找不到符合您查詢的內容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '複製成功',
+    error: '複製失敗',
+    noSupport: '瀏覽器不支援'
+  },
+  relativeDate: {
+    homepage: false,
+    post: true
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '剛剛',
+    min: '分鐘前',
+    hour: '小時前',
+    day: '天前',
+    month: '個月前'
+  },
+  copyright: {"limitCount":1,"languages":{"author":"作者: Cheng®","link":"連結: ","source":"來源: Cheng's Tech & Life","info":"著作權歸作者所有。如需商業轉載，請聯絡作者獲得授權，非商業轉載請註明出處😁。"}},
+  lightbox: 'fancybox',
+  Snackbar: {"chs_to_cht":"已切換為繁體中文","cht_to_chs":"已切換為簡體中文","day_to_night":"已切換為深色模式","night_to_day":"已切換為淺色模式","bgLight":"#49b1f5","bgDark":"#1f1f1f","position":"top-center"},
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid/dist/infinitegrid.min.js',
+    buttonText: '載入更多'
+  },
+  isPhotoFigcaption: true,
+  islazyloadPlugin: false,
+  isAnchor: true,
+  percent: {
+    toc: true,
+    rightside: true,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Claude Managed Agents 自架沙箱與 MCP Tunnels 完整教學 — 讓 AI Agent 在你自己的基礎設施上跑',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><link rel="stylesheet" href="/css/kkbox-player.css"><link rel="stylesheet" href="/css/tag-cloud-fancy.css"><link rel="stylesheet" href="/css/font-resize.css"><link rel="stylesheet" href="/css/dark-palette.css"><link rel="stylesheet" href="/css/loading-override.css"><link rel="stylesheet" href="/css/series-showcase.css"><link rel="stylesheet" href="/css/search-tags.css"><link rel="alternate" href="/atom.xml" title="Cheng's Tech & Life" type="application/atom+xml">
+</head><body><div id="loading-box"><div class="loading-glass-overlay"></div><div class="loading-indicator"><div class="loading-dot"></div><div class="loading-dot"></div><div class="loading-dot"></div></div></div><script>(()=>{
+  const $loadingBox = document.getElementById('loading-box')
+  const $body = document.body
+  const preloader = {
+    endLoading: () => {
+      if ($loadingBox.classList.contains('loaded')) return
+      $body.style.overflow = ''
+      $loadingBox.classList.add('loaded')
+    },
+    initLoading: () => {
+      $body.style.overflow = 'hidden'
+      $loadingBox.classList.remove('loaded')
+    }
+  }
+
+  preloader.initLoading()
+
+  if (document.readyState === 'complete') {
+    preloader.endLoading()
+  } else {
+    window.addEventListener('load', preloader.endLoading)
+    document.addEventListener('DOMContentLoaded', preloader.endLoading)
+    setTimeout(preloader.endLoading, 7000)
+  }
+
+  if (true) {
+    btf.addGlobalFn('pjaxSend', preloader.initLoading, 'preloader_init')
+    btf.addGlobalFn('pjaxComplete', preloader.endLoading, 'preloader_end')
+  }
+})()</script><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="https://lh3.googleusercontent.com/pw/ABLVV87_po8nBc6F_tXcoYDmtzMGWxHuhhrbguYILCjmjWKLOS8DTpubm0YoQLKgjyjRIZyV5TjYe7XVEz_YU4squfr37GTZqPZP1hlMVZ_MIgXpTxWu73M=w1200" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">261</div></a><a href="/tags/"><div class="headline">標籤</div><div class="length-num">218</div></a><a href="/categories/"><div class="headline">分類</div><div class="length-num">19</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首頁-Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 時間軸-archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 標籤-tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分類-Categories</span></a></div><div class="menus_item"><a class="site-page" href="/series/"><i class="fa-fw fas fa-layer-group"></i><span> 系列-Series</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-list"></i><span> 其他列表</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音樂-Music</span></a></li><li><a class="site-page child" href="/gallery/"><i class="fa-fw fas fa-images"></i><span> 畫館-Gallery</span></a></li></ul></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg fixed" id="page-header" style="background-image: url(/img/20260525-03.webp);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><img class="site-icon" src="https://lh3.googleusercontent.com/pw/ABLVV87_po8nBc6F_tXcoYDmtzMGWxHuhhrbguYILCjmjWKLOS8DTpubm0YoQLKgjyjRIZyV5TjYe7XVEz_YU4squfr37GTZqPZP1hlMVZ_MIgXpTxWu73M=w1200" alt="Logo"><span class="site-name">Cheng's Tech &amp; Life</span></a><a class="nav-page-title" href="/"><span class="site-name">Claude Managed Agents 自架沙箱與 MCP Tunnels 完整教學 — 讓 AI Agent 在你自己的基礎設施上跑</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首頁</span></span></a></span><div id="menus"><div id="search-button" title="Ctrl+K / Cmd+K"><span class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜尋</span></span></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首頁-Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 時間軸-archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 標籤-tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分類-Categories</span></a></div><div class="menus_item"><a class="site-page" href="/series/"><i class="fa-fw fas fa-layer-group"></i><span> 系列-Series</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-list"></i><span> 其他列表</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音樂-Music</span></a></li><li><a class="site-page child" href="/gallery/"><i class="fa-fw fas fa-images"></i><span> 畫館-Gallery</span></a></li></ul></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">Claude Managed Agents 自架沙箱與 MCP Tunnels 完整教學 — 讓 AI Agent 在你自己的基礎設施上跑</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">發表於</span><time class="post-meta-date-created" datetime="2026-05-25T01:30:00.000Z" title="發表於 2026-05-25 09:30:00">2026-05-25</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新於</span><time class="post-meta-date-updated" datetime="2026-05-25T13:40:12.303Z" title="更新於 2026-05-25 21:40:12">2026-05-25</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Claude-Code/">Claude Code</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">總字數:</span><span class="word-count">3.1k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">閱讀時間:</span><span>11分鐘</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">瀏覽量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><p>你要跑一個 Claude agent 自動處理 Jira ticket。</p>
+<p>問題是這個 Jira 在公司 VPN 後面、沒有 public endpoint，外面打不進來。傳統做法你會做什麼？開個反向代理、租個跳板機、塞個 OAuth proxy 在 DMZ、然後跟資安部門吵兩個月。最後上線時候那個架構複雜到沒人敢動。</p>
+<p><a target="_blank" rel="noopener" href="https://claude.com/blog/claude-managed-agents-updates">Anthropic 5 月 19 日為 Claude Managed Agents 加了兩個東西</a>，讓上面那段話可以縮成「裝個 daemon、跑一個指令、收工」：<strong>Self-hosted sandboxes</strong>（自架沙箱）和 <strong>MCP Tunnels</strong>（私有通道）。前者把 tool 執行搬回你自己的機房，後者讓 Anthropic 那邊的 agent 不開外網就能連你內網的 MCP server。</p>
+<p>要看懂這兩個功能設計上的精巧之處，要先把「Claude agent 到底由幾塊組成」這件事拆開來。</p>
+<hr>
+<h2 id="一個-AI-Agent-拆成兩塊：思考-vs-動手"><a href="#一個-AI-Agent-拆成兩塊：思考-vs-動手" class="headerlink" title="一個 AI Agent 拆成兩塊：思考 vs 動手"></a>一個 AI Agent 拆成兩塊：思考 vs 動手</h2><p>把 agent 想成餐廳：</p>
+<p><strong>主廚</strong>坐在中央廚房想菜單、看訂單、決定接下來該炒哪盤——這是 agent loop，負責 orchestration（決定下一步）、context management（記得目前進度）、error recovery（菜炒壞了怎麼辦）。</p>
+<p><strong>雜工</strong>是真正動手切菜、開瓦斯、洗鍋子的人——這對應 tool execution，實際把 <code>read_file</code>、<code>write_file</code>、<code>run_shell</code> 這些指令跑出來。</p>
+<p>過去 Anthropic 的設計是把主廚跟雜工綁在同一個 sandbox 裡，全部跑在 Anthropic 的基礎設施上。這對「給 Claude 一個任意題目讓它自己玩」沒問題，但只要你的 agent 要碰公司資料——客戶清單、財報草稿、內網檔案——這套架構就會讓資安團隊馬上跳出來：「我們的資料怎麼會跑到 Anthropic 的機器上？」</p>
+<p>Self-hosted sandboxes 做的事很簡單：<strong>雜工搬回你家</strong>。主廚還是在 Anthropic 的中央廚房（agent loop），但所有實際碰資料的動作都在你自己控制的環境跑。</p>
+<p>MCP Tunnels 解決的是另一個問題：<strong>主廚怎麼問你家冰箱有什麼</strong>。MCP server 是 agent 拿到「外部知識」的橋——可能是公司的內部知識庫、Jira、PostgreSQL。但這些東西放在你 VPN 裡面，主廚一打過去就被防火牆擋掉。</p>
+<hr>
+<h2 id="Self-hosted-Sandboxes：把-tool-執行搬回自己機房"><a href="#Self-hosted-Sandboxes：把-tool-執行搬回自己機房" class="headerlink" title="Self-hosted Sandboxes：把 tool 執行搬回自己機房"></a>Self-hosted Sandboxes：把 tool 執行搬回自己機房</h2><p>機制比直覺更簡單。你在自己機房（或雲端 VM）跑一個叫 <strong>environment worker</strong> 的 process，它的工作只有一件事：接收 Anthropic 那邊 agent loop 發過來的 tool 執行請求，在本地跑掉，把結果回傳。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">[Anthropic 雲端 Agent Loop]</span><br><span class="line">        ↓ &quot;請執行: read_file(&#x27;/secret/q4_report.pdf&#x27;)&quot;</span><br><span class="line">        ↓</span><br><span class="line">[你機房的 environment worker]</span><br><span class="line">        ↓ 真的去讀檔案</span><br><span class="line">        ↓</span><br><span class="line">        ↑ 回傳檔案內容</span><br><span class="line">        ↑</span><br><span class="line">[Anthropic 雲端 Agent Loop]</span><br><span class="line">        ↓ 根據檔案內容決定下一步</span><br><span class="line">        ↓ ...</span><br></pre></td></tr></table></figure>
+
+<p>關鍵設計是「敏感資料永遠不離開你的網路邊界」。檔案在你機房被讀，內容被當作 tool 結果送回 agent——但那個檔案本身、那個 Python package、那個 service 連線，都還在你家。</p>
+<p><a target="_blank" rel="noopener" href="https://platform.claude.com/docs/en/managed-agents/self-hosted-sandboxes">官方公開測試版本</a>目前認證了四家 managed provider，各自定位不同：</p>
+<h3 id="四家認證-provider-怎麼選"><a href="#四家認證-provider-怎麼選" class="headerlink" title="四家認證 provider 怎麼選"></a>四家認證 provider 怎麼選</h3><p><strong>Cloudflare</strong> — 推出時就最完整：除了基礎 sandbox 還加了 egress control（控制 sandbox 對外連線白名單）、browser access（agent 可以開瀏覽器）、custom tool 支援。<a target="_blank" rel="noopener" href="https://developers.cloudflare.com/sandbox/tutorials/claude-managed-agents/">Cloudflare 的 Sandbox SDK</a> 是這四家裡 lift-and-shift 摩擦力最低的選擇。</p>
+<p><strong>Daytona</strong> — 完整的可組裝電腦（full composable computers）。每個 sandbox 都是長期運行、有狀態的——你可以 SSH 進去看 agent 操作到哪、可以 pause + restore 保留所有狀態。適合需要「人類接手 debug」的場景。</p>
+<p><strong>Modal</strong> — Anthropic 文件直接寫「為 AI workload 而生」。sandbox 跟 Modal 既有的 functions、storage、networking primitives 共享底層。custom container runtime 號稱任何 image 都 sub-second 啟動，可以擴到上萬個並發 sandbox，CPU&#x2F;GPU 隨點隨開。</p>
+<p><strong>Vercel</strong> — 沒在搜尋結果裡單獨展開，但定位是給 Next.js + serverless 已經 all-in 在 Vercel 的團隊一個「不換 vendor 就能加 agent」的選項。</p>
+<p>選哪家的問題比想像中單純：你公司現在主要雲端基礎設施在哪邊，就選哪邊。換 vendor 加 agent 的複雜度遠高於 agent 本身。</p>
+<h3 id="從零部署：以-Cloudflare-為例"><a href="#從零部署：以-Cloudflare-為例" class="headerlink" title="從零部署：以 Cloudflare 為例"></a>從零部署：以 Cloudflare 為例</h3><p>最完整且摩擦力最低的路徑是 Cloudflare。流程不到十分鐘：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 1. 安裝 Cloudflare Sandbox SDK</span></span><br><span class="line">npm install @cloudflare/sandbox</span><br><span class="line"></span><br><span class="line"><span class="comment"># 2. 設定 wrangler.toml 加上 sandbox binding</span></span><br><span class="line"><span class="built_in">cat</span> &gt;&gt; wrangler.toml &lt;&lt;<span class="string">EOF</span></span><br><span class="line"><span class="string">[[services]]</span></span><br><span class="line"><span class="string">binding = &quot;SANDBOX&quot;</span></span><br><span class="line"><span class="string">service = &quot;claude-sandbox&quot;</span></span><br><span class="line"><span class="string">EOF</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 3. 部署 environment worker 到 Cloudflare</span></span><br><span class="line">wrangler deploy</span><br><span class="line"></span><br><span class="line"><span class="comment"># 4. 在 Claude Console 註冊這個 sandbox</span></span><br><span class="line"><span class="comment"># Workspace Settings → Managed Agents → Sandbox Providers → Add Cloudflare</span></span><br></pre></td></tr></table></figure>
+
+<p>註冊成功後，下次你建立 agent 時可以指定：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> anthropic</span><br><span class="line"></span><br><span class="line">client = anthropic.Anthropic()</span><br><span class="line">response = client.managed_agents.create(</span><br><span class="line">    name=<span class="string">&quot;財報摘要 agent&quot;</span>,</span><br><span class="line">    sandbox_provider=<span class="string">&quot;cloudflare&quot;</span>,</span><br><span class="line">    sandbox_config=&#123;</span><br><span class="line">        <span class="string">&quot;egress_allowlist&quot;</span>: [<span class="string">&quot;api.internal.example.com&quot;</span>],</span><br><span class="line">        <span class="string">&quot;tools&quot;</span>: [<span class="string">&quot;read_file&quot;</span>, <span class="string">&quot;write_file&quot;</span>, <span class="string">&quot;shell&quot;</span>],</span><br><span class="line">    &#125;,</span><br><span class="line">    instructions=<span class="string">&quot;你是一個內部財報處理 agent...&quot;</span>,</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<p><code>egress_allowlist</code> 是 Cloudflare 整合的賣點之一：你可以白名單化 sandbox 能對外連到哪幾個 host。Agent 想偷打去其他地方？被 Cloudflare 擋掉。這對於資安部門要簽核的時候差很多——你能拿出一個 host 清單講「就只能去這幾個地方」。</p>
+<h3 id="自己手搓-environment-worker（不用-managed-provider）"><a href="#自己手搓-environment-worker（不用-managed-provider）" class="headerlink" title="自己手搓 environment worker（不用 managed provider）"></a>自己手搓 environment worker（不用 managed provider）</h3><p>如果你不想綁 Cloudflare&#x2F;Modal 這類 provider，自己跑 environment worker 也可以。Anthropic 提供了 Python SDK：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># environment_worker.py</span></span><br><span class="line"><span class="keyword">from</span> anthropic.managed_agents <span class="keyword">import</span> EnvironmentWorker</span><br><span class="line"></span><br><span class="line">worker = EnvironmentWorker(</span><br><span class="line">    api_key=<span class="string">&quot;sk-ant-...&quot;</span>,</span><br><span class="line">    workspace_id=<span class="string">&quot;ws_xxx&quot;</span>,</span><br><span class="line">    sandbox_root=<span class="string">&quot;/var/lib/claude-sandbox&quot;</span>,</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="meta">@worker.tool(<span class="params"><span class="string">&quot;read_file&quot;</span></span>)</span></span><br><span class="line"><span class="keyword">async</span> <span class="keyword">def</span> <span class="title function_">read_file</span>(<span class="params">path: <span class="built_in">str</span></span>) -&gt; <span class="built_in">str</span>:</span><br><span class="line">    <span class="comment"># 你可以在這裡加任意檢查邏輯</span></span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> path.startswith(<span class="string">&quot;/var/lib/claude-sandbox/&quot;</span>):</span><br><span class="line">        <span class="keyword">raise</span> PermissionError(<span class="string">&quot;路徑超出 sandbox 範圍&quot;</span>)</span><br><span class="line">    <span class="keyword">with</span> <span class="built_in">open</span>(path) <span class="keyword">as</span> f:</span><br><span class="line">        <span class="keyword">return</span> f.read()</span><br><span class="line"></span><br><span class="line"><span class="meta">@worker.tool(<span class="params"><span class="string">&quot;query_db&quot;</span></span>)</span></span><br><span class="line"><span class="keyword">async</span> <span class="keyword">def</span> <span class="title function_">query_db</span>(<span class="params">sql: <span class="built_in">str</span></span>) -&gt; <span class="built_in">list</span>[<span class="built_in">dict</span>]:</span><br><span class="line">    <span class="comment"># 連到內網 PostgreSQL，這個連線永遠在你機房</span></span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">await</span> db.fetch_all(sql)</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&quot;__main__&quot;</span>:</span><br><span class="line">    worker.run()</span><br></pre></td></tr></table></figure>
+
+<p>跑起來這個 process，它會跟 Anthropic 建立一個 outbound 長連線、等待 agent loop 派發 tool 執行請求。沒有 inbound port、沒有對外公開的 endpoint。這是核心安全設計。</p>
+<hr>
+<h2 id="MCP-Tunnels：讓-Agent-連進你的內網而不需要開門"><a href="#MCP-Tunnels：讓-Agent-連進你的內網而不需要開門" class="headerlink" title="MCP Tunnels：讓 Agent 連進你的內網而不需要開門"></a>MCP Tunnels：讓 Agent 連進你的內網而不需要開門</h2><p>Self-hosted sandbox 解決了「tool 執行在哪跑」，但還沒解決一個常見場景：<strong>你的 MCP server 在 VPN 後面</strong>。</p>
+<p>MCP server 是 agent 拿到「外部知識」的橋。可能是你公司自己寫的 Jira 連接器、可能是接你內部知識庫的 RAG server、可能是接 PostgreSQL 的 query MCP。問題是這些東西放在內網，Anthropic 那邊的 agent loop 怎麼打進來？</p>
+<p>過去的解決方案讓資安部門很頭痛：</p>
+<ul>
+<li>開個反向代理在 DMZ → 增加攻擊面</li>
+<li>把 MCP server 部署到公雲 → 資料離開公司</li>
+<li>跑 ngrok 或 cloudflared → 流量不受控</li>
+</ul>
+<p>MCP Tunnels 走的是相反的方向：<strong>讓 tunnel 是你打出去的、不是 Anthropic 打進來的</strong>。</p>
+<h3 id="工作原理（用打電話來類比）"><a href="#工作原理（用打電話來類比）" class="headerlink" title="工作原理（用打電話來類比）"></a>工作原理（用打電話來類比）</h3><p>想像你要跟外面某個人講話，但你家門禁森嚴不讓人按門鈴。怎麼辦？你自己打電話出去——電話線是你拉的、你決定什麼時候掛、你看得到對方號碼。對方雖然能透過這條電話線跟你講話，但他沒辦法在你家門口出現。</p>
+<p>MCP Tunnel 就是這條電話線：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">[你機房]</span><br><span class="line">  ├── 你的內網 MCP server (postgres-mcp:3000)</span><br><span class="line">  └── 你部署的 lightweight gateway</span><br><span class="line">        ↓</span><br><span class="line">        ↓ 主動建立 outbound TLS 長連線</span><br><span class="line">        ↓</span><br><span class="line">   [Anthropic Workspace]</span><br><span class="line">        ↑</span><br><span class="line">        ↑ Agent loop 透過這條 tunnel 呼叫 MCP server</span><br></pre></td></tr></table></figure>
+
+<p>關鍵設計：</p>
+<ul>
+<li><strong>single outbound connection</strong>：你機房對外只開一個 outbound TLS 連線</li>
+<li><strong>no inbound firewall rules</strong>：不需要在防火牆開洞讓 Anthropic 打進來</li>
+<li><strong>no public endpoints</strong>：你的 MCP server 沒有 public IP、沒有 public DNS</li>
+<li><strong>end-to-end encrypted</strong>：tunnel 內所有 traffic TLS 加密</li>
+</ul>
+<p>如果你熟悉 SSH reverse tunnel 或 Cloudflare Tunnel，這個概念你已經懂了——只是這次的對端是 Anthropic Workspace、語意層是 MCP。</p>
+<h3 id="設定-MCP-Tunnel"><a href="#設定-MCP-Tunnel" class="headerlink" title="設定 MCP Tunnel"></a>設定 MCP Tunnel</h3><p>整個操作在 Claude Console 走完。MCP Tunnels 目前是 research preview，要先在 workspace settings 申請存取權。拿到權限後流程：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 1. 在 Claude Console 建立一個 tunnel</span></span><br><span class="line"><span class="comment"># Workspace Settings → MCP Tunnels → Create Tunnel</span></span><br><span class="line"><span class="comment"># 拿到 tunnel_id 和 secret token</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 2. 在你機房跑 gateway</span></span><br><span class="line">docker run -d \</span><br><span class="line">  --name claude-mcp-tunnel \</span><br><span class="line">  --restart unless-stopped \</span><br><span class="line">  -e TUNNEL_ID=tnl_xxx \</span><br><span class="line">  -e TUNNEL_TOKEN=...secret... \</span><br><span class="line">  -e MCP_SERVER_URL=http://postgres-mcp.internal:3000 \</span><br><span class="line">  anthropic/mcp-tunnel-gateway:latest</span><br><span class="line"></span><br><span class="line"><span class="comment"># 3. 在 Claude Console 把這個 tunnel 連到你要用的 agent</span></span><br><span class="line"><span class="comment"># Workspace Settings → Managed Agents → Add MCP Server → Use Tunnel</span></span><br></pre></td></tr></table></figure>
+
+<p>接下來你建 agent 的時候，MCP server 就像直接掛在 Anthropic workspace 上一樣可用：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">response = client.managed_agents.create(</span><br><span class="line">    name=<span class="string">&quot;Jira ticket triage agent&quot;</span>,</span><br><span class="line">    mcp_servers=[</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="string">&quot;type&quot;</span>: <span class="string">&quot;tunnel&quot;</span>,</span><br><span class="line">            <span class="string">&quot;tunnel_id&quot;</span>: <span class="string">&quot;tnl_xxx&quot;</span>,</span><br><span class="line">            <span class="string">&quot;endpoint&quot;</span>: <span class="string">&quot;/jira&quot;</span>,  <span class="comment"># tunnel 內走到 Jira MCP</span></span><br><span class="line">        &#125;,</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="string">&quot;type&quot;</span>: <span class="string">&quot;tunnel&quot;</span>,</span><br><span class="line">            <span class="string">&quot;tunnel_id&quot;</span>: <span class="string">&quot;tnl_xxx&quot;</span>,</span><br><span class="line">            <span class="string">&quot;endpoint&quot;</span>: <span class="string">&quot;/postgres&quot;</span>,  <span class="comment"># tunnel 內走到 PostgreSQL MCP</span></span><br><span class="line">        &#125;,</span><br><span class="line">    ],</span><br><span class="line">    instructions=<span class="string">&quot;你是一個 ticket 分流 agent...&quot;</span>,</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<p>注意一個 tunnel 可以代理多個 MCP server（用 path 區分），不需要每個 server 拉一條 tunnel。</p>
+<h3 id="MCP-Tunnel-不限於-Managed-Agents"><a href="#MCP-Tunnel-不限於-Managed-Agents" class="headerlink" title="MCP Tunnel 不限於 Managed Agents"></a>MCP Tunnel 不限於 Managed Agents</h3><p>文件裡有個容易被忽略但很重要的細節：<a target="_blank" rel="noopener" href="https://platform.claude.com/docs/en/managed-agents/quickstart">MCP Tunnels 同時支援 Messages API</a>。意思是即使你不用 Managed Agents（你用自己的 Anthropic SDK 應用程式呼叫 Claude），一樣可以透過 MCP Tunnel 給 Claude 接到你內網的 MCP server。</p>
+<p>這個彈性把整個 Anthropic 開發者平台變成「你內網的延伸」——只要你有 outbound 網路，內網資料就能被 Claude 用上。</p>
+<hr>
+<h2 id="Claude-Code-的引導設定指令"><a href="#Claude-Code-的引導設定指令" class="headerlink" title="Claude Code 的引導設定指令"></a>Claude Code 的引導設定指令</h2><p>如果你嫌 console 點來點去太累，最新版 Claude Code 內建了一個 slash command 把整個設定流程包起來：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ claude</span><br><span class="line">&gt; /claude-api managed-agents-onboard</span><br></pre></td></tr></table></figure>
+
+<p>這個 command 會用對話的方式問你：</p>
+<ol>
+<li>你是要設定 sandbox 還是 MCP tunnel？</li>
+<li>用哪家 provider？</li>
+<li>要連到內網哪個 service？</li>
+</ol>
+<p>回答完之後它會自動產出設定檔、跑必要的 deploy command、把結果驗證一遍。對於第一次設定的人來講，這比讀文件快兩倍。</p>
+<hr>
+<h2 id="該選哪個？決策框架"><a href="#該選哪個？決策框架" class="headerlink" title="該選哪個？決策框架"></a>該選哪個？決策框架</h2><p>工程師最容易犯的錯是「兩個都裝」——不需要。先想清楚你解的是哪個問題：</p>
+<p><strong>只用 self-hosted sandbox</strong>：你需要 agent 跑 tool（讀檔、跑 shell、改檔），且這些動作要在你機房做。但 MCP server 你沒有，agent 不需要連內網其他 service。</p>
+<p><strong>只用 MCP tunnel</strong>：你的 agent 跑 Anthropic-managed sandbox 就好，沒有 tool 要在你機房跑。但你有內網 MCP server（Jira、Postgres、ticketing system）要給 agent 用。</p>
+<p><strong>兩個都用</strong>：完整的「內部 agent」場景——agent 要碰你的檔案、跑你的 service、又要連你的 MCP server。這時兩個一起裝。</p>
+<p>決策的核心是「資料的最遠流動範圍」。資料只在 agent loop 出現過、實體不離開你機房 → self-hosted sandbox 就好。資料在 MCP query 裡進出、但 tool execution 不碰它 → MCP tunnel 就好。兩種狀況同時存在 → 兩個都要。</p>
+<hr>
+<h2 id="限制與該留意的事"><a href="#限制與該留意的事" class="headerlink" title="限制與該留意的事"></a>限制與該留意的事</h2><p>公開測試版本還有幾個值得知道的限制：</p>
+<p><strong>Self-hosted sandbox</strong>：是 public beta、可以正式使用，但建議在 staging 環境先壓過幾天再上 production。Anthropic 那邊的 agent loop 跟你 environment worker 之間 latency 會反映在 user-facing 速度上。你機房離 Anthropic data center 越遠、agent 反應就越慢——美西的 AWS 跟 Anthropic 美西 region 之間是 30-50ms RTT，台灣機房直連大概 150-200ms。延遲對 multi-step agent 來說會放大十倍以上。</p>
+<p><strong>MCP Tunnels</strong>：還在 research preview，要排隊申請存取權。Anthropic 沒公開 SLA，正式 Production-grade SLA 要等 GA 階段。</p>
+<p><strong>Audit 跟稽核</strong>：如果你公司有合規需求要記錄每一次 tool 呼叫，environment worker 需要自己接 logging pipeline。Anthropic 的 audit log 只記到 agent loop 那層、看不到 tool 內部的 input&#x2F;output。</p>
+<p><strong>provider lock-in 風險</strong>：四家認證 provider 各自的 API 不完全相容。如果你今天選 Cloudflare、明天想換 Daytona，environment worker 邏輯要重寫。建議把業務邏輯（讀檔、查 DB、呼叫 service）跟 provider SDK 分開包，換 vendor 的時候只動 adapter 那層。</p>
+<hr>
+<h2 id="上手練習：你可以今天試什麼"><a href="#上手練習：你可以今天試什麼" class="headerlink" title="上手練習：你可以今天試什麼"></a>上手練習：你可以今天試什麼</h2><p>不用等到有正式案件再學。今晚就可以跑一個玩具實驗：</p>
+<ol>
+<li>在 <a target="_blank" rel="noopener" href="https://console.anthropic.com/">Anthropic Console</a> 申請 Managed Agents 存取</li>
+<li>在你 Mac 上跑一個 Python environment worker（不用真機房，本機就行）</li>
+<li>註冊一個本地 sandbox 到 console</li>
+<li>建一個 agent，讓它讀你 <code>~/Documents/</code> 的一個檔案、用內容寫一個摘要回來</li>
+<li>觀察 Anthropic Workspace 的 audit log，確認 agent loop 跟 tool execution 確實分離</li>
+</ol>
+<p>你會在五分鐘內感受到「agent 在外面想、檔案永遠在我家」是什麼意思。這個感覺一旦建立，後面跟資安部門解釋自架 sandbox 的好處就會容易很多。</p>
+<hr>
+<h2 id="延伸閱讀"><a href="#延伸閱讀" class="headerlink" title="延伸閱讀"></a>延伸閱讀</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://claude.com/blog/claude-managed-agents-updates">Claude Managed Agents 公告 — Anthropic Blog</a></li>
+<li><a target="_blank" rel="noopener" href="https://platform.claude.com/docs/en/managed-agents/self-hosted-sandboxes">Self-hosted sandboxes 官方文件 — Claude API Docs</a></li>
+<li><a target="_blank" rel="noopener" href="https://platform.claude.com/docs/en/managed-agents/quickstart">Managed Agents Quickstart — Claude API Docs</a></li>
+<li><a target="_blank" rel="noopener" href="https://developers.cloudflare.com/sandbox/tutorials/claude-managed-agents/">Cloudflare Sandbox SDK + Managed Agents 教學 — Cloudflare Developers</a></li>
+<li><a target="_blank" rel="noopener" href="https://blog.cloudflare.com/claude-managed-agents/">Announcing Claude Managed Agents on Cloudflare — Cloudflare Blog</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.infoq.com/news/2026/05/claude-mcp-tunnels/">Anthropic Introduces MCP Tunnels — InfoQ</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/cloudflare/claude-managed-agents">Cloudflare claude-managed-agents GitHub repo</a></li>
+</ul>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://mark22013333.github.io">Cheng®</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章連結: </span><span class="post-copyright-info"><a href="https://mark22013333.github.io/2026/05/25/Claude-Managed-Agents-%E8%87%AA%E6%9E%B6%E6%B2%99%E7%AE%B1%E8%88%87-MCP-Tunnels-%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8/">https://mark22013333.github.io/2026/05/25/Claude-Managed-Agents-自架沙箱與-MCP-Tunnels-完整教學/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版權聲明: </span><span class="post-copyright-info">本部落格所有文章除特別聲明外，均採用<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 授權協議。轉載請註明來源 <a href="https://mark22013333.github.io" target="_blank">Cheng's Tech & Life</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Claude/">Claude</a><a class="post-meta__tags" href="/tags/MCP/">MCP</a><a class="post-meta__tags" href="/tags/AI-Agent/">AI Agent</a><a class="post-meta__tags" href="/tags/Anthropic/">Anthropic</a><a class="post-meta__tags" href="/tags/Claude-Code/">Claude Code</a><a class="post-meta__tags" href="/tags/%E6%95%99%E5%AD%B8/">教學</a></div><div class="post-share"><div class="social-share" data-image="/img/20260525-03.webp" data-sites="facebook,x"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><div class="post-reward"><div class="reward-badges"><a class="sponsor-glow-btn" href="https://www.buymeacoffee.com/mark22013333" target="_blank" rel="noopener noreferrer" title="Buy Me A Coffee"><img src="https://img.shields.io/badge/Buy_Me_A_Coffee-FFDD00?style=for-the-badge&amp;logo=buy-me-a-coffee&amp;logoColor=black" alt="Buy Me A Coffee"/></a><a class="sponsor-glow-btn" href="https://p.ecpay.com.tw/EFC3F8F" target="_blank" rel="noopener noreferrer" title="綠界贊助"><img src="https://img.shields.io/badge/☕_%E8%AB%8B%E6%88%91%E5%96%9D%E6%9D%AF%E5%92%96%E5%95%A1-Donate-11998e?style=for-the-badge&amp;logo=coffee&amp;logoColor=white" alt="綠界贊助"/></a><a class="sponsor-glow-btn" href="https://calendly.com/markcheng00806-intumit/15min" target="_blank" rel="noopener noreferrer" title="預約時間"><img src="https://img.shields.io/badge/📅_%E9%A0%90%E7%B4%84_15_%E5%88%86%E9%90%98-Book_Time-0072ff?style=for-the-badge" alt="預約時間"/></a><p class="reward-badges-note">你的鼓勵將被轉換為我明天繼續加班的動力（真的）。 ❤️</p></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related full-width" href="/2026/05/25/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260525/" title="AI 與科技新聞摘要 - 2026/05/25"><img class="cover" src="/img/20260525-02.webp" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">AI 與科技新聞摘要 - 2026/05/25</div></div><div class="info-2"><div class="info-item-1">OpenAI 的共同創辦人，現在在 Anthropic 上班。 Andrej Karpathy——你可能記得他在 Tesla 帶過 Autopilot AI、後來離開做 nanoGPT 教學影片紅遍 ML 圈、再前面更早他是 OpenAI 創始八人組之一——上禮拜公開宣布他要加入 Anthropic 的 pre-training team。這是 frontier lab 之間人才流動的一個極端案例：不是 senior engineer 跳槽，是創辦人等級的人跳到對家。 同一週，Ramp 釋出 2026 年 4 月的企業 AI 採用率數據——Anthropic 34.4%、OpenAI 32.3%。第一次反超。Anthropic 公開了 Claude for Small Business 把 AI 塞進中小企業工具鏈的策略。OpenAI 機密遞了 IPO 文件給 SEC，Anthropic 同期預告首季營業利潤。Drupal 核心爆出 CVSS 高危的 SQL injection 漏洞，CISA 三天內加進 KEV catalog。 五件事的共通底色：上一波 AI 浪潮是技術競賽，...</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相關推薦</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2026/04/28/MCP-Server-%E9%96%8B%E7%99%BC%E5%85%A5%E9%96%80%E6%95%99%E5%AD%B8-%E7%94%A8-Python-%E5%BE%9E%E9%9B%B6%E6%89%93%E9%80%A0-AI-%E5%B7%A5%E5%85%B7%E9%80%A3%E6%8E%A5%E5%99%A8/" title="MCP Server 開發入門教學 — 用 Python 從零打造 AI 工具連接器"><img class="cover" src="/img/20260428-03.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-04-28</div><div class="info-item-2">MCP Server 開發入門教學 — 用 Python 從零打造 AI 工具連接器</div></div><div class="info-2"><div class="info-item-1">你家一定有 USB 轉接頭。Type-C 轉 HDMI、Lightning 轉 3.5mm、各種奇奇怪怪的接頭。轉接頭本身不做任何事，它只是讓兩個本來講不同語言的東西能接上。螢幕不需要知道你的筆電是什麼牌子，筆電也不需要知道螢幕的解析度怎麼設定 — 轉接頭搞定一切。 MCP（Model Context Protocol）就是 AI 世界的 USB 轉接頭。 Anthropic 開發了這個開放協定，現在已經捐給 Linux Foundation AAIF。它讓 AI model 連接外部工具和資料來源，不管是資料庫、API、檔案系統，接上就能用。目前生態系已經長到 164M 月下載量、超過 2,400 個 server，Microsoft、GitHub、Cloudflare、Stripe 都在用。Claude Code、Cursor、Kiro 這些 AI coding 工具也全部支援。 這不是什麼還在實驗階段的新玩意。這已經是事實標準了。 MCP 的三個核心原語在寫 code 之前，先搞懂 MCP 的三個核心概念。我用遙控器來比喻： Tools（工具） — 遙控器上的按鈕。按下「計...</div></div></div></a><a class="pagination-related" href="/2026/04/17/Claude-Opus-4.7-%E6%96%B0%E5%8A%9F%E8%83%BD%E5%AF%A6%E6%88%B0-xhigh-Task-Budgets-%E8%88%87-ultrareview/" title="Claude Opus 4.7 新功能實戰 — xhigh、Task Budgets 與 &#x2F;ultrareview"><img class="cover" src="/img/20260417-opus47.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-04-17</div><div class="info-item-2">Claude Opus 4.7 新功能實戰 — xhigh、Task Budgets 與 &#x2F;ultrareview</div></div><div class="info-2"><div class="info-item-1">跑一個重構任務，Claude 花了 45 分鐘、燒掉 120K token，結果最後 5% 的改動因為 context 爆了被截斷。 如果你用 Claude Code 跑過長任務，這個場景應該不陌生。Opus 4.7 帶來的三個新功能——xhigh effort、Task Budgets 和 &#x2F;ultrareview——本質上都在解決同一個問題：怎麼讓 Agent 聰明地分配有限資源。 &#x2F;effort xhigh — 不想等 max 但 high 不夠的時候之前的 effort 只有三檔：low、high、max。問題是 high 和 max 之間的落差太大——high 有時候不夠仔細，max 又慢到讓你懷疑它是不是去吃飯了。 把它想成開車。low 是高速公路定速巡航，掃一眼就過；high 是市區正常開，該注意的路口會看；max 是在停車場找車位，一格一格慢慢掃。xhigh 就是「市區開但遇到複雜路口會多看兩眼」——比 high 仔細但不會像 max 那樣龜速。 在 Claude Code 裡直接用 /effort xhigh 切換。適用場景：中等複雜度的 b...</div></div></div></a><a class="pagination-related" href="/2026/04/13/Claude-Code-%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8%E7%B4%A2%E5%BC%95-%E5%BE%9E%E5%85%A5%E9%96%80%E5%88%B0%E9%80%B2%E9%9A%8E%E7%9A%84%E6%89%80%E6%9C%89%E6%96%87%E7%AB%A0%E6%95%B4%E7%90%86/" title="Claude Code 完整教學索引 — 從入門到進階的所有文章整理"><img class="cover" src="/img/20260413-pillar.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-04-13</div><div class="info-item-2">Claude Code 完整教學索引 — 從入門到進階的所有文章整理</div></div><div class="info-2"><div class="info-item-1">這個頁面整理了我寫過的所有 Claude Code 相關文章，從完全不懂到能拿它做正經事，按照學習路徑排好了。 如果你是第一次接觸，從「入門與基礎」開始看；如果已經在用了想挖更多玩法，直接跳到你有興趣的段落。文章持續更新中，有新的會往上加。  入門與基礎還不確定 Claude Code 是什麼、跟 Chat 和 Cowork 差在哪的，先看這幾篇。  Claude Desktop 三種模式怎麼切？Chat、Cowork、Code 完整導覽 — Chat、Cowork、Code 三種模式的定位與切換時機 Claude Cowork 入門指南 — 讓 AI 在你電腦上自己幹活 — Cowork 模式怎麼用、能做什麼 Claude Code Auto Mode — 讓 AI 自己決定該不該執行指令 — 自動核准指令，不用一直按 y Claude Code &#x2F;powerup 互動式教學與 April 2026 重點更新完整指南 — 用 &#x2F;powerup 學功能，順便看四月更新了什麼   核心功能這幾篇是用 Claude Code 做事的基本功，搞懂這些效率差很多。  ...</div></div></div></a><a class="pagination-related" href="/2026/03/25/Claude-Cowork-%E5%85%A5%E9%96%80%E6%8C%87%E5%8D%97-%E8%AE%93-AI-%E5%9C%A8%E4%BD%A0%E9%9B%BB%E8%85%A6%E4%B8%8A%E8%87%AA%E5%B7%B1%E5%B9%B9%E6%B4%BB/" title="Claude Cowork 入門指南 — 讓 AI 在你電腦上自己幹活"><img class="cover" src="/img/20260325-03.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-03-25</div><div class="info-item-2">Claude Cowork 入門指南 — 讓 AI 在你電腦上自己幹活</div></div><div class="info-2"><div class="info-item-1">問各位一個問題：你有多少工作流程是「重複但需要腦力」的？ 不是那種純機械式的點擊，而是需要看一下檔案、決定下一步該做什麼、修改點東西、再檢查一遍的工作。如果你用過 Claude，可能就會想，要是 Claude 能直接在我電腦上幫我做這些事就好了。 Claude Desktop App 的 Cowork 模式就是為了這個需求而生的。 Chat vs Cowork vs Code，三種工作模式在講 Cowork 之前，先搞清楚 Claude Desktop App 裡的三種模式長什麼樣： Chat 模式 — 就是你熟悉的對話框。你提問，Claude 回答。速度快，適合快速問答和頭腦風暴。但 Claude 看不到你的檔案，也跑不了程式碼。 Code 模式 — 這個就是 Claude Code（如果你有裝 Claude Code CLI 的話會更熟悉）。提供了一個終端機編碼環境，Claude 可以寫程式、執行、看結果。但這主要是給程式人員用的。 Cowork 模式 — 才是今天的主角。它融合了 Chat 的靈活性和 Code 的執行能力，但不限於終端機。Claude 可以讀寫你電腦上的檔...</div></div></div></a><a class="pagination-related" href="/2026/05/22/Claude-Code-%E8%B7%A8%E5%A4%9A-Repo-%E9%96%8B%E7%99%BC%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8-%E7%94%A8-Virtual-Monorepo-%E4%B8%B2%E6%8E%A5-35-%E5%80%8B%E6%9C%8D%E5%8B%99/" title="Claude Code 跨多 Repo 開發完整教學 — 用 Virtual Monorepo 串接 35 個服務"><img class="cover" src="/img/20260522-03.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-05-22</div><div class="info-item-2">Claude Code 跨多 Repo 開發完整教學 — 用 Virtual Monorepo 串接 35 個服務</div></div><div class="info-2"><div class="info-item-1">想像你接手一個系統，它有 35 個 GitHub repo。 event-ingestion-service、stream-processor、analytics-api、ops-dashboard、streaming-cluster、database-cluster⋯⋯每個都在獨立的 repo 裡，各自有 CI、各自的 PR review、各自的 release 流程。你打開 Claude Code，cd 進其中一個 repo，問它：「使用者按下儀表板的『重新計算』按鈕之後，後台會發生什麼事？」 它只能看到當下這個 repo 的程式碼。後台處理在 stream-processor，重新計算邏輯在 analytics-api，資料來源在 event-ingestion-service——這些 Claude 一個都看不到。它能告訴你的，最多就是「這個按鈕呼叫了 /recompute 端點」，後面發生什麼事就要靠你自己腦補。 這不是 Claude 不夠聰明的問題。是它沒看到那張地圖。  問題不在 repo 結構，在「可視範圍」很多人聽到「跨 repo 開發」第一反應是：那我們把 35...</div></div></div></a><a class="pagination-related" href="/2026/04/22/GitHub-Copilot-%E5%81%9C%E6%AD%A2%E6%96%B0%E7%94%A8%E6%88%B6%E8%A8%BB%E5%86%8A%E5%BE%8C%E5%B7%A5%E7%A8%8B%E5%B8%AB%E6%80%8E%E9%BA%BC%E5%B9%B3%E7%A7%BB%E5%88%B0-Claude-Code/" title="GitHub Copilot 停止新用戶註冊後，工程師怎麼平移到 Claude Code"><img class="cover" src="/img/20260422-03.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-04-22</div><div class="info-item-2">GitHub Copilot 停止新用戶註冊後，工程師怎麼平移到 Claude Code</div></div><div class="info-2"><div class="info-item-1">GitHub Copilot 在 4 月 20 日暫停了所有個人方案的新用戶註冊。同時，Pro 方案的用戶即將失去 Claude Opus 模型的存取權。 如果你是剛好要開新帳號的工程師，或者是衝著 Opus 去的 Pro 用戶，現在是個評估要不要換工具的時間點。 這篇是從 Copilot 遷移到 Claude Code 的操作指南，不是比較評測（已有一篇），也不是勸你換工具。你得自己決定值不值得換，但換之前至少要知道怎麼換、換了之後哪些習慣要調整。  先搞清楚兩個工具的根本差異遷移前最重要的一件事不是「A 功能在哪裡」，而是「這個工具假設你怎麼工作」。不懂這個，你會用 Copilot 的思維用 Claude Code，然後覺得它很難用。 Copilot 的設計假設：你在 IDE 裡工作，AI 在旁邊輔助。你寫程式，AI 補全、提建議、回答問題。主導者是你，AI 是智慧自動補全。 Claude Code 的設計假設：你在 terminal 裡工作，AI 和你一起做事。你描述目標或問題，AI 讀檔案、跑指令、修程式碼。主導者更模糊——Claude Code 可以接管一個任務然後跑到...</div></div></div></a></div></div><hr class="custom-hr"/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 評論</span></div></div><div class="comment-wrap"><div><div id="giscus-wrap"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="https://lh3.googleusercontent.com/pw/ABLVV87_po8nBc6F_tXcoYDmtzMGWxHuhhrbguYILCjmjWKLOS8DTpubm0YoQLKgjyjRIZyV5TjYe7XVEz_YU4squfr37GTZqPZP1hlMVZ_MIgXpTxWu73M=w1200" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">Cheng®</div><div class="author-info-description">Backend Developer / 技術筆記 & AI 新聞分享</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">261</div></a><a href="/tags/"><div class="headline">標籤</div><div class="length-num">218</div></a><a href="/categories/"><div class="headline">分類</div><div class="length-num">19</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/mark22013333"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons"><a class="social-icon" href="https://github.com/mark22013333" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:mark22013333@gmail.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a></div><div class="card-info-sponsor"><a class="sponsor-glow-btn" href="https://www.buymeacoffee.com/mark22013333" target="_blank" rel="noopener noreferrer" title="Buy Me A Coffee"><img src="https://img.shields.io/badge/Buy_Me_A_Coffee-FFDD00?style=for-the-badge&amp;logo=buy-me-a-coffee&amp;logoColor=black" alt="Buy Me A Coffee"/></a><a class="sponsor-glow-btn" href="https://p.ecpay.com.tw/EFC3F8F" target="_blank" rel="noopener noreferrer" title="綠界贊助"><img src="https://img.shields.io/badge/☕_%E8%AB%8B%E6%88%91%E5%96%9D%E6%9D%AF%E5%92%96%E5%95%A1-Donate-11998e?style=for-the-badge&amp;logo=coffee&amp;logoColor=white" alt="綠界贊助"/></a><a class="sponsor-glow-btn" href="https://calendly.com/markcheng00806-intumit/15min" target="_blank" rel="noopener noreferrer" title="預約時間"><img src="https://img.shields.io/badge/📅_%E9%A0%90%E7%B4%84_15_%E5%88%86%E9%90%98-Book_Time-0072ff?style=for-the-badge" alt="預約時間"/></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">這裡記錄我在後端開發路上踩過的坑、學到的東西，也會分享每日 AI 與科技新聞觀點。歡迎一起交流！</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目錄</span><span class="toc-percentage"></span></div><div class="toc-content is-expand"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E5%80%8B-AI-Agent-%E6%8B%86%E6%88%90%E5%85%A9%E5%A1%8A%EF%BC%9A%E6%80%9D%E8%80%83-vs-%E5%8B%95%E6%89%8B"><span class="toc-number">1.</span> <span class="toc-text">一個 AI Agent 拆成兩塊：思考 vs 動手</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Self-hosted-Sandboxes%EF%BC%9A%E6%8A%8A-tool-%E5%9F%B7%E8%A1%8C%E6%90%AC%E5%9B%9E%E8%87%AA%E5%B7%B1%E6%A9%9F%E6%88%BF"><span class="toc-number">2.</span> <span class="toc-text">Self-hosted Sandboxes：把 tool 執行搬回自己機房</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9B%9B%E5%AE%B6%E8%AA%8D%E8%AD%89-provider-%E6%80%8E%E9%BA%BC%E9%81%B8"><span class="toc-number">2.1.</span> <span class="toc-text">四家認證 provider 怎麼選</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%BE%9E%E9%9B%B6%E9%83%A8%E7%BD%B2%EF%BC%9A%E4%BB%A5-Cloudflare-%E7%82%BA%E4%BE%8B"><span class="toc-number">2.2.</span> <span class="toc-text">從零部署：以 Cloudflare 為例</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%87%AA%E5%B7%B1%E6%89%8B%E6%90%93-environment-worker%EF%BC%88%E4%B8%8D%E7%94%A8-managed-provider%EF%BC%89"><span class="toc-number">2.3.</span> <span class="toc-text">自己手搓 environment worker（不用 managed provider）</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#MCP-Tunnels%EF%BC%9A%E8%AE%93-Agent-%E9%80%A3%E9%80%B2%E4%BD%A0%E7%9A%84%E5%85%A7%E7%B6%B2%E8%80%8C%E4%B8%8D%E9%9C%80%E8%A6%81%E9%96%8B%E9%96%80"><span class="toc-number">3.</span> <span class="toc-text">MCP Tunnels：讓 Agent 連進你的內網而不需要開門</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86%EF%BC%88%E7%94%A8%E6%89%93%E9%9B%BB%E8%A9%B1%E4%BE%86%E9%A1%9E%E6%AF%94%EF%BC%89"><span class="toc-number">3.1.</span> <span class="toc-text">工作原理（用打電話來類比）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%A8%AD%E5%AE%9A-MCP-Tunnel"><span class="toc-number">3.2.</span> <span class="toc-text">設定 MCP Tunnel</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#MCP-Tunnel-%E4%B8%8D%E9%99%90%E6%96%BC-Managed-Agents"><span class="toc-number">3.3.</span> <span class="toc-text">MCP Tunnel 不限於 Managed Agents</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Claude-Code-%E7%9A%84%E5%BC%95%E5%B0%8E%E8%A8%AD%E5%AE%9A%E6%8C%87%E4%BB%A4"><span class="toc-number">4.</span> <span class="toc-text">Claude Code 的引導設定指令</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%A9%B2%E9%81%B8%E5%93%AA%E5%80%8B%EF%BC%9F%E6%B1%BA%E7%AD%96%E6%A1%86%E6%9E%B6"><span class="toc-number">5.</span> <span class="toc-text">該選哪個？決策框架</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%99%90%E5%88%B6%E8%88%87%E8%A9%B2%E7%95%99%E6%84%8F%E7%9A%84%E4%BA%8B"><span class="toc-number">6.</span> <span class="toc-text">限制與該留意的事</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%8A%E6%89%8B%E7%B7%B4%E7%BF%92%EF%BC%9A%E4%BD%A0%E5%8F%AF%E4%BB%A5%E4%BB%8A%E5%A4%A9%E8%A9%A6%E4%BB%80%E9%BA%BC"><span class="toc-number">7.</span> <span class="toc-text">上手練習：你可以今天試什麼</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%BB%B6%E4%BC%B8%E9%96%B1%E8%AE%80"><span class="toc-number">8.</span> <span class="toc-text">延伸閱讀</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2026/05/25/Claude-Managed-Agents-%E8%87%AA%E6%9E%B6%E6%B2%99%E7%AE%B1%E8%88%87-MCP-Tunnels-%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8/" title="Claude Managed Agents 自架沙箱與 MCP Tunnels 完整教學 — 讓 AI Agent 在你自己的基礎設施上跑"><img src="/img/20260525-03.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Claude Managed Agents 自架沙箱與 MCP Tunnels 完整教學 — 讓 AI Agent 在你自己的基礎設施上跑"/></a><div class="content"><a class="title" href="/2026/05/25/Claude-Managed-Agents-%E8%87%AA%E6%9E%B6%E6%B2%99%E7%AE%B1%E8%88%87-MCP-Tunnels-%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8/" title="Claude Managed Agents 自架沙箱與 MCP Tunnels 完整教學 — 讓 AI Agent 在你自己的基礎設施上跑">Claude Managed Agents 自架沙箱與 MCP Tunnels 完整教學 — 讓 AI Agent 在你自己的基礎設施上跑</a><time datetime="2026-05-25T01:30:00.000Z" title="發表於 2026-05-25 09:30:00">2026-05-25</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/05/25/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260525/" title="AI 與科技新聞摘要 - 2026/05/25"><img src="/img/20260525-02.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="AI 與科技新聞摘要 - 2026/05/25"/></a><div class="content"><a class="title" href="/2026/05/25/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260525/" title="AI 與科技新聞摘要 - 2026/05/25">AI 與科技新聞摘要 - 2026/05/25</a><time datetime="2026-05-25T01:15:00.000Z" title="發表於 2026-05-25 09:15:00">2026-05-25</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/05/25/notebooklm-py-%E7%94%A8-Python-%E7%A8%8B%E5%BC%8F%E9%A9%85%E5%8B%95-Google-NotebookLM/" title="notebooklm-py — 用 Python 程式驅動 Google NotebookLM"><img src="/img/20260525-01.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="notebooklm-py — 用 Python 程式驅動 Google NotebookLM"/></a><div class="content"><a class="title" href="/2026/05/25/notebooklm-py-%E7%94%A8-Python-%E7%A8%8B%E5%BC%8F%E9%A9%85%E5%8B%95-Google-NotebookLM/" title="notebooklm-py — 用 Python 程式驅動 Google NotebookLM">notebooklm-py — 用 Python 程式驅動 Google NotebookLM</a><time datetime="2026-05-25T01:00:00.000Z" title="發表於 2026-05-25 09:00:00">2026-05-25</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/05/24/%E5%B7%A5%E7%A8%8B%E5%B8%AB%E5%A4%8F%E5%A4%A9%E7%BA%8C%E8%88%AA%E6%8C%87%E5%8D%97-MacBook-%E7%87%99%E6%89%8B-%E4%BA%BA%E8%85%A6%E9%81%8E%E7%86%B1-%E5%92%96%E5%95%A1%E5%9B%A0%E5%A4%B1%E9%9D%88-%E4%B8%89%E5%80%8B%E7%B3%BB%E7%B5%B1%E8%A6%81%E5%88%86%E9%96%8B%E8%AA%BF/" title="工程師夏天續航指南｜MacBook 燙手、人腦過熱、咖啡因失靈，三個系統要分開調"><img src="/img/20260524-03.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="工程師夏天續航指南｜MacBook 燙手、人腦過熱、咖啡因失靈，三個系統要分開調"/></a><div class="content"><a class="title" href="/2026/05/24/%E5%B7%A5%E7%A8%8B%E5%B8%AB%E5%A4%8F%E5%A4%A9%E7%BA%8C%E8%88%AA%E6%8C%87%E5%8D%97-MacBook-%E7%87%99%E6%89%8B-%E4%BA%BA%E8%85%A6%E9%81%8E%E7%86%B1-%E5%92%96%E5%95%A1%E5%9B%A0%E5%A4%B1%E9%9D%88-%E4%B8%89%E5%80%8B%E7%B3%BB%E7%B5%B1%E8%A6%81%E5%88%86%E9%96%8B%E8%AA%BF/" title="工程師夏天續航指南｜MacBook 燙手、人腦過熱、咖啡因失靈，三個系統要分開調">工程師夏天續航指南｜MacBook 燙手、人腦過熱、咖啡因失靈，三個系統要分開調</a><time datetime="2026-05-24T07:00:00.000Z" title="發表於 2026-05-24 15:00:00">2026-05-24</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/05/24/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260524/" title="AI 與科技新聞摘要 20260524｜漏洞利用首次擠掉憑證、Claude 進駐 SaaS、ChatGPT 變廣告平台"><img src="/img/20260524-02.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="AI 與科技新聞摘要 20260524｜漏洞利用首次擠掉憑證、Claude 進駐 SaaS、ChatGPT 變廣告平台"/></a><div class="content"><a class="title" href="/2026/05/24/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260524/" title="AI 與科技新聞摘要 20260524｜漏洞利用首次擠掉憑證、Claude 進駐 SaaS、ChatGPT 變廣告平台">AI 與科技新聞摘要 20260524｜漏洞利用首次擠掉憑證、Claude 進駐 SaaS、ChatGPT 變廣告平台</a><time datetime="2026-05-24T03:00:00.000Z" title="發表於 2026-05-24 11:00:00">2026-05-24</time></div></div></div></div></div></div></main><footer id="footer" style="background-image: url(/img/20260525-03.webp);"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2024 - 2026 By Cheng®</span></div><div class="footer_custom_text">Written by Cheng® — 自律，從當下的一念開始。</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="閱讀模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日夜模式切換"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="單欄和雙欄切換"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="設定"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目錄"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="前往評論"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到頂端"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.umd.min.js"></script><script src="https://cdn.jsdelivr.net/npm/instant.page/instantpage.min.js" type="module"></script><script src="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.js"></script><div class="js-pjax"><script>(() => {
+  const isShuoshuo = GLOBAL_CONFIG_SITE.pageType === 'shuoshuo'
+  const option = {"mapping":"pathname","strict":0,"reactionsEnabled":1,"emitMetadata":0,"inputPosition":"bottom","lang":"zh-TW"}
+
+  const getGiscusTheme = theme => theme === 'dark' ? 'dark' : 'light'
+
+  const createScriptElement = config => {
+    const ele = document.createElement('script')
+    Object.entries(config).forEach(([key, value]) => {
+      ele.setAttribute(key, value)
+    })
+    return ele
+  }
+
+  const loadGiscus = (el = document, key) => {
+    const mappingConfig = isShuoshuo
+      ? { 'data-mapping': 'specific', 'data-term': key }
+      : { 'data-mapping': (option && option['data-mapping']) || 'pathname' }
+
+    const giscusConfig = {
+      src: 'https://giscus.app/client.js',
+      'data-repo': 'mark22013333/mark22013333.github.io',
+      'data-repo-id': 'R_kgDOLAxa6A',
+      'data-category-id': 'DIC_kwDOLAxa6M4C5eO9',
+      'data-theme': getGiscusTheme(document.documentElement.getAttribute('data-theme')),
+      'data-reactions-enabled': '1',
+      crossorigin: 'anonymous',
+      async: true,
+      ...option,
+      ...mappingConfig
+    }
+
+    const scriptElement = createScriptElement(giscusConfig)
+
+    el.querySelector('#giscus-wrap').appendChild(scriptElement)
+
+    if (isShuoshuo) {
+      window.shuoshuoComment.destroyGiscus = () => {
+        if (el.children.length) {
+          el.innerHTML = ''
+          el.classList.add('no-comment')
+        }
+      }
+    }
+  }
+
+  const changeGiscusTheme = theme => {
+    const iframe = document.querySelector('#giscus-wrap iframe')
+    if (iframe) {
+      const message = {
+        giscus: {
+          setConfig: {
+            theme: getGiscusTheme(theme)
+          }
+        }
+      }
+      iframe.contentWindow.postMessage(message, 'https://giscus.app')
+    }
+  }
+
+  btf.addGlobalFn('themeChange', changeGiscusTheme, 'giscus')
+
+  if (isShuoshuo) {
+    'Giscus' === 'Giscus'
+      ? window.shuoshuoComment = { loadComment: loadGiscus }
+      : window.loadOtherComment = loadGiscus
+    return
+  }
+
+  if ('Giscus' === 'Giscus' || !true) {
+    if (true) btf.loadComment(document.getElementById('giscus-wrap'), loadGiscus)
+    else loadGiscus()
+  } else {
+    window.loadOtherComment = loadGiscus
+  }
+})()</script></div><script src="/js/kkbox-player.js"></script><script src="/js/archives-pagination.js"></script><script src="/js/font-resize.js"></script><script src="/js/dark-palette.js"></script><script src="/js/series-showcase.js"></script><script src="/js/search-tags.js"></script><script defer="defer" id="fluttering_ribbon" mobile="false" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/canvas-fluttering-ribbon.min.js"></script><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/activate-power-mode.min.js"></script><script>POWERMODE.colorful = true;
+POWERMODE.shake = true;
+POWERMODE.mobile = true;
+document.body.addEventListener('input', POWERMODE);
+</script><script src="https://cdn.jsdelivr.net/npm/pjax/pjax.min.js" defer="defer"></script><script>document.addEventListener('DOMContentLoaded', () => {
+  const pjaxSelectors = ["meta[property=\"og:image\"]","meta[property=\"og:title\"]","meta[property=\"og:url\"]","meta[property=\"og:description\"]","link[rel=\"canonical\"]","head > title","#config-diff","#body-wrap","#rightside-config-hide","#rightside-config-show",".js-pjax"]
+
+  window.pjax = new Pjax({
+    elements: 'a:not([target="_blank"])',
+    selectors: pjaxSelectors,
+    cacheBust: false,
+    analytics: true,
+    scrollRestoration: false
+  })
+
+  const triggerPjaxFn = (val) => {
+    if (!val) return
+    Object.values(val).forEach(fn => {
+      try {
+        fn()
+      } catch (err) {
+        console.debug('Pjax callback failed:', err)
+      }
+    })
+  }
+
+  document.addEventListener('pjax:send', () => {
+    // removeEventListener
+    btf.removeGlobalFnEvent('pjaxSendOnce')
+    btf.removeGlobalFnEvent('themeChange')
+
+    // reset readmode
+    const $bodyClassList = document.body.classList
+    if ($bodyClassList.contains('read-mode')) $bodyClassList.remove('read-mode')
+
+    triggerPjaxFn(window.globalFn.pjaxSend)
+  })
+
+  document.addEventListener('pjax:complete', () => {
+    btf.removeGlobalFnEvent('pjaxCompleteOnce')
+    document.querySelectorAll('script[data-pjax]').forEach(item => {
+      const newScript = document.createElement('script')
+      const content = item.text || item.textContent || item.innerHTML || ""
+      Array.from(item.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value))
+      newScript.appendChild(document.createTextNode(content))
+      item.parentNode.replaceChild(newScript, item)
+    })
+
+    triggerPjaxFn(window.globalFn.pjaxComplete)
+  })
+
+  document.addEventListener('pjax:error', e => {
+    if (e.request.status === 404) {
+      true
+        ? pjax.loadUrl('/404.html')
+        : window.location.href = e.request.responseURL
+    }
+  })
+})</script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜尋</span><i class="fas fa-spinner fa-pulse" id="loading-status" hidden="hidden"></i><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="text-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  資料載入中</span></div><div class="local-search-input"><input placeholder="搜尋文章" type="text"/></div><hr/><div id="local-search-results"></div><div class="ais-Pagination" id="local-search-pagination" style="display:none;"><ul class="ais-Pagination-list"></ul></div><div id="local-search-stats"></div></div><div id="search-mask"></div><script src="/js/search/local-search.js"></script></div></div><script>window.__BLOG_TAGS__=[{"name":"Claude Code","count":79,"path":"tags/Claude-Code/"},{"name":"AI與科技新聞","count":62,"path":"tags/AI與科技新聞/"},{"name":"AI Agent","count":40,"path":"tags/AI-Agent/"},{"name":"Anthropic","count":37,"path":"tags/Anthropic/"},{"name":"資安","count":36,"path":"tags/資安/"},{"name":"OpenAI","count":31,"path":"tags/OpenAI/"},{"name":"MCP","count":29,"path":"tags/MCP/"},{"name":"Claude","count":27,"path":"tags/Claude/"},{"name":"教學","count":27,"path":"tags/教學/"},{"name":"自動化","count":19,"path":"tags/自動化/"},{"name":"Java","count":19,"path":"tags/Java/"},{"name":"開源","count":18,"path":"tags/開源/"},{"name":"開發工具","count":16,"path":"tags/開發工具/"},{"name":"Google","count":15,"path":"tags/Google/"},{"name":"Copilot","count":13,"path":"tags/Copilot/"},{"name":"DevOps","count":13,"path":"tags/DevOps/"},{"name":"工程師生活","count":12,"path":"tags/工程師生活/"},{"name":"GitHub","count":12,"path":"tags/GitHub/"},{"name":"Skills","count":11,"path":"tags/Skills/"},{"name":"Spring","count":11,"path":"tags/Spring/"},{"name":"LLM","count":9,"path":"tags/LLM/"},{"name":"Azure","count":9,"path":"tags/Azure/"},{"name":"微軟課程","count":9,"path":"tags/微軟課程/"},{"name":"資料庫","count":9,"path":"tags/資料庫/"},{"name":"Gemini","count":8,"path":"tags/Gemini/"},{"name":"Cursor","count":8,"path":"tags/Cursor/"},{"name":"Elasticsearch","count":8,"path":"tags/Elasticsearch/"},{"name":"健康","count":6,"path":"tags/健康/"},{"name":"理財","count":6,"path":"tags/理財/"},{"name":"Apple","count":6,"path":"tags/Apple/"},{"name":"Microsoft","count":6,"path":"tags/Microsoft/"},{"name":"GitHub Copilot","count":6,"path":"tags/GitHub-Copilot/"},{"name":"AI","count":5,"path":"tags/AI/"},{"name":"AZ-305","count":5,"path":"tags/AZ-305/"},{"name":"Rust","count":5,"path":"tags/Rust/"},{"name":"CLI","count":5,"path":"tags/CLI/"},{"name":"Python","count":5,"path":"tags/Python/"},{"name":"Collections","count":5,"path":"tags/Collections/"},{"name":"併發","count":5,"path":"tags/併發/"},{"name":"NVIDIA","count":4,"path":"tags/NVIDIA/"},{"name":"Kiro","count":4,"path":"tags/Kiro/"},{"name":"macOS","count":4,"path":"tags/macOS/"},{"name":"Hooks","count":4,"path":"tags/Hooks/"},{"name":"AI 開發工具","count":4,"path":"tags/AI-開發工具/"},{"name":"Code Review","count":4,"path":"tags/Code-Review/"},{"name":"Docker","count":4,"path":"tags/Docker/"},{"name":"DP-300","count":4,"path":"tags/DP-300/"},{"name":"SQL Server","count":4,"path":"tags/SQL-Server/"},{"name":"Performance","count":4,"path":"tags/Performance/"},{"name":"JSON","count":4,"path":"tags/JSON/"},{"name":"Stream","count":4,"path":"tags/Stream/"},{"name":"168斷食","count":3,"path":"tags/168斷食/"},{"name":"Windsurf","count":3,"path":"tags/Windsurf/"},{"name":"AI 產業","count":3,"path":"tags/AI-產業/"},{"name":"TDD","count":3,"path":"tags/TDD/"},{"name":"Agent","count":3,"path":"tags/Agent/"},{"name":"SDD","count":3,"path":"tags/SDD/"},{"name":"系統監控","count":3,"path":"tags/系統監控/"},{"name":"遠端工作","count":3,"path":"tags/遠端工作/"},{"name":"生產力","count":2,"path":"tags/生產力/"},{"name":"Mistral","count":2,"path":"tags/Mistral/"},{"name":"AI 法規","count":2,"path":"tags/AI-法規/"},{"name":"Codex","count":2,"path":"tags/Codex/"},{"name":"AI 安全","count":2,"path":"tags/AI-安全/"},{"name":"Networking","count":2,"path":"tags/Networking/"},{"name":"Tool Use","count":2,"path":"tags/Tool-Use/"},{"name":"Multi-Model","count":2,"path":"tags/Multi-Model/"},{"name":"Claude Design","count":2,"path":"tags/Claude-Design/"},{"name":"Prototype","count":2,"path":"tags/Prototype/"},{"name":"Lucene","count":2,"path":"tags/Lucene/"},{"name":"Prompt Engineering","count":2,"path":"tags/Prompt-Engineering/"},{"name":"生活札記","count":2,"path":"tags/生活札記/"},{"name":"旅遊","count":2,"path":"tags/旅遊/"},{"name":"專注力","count":1,"path":"tags/專注力/"},{"name":"軟體工程師","count":1,"path":"tags/軟體工程師/"},{"name":"職涯","count":1,"path":"tags/職涯/"},{"name":"2026","count":1,"path":"tags/2026/"},{"name":"Meta","count":1,"path":"tags/Meta/"},{"name":"AWS","count":1,"path":"tags/AWS/"},{"name":"Amazon","count":1,"path":"tags/Amazon/"},{"name":"資訊安全","count":1,"path":"tags/資訊安全/"},{"name":"Migration","count":1,"path":"tags/Migration/"},{"name":"Agent Skills","count":1,"path":"tags/Agent-Skills/"},{"name":"Addy Osmani","count":1,"path":"tags/Addy-Osmani/"},{"name":"工程紀律","count":1,"path":"tags/工程紀律/"},{"name":"Apify","count":1,"path":"tags/Apify/"},{"name":"爬蟲","count":1,"path":"tags/爬蟲/"},{"name":"Prompt Caching","count":1,"path":"tags/Prompt-Caching/"},{"name":"成本優化","count":1,"path":"tags/成本優化/"},{"name":"Buddi","count":1,"path":"tags/Buddi/"},{"name":"notch","count":1,"path":"tags/notch/"},{"name":"Function Calling","count":1,"path":"tags/Function-Calling/"},{"name":"UI 設計","count":1,"path":"tags/UI-設計/"},{"name":"CLAUDE.md","count":1,"path":"tags/CLAUDE-md/"},{"name":"Auto Memory","count":1,"path":"tags/Auto-Memory/"},{"name":"Project Setup","count":1,"path":"tags/Project-Setup/"},{"name":"Extended Thinking","count":1,"path":"tags/Extended-Thinking/"},{"name":"Reasoning","count":1,"path":"tags/Reasoning/"},{"name":"/goal","count":1,"path":"tags/goal/"},{"name":"VS Code","count":1,"path":"tags/VS-Code/"},{"name":"Monitor Tool","count":1,"path":"tags/Monitor-Tool/"},{"name":"Haiku","count":1,"path":"tags/Haiku/"},{"name":"Sonnet","count":1,"path":"tags/Sonnet/"},{"name":"Opus","count":1,"path":"tags/Opus/"},{"name":"Token 成本","count":1,"path":"tags/Token-成本/"},{"name":"Plan Mode","count":1,"path":"tags/Plan-Mode/"},{"name":"Voice Mode","count":1,"path":"tags/Voice-Mode/"},{"name":"Push-to-Talk","count":1,"path":"tags/Push-to-Talk/"},{"name":"Ultraplan","count":1,"path":"tags/Ultraplan/"},{"name":"規劃","count":1,"path":"tags/規劃/"},{"name":"cloud","count":1,"path":"tags/cloud/"},{"name":"Team","count":1,"path":"tags/Team/"},{"name":"Onboarding","count":1,"path":"tags/Onboarding/"},{"name":"Routines","count":1,"path":"tags/Routines/"},{"name":"Subagent","count":1,"path":"tags/Subagent/"},{"name":"Cowork","count":1,"path":"tags/Cowork/"},{"name":"Plugin","count":1,"path":"tags/Plugin/"},{"name":"Supply Chain","count":1,"path":"tags/Supply-Chain/"},{"name":"Managed Agents","count":1,"path":"tags/Managed-Agents/"},{"name":"Dreaming","count":1,"path":"tags/Dreaming/"},{"name":"Outcomes","count":1,"path":"tags/Outcomes/"},{"name":"UX 設計","count":1,"path":"tags/UX-設計/"},{"name":"Coolify","count":1,"path":"tags/Coolify/"},{"name":"self-hosted","count":1,"path":"tags/self-hosted/"},{"name":"PaaS","count":1,"path":"tags/PaaS/"},{"name":"Productivity","count":1,"path":"tags/Productivity/"},{"name":"CrewAI","count":1,"path":"tags/CrewAI/"},{"name":"Multi-Agent","count":1,"path":"tags/Multi-Agent/"},{"name":"Encryption","count":1,"path":"tags/Encryption/"},{"name":"Monitoring","count":1,"path":"tags/Monitoring/"},{"name":"Analyzer","count":1,"path":"tags/Analyzer/"},{"name":"IK","count":1,"path":"tags/IK/"},{"name":"中文搜尋","count":1,"path":"tags/中文搜尋/"},{"name":"ELK Stack","count":1,"path":"tags/ELK-Stack/"},{"name":"Architecture","count":1,"path":"tags/Architecture/"},{"name":"Production","count":1,"path":"tags/Production/"},{"name":"Operations","count":1,"path":"tags/Operations/"},{"name":"CRUD","count":1,"path":"tags/CRUD/"},{"name":"bulk","count":1,"path":"tags/bulk/"},{"name":"alias","count":1,"path":"tags/alias/"},{"name":"REST API","count":1,"path":"tags/REST-API/"},{"name":"Mapping","count":1,"path":"tags/Mapping/"},{"name":"Template","count":1,"path":"tags/Template/"},{"name":"Schema","count":1,"path":"tags/Schema/"},{"name":"Aggregation","count":1,"path":"tags/Aggregation/"},{"name":"Search","count":1,"path":"tags/Search/"},{"name":"internals","count":1,"path":"tags/internals/"},{"name":"Translog","count":1,"path":"tags/Translog/"},{"name":"Segment","count":1,"path":"tags/Segment/"},{"name":"GH-300","count":1,"path":"tags/GH-300/"},{"name":"Responsible AI","count":1,"path":"tags/Responsible-AI/"},{"name":"工具遷移","count":1,"path":"tags/工具遷移/"},{"name":"前端","count":1,"path":"tags/前端/"},{"name":"SpecKit","count":1,"path":"tags/SpecKit/"},{"name":"ETF","count":1,"path":"tags/ETF/"},{"name":"台股","count":1,"path":"tags/台股/"},{"name":"美股","count":1,"path":"tags/美股/"},{"name":"Mag-7","count":1,"path":"tags/Mag-7/"},{"name":"財報","count":1,"path":"tags/財報/"},{"name":"Jira","count":1,"path":"tags/Jira/"},{"name":"Atlassian","count":1,"path":"tags/Atlassian/"},{"name":"OpenCode","count":1,"path":"tags/OpenCode/"},{"name":"GPT","count":1,"path":"tags/GPT/"},{"name":"Lightpanda","count":1,"path":"tags/Lightpanda/"},{"name":"Headless Browser","count":1,"path":"tags/Headless-Browser/"},{"name":"Zig","count":1,"path":"tags/Zig/"},{"name":"Web Scraping","count":1,"path":"tags/Web-Scraping/"},{"name":"Open CoDesign","count":1,"path":"tags/Open-CoDesign/"},{"name":"AI Design","count":1,"path":"tags/AI-Design/"},{"name":"Multica","count":1,"path":"tags/Multica/"},{"name":"GPT-5.5","count":1,"path":"tags/GPT-5-5/"},{"name":"Discord","count":1,"path":"tags/Discord/"},{"name":"OpenScreen","count":1,"path":"tags/OpenScreen/"},{"name":"Screen Recording","count":1,"path":"tags/Screen-Recording/"},{"name":"Sonatype Guide","count":1,"path":"tags/Sonatype-Guide/"},{"name":"依賴管理","count":1,"path":"tags/依賴管理/"},{"name":"AI VTuber","count":1,"path":"tags/AI-VTuber/"},{"name":"Project AIRI","count":1,"path":"tags/Project-AIRI/"},{"name":"TypeScript","count":1,"path":"tags/TypeScript/"},{"name":"RTK","count":1,"path":"tags/RTK/"},{"name":"Token 優化","count":1,"path":"tags/Token-優化/"},{"name":"Stanford AI Index","count":1,"path":"tags/Stanford-AI-Index/"},{"name":"AI產業","count":1,"path":"tags/AI產業/"},{"name":"工程師職涯","count":1,"path":"tags/工程師職涯/"},{"name":"AI透明度","count":1,"path":"tags/AI透明度/"},{"name":"就業市場","count":1,"path":"tags/就業市場/"},{"name":"TimesFM","count":1,"path":"tags/TimesFM/"},{"name":"時間序列","count":1,"path":"tags/時間序列/"},{"name":"基礎模型","count":1,"path":"tags/基礎模型/"},{"name":"ML","count":1,"path":"tags/ML/"},{"name":"API","count":1,"path":"tags/API/"},{"name":"設計模式","count":1,"path":"tags/設計模式/"},{"name":"Whisper","count":1,"path":"tags/Whisper/"},{"name":"Speech-to-Text","count":1,"path":"tags/Speech-to-Text/"},{"name":"Flash Attention","count":1,"path":"tags/Flash-Attention/"},{"name":"Skill","count":1,"path":"tags/Skill/"},{"name":"心智模型","count":1,"path":"tags/心智模型/"},{"name":"決策工具","count":1,"path":"tags/決策工具/"},{"name":"包棟民宿","count":1,"path":"tags/包棟民宿/"},{"name":"台中","count":1,"path":"tags/台中/"},{"name":"南投","count":1,"path":"tags/南投/"},{"name":"苗栗","count":1,"path":"tags/苗栗/"},{"name":"AI 模型","count":1,"path":"tags/AI-模型/"},{"name":"時事評論","count":1,"path":"tags/時事評論/"},{"name":"能源","count":1,"path":"tags/能源/"},{"name":"AI 基礎建設","count":1,"path":"tags/AI-基礎建設/"},{"name":"台灣","count":1,"path":"tags/台灣/"},{"name":"MacBook","count":1,"path":"tags/MacBook/"},{"name":"淡江大橋","count":1,"path":"tags/淡江大橋/"},{"name":"淡水","count":1,"path":"tags/淡水/"},{"name":"建築","count":1,"path":"tags/建築/"},{"name":"週末","count":1,"path":"tags/週末/"},{"name":"Claude Skills","count":1,"path":"tags/Claude-Skills/"},{"name":"居家辦公","count":1,"path":"tags/居家辦公/"},{"name":"人體工學","count":1,"path":"tags/人體工學/"},{"name":"日本","count":1,"path":"tags/日本/"},{"name":"黃金週","count":1,"path":"tags/黃金週/"},{"name":"Golden Week","count":1,"path":"tags/Golden-Week/"}];</script></body></html>
