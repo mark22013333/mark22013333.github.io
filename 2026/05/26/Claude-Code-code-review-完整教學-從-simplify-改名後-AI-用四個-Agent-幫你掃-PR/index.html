@@ -1,0 +1,495 @@
+<!DOCTYPE html><html lang="zh-TW" data-theme="dark"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>Claude Code /code-review 完整教學：從 /simplify 改名後，AI 用四個 Agent 幫你掃 PR | Cheng's Tech &amp; Life</title><meta name="author" content="Cheng®"><meta name="copyright" content="Cheng®"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#0d0d0d"><meta name="description" content="原本要看兩小時的 PR，跑 &#x2F;code-review high --comment 十分鐘，AI 在 GitHub 上替你留好 inline comments。四個平行 agent、confidence 80 門檻、--comment 三種行為，這篇講清楚。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Claude Code &#x2F;code-review 完整教學：從 &#x2F;simplify 改名後，AI 用四個 Agent 幫你掃 PR">
+<meta property="og:url" content="https://mark22013333.github.io/2026/05/26/Claude-Code-code-review-%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8-%E5%BE%9E-simplify-%E6%94%B9%E5%90%8D%E5%BE%8C-AI-%E7%94%A8%E5%9B%9B%E5%80%8B-Agent-%E5%B9%AB%E4%BD%A0%E6%8E%83-PR/index.html">
+<meta property="og:site_name" content="Cheng&#39;s Tech &amp; Life">
+<meta property="og:description" content="原本要看兩小時的 PR，跑 &#x2F;code-review high --comment 十分鐘，AI 在 GitHub 上替你留好 inline comments。四個平行 agent、confidence 80 門檻、--comment 三種行為，這篇講清楚。">
+<meta property="og:locale" content="zh_TW">
+<meta property="og:image" content="https://mark22013333.github.io/img/20260526-03.webp">
+<meta property="article:published_time" content="2026-05-26T13:45:00.000Z">
+<meta property="article:modified_time" content="2026-05-26T13:41:47.640Z">
+<meta property="article:author" content="Cheng®">
+<meta property="article:tag" content="Claude Code">
+<meta property="article:tag" content="GitHub">
+<meta property="article:tag" content="教學">
+<meta property="article:tag" content="AI 開發工具">
+<meta property="article:tag" content="Code Review">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://mark22013333.github.io/img/20260526-03.webp"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Claude Code /code-review 完整教學：從 /simplify 改名後，AI 用四個 Agent 幫你掃 PR",
+  "url": "https://mark22013333.github.io/2026/05/26/Claude-Code-code-review-%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8-%E5%BE%9E-simplify-%E6%94%B9%E5%90%8D%E5%BE%8C-AI-%E7%94%A8%E5%9B%9B%E5%80%8B-Agent-%E5%B9%AB%E4%BD%A0%E6%8E%83-PR/",
+  "image": "https://mark22013333.github.io/img/20260526-03.webp",
+  "datePublished": "2026-05-26T13:45:00.000Z",
+  "dateModified": "2026-05-26T13:41:47.640Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "Cheng®",
+      "url": "https://mark22013333.github.io"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://mark22013333.github.io/2026/05/26/Claude-Code-code-review-%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8-%E5%BE%9E-simplify-%E6%94%B9%E5%90%8D%E5%BE%8C-AI-%E7%94%A8%E5%9B%9B%E5%80%8B-Agent-%E5%B9%AB%E4%BD%A0%E6%8E%83-PR/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//www.google-analytics.com" crossorigin=""/><link rel="preconnect" href="//fonts.googleapis.com" crossorigin=""/><link rel="preconnect" href="//busuanzi.ibruce.info"/><meta name="google-site-verification" content="6ywUr8k2n_CT1PFYJzlSvI3CZ-JmJ55RYbA39VrFBDs"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!true && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          const hour = new Date().getHours()
+          const isNight = hour <= 9 || hour >= 18
+          if (theme === undefined) isNight ? activateDarkMode() : activateLightMode()
+          else theme === 'light' ? activateLightMode() : activateDarkMode()
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script async="async" src="https://www.googletagmanager.com/gtag/js?id=G-JBV14NRDH3"></script><script>window.dataLayer = window.dataLayer || []
+function gtag(){dataLayer.push(arguments)}
+gtag('js', new Date())
+gtag('config', 'G-JBV14NRDH3')
+btf.addGlobalFn('pjaxComplete', () => {
+  gtag('config', 'G-JBV14NRDH3', {'page_path': window.location.pathname})
+}, 'google_analytics')
+</script><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Titillium+Web&amp;display=swap" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"pagination":{"enable":false,"hitsPerPage":8},"languages":{"hits_empty":"找不到符合您查詢的內容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '複製成功',
+    error: '複製失敗',
+    noSupport: '瀏覽器不支援'
+  },
+  relativeDate: {
+    homepage: false,
+    post: true
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '剛剛',
+    min: '分鐘前',
+    hour: '小時前',
+    day: '天前',
+    month: '個月前'
+  },
+  copyright: {"limitCount":1,"languages":{"author":"作者: Cheng®","link":"連結: ","source":"來源: Cheng's Tech & Life","info":"著作權歸作者所有。如需商業轉載，請聯絡作者獲得授權，非商業轉載請註明出處😁。"}},
+  lightbox: 'fancybox',
+  Snackbar: {"chs_to_cht":"已切換為繁體中文","cht_to_chs":"已切換為簡體中文","day_to_night":"已切換為深色模式","night_to_day":"已切換為淺色模式","bgLight":"#49b1f5","bgDark":"#1f1f1f","position":"top-center"},
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid/dist/infinitegrid.min.js',
+    buttonText: '載入更多'
+  },
+  isPhotoFigcaption: true,
+  islazyloadPlugin: false,
+  isAnchor: true,
+  percent: {
+    toc: true,
+    rightside: true,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Claude Code /code-review 完整教學：從 /simplify 改名後，AI 用四個 Agent 幫你掃 PR',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><link rel="stylesheet" href="/css/kkbox-player.css"><link rel="stylesheet" href="/css/tag-cloud-fancy.css"><link rel="stylesheet" href="/css/font-resize.css"><link rel="stylesheet" href="/css/dark-palette.css"><link rel="stylesheet" href="/css/loading-override.css"><link rel="stylesheet" href="/css/series-showcase.css"><link rel="stylesheet" href="/css/search-tags.css"><link rel="alternate" href="/atom.xml" title="Cheng's Tech & Life" type="application/atom+xml">
+</head><body><div id="loading-box"><div class="loading-glass-overlay"></div><div class="loading-indicator"><div class="loading-dot"></div><div class="loading-dot"></div><div class="loading-dot"></div></div></div><script>(()=>{
+  const $loadingBox = document.getElementById('loading-box')
+  const $body = document.body
+  const preloader = {
+    endLoading: () => {
+      if ($loadingBox.classList.contains('loaded')) return
+      $body.style.overflow = ''
+      $loadingBox.classList.add('loaded')
+    },
+    initLoading: () => {
+      $body.style.overflow = 'hidden'
+      $loadingBox.classList.remove('loaded')
+    }
+  }
+
+  preloader.initLoading()
+
+  if (document.readyState === 'complete') {
+    preloader.endLoading()
+  } else {
+    window.addEventListener('load', preloader.endLoading)
+    document.addEventListener('DOMContentLoaded', preloader.endLoading)
+    setTimeout(preloader.endLoading, 7000)
+  }
+
+  if (true) {
+    btf.addGlobalFn('pjaxSend', preloader.initLoading, 'preloader_init')
+    btf.addGlobalFn('pjaxComplete', preloader.endLoading, 'preloader_end')
+  }
+})()</script><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="https://lh3.googleusercontent.com/pw/ABLVV87_po8nBc6F_tXcoYDmtzMGWxHuhhrbguYILCjmjWKLOS8DTpubm0YoQLKgjyjRIZyV5TjYe7XVEz_YU4squfr37GTZqPZP1hlMVZ_MIgXpTxWu73M=w1200" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">264</div></a><a href="/tags/"><div class="headline">標籤</div><div class="length-num">218</div></a><a href="/categories/"><div class="headline">分類</div><div class="length-num">19</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首頁-Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 時間軸-archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 標籤-tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分類-Categories</span></a></div><div class="menus_item"><a class="site-page" href="/series/"><i class="fa-fw fas fa-layer-group"></i><span> 系列-Series</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-list"></i><span> 其他列表</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音樂-Music</span></a></li><li><a class="site-page child" href="/gallery/"><i class="fa-fw fas fa-images"></i><span> 畫館-Gallery</span></a></li></ul></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg fixed" id="page-header" style="background-image: url(/img/20260526-03.webp);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><img class="site-icon" src="https://lh3.googleusercontent.com/pw/ABLVV87_po8nBc6F_tXcoYDmtzMGWxHuhhrbguYILCjmjWKLOS8DTpubm0YoQLKgjyjRIZyV5TjYe7XVEz_YU4squfr37GTZqPZP1hlMVZ_MIgXpTxWu73M=w1200" alt="Logo"><span class="site-name">Cheng's Tech &amp; Life</span></a><a class="nav-page-title" href="/"><span class="site-name">Claude Code /code-review 完整教學：從 /simplify 改名後，AI 用四個 Agent 幫你掃 PR</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首頁</span></span></a></span><div id="menus"><div id="search-button" title="Ctrl+K / Cmd+K"><span class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜尋</span></span></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首頁-Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 時間軸-archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 標籤-tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分類-Categories</span></a></div><div class="menus_item"><a class="site-page" href="/series/"><i class="fa-fw fas fa-layer-group"></i><span> 系列-Series</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-list"></i><span> 其他列表</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音樂-Music</span></a></li><li><a class="site-page child" href="/gallery/"><i class="fa-fw fas fa-images"></i><span> 畫館-Gallery</span></a></li></ul></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">Claude Code /code-review 完整教學：從 /simplify 改名後，AI 用四個 Agent 幫你掃 PR</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">發表於</span><time class="post-meta-date-created" datetime="2026-05-26T13:45:00.000Z" title="發表於 2026-05-26 21:45:00">2026-05-26</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新於</span><time class="post-meta-date-updated" datetime="2026-05-26T13:41:47.640Z" title="更新於 2026-05-26 21:41:47">2026-05-26</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Claude-Code/">Claude Code</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">總字數:</span><span class="word-count">2.5k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">閱讀時間:</span><span>8分鐘</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">瀏覽量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><p>打開 PR review，1200 行變更，今天不用吃午飯了。</p>
+<p>這是台灣工程師每週都會遇上的場景。然後你看著 diff 想：「能不能把這事丟給 AI？」——可以，但 Claude Code 之前的 <code>/review</code> 命令，不是太囉嗦（順手幫你改 code）就是太保守（只列 nit）。</p>
+<p>直到五月中，Anthropic 把它整個換過。原本叫 <code>/simplify</code> 的命令改名為 <code>/code-review</code>、移除「順手修補」的行為、改成<strong>四個平行 agent 掃 diff</strong>、confidence ≥ 80 才出聲、加上 <code>--comment</code> 直接把 inline 評論發到 GitHub PR。</p>
+<p>這個改動的好玩在於——不是新增功能，是<strong>刪除功能</strong>。Anthropic 把命令收窄到「只做一件事」：找 correctness bug。其他的事它不做。</p>
+<p>這是這篇要拆給你看的：為什麼這樣設計、怎麼用、什麼時候別用。</p>
+<h2 id="三秒先講結果"><a href="#三秒先講結果" class="headerlink" title="三秒先講結果"></a>三秒先講結果</h2><p>把這個指令背起來：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 在 PR 分支上，輸出到終端機</span></span><br><span class="line">/code-review high</span><br><span class="line"></span><br><span class="line"><span class="comment"># 在 PR 分支上，把問題用 inline comment 發到 GitHub</span></span><br><span class="line">/code-review high --comment</span><br></pre></td></tr></table></figure>
+
+<p><code>high</code> 是 effort level，可以換成 <code>medium</code> 或 <code>low</code>。<code>--comment</code> 是把結果發到 PR。沒這兩個參數，預設行為是中等強度、輸出到 terminal。</p>
+<p>跑完之後 AI 會：</p>
+<ol>
+<li>啟動 4 個 review agent 平行掃 diff</li>
+<li>每個發現的問題給一個 0-100 的 confidence 分數</li>
+<li>只輸出 ≥ 80 分的問題</li>
+<li>結果去重、按嚴重性排序</li>
+<li>有 <code>--comment</code> 就 post 到 GitHub，沒有就印在 terminal</li>
+</ol>
+<p>整個過程不修 code，只指出 bug 在哪。<strong>它變成一個只做評審的工具，不再順手改東西</strong>。</p>
+<h2 id="為什麼從-simplify-改名"><a href="#為什麼從-simplify-改名" class="headerlink" title="為什麼從 &#x2F;simplify 改名"></a>為什麼從 &#x2F;simplify 改名</h2><p>這是這次改動最容易被忽略、但最值得想的地方。</p>
+<p>原本的 <code>/simplify</code> 行為是「找到 bug，順手清乾淨」。聽起來好像很貼心——AI 看出問題、AI 直接修——但實務上會發生兩件事：</p>
+<p>第一，<strong>reviewer 看不到問題就被解掉了</strong>。你提了 PR，AI 在背景跑 <code>/simplify</code>，回來告訴你「好了喔」。你不知道它改了什麼、為什麼改、有沒有改錯。code review 的價值有一半在「看見問題」，這層被跳過了。</p>
+<p>第二，<strong>修補本身可能引入新 bug</strong>。AI 改 bug 的時候很自信，但它的修補是不是真的對？沒人複查。原本的程式碼有 bug 是已知的，AI 修完的程式碼有沒有 bug 是未知的——多了一個變數。</p>
+<p><code>/code-review</code> 的設計選擇剛好相反：<strong>只找問題、不修問題</strong>。修補的決策權還給人。這個決定看起來像功能變弱了，實際上是把工具的角色講清楚——它是一個 reviewer，不是一個 fixer。</p>
+<p>工具角色一清楚，搭配的工作流才能穩定。reviewer 不會偷偷改東西，所以 reviewer 可以跑得更積極（每個 PR 都跑、跑多次）；fixer 由你決定要不要做、做哪些——這層是不能被外包的判斷。</p>
+<h2 id="四個-Agent-平行掃描的意義"><a href="#四個-Agent-平行掃描的意義" class="headerlink" title="四個 Agent 平行掃描的意義"></a>四個 Agent 平行掃描的意義</h2><p><code>/code-review</code> 觸發時，Claude Code 會在背景開 4 個 review agent，各自獨立看同一段 diff。</p>
+<p>為什麼是 4 個？這跟 LLM 的「多次採樣」邏輯有關。同一個模型同一個 prompt，每次推理會給略不同的答案。如果你跑 4 次、4 次都說「這行有問題」，這個 bug 的可信度遠高於「跑 1 次說有問題」。</p>
+<p>具體做法是這樣：</p>
+<ol>
+<li>4 個 agent 分別跑完，各自列出他們發現的 issue</li>
+<li>每個 issue 比對其他 agent 的結果，給一個 confidence score（多少個 agent 都看出來）</li>
+<li>把 score &lt; 80 的 issue 砍掉</li>
+<li>剩下的 issue 去重（同一個問題不同說法只留一份）</li>
+<li>按嚴重性排序輸出</li>
+</ol>
+<p>這個設計把 LLM 的「隨機性」變成資產，而不是負債。單跑容易有假警報（false positive），四跑取交集就把雜訊濾掉一大半。</p>
+<blockquote>
+<p>想自己調 confidence 門檻可以改 <code>commands/code-review.md</code> 裡的 <code>80</code>，範圍 0-100。設低了會收到一堆 nit，設高了可能漏 bug。預設 80 是個平衡點。</p>
+</blockquote>
+<h2 id="Effort-Level-怎麼選"><a href="#Effort-Level-怎麼選" class="headerlink" title="Effort Level 怎麼選"></a>Effort Level 怎麼選</h2><p><code>high</code> &#x2F; <code>medium</code> &#x2F; <code>low</code> 不是「看多認真」的差別，是「掃多深」的差別。</p>
+<ul>
+<li>**<code>low</code>**：快速看一輪，找明顯的 logic error 與 typo。適合 1-2 個檔案的小變更。</li>
+<li>**<code>medium</code>**（預設）：深一點，會看 edge case 與 null check。適合 PR 範圍 200-500 行。</li>
+<li>**<code>high</code>**：完整檢查，會跨檔案追 data flow、檢查 race condition、評估錯誤處理。適合 500 行以上、或者觸碰核心邏輯的 PR。</li>
+</ul>
+<p>實務經驗：高度自信的小 PR 用 <code>medium</code> 就夠了。觸碰共用 module、改了 schema、跨服務的、production 路徑相關的——直接 <code>high</code>，多花的時間值得。</p>
+<h2 id="–comment-三種行為模式"><a href="#–comment-三種行為模式" class="headerlink" title="–comment 三種行為模式"></a>–comment 三種行為模式</h2><p><code>--comment</code> 旗標的行為要分三種情況講，因為跟你預期可能不同：</p>
+<table>
+<thead>
+<tr>
+<th>情況</th>
+<th>沒有 <code>--comment</code></th>
+<th>有 <code>--comment</code></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>沒發現問題</td>
+<td>在 terminal 印「沒問題」</td>
+<td>在 PR 留一個「review complete, no issues」摘要</td>
+</tr>
+<tr>
+<td>發現問題</td>
+<td>在 terminal 印 issue 清單</td>
+<td>在 PR 各行 post inline comment + 摘要</td>
+</tr>
+</tbody></table>
+<p>第二格是這個指令最值錢的地方。Claude 會根據每個 issue 的位置，<strong>直接在那一行 GitHub PR 的程式碼旁邊留評論</strong>，跟人類 reviewer 的留言完全一樣。摘要會放在 PR 評論區，列出總共幾個 issue、按嚴重性分類。</p>
+<p>注意一個細節：<strong>沒給 <code>--comment</code> 但發現問題，預設不會發到 GitHub</strong>。這是個保護性設計——你跑 <code>/code-review</code> 練習一下、看看 AI 抓得準不準，不會誤觸發 PR 上的雜訊。要真的發出去得明確加 flag。</p>
+<h2 id="三種典型工作流"><a href="#三種典型工作流" class="headerlink" title="三種典型工作流"></a>三種典型工作流</h2><p><strong>本地預檢，發 PR 前先掃</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">git checkout -b feat/payment-flow</span><br><span class="line"><span class="comment"># ... 寫 code ...</span></span><br><span class="line">git push</span><br><span class="line">gh <span class="built_in">pr</span> create --draft</span><br><span class="line">/code-review medium</span><br></pre></td></tr></table></figure>
+
+<p>本地跑、輸出 terminal、看完 AI 的建議再決定發不發 PR。等於把自己的 PR 先當別人的 PR 來 review 一次，抓掉低級錯誤再給人看。</p>
+<p><strong>Reviewer 用來輔助</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">gh <span class="built_in">pr</span> checkout 1234</span><br><span class="line">/code-review high --comment</span><br></pre></td></tr></table></figure>
+
+<p>PR 收到要 review，先 checkout 下來、跑高強度評審、把 AI 認為有問題的點直接 post 到 PR 上。剩下要自己看的就是 AI 沒看出來的部分——business logic、設計合理性、命名好壞——這些 AI 不擅長判斷，但 logic bug &#x2F; null check &#x2F; race condition 它抓得快。</p>
+<p><strong>整合到 CI 自動跑</strong></p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># .github/workflows/code-review.yml</span></span><br><span class="line"><span class="attr">name:</span> <span class="string">AI</span> <span class="string">Code</span> <span class="string">Review</span></span><br><span class="line"><span class="attr">on:</span></span><br><span class="line">  <span class="attr">pull_request:</span></span><br><span class="line">    <span class="attr">types:</span> [<span class="string">opened</span>, <span class="string">synchronize</span>]</span><br><span class="line"><span class="attr">jobs:</span></span><br><span class="line">  <span class="attr">review:</span></span><br><span class="line">    <span class="attr">runs-on:</span> <span class="string">ubuntu-latest</span></span><br><span class="line">    <span class="attr">steps:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">uses:</span> <span class="string">actions/checkout@v4</span></span><br><span class="line">        <span class="attr">with:</span></span><br><span class="line">          <span class="attr">fetch-depth:</span> <span class="number">0</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Run</span> <span class="string">Claude</span> <span class="string">Code</span> <span class="string">Review</span></span><br><span class="line">        <span class="attr">env:</span></span><br><span class="line">          <span class="attr">ANTHROPIC_API_KEY:</span> <span class="string">$&#123;&#123;</span> <span class="string">secrets.ANTHROPIC_API_KEY</span> <span class="string">&#125;&#125;</span></span><br><span class="line">          <span class="attr">GITHUB_TOKEN:</span> <span class="string">$&#123;&#123;</span> <span class="string">secrets.GITHUB_TOKEN</span> <span class="string">&#125;&#125;</span></span><br><span class="line">        <span class="attr">run:</span> <span class="string">|</span></span><br><span class="line">          <span class="string">claude</span> <span class="string">-p</span> <span class="string">&quot;/code-review high --comment&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>每次 PR 開或更新，AI 自動掃一次。人類 reviewer 進來看的時候，AI 已經把該抓的抓好了。注意要設預算上限，免得跑爆——<code>/code-review high</code> 在大 PR 上會吃不少 token。</p>
+<h2 id="什麼時候不要用"><a href="#什麼時候不要用" class="headerlink" title="什麼時候不要用"></a>什麼時候不要用</h2><p><strong>第一種</strong>：你要的是「重構建議」，不是「找 bug」。<code>/code-review</code> 不會跟你說「這段拆成兩個 function 比較好」，它只找 correctness 問題。要重構建議用其他指令或直接問 Claude。</p>
+<p><strong>第二種</strong>：PR 範圍極小（&lt; 30 行）。四個 agent 平行跑一次 token 成本不小，30 行 diff 自己看比較快。</p>
+<p><strong>第三種</strong>：你正在學一個新框架。AI 可能誤判 framework-specific idiom 是 bug，會干擾你判斷。等熟悉了再跑。</p>
+<p><strong>第四種</strong>：security review。<code>/code-review</code> 找的是 correctness bug，不是 security vulnerability。安全議題用 <code>/security-review</code>，那是另一個指令、用另一套 prompt、跑另一組檢查。</p>
+<h2 id="跟舊的-review-命令的差別"><a href="#跟舊的-review-命令的差別" class="headerlink" title="跟舊的 &#x2F;review 命令的差別"></a>跟舊的 &#x2F;review 命令的差別</h2><p>有些教學文還會教你跑 <code>/review</code>——那是另一個指令，行為類似但更簡化。差別整理：</p>
+<table>
+<thead>
+<tr>
+<th>指令</th>
+<th>用途</th>
+<th>confidence 過濾</th>
+<th>改 code</th>
+<th>適合場合</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>/review</code></td>
+<td>通用 PR review</td>
+<td>沒有</td>
+<td>不改</td>
+<td>快速看一眼</td>
+</tr>
+<tr>
+<td><code>/code-review</code></td>
+<td>找 correctness bug</td>
+<td>confidence ≥ 80</td>
+<td>不改</td>
+<td>嚴肅 review</td>
+</tr>
+<tr>
+<td><code>/security-review</code></td>
+<td>找安全漏洞</td>
+<td>安全規則匹配</td>
+<td>不改</td>
+<td>release 前掃</td>
+</tr>
+<tr>
+<td><code>/simplify</code>（已廢棄）</td>
+<td>找 bug 順手修</td>
+<td>—</td>
+<td>會改</td>
+<td>已不建議用</td>
+</tr>
+</tbody></table>
+<p>簡單記：要 AI <strong>幫你決定發不發出去</strong>用 <code>/code-review</code>，要 AI <strong>快速看一眼跟你聊聊</strong>用 <code>/review</code>。</p>
+<h2 id="一個常見踩坑"><a href="#一個常見踩坑" class="headerlink" title="一個常見踩坑"></a>一個常見踩坑</h2><p>跑 <code>/code-review high --comment</code> 在大 PR 上，結果 GitHub PR 多了二十條 AI inline comment——人類 reviewer 進來嚇一跳。</p>
+<p>解法是把 confidence 門檻拉高。改 <code>~/.claude/plugins/code-review/commands/code-review.md</code>：</p>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="section"># 把這行的 80 改成 90 或 95</span></span><br><span class="line">issues with confidence &gt;= 80</span><br></pre></td></tr></table></figure>
+
+<p>confidence 90 大概只會留下 4-6 個最有把握的 issue，PR 看起來乾淨多了。代價是漏報率上升。</p>
+<p>如果你還是擔心 AI 留太多 comment，先用 <code>--comment</code> 留 draft：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">/code-review high</span><br><span class="line"><span class="comment"># 看完輸出後，如果覺得 OK 再</span></span><br><span class="line">/code-review high --comment</span><br></pre></td></tr></table></figure>
+
+<p>兩段式：第一次本地看，第二次發到 PR。多花一次 token，但能控制最終 PR 上看到什麼。</p>
+<h2 id="為什麼這個指令值得放進日常流程"><a href="#為什麼這個指令值得放進日常流程" class="headerlink" title="為什麼這個指令值得放進日常流程"></a>為什麼這個指令值得放進日常流程</h2><p>回到開頭那個 1200 行 PR 的場景。</p>
+<p>人類 reviewer 看完 1200 行的時間是 1-2 小時，注意力會在後半段衰退——前 200 行抓得很細，後 1000 行只看 commit message 就 LGTM。這是人類 review 不可避免的偏差。</p>
+<p><code>/code-review high --comment</code> 把這 1-2 小時的工作切兩半。AI 的注意力不會衰退，1200 行對它跟 200 行對它的精細度差不多——前提是 token 預算夠跑高 effort。它先把「明顯的 correctness bug」抓完，人類 reviewer 進來的時候，剩下要看的是 AI 抓不到的層次：</p>
+<ul>
+<li>這個設計合不合理？</li>
+<li>命名能不能改進？</li>
+<li>有沒有更好的抽象？</li>
+<li>跟整個系統的方向一致嗎？</li>
+</ul>
+<p>這層是 AI 暫時還做不好的判斷。把工具的角色切清楚，工作流才會穩定——AI 做它擅長的（規模化、不疲勞的 correctness check），人類做人類擅長的（系統視野、設計品味、上下文判斷）。</p>
+<p><code>/simplify</code> 改成 <code>/code-review</code> 看起來只是改了個名字，背後是這個分工的明確化。功能變窄了，但<strong>剩下那塊變得可信</strong>。</p>
+<h2 id="相關連結"><a href="#相關連結" class="headerlink" title="相關連結"></a>相關連結</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://code.claude.com/docs/en/code-review">Claude Code Code Review 官方文件</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/anthropics/claude-code/blob/main/plugins/code-review/commands/code-review.md">code-review 命令原始碼</a></li>
+<li><a target="_blank" rel="noopener" href="https://code.claude.com/docs/en/changelog">Claude Code Changelog</a></li>
+<li><a target="_blank" rel="noopener" href="https://support.claude.com/en/articles/14233555-set-up-code-review-for-claude-code">Set up Code Review for Claude Code</a></li>
+</ul>
+<p>延伸閱讀我之前寫過的：</p>
+<ul>
+<li><a href="/2026/04/02/Claude-Code-Context-%E7%AE%A1%E7%90%86%E6%94%BB%E7%95%A5-%E7%82%BA%E4%BB%80%E9%BA%BC%E4%BD%A0%E7%9A%84-AI-%E8%B6%8A%E7%94%A8%E8%B6%8A%E7%AC%A8%E4%BB%A5%E5%8F%8A%E6%80%8E%E9%BA%BC%E4%BF%AE/">Claude Code Context 管理攻略 — 為什麼你的 AI 越用越笨以及怎麼修</a></li>
+<li><a href="/2026/05/13/Claude-Code-Plan-Mode-%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8-%E8%AE%93-AI-%E5%85%88%E6%83%B3%E6%B8%85%E6%A5%9A%E5%86%8D%E5%8B%95%E6%89%8B%E7%9A%84%E6%AD%A3%E7%A2%BA%E5%A7%BF%E5%8B%A2/">Claude Code Plan Mode 完整教學 — 讓 AI 先想清楚再動手的正確姿勢</a></li>
+<li><a href="/2026/03/28/Claude-Code-Sub-agents-%E6%8B%86%E8%A7%A3%E4%BB%BB%E5%8B%99%E7%9A%84%E6%AD%A3%E7%A2%BA%E5%A7%BF%E5%8B%A2/">Claude Code Sub-agents — 拆解任務的正確姿勢</a></li>
+</ul>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://mark22013333.github.io">Cheng®</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章連結: </span><span class="post-copyright-info"><a href="https://mark22013333.github.io/2026/05/26/Claude-Code-code-review-%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8-%E5%BE%9E-simplify-%E6%94%B9%E5%90%8D%E5%BE%8C-AI-%E7%94%A8%E5%9B%9B%E5%80%8B-Agent-%E5%B9%AB%E4%BD%A0%E6%8E%83-PR/">https://mark22013333.github.io/2026/05/26/Claude-Code-code-review-完整教學-從-simplify-改名後-AI-用四個-Agent-幫你掃-PR/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版權聲明: </span><span class="post-copyright-info">本部落格所有文章除特別聲明外，均採用<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 授權協議。轉載請註明來源 <a href="https://mark22013333.github.io" target="_blank">Cheng's Tech & Life</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Claude-Code/">Claude Code</a><a class="post-meta__tags" href="/tags/GitHub/">GitHub</a><a class="post-meta__tags" href="/tags/%E6%95%99%E5%AD%B8/">教學</a><a class="post-meta__tags" href="/tags/AI-%E9%96%8B%E7%99%BC%E5%B7%A5%E5%85%B7/">AI 開發工具</a><a class="post-meta__tags" href="/tags/Code-Review/">Code Review</a></div><div class="post-share"><div class="social-share" data-image="/img/20260526-03.webp" data-sites="facebook,x"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><div class="post-reward"><div class="reward-badges"><a class="sponsor-glow-btn" href="https://www.buymeacoffee.com/mark22013333" target="_blank" rel="noopener noreferrer" title="Buy Me A Coffee"><img src="https://img.shields.io/badge/Buy_Me_A_Coffee-FFDD00?style=for-the-badge&amp;logo=buy-me-a-coffee&amp;logoColor=black" alt="Buy Me A Coffee"/></a><a class="sponsor-glow-btn" href="https://p.ecpay.com.tw/EFC3F8F" target="_blank" rel="noopener noreferrer" title="綠界贊助"><img src="https://img.shields.io/badge/☕_%E8%AB%8B%E6%88%91%E5%96%9D%E6%9D%AF%E5%92%96%E5%95%A1-Donate-11998e?style=for-the-badge&amp;logo=coffee&amp;logoColor=white" alt="綠界贊助"/></a><a class="sponsor-glow-btn" href="https://calendly.com/markcheng00806-intumit/15min" target="_blank" rel="noopener noreferrer" title="預約時間"><img src="https://img.shields.io/badge/📅_%E9%A0%90%E7%B4%84_15_%E5%88%86%E9%90%98-Book_Time-0072ff?style=for-the-badge" alt="預約時間"/></a><p class="reward-badges-note">你的鼓勵將被轉換為我明天繼續加班的動力（真的）。 ❤️</p></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related full-width" href="/2026/05/26/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260526/" title="AI 與科技新聞摘要 20260526：兩個三萬人、Copilot 轉成計量收費、AI 框架本身變成 0-day 攻擊面"><img class="cover" src="/img/20260526-02.webp" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">AI 與科技新聞摘要 20260526：兩個三萬人、Copilot 轉成計量收費、AI 框架本身變成 0-day 攻擊面</div></div><div class="info-2"><div class="info-item-1">兩個三萬。一週內，PwC 用 3 萬名顧問押注 Claude；Bristol Myers Squibb 用 3 萬名員工押注 Claude。沒有人押注 OpenAI。 同一週，GitHub 宣布 Copilot 六月一號全部改用 AI Credits 計費；Cursor 估值飆到 500 億美元、SpaceX 留了 600 億的收購選項——AI IDE 從補貼戰打進燒錢戰。 同一週，一個叫 PraisonAI 的開源 agent 框架被公告漏洞，四小時內就有掃描器探到了。 這五件事連起來，是一個正在加速的趨勢：企業 AI 的採用從「試點」進入「全員部署」階段，模型供應商從「賣 token」進入「綁定客戶」階段，而底層的攻擊面才剛開始有人盯。下行的風險，正以遠快於上行收益的速度長大。  一、PwC 把 3 萬人押在 Claude 上：四大會計事務所第一個正式入場5&#x2F;14 公布、5&#x2F;15 開始鋪：PwC 與 Anthropic 擴大合作，三萬名顧問做 Claude 認證，並設立聯合 Center of Excellence。 具體動作不只是「導入工具」這麼簡單。C...</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相關推薦</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2026/05/14/Claude-Code-Desktop-App-%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8-%E5%B9%B3%E8%A1%8C-Session-%E6%8B%96%E6%94%BE%E5%B7%A5%E4%BD%9C%E5%8D%80%E8%88%87%E6%95%B4%E5%90%88%E7%B5%82%E7%AB%AF%E6%A9%9F/" title="Claude Code Desktop App 完整教學 — 平行 Session、拖放工作區與整合終端機"><img class="cover" src="/img/20260514-03.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-05-14</div><div class="info-item-2">Claude Code Desktop App 完整教學 — 平行 Session、拖放工作區與整合終端機</div></div><div class="info-2"><div class="info-item-1">打開三個終端機視窗。一個跑前端 dev server，一個跑後端 API，一個跑測試。再開一個 Claude Code session 修 bug，另一個 session 寫新功能。Alt-Tab 按到手指抽筋，每次切回去都要花五秒重新定位「我剛才做到哪了」。 如果你有過這種經驗，Claude Code 的桌面版重新設計就是為你做的。  一個視窗，多個 Session2026 年四月，Anthropic 對 Claude Code 的桌面 app 做了一次大改版。核心改變只有一個：你可以在同一個視窗裡同時開多個 session，並排顯示。 聽起來很簡單。實際用起來的差距是這樣的——以前你要在不同視窗之間跳來跳去，每次切換都斷一次思路。現在你把兩個 session 並排放在螢幕上，左邊修 bug、右邊跑測試，眼睛掃一下就能看到兩邊的狀態。 這就像雙螢幕跟單螢幕的差距。技術上你用單螢幕也能做一樣的事。但雙螢幕省下的是每天幾百次的視窗切換，每次省一點點認知負擔，一天下來是真實的生產力差距。  Session Sidebar：所有工作，一個清單新版左側加了一個 Session Sideb...</div></div></div></a><a class="pagination-related" href="/2026/03/29/Claude-Desktop-%E4%B8%89%E7%A8%AE%E6%A8%A1%E5%BC%8F%E6%80%8E%E9%BA%BC%E5%88%87-Chat-Cowork-Code-%E5%AE%8C%E6%95%B4%E5%B0%8E%E8%A6%BD/" title="Claude Desktop 三種模式怎麼切？Chat、Cowork、Code 完整導覽"><img class="cover" src="/img/20260329-03.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-03-29</div><div class="info-item-2">Claude Desktop 三種模式怎麼切？Chat、Cowork、Code 完整導覽</div></div><div class="info-2"><div class="info-item-1">打開 Claude Desktop，上面三個 tab 寫著 Chat、Cowork、Code。第一次看到的人大概會問：這三個到底差在哪？什麼時候該用哪個？ 答案比想像中簡單——它們不是三個不同的 AI，是同一個 Claude 的三種工作模式，各自對應不同的使用場景和權限範圍。 Chat：快問快答的主場Chat 是最輕量的模式。問問題、腦力激盪、幫你改改文案、翻譯一段文字——這些不需要動到檔案系統、不需要跑程式的事情，Chat 就夠了。 有兩個功能值得記住。第一個是 Quick Entry：在 Mac 上連按兩下 Option 鍵，會跳出一個浮動對話框，不用切到 Claude 視窗就能丟問題。會議之間的三十秒空檔，打開來問一句「剛才那個 dashboard 上的 DAU 數字怎麼算的」剛好。 第二個是截圖分享。直接把螢幕畫面丟給 Claude 看，省去「那個按鈕在左邊第三排…不對，是第四排」的來回描述。 Chat 也能串 Desktop Connector，接上 Apple Notes 之類的本機工具。但整體來說，它的定位就是快速對話，不是拿來做大型專案的。 Cowork：需要動手...</div></div></div></a><a class="pagination-related" href="/2026/04/01/%E9%80%8F%E9%81%8E-iMessage-%E8%88%87-Claude-Code-%E5%B0%8D%E8%A9%B1-%E5%AE%8C%E6%95%B4%E8%A8%AD%E5%AE%9A%E6%95%99%E5%AD%B8/" title="透過 iMessage 與 Claude Code 對話 — 完整設定教學"><img class="cover" src="/img/20260401-04.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-04-01</div><div class="info-item-2">透過 iMessage 與 Claude Code 對話 — 完整設定教學</div></div><div class="info-2"><div class="info-item-1">人不在電腦前，但 Claude Code session 正在跑。手機震了一下——不是 LINE，不是 Slack，是 iMessage。你直接在訊息 App 裡打「幫我跑一下測試」，幾秒後 Claude 回你結果。整個過程你連筆電都沒打開。 上次介紹了 Channels 的整體架構，Telegram、Discord、iMessage 三個平台都帶過一輪。但 iMessage 這條路線有太多眉角沒講到——self-chat 的 echo 迴圈、is_from_me 的詭異行為、號碼格式踩坑。這篇專門把 iMessage Channel 從頭到尾拆開來講，包括那些官方文件沒寫清楚的 troubleshooting。  前置需求——四個條件缺一不可開始之前先確認： macOS 電腦。iMessage Channel 的原理是直接讀你 Mac 上的 ~/Library/Messages/chat.db，這是 macOS 獨有的 SQLite 資料庫。Windows 和 Linux 沒有這個東西，所以 iMessage Channel 是 macOS 限定。 Claude Code CL...</div></div></div></a><a class="pagination-related" href="/2026/04/07/Harness-Engineering-%E5%A6%82%E4%BD%95%E5%B0%8D-Coding-Agent-%E7%9A%84%E7%A8%8B%E5%BC%8F%E7%A2%BC%E5%BB%BA%E7%AB%8B%E4%BF%A1%E4%BB%BB/" title="Harness Engineering - 如何對 Coding Agent 的程式碼建立信任"><img class="cover" src="/img/20260407-01.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-04-07</div><div class="info-item-2">Harness Engineering - 如何對 Coding Agent 的程式碼建立信任</div></div><div class="info-2"><div class="info-item-1">打開 PR review，看到 800 行 AI 產出的變更。你盯著螢幕三十秒，腦袋浮出那個每次都會出現的問題：這東西能信嗎？ Thoughtworks 的 Distinguished Engineer Birgitta Bockeler 在 Martin Fowler 網站上丟出了一篇重量級文章（2026-04-02 發表），直接正面回答這個問題。她的答案不是「可以」或「不可以」，而是：你需要建構一套系統化的控制機制，叫做 Harness。 Harness 是什麼？一句話講完Harness &#x3D; AI Agent 中除了模型本身以外的所有東西。 人類工程師寫 code 的時候，其實自帶一套「隱性 harness」——多年累積的編碼慣例、對複雜度的直覺痛感、「這段寫太爛了我自己看不下去」的美學標準。Agent 沒有這些。它能吐出幾乎任何程式碼，但沒有品味判斷、沒有組織記憶、沒有那種「雖然能跑但三個月後一定出事」的第六感。 所以你得把這些隱性知識外顯化成可執行的控制系統。人類的角色從「寫程式碼」變成「迭代改進 harness」——harness 的品質直接決定你能對 Age...</div></div></div></a><a class="pagination-related" href="/2026/04/22/GitHub-Copilot-%E5%81%9C%E6%AD%A2%E6%96%B0%E7%94%A8%E6%88%B6%E8%A8%BB%E5%86%8A%E5%BE%8C%E5%B7%A5%E7%A8%8B%E5%B8%AB%E6%80%8E%E9%BA%BC%E5%B9%B3%E7%A7%BB%E5%88%B0-Claude-Code/" title="GitHub Copilot 停止新用戶註冊後，工程師怎麼平移到 Claude Code"><img class="cover" src="/img/20260422-03.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-04-22</div><div class="info-item-2">GitHub Copilot 停止新用戶註冊後，工程師怎麼平移到 Claude Code</div></div><div class="info-2"><div class="info-item-1">GitHub Copilot 在 4 月 20 日暫停了所有個人方案的新用戶註冊。同時，Pro 方案的用戶即將失去 Claude Opus 模型的存取權。 如果你是剛好要開新帳號的工程師，或者是衝著 Opus 去的 Pro 用戶，現在是個評估要不要換工具的時間點。 這篇是從 Copilot 遷移到 Claude Code 的操作指南，不是比較評測（已有一篇），也不是勸你換工具。你得自己決定值不值得換，但換之前至少要知道怎麼換、換了之後哪些習慣要調整。  先搞清楚兩個工具的根本差異遷移前最重要的一件事不是「A 功能在哪裡」，而是「這個工具假設你怎麼工作」。不懂這個，你會用 Copilot 的思維用 Claude Code，然後覺得它很難用。 Copilot 的設計假設：你在 IDE 裡工作，AI 在旁邊輔助。你寫程式，AI 補全、提建議、回答問題。主導者是你，AI 是智慧自動補全。 Claude Code 的設計假設：你在 terminal 裡工作，AI 和你一起做事。你描述目標或問題，AI 讀檔案、跑指令、修程式碼。主導者更模糊——Claude Code 可以接管一個任務然後跑到...</div></div></div></a><a class="pagination-related" href="/2026/05/11/Claude-Code-%E4%BD%A0%E4%B8%8D%E7%9F%A5%E9%81%93%E7%9A%84-12-%E5%80%8B%E9%9A%B1%E8%97%8F%E5%8A%9F%E8%83%BD-%E5%BE%9E%E7%9C%81%E9%8C%A2%E5%88%B0%E5%AE%89%E5%85%A8%E7%9A%84%E9%80%B2%E9%9A%8E%E6%93%8D%E4%BD%9C%E8%A1%93/" title="Claude Code 你不知道的 12 個隱藏功能 — 從省錢到安全的進階操作術"><img class="cover" src="/img/20260511-03.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-05-11</div><div class="info-item-2">Claude Code 你不知道的 12 個隱藏功能 — 從省錢到安全的進階操作術</div></div><div class="info-2"><div class="info-item-1">你家廚房裡的微波爐，大概有 30 個按鈕。你用過幾個？兩三個。加熱、解凍、開門。剩下的 27 個按鈕你可能從來沒按過，甚至不知道它們幹嘛。 Claude Code 也是。 大部分人的使用方式是：打開終端機、輸入需求、等 AI 回答、複製貼上。偶爾用 /help 看一下有什麼指令。但 Claude Code 裡面埋了一堆功能，不在首頁、不在教學影片裡、不會主動跳出來告訴你——除非你自己去翻文件或踩到。 這篇整理了 12 個真正實用的隱藏功能，從「怎麼少花錢」到「怎麼不炸掉你的 production」。每一個都是你今天就能用上的。  1. /cost — 即時看你燒了多少錢Claude Code 裡面有個內建的花費追蹤器。在對話中任何時候打 /cost，它會顯示這個 session 目前為止用了多少 token、花了多少錢。 12&gt; /costSession cost: $2.47 (Input: 156K tokens, Output: 42K tokens)  為什麼這很重要？因為你不會知道一個「幫我重構這個檔案」的請求到底讀了多少檔案、消耗了多少 context。有時候一...</div></div></div></a></div></div><hr class="custom-hr"/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 評論</span></div></div><div class="comment-wrap"><div><div id="giscus-wrap"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="https://lh3.googleusercontent.com/pw/ABLVV87_po8nBc6F_tXcoYDmtzMGWxHuhhrbguYILCjmjWKLOS8DTpubm0YoQLKgjyjRIZyV5TjYe7XVEz_YU4squfr37GTZqPZP1hlMVZ_MIgXpTxWu73M=w1200" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">Cheng®</div><div class="author-info-description">Backend Developer / 技術筆記 & AI 新聞分享</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">264</div></a><a href="/tags/"><div class="headline">標籤</div><div class="length-num">218</div></a><a href="/categories/"><div class="headline">分類</div><div class="length-num">19</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/mark22013333"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons"><a class="social-icon" href="https://github.com/mark22013333" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:mark22013333@gmail.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a></div><div class="card-info-sponsor"><a class="sponsor-glow-btn" href="https://www.buymeacoffee.com/mark22013333" target="_blank" rel="noopener noreferrer" title="Buy Me A Coffee"><img src="https://img.shields.io/badge/Buy_Me_A_Coffee-FFDD00?style=for-the-badge&amp;logo=buy-me-a-coffee&amp;logoColor=black" alt="Buy Me A Coffee"/></a><a class="sponsor-glow-btn" href="https://p.ecpay.com.tw/EFC3F8F" target="_blank" rel="noopener noreferrer" title="綠界贊助"><img src="https://img.shields.io/badge/☕_%E8%AB%8B%E6%88%91%E5%96%9D%E6%9D%AF%E5%92%96%E5%95%A1-Donate-11998e?style=for-the-badge&amp;logo=coffee&amp;logoColor=white" alt="綠界贊助"/></a><a class="sponsor-glow-btn" href="https://calendly.com/markcheng00806-intumit/15min" target="_blank" rel="noopener noreferrer" title="預約時間"><img src="https://img.shields.io/badge/📅_%E9%A0%90%E7%B4%84_15_%E5%88%86%E9%90%98-Book_Time-0072ff?style=for-the-badge" alt="預約時間"/></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">這裡記錄我在後端開發路上踩過的坑、學到的東西，也會分享每日 AI 與科技新聞觀點。歡迎一起交流！</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目錄</span><span class="toc-percentage"></span></div><div class="toc-content is-expand"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89%E7%A7%92%E5%85%88%E8%AC%9B%E7%B5%90%E6%9E%9C"><span class="toc-number">1.</span> <span class="toc-text">三秒先講結果</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%82%BA%E4%BB%80%E9%BA%BC%E5%BE%9E-simplify-%E6%94%B9%E5%90%8D"><span class="toc-number">2.</span> <span class="toc-text">為什麼從 &#x2F;simplify 改名</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B%E5%80%8B-Agent-%E5%B9%B3%E8%A1%8C%E6%8E%83%E6%8F%8F%E7%9A%84%E6%84%8F%E7%BE%A9"><span class="toc-number">3.</span> <span class="toc-text">四個 Agent 平行掃描的意義</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Effort-Level-%E6%80%8E%E9%BA%BC%E9%81%B8"><span class="toc-number">4.</span> <span class="toc-text">Effort Level 怎麼選</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E2%80%93comment-%E4%B8%89%E7%A8%AE%E8%A1%8C%E7%82%BA%E6%A8%A1%E5%BC%8F"><span class="toc-number">5.</span> <span class="toc-text">–comment 三種行為模式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89%E7%A8%AE%E5%85%B8%E5%9E%8B%E5%B7%A5%E4%BD%9C%E6%B5%81"><span class="toc-number">6.</span> <span class="toc-text">三種典型工作流</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%80%E9%BA%BC%E6%99%82%E5%80%99%E4%B8%8D%E8%A6%81%E7%94%A8"><span class="toc-number">7.</span> <span class="toc-text">什麼時候不要用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%B7%9F%E8%88%8A%E7%9A%84-review-%E5%91%BD%E4%BB%A4%E7%9A%84%E5%B7%AE%E5%88%A5"><span class="toc-number">8.</span> <span class="toc-text">跟舊的 &#x2F;review 命令的差別</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E5%80%8B%E5%B8%B8%E8%A6%8B%E8%B8%A9%E5%9D%91"><span class="toc-number">9.</span> <span class="toc-text">一個常見踩坑</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%82%BA%E4%BB%80%E9%BA%BC%E9%80%99%E5%80%8B%E6%8C%87%E4%BB%A4%E5%80%BC%E5%BE%97%E6%94%BE%E9%80%B2%E6%97%A5%E5%B8%B8%E6%B5%81%E7%A8%8B"><span class="toc-number">10.</span> <span class="toc-text">為什麼這個指令值得放進日常流程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%9B%B8%E9%97%9C%E9%80%A3%E7%B5%90"><span class="toc-number">11.</span> <span class="toc-text">相關連結</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2026/05/26/Claude-Code-code-review-%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8-%E5%BE%9E-simplify-%E6%94%B9%E5%90%8D%E5%BE%8C-AI-%E7%94%A8%E5%9B%9B%E5%80%8B-Agent-%E5%B9%AB%E4%BD%A0%E6%8E%83-PR/" title="Claude Code /code-review 完整教學：從 /simplify 改名後，AI 用四個 Agent 幫你掃 PR"><img src="/img/20260526-03.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Claude Code /code-review 完整教學：從 /simplify 改名後，AI 用四個 Agent 幫你掃 PR"/></a><div class="content"><a class="title" href="/2026/05/26/Claude-Code-code-review-%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8-%E5%BE%9E-simplify-%E6%94%B9%E5%90%8D%E5%BE%8C-AI-%E7%94%A8%E5%9B%9B%E5%80%8B-Agent-%E5%B9%AB%E4%BD%A0%E6%8E%83-PR/" title="Claude Code /code-review 完整教學：從 /simplify 改名後，AI 用四個 Agent 幫你掃 PR">Claude Code /code-review 完整教學：從 /simplify 改名後，AI 用四個 Agent 幫你掃 PR</a><time datetime="2026-05-26T13:45:00.000Z" title="發表於 2026-05-26 21:45:00">2026-05-26</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/05/26/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260526/" title="AI 與科技新聞摘要 20260526：兩個三萬人、Copilot 轉成計量收費、AI 框架本身變成 0-day 攻擊面"><img src="/img/20260526-02.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="AI 與科技新聞摘要 20260526：兩個三萬人、Copilot 轉成計量收費、AI 框架本身變成 0-day 攻擊面"/></a><div class="content"><a class="title" href="/2026/05/26/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260526/" title="AI 與科技新聞摘要 20260526：兩個三萬人、Copilot 轉成計量收費、AI 框架本身變成 0-day 攻擊面">AI 與科技新聞摘要 20260526：兩個三萬人、Copilot 轉成計量收費、AI 框架本身變成 0-day 攻擊面</a><time datetime="2026-05-26T13:40:00.000Z" title="發表於 2026-05-26 21:40:00">2026-05-26</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/05/26/Learn-Harness-Engineering-%E8%AE%93-AI-Coding-Agent-%E5%9C%A8%E7%9C%9F%E5%AF%A6%E5%B0%88%E6%A1%88%E7%A9%A9%E5%AE%9A%E5%B7%A5%E4%BD%9C%E7%9A%84%E9%96%8B%E6%BA%90%E8%AA%B2%E7%A8%8B/" title="Learn Harness Engineering — 讓 AI Coding Agent 在真實專案穩定工作的開源課程"><img src="/img/20260526-01.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Learn Harness Engineering — 讓 AI Coding Agent 在真實專案穩定工作的開源課程"/></a><div class="content"><a class="title" href="/2026/05/26/Learn-Harness-Engineering-%E8%AE%93-AI-Coding-Agent-%E5%9C%A8%E7%9C%9F%E5%AF%A6%E5%B0%88%E6%A1%88%E7%A9%A9%E5%AE%9A%E5%B7%A5%E4%BD%9C%E7%9A%84%E9%96%8B%E6%BA%90%E8%AA%B2%E7%A8%8B/" title="Learn Harness Engineering — 讓 AI Coding Agent 在真實專案穩定工作的開源課程">Learn Harness Engineering — 讓 AI Coding Agent 在真實專案穩定工作的開源課程</a><time datetime="2026-05-26T13:35:00.000Z" title="發表於 2026-05-26 21:35:00">2026-05-26</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/05/25/Claude-Managed-Agents-%E8%87%AA%E6%9E%B6%E6%B2%99%E7%AE%B1%E8%88%87-MCP-Tunnels-%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8/" title="Claude Managed Agents 自架沙箱與 MCP Tunnels 完整教學 — 讓 AI Agent 在你自己的基礎設施上跑"><img src="/img/20260525-03.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Claude Managed Agents 自架沙箱與 MCP Tunnels 完整教學 — 讓 AI Agent 在你自己的基礎設施上跑"/></a><div class="content"><a class="title" href="/2026/05/25/Claude-Managed-Agents-%E8%87%AA%E6%9E%B6%E6%B2%99%E7%AE%B1%E8%88%87-MCP-Tunnels-%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8/" title="Claude Managed Agents 自架沙箱與 MCP Tunnels 完整教學 — 讓 AI Agent 在你自己的基礎設施上跑">Claude Managed Agents 自架沙箱與 MCP Tunnels 完整教學 — 讓 AI Agent 在你自己的基礎設施上跑</a><time datetime="2026-05-25T01:30:00.000Z" title="發表於 2026-05-25 09:30:00">2026-05-25</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/05/25/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260525/" title="AI 與科技新聞摘要 - 2026/05/25"><img src="/img/20260525-02.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="AI 與科技新聞摘要 - 2026/05/25"/></a><div class="content"><a class="title" href="/2026/05/25/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260525/" title="AI 與科技新聞摘要 - 2026/05/25">AI 與科技新聞摘要 - 2026/05/25</a><time datetime="2026-05-25T01:15:00.000Z" title="發表於 2026-05-25 09:15:00">2026-05-25</time></div></div></div></div></div></div></main><footer id="footer" style="background-image: url(/img/20260526-03.webp);"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2024 - 2026 By Cheng®</span></div><div class="footer_custom_text">Written by Cheng® — 自律，從當下的一念開始。</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="閱讀模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日夜模式切換"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="單欄和雙欄切換"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="設定"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目錄"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="前往評論"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到頂端"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.umd.min.js"></script><script src="https://cdn.jsdelivr.net/npm/instant.page/instantpage.min.js" type="module"></script><script src="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.js"></script><div class="js-pjax"><script>(() => {
+  const isShuoshuo = GLOBAL_CONFIG_SITE.pageType === 'shuoshuo'
+  const option = {"mapping":"pathname","strict":0,"reactionsEnabled":1,"emitMetadata":0,"inputPosition":"bottom","lang":"zh-TW"}
+
+  const getGiscusTheme = theme => theme === 'dark' ? 'dark' : 'light'
+
+  const createScriptElement = config => {
+    const ele = document.createElement('script')
+    Object.entries(config).forEach(([key, value]) => {
+      ele.setAttribute(key, value)
+    })
+    return ele
+  }
+
+  const loadGiscus = (el = document, key) => {
+    const mappingConfig = isShuoshuo
+      ? { 'data-mapping': 'specific', 'data-term': key }
+      : { 'data-mapping': (option && option['data-mapping']) || 'pathname' }
+
+    const giscusConfig = {
+      src: 'https://giscus.app/client.js',
+      'data-repo': 'mark22013333/mark22013333.github.io',
+      'data-repo-id': 'R_kgDOLAxa6A',
+      'data-category-id': 'DIC_kwDOLAxa6M4C5eO9',
+      'data-theme': getGiscusTheme(document.documentElement.getAttribute('data-theme')),
+      'data-reactions-enabled': '1',
+      crossorigin: 'anonymous',
+      async: true,
+      ...option,
+      ...mappingConfig
+    }
+
+    const scriptElement = createScriptElement(giscusConfig)
+
+    el.querySelector('#giscus-wrap').appendChild(scriptElement)
+
+    if (isShuoshuo) {
+      window.shuoshuoComment.destroyGiscus = () => {
+        if (el.children.length) {
+          el.innerHTML = ''
+          el.classList.add('no-comment')
+        }
+      }
+    }
+  }
+
+  const changeGiscusTheme = theme => {
+    const iframe = document.querySelector('#giscus-wrap iframe')
+    if (iframe) {
+      const message = {
+        giscus: {
+          setConfig: {
+            theme: getGiscusTheme(theme)
+          }
+        }
+      }
+      iframe.contentWindow.postMessage(message, 'https://giscus.app')
+    }
+  }
+
+  btf.addGlobalFn('themeChange', changeGiscusTheme, 'giscus')
+
+  if (isShuoshuo) {
+    'Giscus' === 'Giscus'
+      ? window.shuoshuoComment = { loadComment: loadGiscus }
+      : window.loadOtherComment = loadGiscus
+    return
+  }
+
+  if ('Giscus' === 'Giscus' || !true) {
+    if (true) btf.loadComment(document.getElementById('giscus-wrap'), loadGiscus)
+    else loadGiscus()
+  } else {
+    window.loadOtherComment = loadGiscus
+  }
+})()</script></div><script src="/js/kkbox-player.js"></script><script src="/js/archives-pagination.js"></script><script src="/js/font-resize.js"></script><script src="/js/dark-palette.js"></script><script src="/js/series-showcase.js"></script><script src="/js/search-tags.js"></script><script defer="defer" id="fluttering_ribbon" mobile="false" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/canvas-fluttering-ribbon.min.js"></script><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/activate-power-mode.min.js"></script><script>POWERMODE.colorful = true;
+POWERMODE.shake = true;
+POWERMODE.mobile = true;
+document.body.addEventListener('input', POWERMODE);
+</script><script src="https://cdn.jsdelivr.net/npm/pjax/pjax.min.js" defer="defer"></script><script>document.addEventListener('DOMContentLoaded', () => {
+  const pjaxSelectors = ["meta[property=\"og:image\"]","meta[property=\"og:title\"]","meta[property=\"og:url\"]","meta[property=\"og:description\"]","link[rel=\"canonical\"]","head > title","#config-diff","#body-wrap","#rightside-config-hide","#rightside-config-show",".js-pjax"]
+
+  window.pjax = new Pjax({
+    elements: 'a:not([target="_blank"])',
+    selectors: pjaxSelectors,
+    cacheBust: false,
+    analytics: true,
+    scrollRestoration: false
+  })
+
+  const triggerPjaxFn = (val) => {
+    if (!val) return
+    Object.values(val).forEach(fn => {
+      try {
+        fn()
+      } catch (err) {
+        console.debug('Pjax callback failed:', err)
+      }
+    })
+  }
+
+  document.addEventListener('pjax:send', () => {
+    // removeEventListener
+    btf.removeGlobalFnEvent('pjaxSendOnce')
+    btf.removeGlobalFnEvent('themeChange')
+
+    // reset readmode
+    const $bodyClassList = document.body.classList
+    if ($bodyClassList.contains('read-mode')) $bodyClassList.remove('read-mode')
+
+    triggerPjaxFn(window.globalFn.pjaxSend)
+  })
+
+  document.addEventListener('pjax:complete', () => {
+    btf.removeGlobalFnEvent('pjaxCompleteOnce')
+    document.querySelectorAll('script[data-pjax]').forEach(item => {
+      const newScript = document.createElement('script')
+      const content = item.text || item.textContent || item.innerHTML || ""
+      Array.from(item.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value))
+      newScript.appendChild(document.createTextNode(content))
+      item.parentNode.replaceChild(newScript, item)
+    })
+
+    triggerPjaxFn(window.globalFn.pjaxComplete)
+  })
+
+  document.addEventListener('pjax:error', e => {
+    if (e.request.status === 404) {
+      true
+        ? pjax.loadUrl('/404.html')
+        : window.location.href = e.request.responseURL
+    }
+  })
+})</script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜尋</span><i class="fas fa-spinner fa-pulse" id="loading-status" hidden="hidden"></i><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="text-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  資料載入中</span></div><div class="local-search-input"><input placeholder="搜尋文章" type="text"/></div><hr/><div id="local-search-results"></div><div class="ais-Pagination" id="local-search-pagination" style="display:none;"><ul class="ais-Pagination-list"></ul></div><div id="local-search-stats"></div></div><div id="search-mask"></div><script src="/js/search/local-search.js"></script></div></div><script>window.__BLOG_TAGS__=[{"name":"Claude Code","count":81,"path":"tags/Claude-Code/"},{"name":"AI與科技新聞","count":63,"path":"tags/AI與科技新聞/"},{"name":"AI Agent","count":41,"path":"tags/AI-Agent/"},{"name":"Anthropic","count":38,"path":"tags/Anthropic/"},{"name":"資安","count":37,"path":"tags/資安/"},{"name":"OpenAI","count":31,"path":"tags/OpenAI/"},{"name":"MCP","count":29,"path":"tags/MCP/"},{"name":"教學","count":29,"path":"tags/教學/"},{"name":"Claude","count":27,"path":"tags/Claude/"},{"name":"自動化","count":20,"path":"tags/自動化/"},{"name":"開源","count":19,"path":"tags/開源/"},{"name":"Java","count":19,"path":"tags/Java/"},{"name":"開發工具","count":16,"path":"tags/開發工具/"},{"name":"Google","count":15,"path":"tags/Google/"},{"name":"Copilot","count":13,"path":"tags/Copilot/"},{"name":"GitHub","count":13,"path":"tags/GitHub/"},{"name":"DevOps","count":13,"path":"tags/DevOps/"},{"name":"工程師生活","count":12,"path":"tags/工程師生活/"},{"name":"Skills","count":11,"path":"tags/Skills/"},{"name":"Spring","count":11,"path":"tags/Spring/"},{"name":"LLM","count":9,"path":"tags/LLM/"},{"name":"Cursor","count":9,"path":"tags/Cursor/"},{"name":"Azure","count":9,"path":"tags/Azure/"},{"name":"微軟課程","count":9,"path":"tags/微軟課程/"},{"name":"資料庫","count":9,"path":"tags/資料庫/"},{"name":"Gemini","count":8,"path":"tags/Gemini/"},{"name":"Elasticsearch","count":8,"path":"tags/Elasticsearch/"},{"name":"GitHub Copilot","count":7,"path":"tags/GitHub-Copilot/"},{"name":"健康","count":6,"path":"tags/健康/"},{"name":"理財","count":6,"path":"tags/理財/"},{"name":"Apple","count":6,"path":"tags/Apple/"},{"name":"Microsoft","count":6,"path":"tags/Microsoft/"},{"name":"AI","count":5,"path":"tags/AI/"},{"name":"AZ-305","count":5,"path":"tags/AZ-305/"},{"name":"Rust","count":5,"path":"tags/Rust/"},{"name":"CLI","count":5,"path":"tags/CLI/"},{"name":"AI 開發工具","count":5,"path":"tags/AI-開發工具/"},{"name":"Code Review","count":5,"path":"tags/Code-Review/"},{"name":"Python","count":5,"path":"tags/Python/"},{"name":"Collections","count":5,"path":"tags/Collections/"},{"name":"併發","count":5,"path":"tags/併發/"},{"name":"NVIDIA","count":4,"path":"tags/NVIDIA/"},{"name":"Kiro","count":4,"path":"tags/Kiro/"},{"name":"AI 產業","count":4,"path":"tags/AI-產業/"},{"name":"macOS","count":4,"path":"tags/macOS/"},{"name":"Hooks","count":4,"path":"tags/Hooks/"},{"name":"Docker","count":4,"path":"tags/Docker/"},{"name":"DP-300","count":4,"path":"tags/DP-300/"},{"name":"SQL Server","count":4,"path":"tags/SQL-Server/"},{"name":"Performance","count":4,"path":"tags/Performance/"},{"name":"JSON","count":4,"path":"tags/JSON/"},{"name":"Stream","count":4,"path":"tags/Stream/"},{"name":"168斷食","count":3,"path":"tags/168斷食/"},{"name":"Windsurf","count":3,"path":"tags/Windsurf/"},{"name":"TDD","count":3,"path":"tags/TDD/"},{"name":"Agent","count":3,"path":"tags/Agent/"},{"name":"SDD","count":3,"path":"tags/SDD/"},{"name":"系統監控","count":3,"path":"tags/系統監控/"},{"name":"遠端工作","count":3,"path":"tags/遠端工作/"},{"name":"生產力","count":2,"path":"tags/生產力/"},{"name":"Mistral","count":2,"path":"tags/Mistral/"},{"name":"AI 法規","count":2,"path":"tags/AI-法規/"},{"name":"Codex","count":2,"path":"tags/Codex/"},{"name":"AI 安全","count":2,"path":"tags/AI-安全/"},{"name":"Networking","count":2,"path":"tags/Networking/"},{"name":"Tool Use","count":2,"path":"tags/Tool-Use/"},{"name":"Multi-Model","count":2,"path":"tags/Multi-Model/"},{"name":"Claude Design","count":2,"path":"tags/Claude-Design/"},{"name":"Prototype","count":2,"path":"tags/Prototype/"},{"name":"Lucene","count":2,"path":"tags/Lucene/"},{"name":"Prompt Engineering","count":2,"path":"tags/Prompt-Engineering/"},{"name":"生活札記","count":2,"path":"tags/生活札記/"},{"name":"旅遊","count":2,"path":"tags/旅遊/"},{"name":"專注力","count":1,"path":"tags/專注力/"},{"name":"軟體工程師","count":1,"path":"tags/軟體工程師/"},{"name":"職涯","count":1,"path":"tags/職涯/"},{"name":"2026","count":1,"path":"tags/2026/"},{"name":"Meta","count":1,"path":"tags/Meta/"},{"name":"AWS","count":1,"path":"tags/AWS/"},{"name":"Amazon","count":1,"path":"tags/Amazon/"},{"name":"資訊安全","count":1,"path":"tags/資訊安全/"},{"name":"Migration","count":1,"path":"tags/Migration/"},{"name":"Agent Skills","count":1,"path":"tags/Agent-Skills/"},{"name":"Addy Osmani","count":1,"path":"tags/Addy-Osmani/"},{"name":"工程紀律","count":1,"path":"tags/工程紀律/"},{"name":"Apify","count":1,"path":"tags/Apify/"},{"name":"爬蟲","count":1,"path":"tags/爬蟲/"},{"name":"Prompt Caching","count":1,"path":"tags/Prompt-Caching/"},{"name":"成本優化","count":1,"path":"tags/成本優化/"},{"name":"Buddi","count":1,"path":"tags/Buddi/"},{"name":"notch","count":1,"path":"tags/notch/"},{"name":"Function Calling","count":1,"path":"tags/Function-Calling/"},{"name":"UI 設計","count":1,"path":"tags/UI-設計/"},{"name":"CLAUDE.md","count":1,"path":"tags/CLAUDE-md/"},{"name":"Auto Memory","count":1,"path":"tags/Auto-Memory/"},{"name":"Project Setup","count":1,"path":"tags/Project-Setup/"},{"name":"Extended Thinking","count":1,"path":"tags/Extended-Thinking/"},{"name":"Reasoning","count":1,"path":"tags/Reasoning/"},{"name":"/goal","count":1,"path":"tags/goal/"},{"name":"VS Code","count":1,"path":"tags/VS-Code/"},{"name":"Monitor Tool","count":1,"path":"tags/Monitor-Tool/"},{"name":"Haiku","count":1,"path":"tags/Haiku/"},{"name":"Sonnet","count":1,"path":"tags/Sonnet/"},{"name":"Opus","count":1,"path":"tags/Opus/"},{"name":"Token 成本","count":1,"path":"tags/Token-成本/"},{"name":"Plan Mode","count":1,"path":"tags/Plan-Mode/"},{"name":"Voice Mode","count":1,"path":"tags/Voice-Mode/"},{"name":"Push-to-Talk","count":1,"path":"tags/Push-to-Talk/"},{"name":"Ultraplan","count":1,"path":"tags/Ultraplan/"},{"name":"規劃","count":1,"path":"tags/規劃/"},{"name":"cloud","count":1,"path":"tags/cloud/"},{"name":"Team","count":1,"path":"tags/Team/"},{"name":"Onboarding","count":1,"path":"tags/Onboarding/"},{"name":"Routines","count":1,"path":"tags/Routines/"},{"name":"Subagent","count":1,"path":"tags/Subagent/"},{"name":"Cowork","count":1,"path":"tags/Cowork/"},{"name":"Plugin","count":1,"path":"tags/Plugin/"},{"name":"Supply Chain","count":1,"path":"tags/Supply-Chain/"},{"name":"Managed Agents","count":1,"path":"tags/Managed-Agents/"},{"name":"Dreaming","count":1,"path":"tags/Dreaming/"},{"name":"Outcomes","count":1,"path":"tags/Outcomes/"},{"name":"UX 設計","count":1,"path":"tags/UX-設計/"},{"name":"Coolify","count":1,"path":"tags/Coolify/"},{"name":"self-hosted","count":1,"path":"tags/self-hosted/"},{"name":"PaaS","count":1,"path":"tags/PaaS/"},{"name":"Productivity","count":1,"path":"tags/Productivity/"},{"name":"CrewAI","count":1,"path":"tags/CrewAI/"},{"name":"Multi-Agent","count":1,"path":"tags/Multi-Agent/"},{"name":"Encryption","count":1,"path":"tags/Encryption/"},{"name":"Monitoring","count":1,"path":"tags/Monitoring/"},{"name":"Analyzer","count":1,"path":"tags/Analyzer/"},{"name":"IK","count":1,"path":"tags/IK/"},{"name":"中文搜尋","count":1,"path":"tags/中文搜尋/"},{"name":"ELK Stack","count":1,"path":"tags/ELK-Stack/"},{"name":"Architecture","count":1,"path":"tags/Architecture/"},{"name":"Production","count":1,"path":"tags/Production/"},{"name":"Operations","count":1,"path":"tags/Operations/"},{"name":"CRUD","count":1,"path":"tags/CRUD/"},{"name":"bulk","count":1,"path":"tags/bulk/"},{"name":"alias","count":1,"path":"tags/alias/"},{"name":"REST API","count":1,"path":"tags/REST-API/"},{"name":"Mapping","count":1,"path":"tags/Mapping/"},{"name":"Template","count":1,"path":"tags/Template/"},{"name":"Schema","count":1,"path":"tags/Schema/"},{"name":"Aggregation","count":1,"path":"tags/Aggregation/"},{"name":"Search","count":1,"path":"tags/Search/"},{"name":"internals","count":1,"path":"tags/internals/"},{"name":"Translog","count":1,"path":"tags/Translog/"},{"name":"Segment","count":1,"path":"tags/Segment/"},{"name":"GH-300","count":1,"path":"tags/GH-300/"},{"name":"Responsible AI","count":1,"path":"tags/Responsible-AI/"},{"name":"工具遷移","count":1,"path":"tags/工具遷移/"},{"name":"前端","count":1,"path":"tags/前端/"},{"name":"SpecKit","count":1,"path":"tags/SpecKit/"},{"name":"ETF","count":1,"path":"tags/ETF/"},{"name":"台股","count":1,"path":"tags/台股/"},{"name":"美股","count":1,"path":"tags/美股/"},{"name":"Mag-7","count":1,"path":"tags/Mag-7/"},{"name":"財報","count":1,"path":"tags/財報/"},{"name":"Jira","count":1,"path":"tags/Jira/"},{"name":"Atlassian","count":1,"path":"tags/Atlassian/"},{"name":"OpenCode","count":1,"path":"tags/OpenCode/"},{"name":"GPT","count":1,"path":"tags/GPT/"},{"name":"Lightpanda","count":1,"path":"tags/Lightpanda/"},{"name":"Headless Browser","count":1,"path":"tags/Headless-Browser/"},{"name":"Zig","count":1,"path":"tags/Zig/"},{"name":"Web Scraping","count":1,"path":"tags/Web-Scraping/"},{"name":"Open CoDesign","count":1,"path":"tags/Open-CoDesign/"},{"name":"AI Design","count":1,"path":"tags/AI-Design/"},{"name":"Multica","count":1,"path":"tags/Multica/"},{"name":"GPT-5.5","count":1,"path":"tags/GPT-5-5/"},{"name":"Discord","count":1,"path":"tags/Discord/"},{"name":"OpenScreen","count":1,"path":"tags/OpenScreen/"},{"name":"Screen Recording","count":1,"path":"tags/Screen-Recording/"},{"name":"Sonatype Guide","count":1,"path":"tags/Sonatype-Guide/"},{"name":"依賴管理","count":1,"path":"tags/依賴管理/"},{"name":"AI VTuber","count":1,"path":"tags/AI-VTuber/"},{"name":"Project AIRI","count":1,"path":"tags/Project-AIRI/"},{"name":"TypeScript","count":1,"path":"tags/TypeScript/"},{"name":"RTK","count":1,"path":"tags/RTK/"},{"name":"Token 優化","count":1,"path":"tags/Token-優化/"},{"name":"Stanford AI Index","count":1,"path":"tags/Stanford-AI-Index/"},{"name":"AI產業","count":1,"path":"tags/AI產業/"},{"name":"工程師職涯","count":1,"path":"tags/工程師職涯/"},{"name":"AI透明度","count":1,"path":"tags/AI透明度/"},{"name":"就業市場","count":1,"path":"tags/就業市場/"},{"name":"TimesFM","count":1,"path":"tags/TimesFM/"},{"name":"時間序列","count":1,"path":"tags/時間序列/"},{"name":"基礎模型","count":1,"path":"tags/基礎模型/"},{"name":"ML","count":1,"path":"tags/ML/"},{"name":"API","count":1,"path":"tags/API/"},{"name":"設計模式","count":1,"path":"tags/設計模式/"},{"name":"Whisper","count":1,"path":"tags/Whisper/"},{"name":"Speech-to-Text","count":1,"path":"tags/Speech-to-Text/"},{"name":"Flash Attention","count":1,"path":"tags/Flash-Attention/"},{"name":"Skill","count":1,"path":"tags/Skill/"},{"name":"心智模型","count":1,"path":"tags/心智模型/"},{"name":"決策工具","count":1,"path":"tags/決策工具/"},{"name":"包棟民宿","count":1,"path":"tags/包棟民宿/"},{"name":"台中","count":1,"path":"tags/台中/"},{"name":"南投","count":1,"path":"tags/南投/"},{"name":"苗栗","count":1,"path":"tags/苗栗/"},{"name":"AI 模型","count":1,"path":"tags/AI-模型/"},{"name":"時事評論","count":1,"path":"tags/時事評論/"},{"name":"能源","count":1,"path":"tags/能源/"},{"name":"AI 基礎建設","count":1,"path":"tags/AI-基礎建設/"},{"name":"台灣","count":1,"path":"tags/台灣/"},{"name":"MacBook","count":1,"path":"tags/MacBook/"},{"name":"淡江大橋","count":1,"path":"tags/淡江大橋/"},{"name":"淡水","count":1,"path":"tags/淡水/"},{"name":"建築","count":1,"path":"tags/建築/"},{"name":"週末","count":1,"path":"tags/週末/"},{"name":"Claude Skills","count":1,"path":"tags/Claude-Skills/"},{"name":"居家辦公","count":1,"path":"tags/居家辦公/"},{"name":"人體工學","count":1,"path":"tags/人體工學/"},{"name":"日本","count":1,"path":"tags/日本/"},{"name":"黃金週","count":1,"path":"tags/黃金週/"},{"name":"Golden Week","count":1,"path":"tags/Golden-Week/"}];</script></body></html>
