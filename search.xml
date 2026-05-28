@@ -4,6 +4,107 @@
   
     
     <entry>
+      <title>Claude Code /loop 與 /schedule 完整教學 — 讓 AI 自己排程自己跑</title>
+      <link href="/2026/05/27/Claude-Code-loop-%E8%88%87-schedule-%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8-%E8%AE%93-AI-%E8%87%AA%E5%B7%B1%E6%8E%92%E7%A8%8B%E8%87%AA%E5%B7%B1%E8%B7%91/"/>
+      <url>/2026/05/27/Claude-Code-loop-%E8%88%87-schedule-%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8-%E8%AE%93-AI-%E8%87%AA%E5%B7%B1%E6%8E%92%E7%A8%8B%E8%87%AA%E5%B7%B1%E8%B7%91/</url>
+      
+        <content type="html"><![CDATA[<p>10 分鐘。這是 <code>/loop</code> 沒指定間隔時的預設值——每 10 分鐘它會把你交代的任務重跑一次。</p><p>聽起來像 cron，但 cron 不會「理解」任務。<code>/loop</code> 在 Claude Code 的 session 裡跑，意思是它每次重跑時都帶著完整的對話脈絡。</p><p>打個比方就懂了。傳統的 cron 是個鬧鐘——時間到了它響，響完它不管事；<code>/loop</code> 是個記得你昨天交代什麼、今天問你「上次那件事好了沒」的助理。差別就在這。</p><p>這篇講怎麼用 <code>/loop</code> 跟 <code>/schedule</code> 把 AI 變成會自己排程的工程助手——從最簡單的「每 5 分鐘檢查 CI」到「指定時間跑部署」，把實務上會踩的坑一次列清楚。</p><hr><h2 id="先搞懂三個東西的差別"><a href="#先搞懂三個東西的差別" class="headerlink" title="先搞懂三個東西的差別"></a>先搞懂三個東西的差別</h2><p><code>/loop</code>、<code>/schedule</code>、Desktop scheduled tasks——這三個東西常常被搞混，先把它們的定位拉開：</p><p><code>/loop</code> 是 <strong>session 內</strong>的重複觸發。你在當前對話裡叫它每 X 分鐘做一件事，session 還開著它就會跑。關掉 terminal、關電腦、session 結束，它就沒了。</p><p><code>/schedule</code> 是 <strong>session 內</strong>的一次性定時觸發。在指定時間（例如下午 3 點）跑一個指令，跑完就結束。一樣，session 結束它也沒了。</p><p><strong>Desktop scheduled tasks</strong> 是 Claude Desktop App 裡的功能，這個會「跨 session 持久化」——你關掉 terminal、關電腦、明天打開，它還會在排定時間執行。</p><p>打個比方。<code>/loop</code> 跟 <code>/schedule</code> 像是手機上的鬧鐘 app——你出門前設定，回家前要繼續響的話手機不能關。Desktop scheduled tasks 像是 IFTTT 或 Zapier——你設定完之後手機關著它也照跑。</p><p>混用是常態：白天用 <code>/loop</code> 處理 session 內的迴圈任務（盯 CI、跑測試、輪詢狀態），晚上用 Desktop scheduled tasks 設定隔天早上自動跑的東西。</p><hr><h2 id="loop-的最小範例"><a href="#loop-的最小範例" class="headerlink" title="&#x2F;loop 的最小範例"></a>&#x2F;loop 的最小範例</h2><p>最簡單的用法：</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/loop 5m /code-review</span><br></pre></td></tr></table></figure><p>意思是「每 5 分鐘執行一次 <code>/code-review</code> 這個 slash command」。間隔的格式是「數字 + 單位」：<code>m</code> 是分鐘、<code>h</code> 是小時、<code>d</code> 是天。</p><p>不指定間隔的話：</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/loop /code-review</span><br></pre></td></tr></table></figure><p>預設是 10 分鐘。</p><p><code>/loop</code> 還接受自然語言：</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/loop every 30 minutes review uncommitted changes</span><br></pre></td></tr></table></figure><p>或者：</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/loop every 2 hours summarize git log</span><br></pre></td></tr></table></figure><p>這時候 <code>/loop</code> 會把後面那段話當成「任務描述」，由 Claude 自己決定要做什麼。這就是 cron 完全做不到的事——任務描述本身可以是模糊的，因為 Claude 會去理解。</p><hr><h2 id="loop-的隱藏限制（一定要知道）"><a href="#loop-的隱藏限制（一定要知道）" class="headerlink" title="&#x2F;loop 的隱藏限制（一定要知道）"></a>&#x2F;loop 的隱藏限制（一定要知道）</h2><p>這幾條限制官方文件有寫，但很多人沒注意：</p><p><strong>任務上限 3 天。</strong> 每個 <code>/loop</code> 任務從建立的那一刻起，最多跑 3 天就會自動過期。這是刻意的安全閥——避免你忘了關掉一個任務，結果它在背景一直燒你的 API 額度。三天到了它會自己停。</p><p><strong>一個 session 最多 50 個排程任務。</strong> 不管是 <code>/loop</code> 還是 <code>/schedule</code>，加起來最多 50 個。要更多就要分到多個 session 跑。</p><p><strong>Session 結束就死。</strong> 這個前面講過，再講一次因為太多人踩這坑：你把 terminal 關了 <code>/loop</code> 就沒了。要長期排程一定要用 Desktop scheduled tasks。</p><p><strong>最大間隔 1 週。</strong> 單一 <code>/loop</code> 任務的間隔最多 7 天。超過 7 天的需求，要用 Desktop scheduled tasks 或 GitHub Actions。</p><p><strong>重啟筆電會中斷。</strong> 即使 session 還在，筆電進入 sleep 狀態 <code>/loop</code> 也會暫停。要「筆電睡了也要跑」的需求，再次：Desktop scheduled tasks。</p><p>這幾條限制看起來很煩，但反過來想——它們是設計來阻止「忘記關掉的迴圈任務一直燒錢」。三天的硬上限相當於告訴你：<strong>任何超過三天的自動化都應該用更可靠的工具</strong>（cron、Desktop scheduled tasks、CI&#x2F;CD），不是塞在 Claude Code 的 session 裡。</p><hr><h2 id="三個實用情境"><a href="#三個實用情境" class="headerlink" title="三個實用情境"></a>三個實用情境</h2><p><strong>情境一：盯 CI 跑完</strong></p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/loop 2m check if the GitHub Actions workflow on my current branch has finished, and if so, summarize the results</span><br></pre></td></tr></table></figure><p>每 2 分鐘問一次 GitHub Actions，跑完了給你摘要。比你自己每 2 分鐘切到 browser 看快多了。</p><p><strong>情境二：等遠端服務上線</strong></p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/loop 1m curl -sf https://staging.example.com/health || echo &quot;still down&quot;</span><br></pre></td></tr></table></figure><p>每分鐘 ping 一次 staging 環境，掛掉就回報。部署完等服務暖機的時候特別好用。</p><p><strong>情境三：盯 PR review 進度</strong></p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/loop 30m show me any new comments on PR #1234</span><br></pre></td></tr></table></figure><p>每半小時看一次 PR 有沒有新留言。比每 5 分鐘自己滑一次 GitHub 健康。</p><p>注意這些情境的共同點：<strong>都是輪詢外部狀態</strong>。<code>/loop</code> 真正強的地方不是「重複做一件事」，是「重複『檢查』一件事，看狀態變了沒」。這跟 cron 的「固定時間做固定動作」是不同思路。</p><hr><h2 id="schedule-的用法"><a href="#schedule-的用法" class="headerlink" title="&#x2F;schedule 的用法"></a>&#x2F;schedule 的用法</h2><p><code>/schedule</code> 在指定時間執行一個指令，只跑一次：</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/schedule 2026-05-27 15:00 /deploy</span><br></pre></td></tr></table></figure><p>下午 3 點跑 <code>/deploy</code>。</p><p>或者用自然語言：</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/schedule in 2 hours /run-tests</span><br></pre></td></tr></table></figure><p>兩小時後跑測試。</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/schedule tomorrow 9am /code-review</span><br></pre></td></tr></table></figure><p>明天早上 9 點 review code。</p><p><code>/schedule</code> 跟 <code>/loop</code> 共用「session 內」的限制——你不能關 terminal，不能讓筆電進 sleep。但它比 <code>/loop</code> 少了「重複觸發」這層，所以最常見的搭配是：用 <code>/schedule</code> 做一次性「等一段時間後做某事」，用 <code>/loop</code> 做持續輪詢。</p><p>實務上 <code>/schedule</code> 比 <code>/loop</code> 用得少，因為「指定時間做一次」這個需求多半要跨 session 才有意義——而要跨 session 就直接用 Desktop scheduled tasks 比較合理。</p><hr><h2 id="什麼時候該用-Desktop-scheduled-tasks"><a href="#什麼時候該用-Desktop-scheduled-tasks" class="headerlink" title="什麼時候該用 Desktop scheduled tasks"></a>什麼時候該用 Desktop scheduled tasks</h2><p>三個訊號出現任何一個，就該升級到 Desktop scheduled tasks：</p><ol><li><strong>要跨天&#x2F;跨週</strong>：每天早上 9 點跑、每週一晚上 11 點跑——這種規律性需求一定用 Desktop。</li><li><strong>不能斷</strong>：例如每日工作摘要、每日部落格自動發布——如果筆電中斷它就死，整個排程就斷了。</li><li><strong>要在你不在電腦前的時候跑</strong>：你出差、放假、睡覺，但任務還是要跑——<code>/loop</code> 不行，Desktop 才行。</li></ol><p>Claude Code session 裡的 <code>/loop</code> 跟 <code>/schedule</code> 真正的甜蜜點是「<strong>這個 session 我會開著，幫我盯點事</strong>」。一旦你想關電腦它還要繼續跑，就不該再用它們。</p><hr><h2 id="容易踩的坑"><a href="#容易踩的坑" class="headerlink" title="容易踩的坑"></a>容易踩的坑</h2><p><strong>坑一：間隔太短</strong></p><p><code>/loop 10s</code> 這種短到 10 秒的間隔，雖然技術上允許，實務上是燒錢機器。每次觸發都會花 token。建議最短不要低於 1 分鐘，預設值 10 分鐘對大部分情境就夠了。</p><p><strong>坑二：忘了關</strong></p><p>session 還開著、<code>/loop</code> 還在跑、你去吃午飯、回來發現 API 額度被燒了一半——很常見。建議：</p><ul><li>短間隔的 <code>/loop</code>（&lt; 5 分鐘）跑完手動 <code>Ctrl+C</code> 停掉</li><li>長間隔的 <code>/loop</code>（&gt;&#x3D; 30 分鐘）依賴 3 天自動過期就好</li></ul><p><strong>坑三：任務描述太模糊</strong></p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"># ❌ 不好</span><br><span class="line">/loop 5m check stuff</span><br><span class="line"></span><br><span class="line"># ✅ 較好</span><br><span class="line">/loop 5m run pytest tests/integration/ and report any failures with file:line</span><br></pre></td></tr></table></figure><p><code>/loop</code> 越具體越好。模糊的任務每次跑都可能解釋成不同的動作。</p><p><strong>坑四：把該用 cron 的事塞進 &#x2F;loop</strong></p><p>「每天早上 9 點生報表」——這要用 cron 或 Desktop scheduled tasks，不是 <code>/loop</code>。<code>/loop</code> 是給 session 內的、輪詢式的、短期的迴圈用的。長期、跨日的排程請用對的工具。</p><hr><h2 id="進階：跟其他-slash-commands-組合"><a href="#進階：跟其他-slash-commands-組合" class="headerlink" title="進階：跟其他 slash commands 組合"></a>進階：跟其他 slash commands 組合</h2><p><code>/loop</code> 跟 <code>/schedule</code> 的真正威力是組合使用。舉幾個例子：</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"># 每 5 分鐘 review 一次最新 commit</span><br><span class="line">/loop 5m /code-review --commits HEAD~1..HEAD</span><br><span class="line"></span><br><span class="line"># 每小時跑一次 simplify（被改名前叫 /code-review --fix）</span><br><span class="line">/loop 1h /simplify</span><br><span class="line"></span><br><span class="line"># 兩小時後跑完整測試套件</span><br><span class="line">/schedule in 2 hours /run-tests --suite all</span><br></pre></td></tr></table></figure><p>組合的設計哲學跟 Unix pipe 一樣：每個指令做一件事，靠組合做更複雜的事。<code>/loop</code>、<code>/schedule</code> 是「時間維度的 pipe」——把任何 slash command 接上時間軸。</p><hr><h2 id="為什麼這兩個指令值得學"><a href="#為什麼這兩個指令值得學" class="headerlink" title="為什麼這兩個指令值得學"></a>為什麼這兩個指令值得學</h2><p>讀到這裡你可能會想：「不就是個排程嗎？」</p><p>仔細想一下兩件事。</p><p>第一，<code>/loop</code> 跟傳統 cron 真正的差別不是語法，是「執行的東西可以是模糊的指令」。<code>cron */5 * * * * check_ci.sh</code> 你要先寫好 <code>check_ci.sh</code>；<code>/loop 5m check CI status</code> 不用，Claude 會自己判斷怎麼檢查。<strong>這把「寫腳本的成本」從『先想清楚再寫』降到『邊用邊修』</strong>。</p><p>第二，<code>/loop</code> 的 3 天上限不是限制——是設計。它把你逼到去思考：「這件事真的應該在 session 裡跑嗎？還是該用更可靠的工具？」三天到了它自動關掉，省下的不只是 token，是你晚上不會被沒關掉的迴圈任務的 API bill 嚇醒。</p><p>最有用的工具往往不是功能最多的，是<strong>邊界畫得最清楚的</strong>。<code>/loop</code> 跟 <code>/schedule</code> 故意只做「session 內」的排程，剩下的長期、跨日、不能斷的需求，它直接告訴你「請用 Desktop scheduled tasks」。這種「清楚地知道自己不該做什麼」，比任何 feature list 都值錢。</p><blockquote><p>來源：<a href="https://code.claude.com/docs/en/slash-commands">Slash commands — Claude Code Docs</a>、<a href="https://betterstack.com/community/guides/ai/claude-code-loop/">Recurring Tasks in Claude Code: The &#x2F;loop Skill and Desktop Scheduler (Better Stack)</a>、<a href="https://blakecrosley.com/guides/claude-code-cheatsheet">Claude Code Cheat Sheet 2026</a></p></blockquote>]]></content>
+      
+      
+      <categories>
+          
+          <category> Claude Code </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> AI Agent </tag>
+            
+            <tag> Claude Code </tag>
+            
+            <tag> 開發工具 </tag>
+            
+            <tag> 自動化 </tag>
+            
+            <tag> 教學 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>AI 與科技新聞摘要 20260527：Fujitsu 押 10 萬人、Claude Code 加裝即時資安守門員、Pentagon 開始測試替代品</title>
+      <link href="/2026/05/27/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260527/"/>
+      <url>/2026/05/27/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260527/</url>
+      
+        <content type="html"><![CDATA[<p>10 萬人。這不是某個科技巨頭的員工總數，是 Fujitsu 一家公司打算在 5&#x2F;27 之後把 Claude 部署到的內部員工數量。</p><p>同一天，Anthropic 把 Claude Code 升級成「自帶資安守門員」的 IDE——一個會即時看你的 diff、看你的 commit、自動標記危險 pattern 的內建插件。</p><p>同一週傳出來的另一條新聞風味就完全不同：Pentagon 正在測試 OpenAI 跟 Google 的模型，準備在某些國防工作流裡替代 Claude。</p><p>把這三件事放在一張桌上看，是一個正在加速的系統性錯位：<strong>企業用戶在加大押注，國防客戶在分散押注</strong>。下行不對稱的風險，往往就藏在這種錯位裡。</p><hr><h2 id="一、Fujitsu-×-Anthropic：10-萬員工-1000-人工程隊伍，日本企業-AI-全面押注"><a href="#一、Fujitsu-×-Anthropic：10-萬員工-1000-人工程隊伍，日本企業-AI-全面押注" class="headerlink" title="一、Fujitsu × Anthropic：10 萬員工 + 1000 人工程隊伍，日本企業 AI 全面押注"></a>一、Fujitsu × Anthropic：10 萬員工 + 1000 人工程隊伍，日本企業 AI 全面押注</h2><p>5&#x2F;27 Fujitsu 正式公告：與 Anthropic 簽下策略合作，將 Claude 部署到全集團約 10 萬名員工，並組建 1000 人規模的工程團隊把這套能力交付給日本企業客戶。</p><p>部署的範圍跨度極大——政府、金融、醫療、關鍵基礎設施。這幾個領域恰好是日本傳統 SI 業的核心客戶。Fujitsu 的盤算很清楚：先讓 10 萬人在內部用 Claude 把方法論摸熟，再用 1000 人的「Forward Deployed Engineer」團隊把這套打法交付給客戶。</p><p>這跟 PwC 上週的 3 萬人合作放在一起看，企業 AI 採用的速度曲線已經從「試點」徹底進入「全員部署」。一個有意思的細節是 Fujitsu 同時也跟 OpenAI 合作——這代表大型企業沒打算把所有雞蛋放同一個籃子。但內部的「主力」是 Claude，這點訊號很強。</p><p>逆向問一句：為什麼是 Anthropic 而不是 OpenAI 拿下這種「全員部署」的合約？在 Pentagon 測試替代品的同一週（見最後一則），這個對比的層次就出來了——Anthropic 對企業的賣點不是消費端的爆紅，是「可審計、可控、可整合進關鍵業務流程」的工程紀律。10 萬人的合約寫的不是行銷預算，是法遵與風險管理預算。</p><blockquote><p>來源：<a href="https://global.fujitsu/en-global/pr/news/2026/05/27-01">Fujitsu signs strategic partnership with Anthropic</a>、<a href="https://www.cxtoday.com/ai-automation-in-cx/fujitsu-and-anthropic-put-human-in-the-loop-cx-on-notice/">Fujitsu and Anthropic Put Self-Evolving AI Agents on the CX Map</a></p></blockquote><hr><h2 id="二、Claude-Code-內建即時資安插件：把-AI-Coding-工具變成自帶守門員的-IDE"><a href="#二、Claude-Code-內建即時資安插件：把-AI-Coding-工具變成自帶守門員的-IDE" class="headerlink" title="二、Claude Code 內建即時資安插件：把 AI Coding 工具變成自帶守門員的 IDE"></a>二、Claude Code 內建即時資安插件：把 AI Coding 工具變成自帶守門員的 IDE</h2><p>同一週 Anthropic 把 Claude Code 升級了一個對工程團隊影響很大的功能：內建的 security-guidance plugin。所有 Claude Code 使用者都拿得到，預設啟用。</p><p>它做的事情很具體——盯著你的程式碼編輯、diff、commit，即時標記潛在的危險 pattern：hardcoded credentials、SSRF 風險、未驗證的 user input、SQL injection 樣式、不安全的 crypto API 呼叫等。它不是阻擋你 commit，是在你按下 commit 之前讓你看見：「這段你可能想再想一下」。</p><p>從產品哲學的角度看，這是 Anthropic 對六週前那場 Claude Code 品質風波的長線回應之一。4 月底的 postmortem 公布之後（reasoning effort 從 high 降到 medium、caching bug、verbosity prompt limit 三件事疊加導致六週的退化），Anthropic 沒有只修正參數——它把「把 AI Coding 工具變成需要紀律的工程環境」當成戰略主軸。</p><p>對工程師的實際意義：以前你 commit 之前要靠 pre-commit hook 跑 gitleaks、bandit、semgrep。現在 Claude Code 寫程式碼的同時就在跑這層審查。這對「不會自己設 hook」的個人開發者跟新團隊提升最大；對成熟團隊則是少一道工，但要小心過度依賴 AI 的判斷。</p><p>實務上的建議：把這層當「最後一道防線之一」，不要當唯一。AI 漏判跟誤判都會發生。</p><blockquote><p>來源：<a href="https://cybersecuritynews.com/anthropic-updates-claude-code/">Anthropic Updates Claude Code With Security Plugin and Faster Performance</a>、<a href="https://www.infoq.com/news/2026/05/anthropic-claude-code-postmortem/">Anthropic Traces Six Weeks of Claude Code Quality Complaints to Three Overlapping Product Changes</a></p></blockquote><hr><h2 id="三、Anthropic-×-SpaceX-Colossus-1：300MW、22-萬張-GPU，算力主權之爭浮上檯面"><a href="#三、Anthropic-×-SpaceX-Colossus-1：300MW、22-萬張-GPU，算力主權之爭浮上檯面" class="headerlink" title="三、Anthropic × SpaceX Colossus 1：300MW、22 萬張 GPU，算力主權之爭浮上檯面"></a>三、Anthropic × SpaceX Colossus 1：300MW、22 萬張 GPU，算力主權之爭浮上檯面</h2><p>5&#x2F;6 公布、整個 5 月持續鋪量：Anthropic 包下 SpaceX 在 Memphis 的 Colossus 1 資料中心全部算力——300MW、22 萬張 GPU（H100 &#x2F; H200 &#x2F; 次世代 GB200 混合）。</p><p>這個交易有幾個層次值得看。</p><p>第一層是規模。300MW 約是台北市某個整區的尖峰用電量級。22 萬張 GPU 是一個訓練前線級模型所需的硬體量級。這不是「補充產能」，是「另開一條訓練主幹線」。</p><p>第二層是政治。SpaceX、xAI（Musk 自己的 AI 公司）、Anthropic 三者有競合關係——Musk 把自家機房整片租給 Anthropic 這個動作本身就很微妙。Musk 自己在訪談裡的說法是「沒人觸發我的邪惡偵測器」，翻譯成商業語言就是「錢夠多、條件夠好，我會把競爭關係先放一邊」。</p><p>第三層才是真正的長期訊號：Anthropic 跟 SpaceX 還在談「軌道資料中心」——多 GW 級的太空算力。聽起來像科幻，但這跟 Microsoft 沉海資料中心、Google 太陽軌道算力研究是同一條軸線。<strong>當訓練算力的瓶頸從晶片變成電力，下一個瓶頸會是「上哪生出 GW 級電力」</strong>。地表上能蓋的位置已經越來越少。</p><p>對普通開發者的直接影響很實在：Anthropic 已經把 Claude Code rate limit 翻倍給 Pro &#x2F; Max 訂閱用戶、移除 Pro &#x2F; Max 的尖峰時段使用上限、Opus 模型 API 額度大幅放寬。這幾乎是用「算力換訂閱黏性」的明牌打法。</p><blockquote><p>來源：<a href="https://www.cnbc.com/2026/05/06/anthropic-spacex-data-center-capacity.html">Anthropic, SpaceX announce compute deal (CNBC)</a>、<a href="https://www.datacenterdynamics.com/en/news/anthropic-to-use-all-of-spacex-xais-colossus-1-data-center-compute/">Anthropic to use all of SpaceX-xAI’s Colossus 1 (DCD)</a>、<a href="https://www.anthropic.com/news/higher-limits-spacex">Anthropic — higher limits SpaceX</a></p></blockquote><hr><h2 id="四、Google-I-O-2026-三道暗箭：Gemini-3-5-Flash、Spark-Agent、Omni-世界模型"><a href="#四、Google-I-O-2026-三道暗箭：Gemini-3-5-Flash、Spark-Agent、Omni-世界模型" class="headerlink" title="四、Google I&#x2F;O 2026 三道暗箭：Gemini 3.5 Flash、Spark Agent、Omni 世界模型"></a>四、Google I&#x2F;O 2026 三道暗箭：Gemini 3.5 Flash、Spark Agent、Omni 世界模型</h2><p>5&#x2F;19 的 Google I&#x2F;O 開了三條戰線同時開火，目的很直白——追 OpenAI 跟 Anthropic 的估值故事。</p><p><strong>Gemini 3.5 Flash</strong> — 輕量版，主打強化的資安防護，「比較不容易產出有害內容，也比較不會把安全查詢誤拒」。重量級的 Gemini 3.5 Pro 留到下個月。</p><p><strong>Gemini Spark</strong> — 跨 app 推理的通用 AI agent，先給 trusted testers 跟 Google AI Ultra 訂閱用戶。這是 Google 對 Cursor、Claude Code、Codex 系列的回應——把 agent 能力綁到自家生態（Gmail、Drive、Workspace）的最深處。</p><p><strong>Omni</strong> — 世界模型，會嵌進 Flash、Gemini App、Google Flow、YouTube Shorts。Google 在押的是「世界模型 + 多模態 + 大平台分發」的組合拳。</p><p>最值得注意的不是這三個產品本身，是它們同時發佈的時間點。Anthropic 跟 OpenAI 都在準備 IPO，估值持續創高。Google 的 I&#x2F;O 是用「我們在內部已經跑這些東西」來證明「我們沒落後」。但機構投資人看的不是發佈會，是用戶數、留存率、企業合約量級——而 Fujitsu 那筆 10 萬人合約不是 Google 拿到的。</p><blockquote><p>來源：<a href="https://www.cnbc.com/2026/05/19/google-ai-ultra-gemini-spark-omni.html">Google debuts new AI models, personal AI agents (CNBC)</a>、<a href="https://techcrunch.com/2026/05/19/google-updates-its-gemini-app-to-take-on-chatgpt-and-claude-at-io-2026/">Google updates its Gemini app to take on ChatGPT and Claude at IO 2026 (TechCrunch)</a></p></blockquote><hr><h2 id="五、Pentagon-開始測試-OpenAI-Google-替代-Claude：國防客戶分散押注"><a href="#五、Pentagon-開始測試-OpenAI-Google-替代-Claude：國防客戶分散押注" class="headerlink" title="五、Pentagon 開始測試 OpenAI &#x2F; Google 替代 Claude：國防客戶分散押注"></a>五、Pentagon 開始測試 OpenAI &#x2F; Google 替代 Claude：國防客戶分散押注</h2><p>最後一則訊號最低調，但長期意義可能最大。</p><p>Pentagon 正在測試 OpenAI 跟 Google 的模型，準備在某些國防工作流裡替代 Anthropic 的 Claude。這是「分散供應商風險」的標準動作——任何單一供應商都不能在關鍵業務上構成 single point of failure。</p><p>把這條跟今天前四則放在一起看：</p><ul><li>商業企業（PwC、BMS、Fujitsu）在加倍押注 Claude，總員工部署數量級已過 20 萬人</li><li>Anthropic 同時鎖住 300MW 算力、推出資安插件、提升使用上限</li><li>Pentagon 同時開始測試替代品</li></ul><p>這不矛盾，這是兩種不同的風險偏好。商業客戶的優化函數是「降本增效」，他們願意接受供應商集中以換取整合深度。國防客戶的優化函數是「不能斷」——任何單一供應商出問題（公司倒、政策變、技術退化）都不能影響關鍵任務。</p><p>逆向問一句：如果你是 Anthropic，你會怎麼回應？答案大概不是去搶國防合約本身（OpenAI 跟 Palantir 那條路已經走很深），而是把 Claude 變成「就算你之後要換到別家也搬不出去」的整合深度——這正是 Fujitsu 1000 人 Forward Deployed Engineer 團隊在做的事。</p><p>對開發者的實用啟發：當 AI coding 工具市占還在洗牌，把工作流綁太死在單一工具是冒不必要的險。Claude Code、Cursor、Copilot 同時保留入口，付出的學習成本遠低於「未來某天工具退化或被收購」的切換成本。</p><blockquote><p>來源：<a href="https://www.anthropic.com/news">Anthropic news (官方公告頁面)</a>、<a href="https://www.nxcode.io/resources/news/cursor-vs-claude-code-vs-github-copilot-2026-ultimate-comparison">Cursor vs Claude Code vs GitHub Copilot 2026 (NxCode)</a></p></blockquote><hr><h2 id="把五件事串起來"><a href="#把五件事串起來" class="headerlink" title="把五件事串起來"></a>把五件事串起來</h2><p>把今天五則新聞抽掉公司名字，剩下一個共同主題：<strong>AI 產業的「下行不對稱」正在浮現</strong>。</p><p>企業全員部署 AI（上行收益可量化），但供應商集中度同步上升（下行風險難量化）；資安插件補了一個明顯的洞（短期上行），但長期是工程師對 AI 的信任天平往「過度依賴」傾斜的風險（長期下行）；算力鎖到 300MW（解了眼前瓶頸），但訓練前沿正在被推到「需要 GW 級電力」的新賽道（新瓶頸正在生成）。</p><p>林迪效應提醒我們：活得越久的東西，未來活越久的機率越高。CLI 工具、Unix 哲學、可審計的程式碼——這些活了 50 年的東西，比任何一個 5 歲的 AI 框架都更值得當你工程體系的地基。AI 是工具，地基還是要自己的工程紀律去打。</p><p>不預測誰會贏，只提供一個思考骨架：<strong>追求「不會輸」遠比追求「會贏」更值得做工</strong>。</p>]]></content>
+      
+      
+      <categories>
+          
+          <category> AI與科技新聞 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> AI與科技新聞 </tag>
+            
+            <tag> OpenAI </tag>
+            
+            <tag> Anthropic </tag>
+            
+            <tag> Google </tag>
+            
+            <tag> AI 安全 </tag>
+            
+            <tag> AI 產業 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>Mole — 用一個 binary 取代 CleanMyMac 全家桶的開源 Mac 清理 CLI</title>
+      <link href="/2026/05/27/Mole-%E7%94%A8%E4%B8%80%E5%80%8B-binary-%E5%8F%96%E4%BB%A3-CleanMyMac-%E5%85%A8%E5%AE%B6%E6%A1%B6%E7%9A%84%E9%96%8B%E6%BA%90-Mac-%E6%B8%85%E7%90%86-CLI/"/>
+      <url>/2026/05/27/Mole-%E7%94%A8%E4%B8%80%E5%80%8B-binary-%E5%8F%96%E4%BB%A3-CleanMyMac-%E5%85%A8%E5%AE%B6%E6%A1%B6%E7%9A%84%E9%96%8B%E6%BA%90-Mac-%E6%B8%85%E7%90%86-CLI/</url>
+      
+        <content type="html"><![CDATA[<p>四個 app 同時失去存在理由。</p><p>CleanMyMac 一年 89 美金、AppCleaner、DaisyDisk、iStat Menus——這四個 Mac 上最常駐的清理 &#x2F; 監控 GUI，加起來年費可以買半張 RTX 5070。Mole 用一個 Shell + Go 寫的 binary 把它們的核心功能全壓進去，CLI 永遠免費，可以丟進腳本、可以塞進排程、可以串 Raycast。</p><p>GitHub 上 38K+ stars，安裝指令一行：<code>brew install mole</code>。它不是「又一個 cleaner」——它是一個反向證明：那些賣你年訂閱的功能，其實本來就該是 CLI。</p><hr><h2 id="為什麼會冒出來這個工具"><a href="#為什麼會冒出來這個工具" class="headerlink" title="為什麼會冒出來這個工具"></a>為什麼會冒出來這個工具</h2><p>Mac 用一兩年之後一定會撞到三件事：硬碟空間不知道被誰吃光、卸載 app 留下一堆殘骸、機器變慢但又找不到原因。</p><p>市面上的解法分兩派。一派是付年費的 GUI（CleanMyMac X 一年 89 美金、Setapp 一個月 9.99 美金），另一派是 GUI 工具又肥又愛背景常駐——CleanMyMac 自己就會吃 300MB+ 記憶體，諷刺得很。</p><p>Mole 走完全反方向：純 CLI、單一 binary、不開機自啟、不送遙測。要清理才叫它出來，平時根本看不到。</p><p>打個比方。如果 CleanMyMac 是 IDE，Mole 就是 <code>vim + grep + awk</code> 組合：工具樸素，威力一點不輸，而且可以拼起來用。GUI 適合「不會 terminal 的人」，CLI 適合「不想每次都點滑鼠的人」——而後者的長期摩擦成本，遠比前者低。</p><hr><h2 id="七個指令對應七個商業工具"><a href="#七個指令對應七個商業工具" class="headerlink" title="七個指令對應七個商業工具"></a>七個指令對應七個商業工具</h2><p>Mole 把所有功能塞進七個指令，每個都對應到一個傳統商業工具的某個核心功能：</p><p><code>mo status</code> — 即時看 CPU、GPU、記憶體、磁碟 I&#x2F;O、top processes，按 <code>q</code> 退出。這是免費版的 iStat Menus。</p><p><code>mo analyze</code> — 進入視覺化磁碟瀏覽器，方向鍵或 Vim 的 <code>h/j/k/l</code> 都能用。一層一層往下鑽，找那種「明明是個小 app 卻佔 5GB」的東西。對標 DaisyDisk。</p><p><code>mo clean</code> — 清快取、log、暫存、瀏覽器快取、Xcode derived data、iOS simulator 快取。對標 CleanMyMac 的核心。</p><p><code>mo uninstall</code> — 互動選擇要卸載的 app，會顯示每個 app 的大小跟最近使用時間。它會把 app 本體、<code>~/Library/Preferences</code> 設定檔、launch daemon、隱藏快取一次清掉，常見一個 app 會清出 12 個位置、52 個關聯檔案。對標 AppCleaner，但更狠。</p><p><code>mo purge</code> — 等等講，這是開發者最有感的指令。</p><p><code>mo optimize</code> — 跑系統最佳化，清 dyld cache、重建 spotlight 索引這類東西。</p><p><code>mo touchid</code> — 設定 sudo 用指紋認證，每次清理不用打密碼。</p><p>不知道從哪開始？打 <code>mo</code> 就會進入互動式選單。</p><hr><h2 id="第一次用建議的順序"><a href="#第一次用建議的順序" class="headerlink" title="第一次用建議的順序"></a>第一次用建議的順序</h2><p>直接 <code>mo clean</code> 是新手最常踩的坑——你不知道它要清什麼。建議按下面順序走：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 1. 看儀表板，先了解機器狀況</span></span><br><span class="line">mo status</span><br><span class="line"></span><br><span class="line"><span class="comment"># 2. 找空間黑洞</span></span><br><span class="line">mo analyze</span><br><span class="line"></span><br><span class="line"><span class="comment"># 3. 預覽要清什麼（不會真的清）</span></span><br><span class="line">mo clean --dry-run</span><br><span class="line"></span><br><span class="line"><span class="comment"># 4. 確認沒事再實際清</span></span><br><span class="line">mo clean</span><br></pre></td></tr></table></figure><p><code>--dry-run</code> 是 Mole 最重要的安全閥。第一次跑任何清理指令一律先加，看一眼會清什麼，確認沒事再執行真的清理。Medium 上有人實測一次清出 25GB，雖然不是每台都這麼誇張，但 5~10GB 是常態。</p><p>這個流程的設計哲學跟 <code>git</code> 很像：你不會直接 <code>git push --force</code>，你會先 <code>git status</code>、<code>git diff</code>、確認、再動手。GUI 工具往往把這個流程壓成一個按鈕，使用者按了之後才知道發生什麼事——這對「快速」是好事，對「可控」是災難。</p><hr><h2 id="開發者最有感：mo-purge"><a href="#開發者最有感：mo-purge" class="headerlink" title="開發者最有感：mo purge"></a>開發者最有感：mo purge</h2><p>如果你是工程師，這指令大概會幫你清出最多空間。</p><p>它會掃描指定路徑下的所有專案，找出可以重新生成的構件目錄：</p><ul><li><code>node_modules</code> — Node.js 套件</li><li><code>target</code> — Rust &#x2F; Java 編譯產物</li><li><code>.build</code> — Swift Package Manager</li><li><code>build</code> &#x2F; <code>dist</code> — 各種前端框架的編譯輸出</li><li><code>venv</code> &#x2F; <code>.venv</code> — Python 虛擬環境</li></ul><p>做前端的人都懂，<code>node_modules</code> 動輒 500MB，五個專案就 2.5GB。手動 <code>find . -name node_modules -exec rm -rf &#123;&#125; +</code> 速度快但很容易連活躍專案一起砍。</p><p><code>mo purge</code> 的貼心之處：7 天內動過的專案會預設取消勾選，你要主動點才會清。這個設計細節省下的「跑 <code>pnpm install</code> 等十分鐘」的痛苦，光這點就值得安裝。</p><p>要自訂掃描路徑：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 用旗標指定</span></span><br><span class="line">mo purge --paths ~/code,~/work</span><br><span class="line"></span><br><span class="line"><span class="comment"># 或寫進設定檔</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&#x27;~/code&#x27;</span> &gt;&gt; ~/.config/mole/purge_paths</span><br><span class="line"><span class="built_in">echo</span> <span class="string">&#x27;~/work&#x27;</span> &gt;&gt; ~/.config/mole/purge_paths</span><br></pre></td></tr></table></figure><hr><h2 id="CLI-的真正威力：–json"><a href="#CLI-的真正威力：–json" class="headerlink" title="CLI 的真正威力：–json"></a>CLI 的真正威力：–json</h2><p>Mole 所有指令都支援 <code>--json</code> 輸出。這是它跟 GUI 工具最大的差別，也是它真正贏的地方。</p><p>GUI 工具的清理結果只能用眼睛看。Mole 的清理結果可以寫進排程、寫進稽核 log、寫進 CI pipeline。</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 每週日凌晨 3 點自動清理快取（crontab）</span></span><br><span class="line">0 3 * * 0 mo clean --json &gt;&gt; ~/Library/Logs/mole-weekly.log</span><br></pre></td></tr></table></figure><p>公司 IT 可以把 <code>mo clean --dry-run --json</code> 塞進 MDM 部署腳本，每週幫員工自動清快取、每月跑一次 <code>mo optimize</code>，運作紀錄寫到 <code>~/Library/Logs/mole/operations.log</code>，稽核時撈出來看。</p><p>GUI 工具做不到這件事——你不能把 CleanMyMac 的點擊動作寫進 cron。能用 CLI 的東西就用 CLI，是個被低估的長期生產力複利。</p><p>V1.35.0 開始 Mole 還支援清理 Claude Code、Cursor 的快取，這對每天用 AI coding 的人特別有用——這些工具的 context 快取、embedding 索引、聊天紀錄累積得很快，常常一個月就吃掉幾 GB。</p><hr><h2 id="使用情境"><a href="#使用情境" class="headerlink" title="使用情境"></a>使用情境</h2><p><strong>接手二手 &#x2F; 公司舊 Mac</strong>：剛拿到一台用了一兩年的 Mac，硬碟剩 10GB，不知從何下手。<code>mo analyze</code> 看空間分佈、<code>mo clean --dry-run</code> 看能清什麼，10 分鐘內可以多回 20~30GB。</p><p><strong>不想被訂閱經濟綁住</strong>：CleanMyMac X 一年 89 美金、Setapp 一個月 9.99 美金，加起來一年快 4000 台幣只是為了清快取。Mole CLI 永遠免費（GUI 版才 9 美金終身）。對於只用清理功能的人來說，這個價差不是「省一點錢」，是「根本沒有同一個 tier 的競品」。</p><p><strong>開發機磁碟長期被構件吃光</strong>：<code>mo purge</code> 一次清完還保留 7 天內活躍專案，比手動 <code>find + rm</code> 安全又省事。</p><p><strong>卸載一堆試用過的 app</strong>：試了 Notion、Obsidian、Logseq、Bear，最後只留一個。其他三個的設定檔、快取、launch daemon 都還散在系統各處。<code>mo uninstall</code> 一次清乾淨。</p><hr><h2 id="限制要先講清楚"><a href="#限制要先講清楚" class="headerlink" title="限制要先講清楚"></a>限制要先講清楚</h2><p>只支援 macOS。Windows 在 <code>windows</code> 分支但實驗性，Linux 完全沒計畫。如果你工作流程是 macOS + Linux 混用，Linux 那邊還是要找別的工具（BleachBit 是合理選擇）。</p><p>iTerm2 相容性有問題——互動選單會亂掉、色彩會錯。iTerm2 是 macOS 開發者最常用的終端機之一，這點要特別注意。如果你慣用 iTerm2，可能要切到 Ghostty、Warp、WezTerm、Alacritty、kitty 其中一個跑 Mole。</p><p>某些清理需要 sudo，建議搭配 <code>mo touchid</code> 設定指紋認證，每次清理不用打密碼。</p><p>AI 工具快取的識別範圍目前只有 Claude Code、Cursor。Aider、Cline、Continue 這類較新的工具還沒納入，要等後續版本。</p><hr><h2 id="真正的問題其實是什麼"><a href="#真正的問題其實是什麼" class="headerlink" title="真正的問題其實是什麼"></a>真正的問題其實是什麼</h2><p>讀到這裡，你可能會覺得這是「省 89 美金」的故事。其實不是。</p><p>真正的問題是：為什麼一個年費 89 美金的 GUI 工具，它的核心功能可以被一個 Shell + Go binary 在 80 天內衝到 38K stars？</p><p>答案不是「Mole 厲害」——答案是「CleanMyMac 賣的不是技術，是介面與品牌信任」。當有人把同樣的清理邏輯做成可審計、可腳本化、可自動化的 CLI，付費 GUI 就會在「願意打開 terminal 的人」這個市場區段瞬間蒸發。</p><p>這不是 Mole vs CleanMyMac 的故事，是 CLI 工具 vs GUI 訂閱 SaaS 的微縮版。同樣的劇本，在 Notion vs Obsidian、Postman vs <code>curl + jq</code>、Sequel Pro vs <code>psql</code>、Docker Desktop vs OrbStack 各自上演過一遍。</p><p>值不值得換看你自己。但這個趨勢——「能 CLI 化的功能會慢慢 CLI 化」——是 Mac 軟體生態未來五年的隱性主旋律。</p><blockquote><p>來源：<a href="https://github.com/tw93/Mole">tw93&#x2F;Mole on GitHub</a>、<a href="https://github.com/tw93/Mole/blob/main/README.md">Mole CLI 官方說明</a>、<a href="https://ddewhurst.com/blog/mole-open-source-bash-go-tool-replacing-paid-mac-apps/">Open Source Bash+Go tool replacing $60+ paid Mac apps</a></p></blockquote>]]></content>
+      
+      
+      <categories>
+          
+          <category> 開源工具 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> 工程師生活 </tag>
+            
+            <tag> 開源 </tag>
+            
+            <tag> 開發工具 </tag>
+            
+            <tag> 自動化 </tag>
+            
+            <tag> CLI </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>Claude Code /code-review 完整教學：從 /simplify 改名後，AI 用四個 Agent 幫你掃 PR</title>
       <link href="/2026/05/26/Claude-Code-code-review-%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8-%E5%BE%9E-simplify-%E6%94%B9%E5%90%8D%E5%BE%8C-AI-%E7%94%A8%E5%9B%9B%E5%80%8B-Agent-%E5%B9%AB%E4%BD%A0%E6%8E%83-PR/"/>
       <url>/2026/05/26/Claude-Code-code-review-%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8-%E5%BE%9E-simplify-%E6%94%B9%E5%90%8D%E5%BE%8C-AI-%E7%94%A8%E5%9B%9B%E5%80%8B-Agent-%E5%B9%AB%E4%BD%A0%E6%8E%83-PR/</url>
@@ -2182,9 +2283,9 @@
             
             <tag> NVIDIA </tag>
             
-            <tag> Mistral </tag>
-            
             <tag> Gemini </tag>
+            
+            <tag> Mistral </tag>
             
         </tags>
       
@@ -2656,39 +2757,6 @@
     
     
     <entry>
-      <title>RTK — 讓 Claude Code 少燒 80% Token 的 Rust 壓縮代理</title>
-      <link href="/2026/04/28/RTK-%E8%AE%93-Claude-Code-%E5%B0%91%E7%87%92-80-Token-%E7%9A%84-Rust-%E5%A3%93%E7%B8%AE%E4%BB%A3%E7%90%86/"/>
-      <url>/2026/04/28/RTK-%E8%AE%93-Claude-Code-%E5%B0%91%E7%87%92-80-Token-%E7%9A%84-Rust-%E5%A3%93%E7%B8%AE%E4%BB%A3%E7%90%86/</url>
-      
-        <content type="html"><![CDATA[<p>你以為 token 是被 AI 的思考燒掉的。其實不是。</p><p>跑一個長時間的 Claude Code 會話，打開帳單看一下，你會發現大部分 token 花在「讀」而不是「想」。更精確地說，花在讀 shell 吐回來的那坨東西——git diff 的路徑前綴、pytest 的進度條、docker logs 的時間戳、一堆空行跟重複行。這些資訊對 LLM 來說毫無意義，但每一個字元都在燒你的錢。</p><p><strong>118k token 的會話，真正有用的資訊大概只有 24k。</strong></p><p>剩下的 94k 是噪音。</p><h2 id="RTK-在幹嘛"><a href="#RTK-在幹嘛" class="headerlink" title="RTK 在幹嘛"></a>RTK 在幹嘛</h2><p>RTK（Rust Token Killer）是一個用 Rust 寫的 CLI 代理層，架在 Claude Code 跟你的 shell 之間。想像一下你家水管接了一個濾水器——水還是會流過去，但泥沙會被擋住。RTK 就是那個濾水器，只是它過濾的不是泥沙，是 token。</p><p>每次 Claude Code 要執行 shell 指令，RTK 會先攔截輸出，用針對特定指令的壓縮模組把冗餘資訊砍掉，只留下 LLM 真正需要的部分，再傳回 context window。壓縮率大概在 60-90%，取決於指令類型。git status 的壓縮效果跟 docker logs 差很多，這很直覺。</p><p>它內建了 100+ 個指令模組——git、pytest、jest、docker、kubectl、terraform，基本上你在開發中會用到的指令都有。不是通用壓縮，是每個指令有自己的規則。知道什麼該留什麼該砍。</p><h2 id="怎麼裝進去"><a href="#怎麼裝進去" class="headerlink" title="怎麼裝進去"></a>怎麼裝進去</h2><p>macOS 推薦 Homebrew：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">brew install rtk</span><br></pre></td></tr></table></figure><p>裝完跑一行設定：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rtk init -g --auto-patch</span><br></pre></td></tr></table></figure><p>這行會幫你設好 Claude Code 的 PreToolUse hook。之後所有 Bash 指令都會自動走 RTK 代理，你什麼都不用改。</p><p>有幾個常見的坑要先避開。<code>npm install -g rtk-ai</code>——npm 上沒這個套件，裝了會炸。<code>cargo install rtk</code>——crates.io 上有同名套件，但那是完全不同的東西。只有 Homebrew 跟官方安裝腳本是對的。</p><h2 id="它怎麼知道該砍什麼"><a href="#它怎麼知道該砍什麼" class="headerlink" title="它怎麼知道該砍什麼"></a>它怎麼知道該砍什麼</h2><p>這是最聰明的部分。RTK 不是瞎砍，它知道每個指令的輸出結構。</p><p>跑 <code>git diff</code> 的時候，它會砍掉那些又臭又長的路徑前綴（<code>a/src/main/java/com/company/project/module/submodule/...</code>），但保留變更的行數跟內容。跑 pytest 的時候，進度條（<code>...........</code>）直接消失，但測試結果和失敗的 traceback 原封不動。Docker logs 的重複行會被折疊成「×N」的格式，但第一次出現的完整內容會保留。</p><p>這就像你在茶水間跟同事轉述 log 一樣——你不會把每一行時間戳都念出來，你會說「這個 error 出現了 47 次」然後念一次完整的 stack trace。RTK 就是在做這件事，只是它做得更快、更穩定。</p><p>有個安全機制：<strong>12 行以下的輸出自動跳過不處理。</strong> 小型輸出通常每一行都是關鍵資訊，壓了反而會掉東西。</p><h2 id="80-是怎麼來的"><a href="#80-是怎麼來的" class="headerlink" title="80% 是怎麼來的"></a>80% 是怎麼來的</h2><p>數字不是亂喊的。</p><p>我自己跑一個典型的 Claude Code 開發會話——改 code、跑測試、看 diff、查 log——原本一個 session 下來 token 消耗 118k。裝上 RTK 之後，同樣的工作流，24k。省了接近 80%。</p><p>這個差距的來源很好理解。一次 <code>git diff</code> 輸出可能有 2000 行，但真正有意義的變更可能只有 200 行。一次 <code>docker logs --tail 500</code> 裡面可能有 400 行是重複的 health check。一次 pytest 的完整輸出裡，進度指示器佔了一半的字元數。這些東西疊起來很恐怖。</p><p>API 費用是按 token 計費的。少送 80% 的 token 進去，就是少付 80% 的錢。數學就這麼簡單。</p><h2 id="什麼時候不該用它"><a href="#什麼時候不該用它" class="headerlink" title="什麼時候不該用它"></a>什麼時候不該用它</h2><p>壓縮是有損的。這三個字很重要。</p><p>RTK 砍掉的東西在大多數情況下是垃圾，但不是所有情況。追查 production incident 的時候，每一行 log 的時間戳和順序都是線索。對 trace ID 的時候，被折疊的重複行裡可能藏了一個微妙的差異。做 performance 分析的時候，你需要看到完整的 latency 分佈。</p><p>這時候用 <code>rtk proxy</code>：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rtk proxy docker logs mycontainer --since <span class="string">&quot;30 min ago&quot;</span></span><br></pre></td></tr></table></figure><p><code>rtk proxy</code> 會繞過所有壓縮邏輯，原封不動地把輸出傳回去。Claude Code 的 Read、Grep、Glob 這些內建工具本來就不走 Bash，所以 hook 也攔不到它們——直接用就好。</p><p>老實說，日常開發 95% 的時間走壓縮都沒問題。只有在精確除錯的場景才需要繞過去。</p><h2 id="兩個好用的子指令"><a href="#兩個好用的子指令" class="headerlink" title="兩個好用的子指令"></a>兩個好用的子指令</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rtk discover</span><br></pre></td></tr></table></figure><p>這個會掃描你的 shell 歷史，找出哪些指令的輸出特別肥、特別適合壓縮，然後告訴你預估能省多少 token。裝完之後先跑一次，心裡有個底。</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">rtk gain</span><br><span class="line">rtk gain --<span class="built_in">history</span></span><br></pre></td></tr></table></figure><p>查看累積省下多少 token 和費用。<code>--history</code> 會列出每個指令的歷史壓縮率。這個數字看了會真香——你會知道自己到底省了多少錢。</p><h2 id="背後就兩條線"><a href="#背後就兩條線" class="headerlink" title="背後就兩條線"></a>背後就兩條線</h2><p>軟體工程裡有一個被低估的問題：<strong>我們送給工具的資訊裡，有多少是真正需要的？</strong></p><p>大多數人優化 LLM 的思路是「讓模型更聰明」或「讓 prompt 更精確」。但 RTK 指向的是一個更基礎的槓桿點——在資訊進入模型之前，先把噪音砍掉。這不是什麼新觀念。Unix 哲學的 pipe 和 filter 就是在做這件事。grep、awk、sed 存在了幾十年，本質上就是在回答同一個問題：什麼是訊號，什麼是噪音。</p><p>RTK 只是把這個古老的問題帶到 LLM 時代。</p><p>而且答案出乎意料地明確：你的 shell 輸出裡，六到九成都是噪音。</p><hr><p><strong>相關連結</strong></p><ul><li>GitHub：<a href="https://github.com/rtk-ai/rtk">https://github.com/rtk-ai/rtk</a></li><li>官方網站：<a href="https://www.rtk-ai.app/">https://www.rtk-ai.app</a></li></ul>]]></content>
-      
-      
-      <categories>
-          
-          <category> Claude Code </category>
-          
-      </categories>
-      
-      
-        <tags>
-            
-            <tag> Claude Code </tag>
-            
-            <tag> Rust </tag>
-            
-            <tag> CLI </tag>
-            
-            <tag> RTK </tag>
-            
-            <tag> Token 優化 </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    
-    
-    <entry>
       <title>MCP Server 開發入門教學 — 用 Python 從零打造 AI 工具連接器</title>
       <link href="/2026/04/28/MCP-Server-%E9%96%8B%E7%99%BC%E5%85%A5%E9%96%80%E6%95%99%E5%AD%B8-%E7%94%A8-Python-%E5%BE%9E%E9%9B%B6%E6%89%93%E9%80%A0-AI-%E5%B7%A5%E5%85%B7%E9%80%A3%E6%8E%A5%E5%99%A8/"/>
       <url>/2026/04/28/MCP-Server-%E9%96%8B%E7%99%BC%E5%85%A5%E9%96%80%E6%95%99%E5%AD%B8-%E7%94%A8-Python-%E5%BE%9E%E9%9B%B6%E6%89%93%E9%80%A0-AI-%E5%B7%A5%E5%85%B7%E9%80%A3%E6%8E%A5%E5%99%A8/</url>
@@ -2714,6 +2782,39 @@
             <tag> 教學 </tag>
             
             <tag> Python </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>RTK — 讓 Claude Code 少燒 80% Token 的 Rust 壓縮代理</title>
+      <link href="/2026/04/28/RTK-%E8%AE%93-Claude-Code-%E5%B0%91%E7%87%92-80-Token-%E7%9A%84-Rust-%E5%A3%93%E7%B8%AE%E4%BB%A3%E7%90%86/"/>
+      <url>/2026/04/28/RTK-%E8%AE%93-Claude-Code-%E5%B0%91%E7%87%92-80-Token-%E7%9A%84-Rust-%E5%A3%93%E7%B8%AE%E4%BB%A3%E7%90%86/</url>
+      
+        <content type="html"><![CDATA[<p>你以為 token 是被 AI 的思考燒掉的。其實不是。</p><p>跑一個長時間的 Claude Code 會話，打開帳單看一下，你會發現大部分 token 花在「讀」而不是「想」。更精確地說，花在讀 shell 吐回來的那坨東西——git diff 的路徑前綴、pytest 的進度條、docker logs 的時間戳、一堆空行跟重複行。這些資訊對 LLM 來說毫無意義，但每一個字元都在燒你的錢。</p><p><strong>118k token 的會話，真正有用的資訊大概只有 24k。</strong></p><p>剩下的 94k 是噪音。</p><h2 id="RTK-在幹嘛"><a href="#RTK-在幹嘛" class="headerlink" title="RTK 在幹嘛"></a>RTK 在幹嘛</h2><p>RTK（Rust Token Killer）是一個用 Rust 寫的 CLI 代理層，架在 Claude Code 跟你的 shell 之間。想像一下你家水管接了一個濾水器——水還是會流過去，但泥沙會被擋住。RTK 就是那個濾水器，只是它過濾的不是泥沙，是 token。</p><p>每次 Claude Code 要執行 shell 指令，RTK 會先攔截輸出，用針對特定指令的壓縮模組把冗餘資訊砍掉，只留下 LLM 真正需要的部分，再傳回 context window。壓縮率大概在 60-90%，取決於指令類型。git status 的壓縮效果跟 docker logs 差很多，這很直覺。</p><p>它內建了 100+ 個指令模組——git、pytest、jest、docker、kubectl、terraform，基本上你在開發中會用到的指令都有。不是通用壓縮，是每個指令有自己的規則。知道什麼該留什麼該砍。</p><h2 id="怎麼裝進去"><a href="#怎麼裝進去" class="headerlink" title="怎麼裝進去"></a>怎麼裝進去</h2><p>macOS 推薦 Homebrew：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">brew install rtk</span><br></pre></td></tr></table></figure><p>裝完跑一行設定：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rtk init -g --auto-patch</span><br></pre></td></tr></table></figure><p>這行會幫你設好 Claude Code 的 PreToolUse hook。之後所有 Bash 指令都會自動走 RTK 代理，你什麼都不用改。</p><p>有幾個常見的坑要先避開。<code>npm install -g rtk-ai</code>——npm 上沒這個套件，裝了會炸。<code>cargo install rtk</code>——crates.io 上有同名套件，但那是完全不同的東西。只有 Homebrew 跟官方安裝腳本是對的。</p><h2 id="它怎麼知道該砍什麼"><a href="#它怎麼知道該砍什麼" class="headerlink" title="它怎麼知道該砍什麼"></a>它怎麼知道該砍什麼</h2><p>這是最聰明的部分。RTK 不是瞎砍，它知道每個指令的輸出結構。</p><p>跑 <code>git diff</code> 的時候，它會砍掉那些又臭又長的路徑前綴（<code>a/src/main/java/com/company/project/module/submodule/...</code>），但保留變更的行數跟內容。跑 pytest 的時候，進度條（<code>...........</code>）直接消失，但測試結果和失敗的 traceback 原封不動。Docker logs 的重複行會被折疊成「×N」的格式，但第一次出現的完整內容會保留。</p><p>這就像你在茶水間跟同事轉述 log 一樣——你不會把每一行時間戳都念出來，你會說「這個 error 出現了 47 次」然後念一次完整的 stack trace。RTK 就是在做這件事，只是它做得更快、更穩定。</p><p>有個安全機制：<strong>12 行以下的輸出自動跳過不處理。</strong> 小型輸出通常每一行都是關鍵資訊，壓了反而會掉東西。</p><h2 id="80-是怎麼來的"><a href="#80-是怎麼來的" class="headerlink" title="80% 是怎麼來的"></a>80% 是怎麼來的</h2><p>數字不是亂喊的。</p><p>我自己跑一個典型的 Claude Code 開發會話——改 code、跑測試、看 diff、查 log——原本一個 session 下來 token 消耗 118k。裝上 RTK 之後，同樣的工作流，24k。省了接近 80%。</p><p>這個差距的來源很好理解。一次 <code>git diff</code> 輸出可能有 2000 行，但真正有意義的變更可能只有 200 行。一次 <code>docker logs --tail 500</code> 裡面可能有 400 行是重複的 health check。一次 pytest 的完整輸出裡，進度指示器佔了一半的字元數。這些東西疊起來很恐怖。</p><p>API 費用是按 token 計費的。少送 80% 的 token 進去，就是少付 80% 的錢。數學就這麼簡單。</p><h2 id="什麼時候不該用它"><a href="#什麼時候不該用它" class="headerlink" title="什麼時候不該用它"></a>什麼時候不該用它</h2><p>壓縮是有損的。這三個字很重要。</p><p>RTK 砍掉的東西在大多數情況下是垃圾，但不是所有情況。追查 production incident 的時候，每一行 log 的時間戳和順序都是線索。對 trace ID 的時候，被折疊的重複行裡可能藏了一個微妙的差異。做 performance 分析的時候，你需要看到完整的 latency 分佈。</p><p>這時候用 <code>rtk proxy</code>：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rtk proxy docker logs mycontainer --since <span class="string">&quot;30 min ago&quot;</span></span><br></pre></td></tr></table></figure><p><code>rtk proxy</code> 會繞過所有壓縮邏輯，原封不動地把輸出傳回去。Claude Code 的 Read、Grep、Glob 這些內建工具本來就不走 Bash，所以 hook 也攔不到它們——直接用就好。</p><p>老實說，日常開發 95% 的時間走壓縮都沒問題。只有在精確除錯的場景才需要繞過去。</p><h2 id="兩個好用的子指令"><a href="#兩個好用的子指令" class="headerlink" title="兩個好用的子指令"></a>兩個好用的子指令</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rtk discover</span><br></pre></td></tr></table></figure><p>這個會掃描你的 shell 歷史，找出哪些指令的輸出特別肥、特別適合壓縮，然後告訴你預估能省多少 token。裝完之後先跑一次，心裡有個底。</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">rtk gain</span><br><span class="line">rtk gain --<span class="built_in">history</span></span><br></pre></td></tr></table></figure><p>查看累積省下多少 token 和費用。<code>--history</code> 會列出每個指令的歷史壓縮率。這個數字看了會真香——你會知道自己到底省了多少錢。</p><h2 id="背後就兩條線"><a href="#背後就兩條線" class="headerlink" title="背後就兩條線"></a>背後就兩條線</h2><p>軟體工程裡有一個被低估的問題：<strong>我們送給工具的資訊裡，有多少是真正需要的？</strong></p><p>大多數人優化 LLM 的思路是「讓模型更聰明」或「讓 prompt 更精確」。但 RTK 指向的是一個更基礎的槓桿點——在資訊進入模型之前，先把噪音砍掉。這不是什麼新觀念。Unix 哲學的 pipe 和 filter 就是在做這件事。grep、awk、sed 存在了幾十年，本質上就是在回答同一個問題：什麼是訊號，什麼是噪音。</p><p>RTK 只是把這個古老的問題帶到 LLM 時代。</p><p>而且答案出乎意料地明確：你的 shell 輸出裡，六到九成都是噪音。</p><hr><p><strong>相關連結</strong></p><ul><li>GitHub：<a href="https://github.com/rtk-ai/rtk">https://github.com/rtk-ai/rtk</a></li><li>官方網站：<a href="https://www.rtk-ai.app/">https://www.rtk-ai.app</a></li></ul>]]></content>
+      
+      
+      <categories>
+          
+          <category> Claude Code </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> Claude Code </tag>
+            
+            <tag> Rust </tag>
+            
+            <tag> CLI </tag>
+            
+            <tag> RTK </tag>
+            
+            <tag> Token 優化 </tag>
             
         </tags>
       
@@ -3549,11 +3650,11 @@
             
             <tag> TDD </tag>
             
-            <tag> SDD </tag>
-            
             <tag> GH-300 </tag>
             
             <tag> Responsible AI </tag>
+            
+            <tag> SDD </tag>
             
         </tags>
       
@@ -3712,9 +3813,9 @@
             
             <tag> 資安 </tag>
             
-            <tag> Cursor </tag>
-            
             <tag> Microsoft </tag>
+            
+            <tag> Cursor </tag>
             
         </tags>
       
@@ -4195,9 +4296,9 @@
             
             <tag> AZ-305 </tag>
             
-            <tag> 微軟課程 </tag>
-            
             <tag> Networking </tag>
+            
+            <tag> 微軟課程 </tag>
             
         </tags>
       
@@ -4629,9 +4730,9 @@
       
         <tags>
             
-            <tag> Cursor </tag>
-            
             <tag> Copilot </tag>
+            
+            <tag> Cursor </tag>
             
             <tag> Claude Code </tag>
             
@@ -4881,9 +4982,9 @@
             
             <tag> MCP </tag>
             
-            <tag> Copilot </tag>
-            
             <tag> Microsoft </tag>
+            
+            <tag> Copilot </tag>
             
         </tags>
       
@@ -5088,9 +5189,9 @@
             
             <tag> 開發工具 </tag>
             
-            <tag> DevOps </tag>
-            
             <tag> 教學 </tag>
+            
+            <tag> DevOps </tag>
             
         </tags>
       
@@ -5179,9 +5280,9 @@
             
             <tag> 資安 </tag>
             
-            <tag> Copilot </tag>
-            
             <tag> Microsoft </tag>
+            
+            <tag> Copilot </tag>
             
         </tags>
       
@@ -5266,9 +5367,9 @@
             
             <tag> 資安 </tag>
             
-            <tag> Cursor </tag>
-            
             <tag> Copilot </tag>
+            
+            <tag> Cursor </tag>
             
         </tags>
       
