@@ -4,6 +4,107 @@
   
     
     <entry>
+      <title>Claude Code /usage 完整教學 — 看你的額度花在哪個 Skill、Subagent、Plugin、MCP server</title>
+      <link href="/2026/05/28/Claude-Code-usage-%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8-%E7%9C%8B%E4%BD%A0%E7%9A%84-token-%E8%8A%B1%E5%9C%A8%E5%93%AA%E5%80%8B-skill-subagent-MCP-server/"/>
+      <url>/2026/05/28/Claude-Code-usage-%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8-%E7%9C%8B%E4%BD%A0%E7%9A%84-token-%E8%8A%B1%E5%9C%A8%E5%93%AA%E5%80%8B-skill-subagent-MCP-server/</url>
+      
+        <content type="html"><![CDATA[<p>打開 Claude Code 還沒輸入任何指令，光是 boot 起來這層 context window 就已經吃掉了——多少？</p><p>預設安裝一個 CLAUDE.md、五個 MCP server、幾個 skills，根據 Claude Code 官方文件的估算，<strong>起跳就要五萬個 token</strong>。其中光 GitHub MCP 一個就佔了一半以上。</p><p>這還是「什麼都還沒做」的數字。</p><p>5 月的 <code>/usage</code> 升級之後，這層消耗變得可見了——指令會把 skills、subagents、plugins、每個 MCP server 各自吃掉多少額度列成一張表。本來這層是黑盒子，現在打開了。</p><p>這篇拆解三件事：<code>/usage</code> 報表怎麼看、看到之後該怎麼動手減重、為什麼這個指令的設計值得抄到自己的工作流。</p><hr><h2 id="usage-跟-cost-跟-stats-不是同一件事"><a href="#usage-跟-cost-跟-stats-不是同一件事" class="headerlink" title="/usage 跟 /cost 跟 /stats 不是同一件事"></a><code>/usage</code> 跟 <code>/cost</code> 跟 <code>/stats</code> 不是同一件事</h2><p>先把容易混淆的三個指令分開：</p><table><thead><tr><th>指令</th><th>看什麼</th><th>適用對象</th></tr></thead><tbody><tr><td><code>/usage</code></td><td>Pro &#x2F; Max 訂閱的額度還剩多少、各 category 吃掉多少</td><td>訂閱戶</td></tr><tr><td><code>/cost</code></td><td>這個 session 跑下來花了多少美金</td><td>用 API key 的人</td></tr><tr><td><code>/stats</code></td><td>使用模式統計（指令次數、模型切換等）</td><td>都可以用</td></tr></tbody></table><p>訂閱戶最常用的是 <code>/usage</code>——它不是看「錢花多少」，是看「<strong>這 5 小時 &#x2F; 這禮拜的額度被吃掉幾成</strong>」。Claude Code 的計費是雙層滾動窗：</p><ul><li><strong>5 小時滾動窗</strong>：短期使用上限，每 5 小時重新計算</li><li><strong>每週上限</strong>：覆蓋七天的總計 active compute time</li></ul><p>兩條曲線都會在 <code>/usage</code> 看到，但更值錢的是底下那層 <strong>per-category breakdown</strong> —— skills、subagents、plugins、MCP 各別貢獻多少。</p><hr><h2 id="為什麼這層-breakdown-很重要"><a href="#為什麼這層-breakdown-很重要" class="headerlink" title="為什麼這層 breakdown 很重要"></a>為什麼這層 breakdown 很重要</h2><p>直覺上，token 用太多就少寫幾個 prompt 就好——但這個直覺只對了一半。</p><p>實際的問題是，<strong>很多 token 在你還沒輸入任何東西時就已經被吃掉了</strong>。</p><p>把每次 boot Claude Code 想成搬家。你進新房子之前，<strong>家具已經先擺好</strong>——CLAUDE.md 是你的書桌、每個 skill 是一個工具櫃、每個 MCP server 是一台冰箱。家具還沒用就佔了客廳的空間，等你開始活動，剩下的空間才是「能用的」。</p><p>問題是冰箱有大有小：</p><ul><li>一個 skill 大約 100 token（lazy load，沒用到不算）</li><li>一個典型 MCP server 5-10 個 tools，預載大概 5,000-10,000 token</li><li><strong>GitHub 官方 MCP 一個就吃 1-3 萬 token</strong>（超過 50 個 tools）</li><li>CLAUDE.md 寫得詳細的話 2,000-5,000 token</li><li>全部加起來可以輕鬆破 5 萬</li></ul><p><code>/usage</code> 的 breakdown 等於把這份「家具帳單」攤開給你看。看到帳單你才會發現「啊原來那個 MCP server 我根本沒用過、佔位佔了三個月」。</p><hr><h2 id="打開-usage-報表怎麼讀"><a href="#打開-usage-報表怎麼讀" class="headerlink" title="打開 /usage 報表怎麼讀"></a>打開 <code>/usage</code> 報表怎麼讀</h2><p>在 Claude Code 裡輸入：</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/usage</span><br></pre></td></tr></table></figure><p>你會看到大概這個結構（每個人配置不同，數字會差很多）：</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">Limits this 5h window:    62%</span><br><span class="line">Weekly cap:               31%</span><br><span class="line"></span><br><span class="line">Breakdown by category:</span><br><span class="line">  - MCP servers:           41%</span><br><span class="line">    - github               24%</span><br><span class="line">    - filesystem            8%</span><br><span class="line">    - playwright            6%</span><br><span class="line">    - notion-local          3%</span><br><span class="line">  - Skills:                 8%</span><br><span class="line">  - Subagents:              3%</span><br><span class="line">  - Plugins:                5%</span><br><span class="line">  - Conversation:          43%</span><br></pre></td></tr></table></figure><p>幾條解讀規則：</p><p><strong>Conversation 佔比過高（&gt;50%）</strong> 通常代表你最近跑了長對話、長 context 的任務（例如 code review 整個 codebase）。這層是健康的——這就是你買 Claude Code 訂閱在做的事。</p><p><strong>MCP servers 佔比過高（&gt;40%）</strong> 通常代表你裝了用不到的 MCP server。看 sub-breakdown，最大那個如果你最近根本沒用，就該卸載。</p><p><strong>Skills 佔比過高（&gt;30%）</strong> 很少見，通常表示你寫了太多大型 SKILL.md（單檔過長），或是 alwaysApply 的規則寫得太貪心。</p><p><strong>Subagents 跟 Plugins</strong> 通常是個位數百分比。如果突然飆高，多半是某個 plugin 把 MCP server &#x2F; skill 都包進去了，要去看那個 plugin 本身。</p><hr><h2 id="從報表反推：該砍掉哪些"><a href="#從報表反推：該砍掉哪些" class="headerlink" title="從報表反推：該砍掉哪些"></a>從報表反推：該砍掉哪些</h2><p>舉個常見的場景：你的 <code>/usage</code> 顯示 GitHub MCP 佔 24%，但你最近兩個月一個 issue 都沒查過——這就是該動手砍的訊號。</p><p>砍的方法不是刪掉它，是<strong>從 settings 把它停用</strong>。Claude Code 的 settings 通常在 <code>~/.claude/settings.json</code> 或者 <code>.claude/settings.json</code>（專案層級），裡面 mcpServers 區段把那個 entry 註解掉就好：</p><figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;mcpServers&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="comment">// &quot;github&quot;: &#123; ... &#125;,  // 暫停，需要時再打開</span></span><br><span class="line">    <span class="attr">&quot;filesystem&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span> ... <span class="punctuation">&#125;</span></span><br><span class="line">  <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure><p>restart Claude Code，再跑一次 <code>/usage</code>，會看到 baseline 直接掉一截。</p><p>幾個常見的「該重新評估」名單：</p><ul><li><strong>GitHub MCP</strong>：tools 太多、context 太重，如果你只用 <code>gh</code> CLI 已經夠了，可以拿掉</li><li><strong>Playwright MCP</strong>：只有寫 E2E 測試才用得到，平常 standby 太浪費</li><li><strong>Notion MCP</strong>：寫筆記才用，寫程式時可以關掉</li><li><strong>多個資料庫 MCP</strong>（mysql &#x2F; postgres &#x2F; mssql 同時開）：留你現在這個專案用到的那個就好</li></ul><p>砍掉的不是工具，是「<strong>用不到的工具預載</strong>」。要用時再打開比常駐便宜得多。</p><hr><h2 id="為什麼-lazy-loading-很重要"><a href="#為什麼-lazy-loading-很重要" class="headerlink" title="為什麼 lazy loading 很重要"></a>為什麼 lazy loading 很重要</h2><p>這個觀念底下有一條更普遍的規則：<strong>不要為了「可能會用到」付固定成本</strong>。</p><p>Skills 的設計示範這條規則的反面——一個 skill 不被觸發時只佔約 100 個 token（只載入名字跟簡介），被觸發時才把完整內容讀進來。這叫 <strong>progressive disclosure</strong> —— 預先告訴 agent「有這個東西可以用」，但細節等需要時再讀。</p><p>MCP 沒有這層 lazy loading。一個 MCP server 一旦註冊，它的 tools schema 全部要載入到 context window，因為 LLM 必須事先知道有哪些 tool function、各自接受什麼參數，才能決定要不要呼叫。<strong>這就是為什麼一個 GitHub MCP 動輒上萬 token</strong>——50 個 tool 各自的 schema 加起來就是這個量級。</p><p>設計差異的根源很單純：skill 是文件，MCP 是 RPC。文件可以等讀者翻到再看，RPC 必須事先知道介面。</p><p>對你的影響是：</p><ul><li>大量 skill 沒關係，沒用到不收費</li><li><strong>少量但每個都精選的 MCP server</strong>，比一堆「以防萬一」的 MCP 划算</li></ul><p>挑 MCP 時的判斷標準是「我這禮拜會用到嗎」，不是「以後可能會用到嗎」。</p><hr><h2 id="進階：監控你的-weekly-cap-曲線"><a href="#進階：監控你的-weekly-cap-曲線" class="headerlink" title="進階：監控你的 weekly cap 曲線"></a>進階：監控你的 weekly cap 曲線</h2><p><code>/usage</code> 的「Weekly cap」這條曲線比 5-hour window 更值錢。原因是 5-hour 那條會自己 reset，你被卡了等等就好；weekly cap 卡了，整週都會手綁。</p><p>幾個經驗法則：</p><ul><li>**週一到週三超過 60%**：表示這禮拜你不能放開來跑 long agent loop，要更省著用</li><li>**連續兩週都 &lt; 50%**：你買的方案可能 over-spec 了，可以考慮降一階</li><li>**單一 5h 窗口 &gt; 80% 但 weekly cap &lt; 30%**：表示你有突發爆量任務，需要更平均地分配跑大型任務的時段</li></ul><p>把 <code>/usage</code> 跑成每天早上的習慣（跟看 git status 一樣），你會慢慢內化出「我這禮拜還剩多少預算」這個直覺，不會月底才發現額度爆了。</p><hr><h2 id="跟錢有關的版本：API-key-用法"><a href="#跟錢有關的版本：API-key-用法" class="headerlink" title="跟錢有關的版本：API key 用法"></a>跟錢有關的版本：API key 用法</h2><p>如果你用的是 API key 而不是訂閱：</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/cost</span><br></pre></td></tr></table></figure><p>這個指令會印目前 session 跑下來累積的美金消耗。對 API 使用者來說，這比 <code>/usage</code> 直接——畢竟你看的不是「額度百分比」，是「實際燒了多少錢」。</p><p>實務上建議：</p><ul><li>跑大任務前 <code>/cost</code> 一次當基準</li><li>跑完再 <code>/cost</code> 一次看消耗</li><li>慢慢內化每種任務的「typical cost」，下次估價時心裡有譜</li></ul><p>API 用法跟訂閱用法差異很大的點是「沒有額度上限」——只要你的信用卡額度還在就會繼續跑。所以 API key 使用者的紀律比訂閱戶更需要主動，因為訂閱戶會被擋住、API 戶不會。</p><hr><h2 id="實際應用情境"><a href="#實際應用情境" class="headerlink" title="實際應用情境"></a>實際應用情境</h2><h3 id="場景一：發現額度突然燒得快"><a href="#場景一：發現額度突然燒得快" class="headerlink" title="場景一：發現額度突然燒得快"></a>場景一：發現額度突然燒得快</h3><p>打 <code>/usage</code> 看是哪個 category 暴增。最常見是某個 skill &#x2F; MCP 改版後體積變大、或者你最近開了一個新 plugin 把整套 stack 預載進來。</p><h3 id="場景二：規劃下週的大任務"><a href="#場景二：規劃下週的大任務" class="headerlink" title="場景二：規劃下週的大任務"></a>場景二：規劃下週的大任務</h3><p>週日晚上跑 <code>/usage</code>，看 weekly cap 還剩多少。如果接下來這禮拜要做 migration、要跑長對話 review、要平行多 session，得先把不必要的 MCP 關掉騰預算。</p><h3 id="場景三：評估訂閱方案"><a href="#場景三：評估訂閱方案" class="headerlink" title="場景三：評估訂閱方案"></a>場景三：評估訂閱方案</h3><p>連續四週看 <code>/usage</code>，看 weekly cap 平均落在哪。長期都用不到 50%，可以考慮降階；經常打到 80%+，就升一階。</p><h3 id="場景四：團隊內部選工具"><a href="#場景四：團隊內部選工具" class="headerlink" title="場景四：團隊內部選工具"></a>場景四：團隊內部選工具</h3><p>如果你在團隊內部推薦工具，先用 <code>/usage</code> 算清楚 baseline cost，比給人空泛建議有說服力——「裝這套會吃掉你 30% baseline」比「我覺得不錯」管用多了。</p><hr><h2 id="一些踩坑點"><a href="#一些踩坑點" class="headerlink" title="一些踩坑點"></a>一些踩坑點</h2><ul><li><strong><code>/usage</code> 不會自動 refresh</strong>：每次跑都是當下快照，要看趨勢得手動連續執行</li><li><strong>Plugin 內含的 MCP &#x2F; skill 不會獨立列出</strong>：plugin 是包裹層，breakdown 顯示在 plugins 那欄，要看細節要去 plugin 設定</li><li><strong>claude.ai 用的 token 也算進來</strong>：因為 Pro &#x2F; Max 跨產品共用額度，你在 claude.ai 開了長對話會吃 Claude Code 的額度</li><li><strong>restart 之後 baseline 會跳一下才穩定</strong>：因為 MCP 重新註冊有 warm-up，看 baseline 等 1-2 分鐘再讀比較準</li></ul><hr><h2 id="收尾：可見性是最便宜的優化"><a href="#收尾：可見性是最便宜的優化" class="headerlink" title="收尾：可見性是最便宜的優化"></a>收尾：可見性是最便宜的優化</h2><p><code>/usage</code> 真正改變的是<strong>你對成本的感官</strong>。</p><p>以前你大概知道「Claude Code 有額度」，但「額度花在哪」是黑盒子。現在打一個指令就看到三條曲線：5 小時窗口、週上限、各 category 拆解。看到了你才會動手砍，看不到就會繼續燒。</p><p>這個觀念可以推到任何工具：<strong>你看不見的成本一定會超支</strong>。AWS 不裝 Cost Explorer 帳單會嚇人、Notion 不開 audit log 不知道哪個整合在亂改、Claude Code 不跑 <code>/usage</code> 不知道哪個 MCP 在偷預算。</p><p>最便宜的優化從來不是「找更好的工具」，是「先看清楚現在的工具花在哪」。</p><p>打開 Claude Code，跑一次 <code>/usage</code>，看一下 breakdown。挑那個你最意外的數字下手——通常就是該砍的那個。</p><hr><h2 id="相關連結"><a href="#相關連結" class="headerlink" title="相關連結"></a>相關連結</h2><ul><li><strong>官方文件</strong>：<a href="https://support.claude.com/en/articles/14552983-models-usage-and-limits-in-claude-code">Models, usage, and limits in Claude Code</a></li><li><strong>Usage 限制機制</strong>：<a href="https://support.claude.com/en/articles/11647753-how-do-usage-and-length-limits-work">How do usage and length limits work?</a></li><li><strong>&#x2F;usage 詳解</strong>：<a href="https://blog.vincentqiao.com/en/posts/claude-code-usage/">Claude Code &#x2F;usage Command Explained</a></li><li><strong>MCP &#x2F; Skills &#x2F; Plugins 分層解析</strong>：<a href="https://alexop.dev/posts/understanding-claude-code-full-stack/">Understanding Claude Code’s Full Stack</a></li></ul>]]></content>
+      
+      
+      <categories>
+          
+          <category> Claude Code </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> MCP </tag>
+            
+            <tag> Claude Code </tag>
+            
+            <tag> Skills </tag>
+            
+            <tag> 教學 </tag>
+            
+            <tag> Performance </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>AI 與科技新聞摘要 20260528：Anthropic 一年 80 倍、Mistral 開始畫自己的晶片、OpenAI 把廣告收入賭到 1000 億</title>
+      <link href="/2026/05/28/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260528/"/>
+      <url>/2026/05/28/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260528/</url>
+      
+        <content type="html"><![CDATA[<p>300 億美金。這是 Anthropic 5 月底坐穩的 run-rate 數字，跟 2025 年底的 90 億比，14 個月翻了 3 倍。再往前抓 18 個月，2024 年底是 10 億——也就是說，從 10 億跑到 300 億，<strong>Anthropic 用了一年半，翻了 30 倍</strong>。</p><p>這不是「成長很快」，這是「曲線換了一條」。</p><p>同一週，Mistral 宣布要自己設計晶片、推出企業 agentic 平台 Vibe；OpenAI 把廣告收入目標寫進了內部簡報——2026 年 25 億、2030 年 1000 億。</p><p>把這幾條放在一張桌上看，一個分岔點越來越清楚：<strong>有些公司在賣信任，有些公司在賣注意力</strong>。短期內兩條曲線都會漲，長期會分開來看。下行風險也會分開——一條被監管追，一條被基礎設施成本追。</p><hr><h2 id="一、Anthropic-一年-80-倍：從新創公司變成基礎設施"><a href="#一、Anthropic-一年-80-倍：從新創公司變成基礎設施" class="headerlink" title="一、Anthropic 一年 80 倍：從新創公司變成基礎設施"></a>一、Anthropic 一年 80 倍：從新創公司變成基礎設施</h2><p>5 月底數字底定：Anthropic 的 annualized run-rate 達到 300 億美金，相比 2024 年底的 10 億，14 個月翻了將近 30 倍。從另一個角度抓，2024 年 1 月 run-rate 才 8700 萬美金、12 月 10 億、2025 年底 90 億、2026 年 2 月 140 億、3 月 190 億、4 月 300 億。</p><p>這個曲線跟「正常 SaaS 成長」完全不一樣。SaaS 從 10 億到 100 億常見要 5-10 年；Anthropic 用 4 個月。</p><p>支撐這個曲線的不是訂閱用戶，是企業合約。<strong>年付百萬美金以上的企業客戶超過 1000 家</strong>——兩年前這個數字是 12。Claude Code 單一產品的 run-rate 在 2 月就破了 25 億，企業使用占比超過一半。</p><p>逆向問一個問題：成長這麼快的公司，下行風險在哪？</p><p>第一個風險是算力供應。300 億 run-rate 需要的訓練 + 推論算力是「全球第幾大」等級的需求。Anthropic 5 月已經跟 Google + Broadcom 簽了 3.5GW TPU 的擴大合約（2027 年起逐步上線），加上原本的 AWS 5GW + Google 5GW，已經是 10GW 的算力承諾。但實際能不能準時交付、能源能不能跟上，是無法靠合約鎖死的變數。</p><p>第二個風險是估值與資金。Series G 把投後估值推到 3800 億美金、單輪募 300 億——這個資本結構對任何「成長放緩」的訊號都會反應很重。意思是即使年成長 100% 都可能不夠，因為市場 price-in 的是 200%。</p><p>第三個風險最隱形：<strong>單一客戶依賴度</strong>。1000 家百萬美金客戶聽起來很分散，但如果其中前 100 家就佔了 60% 收入（這在企業 SaaS 是常見曲線），那這 100 家裡有 10 家換供應商，曲線就會抖一下。Fujitsu、PwC、BMS 這種「全員部署」級別的合約解約成本對買方很高、但對賣方的風險是「一次掉一大塊」。</p><p>上行很顯眼，下行藏在合約結構裡。</p><blockquote><p>來源：<a href="https://www.pymnts.com/artificial-intelligence-2/2026/anthropic-hits-30-billion-run-rate-as-enterprise-demand-accelerates/">Anthropic Hits $30 Billion Run Rate (PYMNTS)</a>、<a href="https://www.anthropic.com/news/anthropic-raises-30-billion-series-g-funding-380-billion-post-money-valuation">Anthropic Series G $30B at $380B valuation</a></p></blockquote><hr><h2 id="二、Anthropic-×-Google-×-Broadcom：3-5GW-TPU-大單，算力之戰換軌道"><a href="#二、Anthropic-×-Google-×-Broadcom：3-5GW-TPU-大單，算力之戰換軌道" class="headerlink" title="二、Anthropic × Google × Broadcom：3.5GW TPU 大單，算力之戰換軌道"></a>二、Anthropic × Google × Broadcom：3.5GW TPU 大單，算力之戰換軌道</h2><p>跟 run-rate 同時鋪量的是算力訂單。Anthropic 跟 Google 跟 Broadcom 簽下擴大版的 TPU 合作，鎖定 <strong>3.5GW 算力</strong>，2027 年起逐步上線。這是 2025 年 10 月那筆「超過 1GW」合約的放大版，加上原本就有的 AWS 跟 Google Cloud 部分，Anthropic 手上鎖定的算力總量達到 10GW 量級。</p><p>這幾個數字最值得看的不是規模，是<strong>選擇</strong>。Anthropic 選擇深度綁定 Google TPU 而不是 NVIDIA GPU——這跟絕大多數 AI 公司的選擇相反。</p><p>逆向想一下：NVIDIA GPU 是事實標準，生態系最完整，為什麼 Anthropic 願意把賭注押在 TPU 上？</p><p>幾個可能的答案：</p><ul><li><strong>價格與供應的可預測性</strong>：跟 Broadcom 直接客製，比在 NVIDIA 排隊有彈性</li><li><strong>垂直整合的長期成本</strong>：模型、編譯器、晶片三層共同設計，可以把每瓦效能拉到專為自家模型優化</li><li><strong>跟 NVIDIA 的議價空間</strong>：手上有 TPU 這條後備路線，跟 NVIDIA 談 GPU 訂單時的姿態完全不同</li></ul><p>但這個選擇也有對應的下行：<strong>如果 Google TPU 的開發跟不上 NVIDIA 的世代速度，Anthropic 會落後 OpenAI 一個世代</strong>。這不是不可能——晶片世代每 18 個月一次，TPU 跟 H100&#x2F;B200&#x2F;GB200 的差距曾經被縮小、也曾經拉開。Anthropic 在這個選擇上是把雞蛋放在「未來可以收斂」的籃子裡，不是「現在領先」的籃子。</p><blockquote><p>來源：<a href="https://www.anthropic.com/news/google-broadcom-partnership-compute">Anthropic expands partnership with Google and Broadcom</a>、<a href="https://www.siliconrepublic.com/machines/anthropic-google-broadcom-announce-3-5gw-tpu-deal">Anthropic, Google, Broadcom announce 3.5GW TPU deal (Silicon Republic)</a></p></blockquote><hr><h2 id="三、Claude-Security-公測-Opus-4-7-GA：把資安變成-commodity"><a href="#三、Claude-Security-公測-Opus-4-7-GA：把資安變成-commodity" class="headerlink" title="三、Claude Security 公測 + Opus 4.7 GA：把資安變成 commodity"></a>三、Claude Security 公測 + Opus 4.7 GA：把資安變成 commodity</h2><p>5 月初 Anthropic 把 Claude Code Security 改名 <strong>Claude Security</strong> 推進公測，跑在新的 <strong>Claude Opus 4.7</strong> 上。同一週 Opus 4.7 GA，對較難的軟體工程任務有明顯提升，並內建偵測「禁止用途 &#x2F; 高風險資安用途」的安全層。</p><p>Claude Security 做的事跟一般 SAST（靜態分析）不一樣。傳統工具靠規則庫匹配 pattern；Claude Security 用模型<strong>讀懂程式碼跟資料流</strong>，追蹤跨檔案、跨模組的元件互動，把那種「規則匹配抓不到」的漏洞挖出來。</p><p>Anthropic 自己 2 月做過一輪實測：用 Opus 4.6 跑一批 production 的開源 codebase，挖出 <strong>500+ 個從未被發現的漏洞</strong>——這些 code 經過數十年的專家審查、peer audit、自動掃描，但仍然漏網。</p><p>接著的鋪量訊號很關鍵：<strong>CrowdStrike、Microsoft Security、Palo Alto Networks、SentinelOne、Trend.ai、Wiz</strong> 同步整合 Opus 4.7 進自家平台。換句話說，企業資安界第一線的工具供應商，幾乎全部把這顆模型納入產品線。</p><p>逆向問一個問題：這對個人開發者意義是什麼？</p><p>意義是「資安門檻」這件事的常識會變動。以前你 commit 程式碼，能不能抓出 SQL injection、SSRF、deserialization 風險，要看你公司有沒有買 Veracode &#x2F; Snyk &#x2F; Semgrep。未來這層能力會直接內建在開發環境裡，<strong>「沒掃過」會變成預設不該發生的事</strong>——而不是有錢公司才做的事。</p><p>但下行也要看見：<strong>模型有偽陽性 + 偽陰性</strong>。偽陽性會讓開發者疲勞（看 100 個警告 80 個是雜訊），偽陰性會給人「我跑過 AI 掃描了所以沒事」的錯誤安全感。短期實務建議是把它當「最後一層保險」，不是唯一一層。</p><blockquote><p>來源：<a href="https://www.helpnetsecurity.com/2026/05/04/anthropic-claude-security-public-beta/">Claude Security enters public beta with Opus 4.7 (Help Net Security)</a>、<a href="https://www.anthropic.com/news/claude-opus-4-7">Anthropic Claude Opus 4.7 announcement</a></p></blockquote><hr><h2 id="四、Mistral-開始畫自己的晶片，順便發-Vibe"><a href="#四、Mistral-開始畫自己的晶片，順便發-Vibe" class="headerlink" title="四、Mistral 開始畫自己的晶片，順便發 Vibe"></a>四、Mistral 開始畫自己的晶片，順便發 Vibe</h2><p>歐洲那邊也動了。5&#x2F;28 CNBC 報導：<strong>Mistral CEO Arthur Mensch 證實 Mistral 正在探索自研晶片</strong>，同時宣布要在法國新建一座專做推論（inference）的資料中心，並推出企業 agentic 平台 <strong>Vibe</strong>——能幫企業客戶起草工作、寫 code、自動執行任務。</p><p>這幾個動作放在一起的訊號很清楚：Mistral 把賭注押在「歐洲版 AI 完整堆疊」上。模型 + 算力 + 晶片 + 資料中心都自己做，盡量不依賴美國供應鏈。</p><p>逆向看，這個策略的下行很大：</p><ul><li><strong>晶片設計門檻極高</strong>：從 design house 到 tape-out 到量產的成本曲線，跟模型公司熟悉的 OPEX 完全不同</li><li><strong>生態系劣勢</strong>：CUDA &#x2F; PyTorch 的開發者鎖定是十年的歷史紅利，Mistral 自家晶片要重建工具鏈</li><li><strong>客戶採購週期長</strong>：歐洲企業客戶對「主權 AI」買單，但採購流程比美國長 2-3 倍</li></ul><p>但<strong>上行也很大</strong>：歐盟法規會持續往「資料主權 + 模型主權」方向走，誰能交付「整套運行在歐盟境內的 AI 堆疊」，誰就吃下歐洲那塊增量市場的最大份。法規從來都是雙面刃——對 Mistral 是順風，對 OpenAI &#x2F; Anthropic 是逆風。</p><p>把 Mistral 跟 Anthropic 並排看，能看到一個有意思的對稱：兩家都在做「垂直整合」，但走的是不同方向。Anthropic 跟 Google 綁，把垂直整合外包給 hyperscaler；Mistral 自己畫晶片，把垂直整合做在自家。一個押的是「我選對盟友」、一個押的是「我不需要盟友」。</p><p>兩種押法都對，但只有時間能告訴我們哪一種更反脆弱。</p><blockquote><p>來源：<a href="https://www.cnbc.com/2026/05/28/mistral-arthur-mensch-design-chips-ai-data-centers.html">Mistral to explore designing own chips (CNBC)</a></p></blockquote><hr><h2 id="五、OpenAI-把-2030-年廣告收入賭到-1000-億"><a href="#五、OpenAI-把-2030-年廣告收入賭到-1000-億" class="headerlink" title="五、OpenAI 把 2030 年廣告收入賭到 1000 億"></a>五、OpenAI 把 2030 年廣告收入賭到 1000 億</h2><p>跟 Anthropic、Mistral 的「賣信任 &#x2F; 賣堆疊」打法完全不一樣，OpenAI 在 5 月對外露出了它的長期商業模式藍圖：<strong>廣告收入從 2026 年的 25 億美金，要在 2030 年衝到 1000 億美金</strong>。</p><p>換算成倍數，是 4 年 40 倍。</p><p>這個目標背後的邏輯不複雜：ChatGPT 月活已經是手機 App 等級的數字，把廣告塞進 chat 介面、塞進搜尋結果、塞進 agentic 推薦流程，廣告變現的 TAM 是「替代 Google 搜尋廣告 + 部分顯示廣告」這個量級——抓 20% 市佔就是 1000 億美金以上。</p><p>但這個賭注有兩個遞迴的下行風險：</p><p><strong>第一個是商業模式上的內在矛盾</strong>。賣廣告要求最大化使用者停留時間、最大化曝光、最大化 CTR——這些目標跟「給使用者最準確、最快的答案」是內在衝突的。Google 在搜尋市場花了十年才把這個矛盾穩住，過程中市佔率被 TikTok &#x2F; 短影音侵蝕。OpenAI 在 chat 介面複製一次廣告變現，會遇到一樣的拉扯，但消費者的耐受度比搜尋更低（chat 是個人化的，廣告插入感更強）。</p><p><strong>第二個是監管風險</strong>。歐盟的 AI Act、英國 ICO、美國 FTC 都在盯廣告 + AI 個人化推薦的邊界。一旦廣告變成主要收入來源，每一個監管動作都會直接影響收入曲線。</p><p>把 OpenAI 跟 Anthropic 並排看：</p><ul><li><strong>Anthropic</strong>：年付百萬美金的企業客戶超過 1000 家，收入結構是「少數大客戶 × 高黏性合約」</li><li><strong>OpenAI</strong>：消費者付費 + 廣告變現，收入結構是「大量散戶 × 廣告 ARPU」</li></ul><p>兩條曲線在「上行潛力」上是平的，但<strong>反脆弱性差很多</strong>。企業合約抗景氣衰退、抗監管擾動的能力，比廣告 + 個人訂閱強。當下一輪經濟衰退來臨時，這個結構差異會把這兩家公司分開來看。</p><blockquote><p>來源：<a href="https://llm-stats.com/llm-updates">OpenAI projects $100B advertising revenue by 2030</a>、<a href="https://www.cio.com/article/4167787/openai-anthropic-expand-services-push-signaling-new-phase-in-enterprise-ai-race.html">OpenAI, Anthropic expand services push (CIO)</a></p></blockquote><hr><h2 id="把五則串起來：兩條完全不同的曲線"><a href="#把五則串起來：兩條完全不同的曲線" class="headerlink" title="把五則串起來：兩條完全不同的曲線"></a>把五則串起來：兩條完全不同的曲線</h2><p>這週的五則新聞拼起來，會看到一個正在分岔的局面：</p><p><strong>第一條曲線：賣信任</strong>。Anthropic + 它鎖定的算力堆疊、Mistral + 它的主權 AI 堆疊、Claude Security + 它整合進企業資安平台的鋪量——這條線打的是「進入企業核心業務」的長期合約，收入結構穩、但成長靠企業採購週期，撞天花板的時間點是「全球企業 IT 預算的天花板」。</p><p><strong>第二條曲線：賣注意力</strong>。OpenAI 的廣告變現、把 ChatGPT 變成新的搜尋介面、把 agentic 推薦塞進日常使用——這條線打的是「替代 Google 廣告」，收入結構彈性大、但要承受監管 + 商業模式內在矛盾，撞天花板的時間點是「使用者對廣告化 AI 的耐受度」。</p><p>兩條曲線短期都會漲。長期會分開。</p><p>對工程師個人的決策意義有兩層：</p><p><strong>選工具的時候</strong>，知道你選的工具背後的商業模式。Anthropic 走企業合約、Claude Code 短期內不太可能塞廣告；OpenAI 走廣告變現，ChatGPT 介面長期一定會有更多商業內容，得有心理準備。</p><p><strong>選工作的時候</strong>（如果你考慮去 AI 公司），同樣的邏輯。賣信任的公司週期長、流動性低，但抗景氣循環；賣注意力的公司週期快、收入彈性大，但對監管、對廣告主預算、對使用者耐受度的依賴更深。</p><p>決策框架不是「哪條曲線更好」，是「你個人的風險偏好對應哪條曲線」。</p><hr><h2 id="補充三條觀察"><a href="#補充三條觀察" class="headerlink" title="補充三條觀察"></a>補充三條觀察</h2><ul><li><p><strong>企業 AI 採購曲線進入「全員部署」階段</strong>。PwC 3 萬人、BMS 3 萬人、Fujitsu 10 萬人——這三個合約在 5 月密集落地。試點時代結束，這對所有「想等成熟再用」的觀望者來說，意思是市場已經沒有更多時間等。</p></li><li><p><strong>算力的議價權正在從晶片商往模型商移動</strong>。Anthropic + Broadcom 跳過 NVIDIA 的議價結構、Mistral 自研晶片、xAI 跟 SpaceX 共用 Colossus——三個方向都在打同一場戰：誰能直接控制算力供應，誰就能控制 P&amp;L。</p></li><li><p><strong>資安是下一個「不需要解釋為什麼要用 AI」的領域</strong>。CrowdStrike、Microsoft Security、Palo Alto 集體整合 Opus 4.7 進產品線，等於告訴市場：傳統 SAST 已經被擠到「合規檢查」這個角色，主動式漏洞挖掘整個產業會被 AI 重新做一遍。</p></li></ul><hr><p>下一次新聞看到「某公司宣布跟 Anthropic &#x2F; OpenAI 簽下 X 萬名員工部署」這種頭條，記得把它放回這個分岔的脈絡看。誰在賣信任、誰在賣注意力——這個分類比「誰的模型比較強」對長期判斷更有用。</p>]]></content>
+      
+      
+      <categories>
+          
+          <category> AI與科技新聞 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> AI與科技新聞 </tag>
+            
+            <tag> OpenAI </tag>
+            
+            <tag> 資安 </tag>
+            
+            <tag> Anthropic </tag>
+            
+            <tag> Mistral </tag>
+            
+            <tag> AI 產業 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>agent-rules — 把 prompt 當設定檔，讓 Claude Code 跟 Cursor 共用同一套 22 個 slash 指令</title>
+      <link href="/2026/05/28/agent-rules-%E6%8A%8A-prompt-%E7%95%B6%E8%A8%AD%E5%AE%9A%E6%AA%94-Claude-Code-%E8%B7%9F-Cursor-%E5%85%B1%E7%94%A8-22-%E5%80%8B-slash-%E6%8C%87%E4%BB%A4%E7%9A%84%E5%B7%A5%E4%BD%9C%E6%B5%81/"/>
+      <url>/2026/05/28/agent-rules-%E6%8A%8A-prompt-%E7%95%B6%E8%A8%AD%E5%AE%9A%E6%AA%94-Claude-Code-%E8%B7%9F-Cursor-%E5%85%B1%E7%94%A8-22-%E5%80%8B-slash-%E6%8C%87%E4%BB%A4%E7%9A%84%E5%B7%A5%E4%BD%9C%E6%B5%81/</url>
+      
+        <content type="html"><![CDATA[<p>寫一個禮拜的 Claude Code 你會發現一件事：你一直在重複貼類似的提示。</p><p>「幫我寫個 conventional commit」、「用 Five Whys 找根因」、「幫我審 PR 邊界條件」、「先寫 failing test 再修」——每天從零開始打一遍，品質還飄。</p><p>agent-rules 解的就是這個。它的觀點很單純：<strong>prompt 不該每次重打，prompt 該被當成設定檔。</strong></p><p>5.7k stars &#x2F; 514 forks，是目前 Claude Code 規則集合裡名氣最大的之一。作者 Peter Steinberger 是 PSPDFKit 創辦人，習慣把工程紀律寫死成可執行的東西。這個 repo 把工程師日常會反覆下的提示，整理成 22 個 markdown 檔案，丟進 <code>~/.claude/commands/</code>，之後在 Claude Code 裡打 <code>/commit</code>、<code>/bug-fix</code>、<code>/pr-review</code> 就會跑。</p><p>跟 Linux command 同一個直覺。</p><hr><h2 id="為什麼這件事不顯而易見"><a href="#為什麼這件事不顯而易見" class="headerlink" title="為什麼這件事不顯而易見"></a>為什麼這件事不顯而易見</h2><p>大部分人用 AI 寫 code 的工作流是這樣的：開 chat、貼程式碼、口頭描述任務、等回應、修一輪、再修一輪。每一輪都要把上下文跟期望重新講一遍。</p><p>這跟「每次煮飯都從頭背一遍食譜」沒兩樣。</p><p>把食譜寫在牆上，按一下就跑——這個動作的價值不在「省幾秒打字」，在於<strong>每次跑的版本是同一個版本</strong>。你不會今天 commit message 偷懶不寫 scope、明天又加上去；不會這次 bug fix 忘了先寫 failing test、下次又補回來。工程紀律的關鍵不是「我懂這個道理」，是「我每次都會做」。</p><p>把這層紀律從你的腦袋移到 markdown 檔，agent 才會穩定執行。</p><blockquote><p>agent-rules 本質不是 framework，不是函式庫，是<strong>精煉過的 prompt 範本庫</strong>。</p></blockquote><hr><h2 id="倉庫結構：三層各自負責一件事"><a href="#倉庫結構：三層各自負責一件事" class="headerlink" title="倉庫結構：三層各自負責一件事"></a>倉庫結構：三層各自負責一件事</h2><p>整個 repo 設計成三層，各自做不同等級的事：</p><table><thead><tr><th>層級</th><th>用途</th><th>安裝位置</th></tr></thead><tbody><tr><td><strong>project-rules&#x2F;</strong></td><td>22 個可重用的 slash command（commit &#x2F; bug-fix &#x2F; pr-review 等）</td><td><code>~/.claude/commands/</code> 或 <code>.cursor/rules/</code></td></tr><tr><td><strong>global-rules&#x2F;</strong></td><td>帳號層級的設定：MCP server 安裝腳本、issue 模板、terminal title 工具</td><td><code>~/.claude/CLAUDE.md</code>、shell rc</td></tr><tr><td><strong>docs&#x2F;</strong></td><td>Swift &#x2F; Apple 領域的大型參考文件（appkit &#x2F; swiftui &#x2F; uikit 各百萬字）</td><td>按需 import</td></tr></tbody></table><p>核心是 <code>project-rules/</code>，22 個 <code>.mdc</code> 檔案撐起整個工作流的體驗。</p><hr><h2 id="為什麼用-mdc-副檔名（這是個小細節，但很聰明）"><a href="#為什麼用-mdc-副檔名（這是個小細節，但很聰明）" class="headerlink" title="為什麼用 .mdc 副檔名（這是個小細節，但很聰明）"></a>為什麼用 <code>.mdc</code> 副檔名（這是個小細節，但很聰明）</h2><p><code>.mdc</code> 本來是 <strong>Cursor 的 rules 格式</strong>：純 markdown 加上 YAML frontmatter，可以宣告 <code>description</code>、<code>globs</code>、<code>alwaysApply</code>：</p><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="attr">description:</span> <span class="string">Clear,</span> <span class="string">one-line</span> <span class="string">description</span> <span class="string">of</span> <span class="string">what</span> <span class="string">the</span> <span class="string">rule</span> <span class="string">enforces</span></span><br><span class="line"><span class="attr">globs:</span> <span class="string">path/to/files/*.ext,</span> <span class="string">other/path/**/*</span></span><br><span class="line"><span class="attr">alwaysApply:</span> <span class="literal">false</span></span><br><span class="line"><span class="meta">---</span></span><br></pre></td></tr></table></figure><p>Claude Code 沒有這個概念，但它把 <code>.mdc</code> 當成普通 markdown 讀，所以<strong>同一份檔案可以同時餵給 Cursor 跟 Claude Code</strong>。</p><p>跨工具兼容的第一步不是寫適配器，是選對副檔名。這個觀察應用到自己的規則庫上，可以省掉很多重複維護。</p><hr><h2 id="22-個指令選四類有代表性的看"><a href="#22-個指令選四類有代表性的看" class="headerlink" title="22 個指令選四類有代表性的看"></a>22 個指令選四類有代表性的看</h2><h3 id="Git-GitHub"><a href="#Git-GitHub" class="headerlink" title="Git &amp; GitHub"></a>Git &amp; GitHub</h3><table><thead><tr><th>指令</th><th>用途</th></tr></thead><tbody><tr><td><code>/commit</code></td><td>完整版：跑 pre-commit checks、偵測 commit type、用 emoji + conventional 格式產出訊息、建議拆 commit</td></tr><tr><td><code>/commit-fast</code></td><td>快速版：生成 3 個訊息候選並自動採用第一個</td></tr><tr><td><code>/bug-fix</code></td><td>全流程：建 issue → 開 branch → 寫 failing test → 修 → push → 開 PR（含 <code>Fixes #N</code>）</td></tr><tr><td><code>/pr-review</code></td><td>6 種 persona 同時審：PM &#x2F; Dev &#x2F; QA &#x2F; Security &#x2F; DevOps &#x2F; UX</td></tr><tr><td><code>/analyze-issue</code></td><td>用 <code>gh issue view</code> 抓 issue，輸出 10 段技術 spec</td></tr></tbody></table><h3 id="Code-Quality"><a href="#Code-Quality" class="headerlink" title="Code Quality"></a>Code Quality</h3><table><thead><tr><th>指令</th><th>用途</th></tr></thead><tbody><tr><td><code>/check</code></td><td>跑 quality gate。<strong>明文禁止 commit、禁止改版號</strong>，純驗證</td></tr><tr><td><code>/clean</code></td><td>跑 formatter + type checker 修到全綠</td></tr><tr><td><code>/code-analysis</code></td><td>6 種分析菜單：knowledge graph &#x2F; quality &#x2F; performance &#x2F; security &#x2F; architecture &#x2F; coverage</td></tr></tbody></table><h3 id="Development-Workflow"><a href="#Development-Workflow" class="headerlink" title="Development Workflow"></a>Development Workflow</h3><table><thead><tr><th>指令</th><th>用途</th></tr></thead><tbody><tr><td><code>/implement-task</code></td><td>5 階段方法論：think strategy → evaluate → tradeoffs → implement → checklist</td></tr><tr><td><code>/context-prime</code></td><td>讀 README、CLAUDE.md、<code>git ls-files</code>，建立對陌生專案的初步理解</td></tr><tr><td><code>/five</code></td><td>Five Whys 根因分析：鏈式追問五次直到 root cause</td></tr><tr><td><code>/mermaid</code></td><td>從 SQL &#x2F; source code 抽實體與關係，輸出 mermaid 圖並用 <code>mmdc</code> 驗證</td></tr></tbody></table><h3 id="Meta（規則自己進化）"><a href="#Meta（規則自己進化）" class="headerlink" title="Meta（規則自己進化）"></a>Meta（規則自己進化）</h3><table><thead><tr><th>指令</th><th>用途</th></tr></thead><tbody><tr><td><code>/create-command</code></td><td>用 agent 幫你寫新的 slash command（meta-bootstrap）</td></tr><tr><td><code>/continuous-improvement</code></td><td>觀察 codebase 的 pattern，當某個模式出現 3 次以上就建議寫成新規則</td></tr><tr><td><code>/cursor-rules-meta-guide</code></td><td>規範 <code>.mdc</code> 應該怎麼寫（含 DO &#x2F; DON’T 對照範例）</td></tr></tbody></table><hr><h2 id="安裝：兩個指令解決"><a href="#安裝：兩個指令解決" class="headerlink" title="安裝：兩個指令解決"></a>安裝：兩個指令解決</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 1. clone repo</span></span><br><span class="line">git <span class="built_in">clone</span> https://github.com/steipete/agent-rules</span><br><span class="line"><span class="built_in">cd</span> agent-rules</span><br><span class="line"></span><br><span class="line"><span class="comment"># 2. 跑安裝腳本</span></span><br><span class="line">./install-project-rules.sh</span><br></pre></td></tr></table></figure><p>腳本做的事很單純：在 <code>~/.claude/CLAUDE.md</code> 加一行 <code>@&lt;repo_path&gt;/project-rules</code>，靠 Claude Code 的 import 語法把 22 個 <code>.mdc</code> 全部納入。裝完直接打 <code>/commit</code>、<code>/bug-fix</code> 就能用。</p><p>給 Cursor 的話，<code>.mdc</code> 本來就是 Cursor 的原生格式，把 <code>project-rules/</code> 整個丟進專案的 <code>.cursor/rules/</code> 就好。</p><hr><h2 id="真正值得偷的不是指令，是五個設計手法"><a href="#真正值得偷的不是指令，是五個設計手法" class="headerlink" title="真正值得偷的不是指令，是五個設計手法"></a>真正值得偷的不是指令，是五個設計手法</h2><p>讀完 22 個規則之後，會發現有些手法可以直接抄到自己的規則集裡。這部分比指令本身更有複利價值。</p><h3 id="1-二段式工作流（完整版-vs-快速版）"><a href="#1-二段式工作流（完整版-vs-快速版）" class="headerlink" title="1. 二段式工作流（完整版 vs 快速版）"></a>1. 二段式工作流（完整版 vs 快速版）</h3><p><code>commit.mdc</code> 跟 <code>commit-fast.mdc</code> 是同一件事的兩種精度。完整版做安全把關（lint、pre-commit hook、拆 commit 建議），快速版省掉互動直接出 3 個訊息選一個。</p><p><strong>同一個任務做兩個版本，依場合切換</strong>。趕時間用 fast，要進 production 用完整版。這個 pattern 套到自己的規則集很實用——<code>/test-quick</code> vs <code>/test-thorough</code>、<code>/review-self</code> vs <code>/review-team</code>。</p><h3 id="2-多-persona-自我審查"><a href="#2-多-persona-自我審查" class="headerlink" title="2. 多 persona 自我審查"></a>2. 多 persona 自我審查</h3><p><code>pr-review.mdc</code> 用 6 個角色同時看一段 PR：</p><ul><li><strong>PM</strong>：功能符合需求嗎？</li><li><strong>Dev</strong>：code quality 與架構合理嗎？</li><li><strong>QA</strong>：測試覆蓋率與邊界條件？</li><li><strong>Security</strong>：資安漏洞？</li><li><strong>DevOps</strong>：部署與監控影響？</li><li><strong>UX</strong>：使用者體驗變化？</li></ul><p>比起單一視角的 reviewer，這種「多角色同步檢視」能撈出更多問題。LLM 在角色切換上其實很順——你給它一個角色 + 一個任務，它就會用那個角色的優先序看事情。可以直接借用這個 prompt 結構，連 persona 都不用改。</p><h3 id="3-強制紀律：把禁區寫在最前面、用大寫"><a href="#3-強制紀律：把禁區寫在最前面、用大寫" class="headerlink" title="3. 強制紀律：把禁區寫在最前面、用大寫"></a>3. 強制紀律：把禁區寫在最前面、用大寫</h3><p><code>/check</code> 規則開頭寫死：</p><blockquote><p>DO NOT commit. DO NOT change version numbers. Only verify.</p></blockquote><p><code>mcp-inspector-debugging.mdc</code> 開頭警告：</p><blockquote><p>DO NOT RUN BLOCKING TERMINAL COMMANDS</p></blockquote><p>這比寫一堆解釋有用。<strong>LLM 容易越界做副作用，最有效的方法就是在指令最前面用大寫寫死禁區</strong>。寫散文式的引導 LLM 容易自己腦補；寫成大寫禁令它會當作 hard constraint。</p><p>這個觀察對寫任何 prompt 都適用——你想阻止 AI 做某件事，與其解釋為什麼不該做，不如直接禁止它做。</p><h3 id="4-編號流程化"><a href="#4-編號流程化" class="headerlink" title="4. 編號流程化"></a>4. 編號流程化</h3><p>所有規則都遵循固定骨架：</p><figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="section"># Title</span></span><br><span class="line">One-line description</span><br><span class="line"></span><br><span class="line"><span class="section">## Usage</span></span><br><span class="line"><span class="section">## Process</span></span><br><span class="line"><span class="bullet">  1.</span> Step one</span><br><span class="line"><span class="bullet">  2.</span> Step two</span><br><span class="line"><span class="bullet">  3.</span> Step three</span><br><span class="line"><span class="section">## Best Practices</span></span><br></pre></td></tr></table></figure><p>寫散文 LLM 容易漏步驟，<strong>全部拆成編號讓它逐條執行</strong>，準確度差很多。</p><p>這也是寫文件的反直覺：人類讀者喜歡散文，但你的目標讀者是 LLM。LLM 喜歡編號。</p><h3 id="5-self-evolving-機制"><a href="#5-self-evolving-機制" class="headerlink" title="5. self-evolving 機制"></a>5. self-evolving 機制</h3><p><code>continuous-improvement.mdc</code> 規定：當 agent 在你的 codebase 觀察到某個 pattern 出現 3 次以上，就主動建議把它寫成新規則。<code>/create-command</code> 直接用 agent 幫你產生新指令的骨架。</p><p>把規則集當成「會自己進化的東西」來設計，而不是寫完就鎖死的靜態文件。這個視角差異會決定你的規則庫一年後是更精煉還是更笨重。</p><hr><h2 id="實際應用情境"><a href="#實際應用情境" class="headerlink" title="實際應用情境"></a>實際應用情境</h2><h3 id="每日-commit-加速"><a href="#每日-commit-加速" class="headerlink" title="每日 commit 加速"></a>每日 commit 加速</h3><p>寫完功能不用想 commit message 怎麼寫，直接打 <code>/commit-fast</code> 就會自動偵測檔案性質、選 type、加 emoji、產 conventional 格式。一天省幾分鐘，一個月省半小時。</p><h3 id="修-bug-走完整流程"><a href="#修-bug-走完整流程" class="headerlink" title="修 bug 走完整流程"></a>修 bug 走完整流程</h3><p>碰到 bug 別急著改 code，先打 <code>/bug-fix</code>。它會引導：建 issue → 開 <code>fix/xxx</code> branch → <strong>先寫能重現的 failing test</strong> → 實作修復 → push → 開 PR 連動 issue。整個 TDD 流程被規則化，不會省略寫測試這一步。</p><h3 id="PR-送審前自我檢查"><a href="#PR-送審前自我檢查" class="headerlink" title="PR 送審前自我檢查"></a>PR 送審前自我檢查</h3><p>要送 PR 給 reviewer 之前先跑 <code>/pr-review</code>，六個 persona 自己先打過一遍。比起拿給人看再被打回來，效率高很多。</p><h3 id="接手陌生-codebase"><a href="#接手陌生-codebase" class="headerlink" title="接手陌生 codebase"></a>接手陌生 codebase</h3><p>第一次進新專案，打 <code>/context-prime</code>。agent 會讀 README、CLAUDE.md、<code>git ls-files</code> 給一份結構摘要，比自己 <code>tree</code> 半天有效率。</p><h3 id="把模糊需求變成技術-spec"><a href="#把模糊需求變成技術-spec" class="headerlink" title="把模糊需求變成技術 spec"></a>把模糊需求變成技術 spec</h3><p>業務丟一個 issue 連結過來只有兩句話描述，打 <code>/analyze-issue &lt;issue#&gt;</code>，agent 用 <code>gh issue view</code> 抓回來，產出 10 段式技術規格（要改哪些檔案、要新建哪些檔案、out of scope、success criteria）。</p><h3 id="畫架構圖"><a href="#畫架構圖" class="headerlink" title="畫架構圖"></a>畫架構圖</h3><p>要產 ER diagram 或 sequence diagram，丟 schema 或 code 給 <code>/mermaid</code>，輸出可驗證的 mermaid 語法，還會用 <code>mmdc</code> 確認語法正確。比手畫快太多。</p><hr><h2 id="但是有些限制要知道"><a href="#但是有些限制要知道" class="headerlink" title="但是有些限制要知道"></a>但是有些限制要知道</h2><p><strong>作者已停止積極維護</strong>。README 明示這是 2025 年中的舊作，新工作在 <a href="https://github.com/steipete/agent-scripts">steipete&#x2F;agent-scripts</a>。把這個 repo 當作學習範本可以；當長期相依套件要三思。</p><p>其他幾個踩坑點：</p><ul><li><strong>不少規則是 macOS 專用</strong>：<code>safari-automation</code>、<code>screenshot-automation</code>、<code>mcp-peekaboo-setup</code>、<code>terminal-title-wrapper</code> 在 Linux &#x2F; Windows 跑不起來</li><li><strong>docs&#x2F; 巨型檔案會吃 context</strong>：<code>appkit.md</code>（2.3MB）、<code>swiftui.md</code>（1.8MB）這種等級的文件直接 alwaysApply 會炸 context window，建議按需 import</li><li><strong>強綁定作者的 MCP 生態</strong>：推薦的 Peekaboo &#x2F; Agent &#x2F; Automator 都是 @steipete 自己發的 npm 套件，用之前自己評估信任邊界</li><li><strong>commit 規則內建 emoji</strong>：對禁用 emoji 的企業 commit convention 不友善，要自己改規則</li><li>**<code>/check</code> 假設專案有 <code>npm run check</code>**：其他語言沒提供 fallback，要自己改</li></ul><p>適合誰用：</p><ul><li>把 Claude Code 或 Cursor 當主要 AI pair programmer 的工程師</li><li>想自己寫 <code>.mdc</code> 規則但缺範本參考的人</li><li>macOS &#x2F; iOS &#x2F; Swift 開發者（<code>docs/</code> 對你最有用）</li><li>對「prompt as config」這個觀念有興趣、想看精煉範例的人</li></ul><p>不適合：</p><ul><li>只用 GitHub Copilot、完全不用 Claude Code &#x2F; Cursor 的人</li><li>純 Linux &#x2F; Windows 開發者（一半 automation 規則跑不起來）</li><li>期待持續更新與社群維護的人（請改追 agent-scripts）</li></ul><hr><h2 id="收尾：背後的兩條線"><a href="#收尾：背後的兩條線" class="headerlink" title="收尾：背後的兩條線"></a>收尾：背後的兩條線</h2><p>agent-rules 的價值不在 22 個指令本身，在它把兩件事示範清楚了。</p><p><strong>第一條線：prompt 不是文字，prompt 是設定檔。</strong> 一旦你接受這個觀念，你就會開始把所有反覆寫的提示都抽出來、放進版本控管、加上 review 流程。這個轉變對工程紀律的影響，比換一個更新的模型還大。</p><p><strong>第二條線：規則庫應該會自己長大。</strong> 寫完就鎖死的規則庫只會越用越過時。把 <code>/create-command</code> 跟 <code>/continuous-improvement</code> 放進規則集裡，等於讓規則庫變成一個會觀察、會建議的東西。</p><p>挑一個你最常下的 prompt，寫成 <code>.mdc</code> 丟進 <code>~/.claude/commands/</code>，明天打那個 slash 試試看。比你以為的還順。</p><hr><h2 id="相關連結"><a href="#相關連結" class="headerlink" title="相關連結"></a>相關連結</h2><ul><li><strong>Repo</strong>：<a href="https://github.com/steipete/agent-rules">github.com&#x2F;steipete&#x2F;agent-rules</a></li><li><strong>作者新作</strong>：<a href="https://github.com/steipete/agent-scripts">github.com&#x2F;steipete&#x2F;agent-scripts</a></li><li><strong>作者</strong>：<a href="https://steipete.me/">Peter Steinberger</a>（PSPDFKit 創辦人）</li><li><strong>License</strong>：MIT</li><li><strong>狀態</strong>：5.7k stars &#x2F; 514 forks（2026-05 統計）</li></ul>]]></content>
+      
+      
+      <categories>
+          
+          <category> Claude Code </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> AI Agent </tag>
+            
+            <tag> 開源 </tag>
+            
+            <tag> Cursor </tag>
+            
+            <tag> Claude Code </tag>
+            
+            <tag> Prompt Engineering </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>Claude Code /loop 與 /schedule 完整教學 — 讓 AI 自己排程自己跑</title>
       <link href="/2026/05/27/Claude-Code-loop-%E8%88%87-schedule-%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8-%E8%AE%93-AI-%E8%87%AA%E5%B7%B1%E6%8E%92%E7%A8%8B%E8%87%AA%E5%B7%B1%E8%B7%91/"/>
       <url>/2026/05/27/Claude-Code-loop-%E8%88%87-schedule-%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8-%E8%AE%93-AI-%E8%87%AA%E5%B7%B1%E6%8E%92%E7%A8%8B%E8%87%AA%E5%B7%B1%E8%B7%91/</url>
@@ -226,9 +327,9 @@
             
             <tag> MCP </tag>
             
-            <tag> AI Agent </tag>
-            
             <tag> Anthropic </tag>
+            
+            <tag> AI Agent </tag>
             
             <tag> Claude Code </tag>
             
@@ -290,11 +391,11 @@
       
         <tags>
             
+            <tag> Google </tag>
+            
             <tag> AI Agent </tag>
             
             <tag> 開源 </tag>
-            
-            <tag> Google </tag>
             
             <tag> 自動化 </tag>
             
@@ -325,9 +426,9 @@
             
             <tag> 健康 </tag>
             
-            <tag> 工程師生活 </tag>
-            
             <tag> 生產力 </tag>
+            
+            <tag> 工程師生活 </tag>
             
             <tag> 遠端工作 </tag>
             
@@ -972,9 +1073,9 @@
       
         <tags>
             
-            <tag> 健康 </tag>
-            
             <tag> 168斷食 </tag>
+            
+            <tag> 健康 </tag>
             
             <tag> 工程師生活 </tag>
             
@@ -1187,9 +1288,9 @@
             
             <tag> AI與科技新聞 </tag>
             
-            <tag> AI Agent </tag>
-            
             <tag> Apple </tag>
+            
+            <tag> AI Agent </tag>
             
             <tag> AI 安全 </tag>
             
@@ -1282,11 +1383,11 @@
             
             <tag> OpenAI </tag>
             
-            <tag> AI Agent </tag>
-            
             <tag> Anthropic </tag>
             
             <tag> Google </tag>
+            
+            <tag> AI Agent </tag>
             
         </tags>
       
@@ -2808,9 +2909,9 @@
             
             <tag> Claude Code </tag>
             
-            <tag> Rust </tag>
-            
             <tag> CLI </tag>
+            
+            <tag> Rust </tag>
             
             <tag> RTK </tag>
             
@@ -2839,9 +2940,9 @@
       
         <tags>
             
-            <tag> 健康 </tag>
-            
             <tag> 168斷食 </tag>
+            
+            <tag> 健康 </tag>
             
             <tag> 生產力 </tag>
             
@@ -3134,9 +3235,9 @@
       
         <tags>
             
-            <tag> 健康 </tag>
-            
             <tag> 168斷食 </tag>
+            
+            <tag> 健康 </tag>
             
             <tag> 工程師生活 </tag>
             
@@ -3650,11 +3751,11 @@
             
             <tag> TDD </tag>
             
+            <tag> SDD </tag>
+            
             <tag> GH-300 </tag>
             
             <tag> Responsible AI </tag>
-            
-            <tag> SDD </tag>
             
         </tags>
       
@@ -3813,9 +3914,9 @@
             
             <tag> 資安 </tag>
             
-            <tag> Microsoft </tag>
-            
             <tag> Cursor </tag>
+            
+            <tag> Microsoft </tag>
             
         </tags>
       
@@ -4067,9 +4168,9 @@
             
             <tag> Claude Code </tag>
             
-            <tag> Rust </tag>
-            
             <tag> DevOps </tag>
+            
+            <tag> Rust </tag>
             
             <tag> Discord </tag>
             
@@ -4296,9 +4397,9 @@
             
             <tag> AZ-305 </tag>
             
-            <tag> Networking </tag>
-            
             <tag> 微軟課程 </tag>
+            
+            <tag> Networking </tag>
             
         </tags>
       
@@ -4730,9 +4831,9 @@
       
         <tags>
             
-            <tag> Copilot </tag>
-            
             <tag> Cursor </tag>
+            
+            <tag> Copilot </tag>
             
             <tag> Claude Code </tag>
             
@@ -4889,9 +4990,9 @@
             
             <tag> LLM </tag>
             
-            <tag> AI Agent </tag>
-            
             <tag> 理財 </tag>
+            
+            <tag> AI Agent </tag>
             
             <tag> 開源 </tag>
             
@@ -4982,9 +5083,9 @@
             
             <tag> MCP </tag>
             
-            <tag> Microsoft </tag>
-            
             <tag> Copilot </tag>
+            
+            <tag> Microsoft </tag>
             
         </tags>
       
@@ -5096,9 +5197,9 @@
       
         <tags>
             
-            <tag> AI Agent </tag>
-            
             <tag> Anthropic </tag>
+            
+            <tag> AI Agent </tag>
             
             <tag> 開發工具 </tag>
             
@@ -5189,9 +5290,9 @@
             
             <tag> 開發工具 </tag>
             
-            <tag> 教學 </tag>
-            
             <tag> DevOps </tag>
+            
+            <tag> 教學 </tag>
             
         </tags>
       
@@ -5280,9 +5381,9 @@
             
             <tag> 資安 </tag>
             
-            <tag> Microsoft </tag>
-            
             <tag> Copilot </tag>
+            
+            <tag> Microsoft </tag>
             
         </tags>
       
@@ -5367,9 +5468,9 @@
             
             <tag> 資安 </tag>
             
-            <tag> Copilot </tag>
-            
             <tag> Cursor </tag>
+            
+            <tag> Copilot </tag>
             
         </tags>
       
@@ -6253,9 +6354,9 @@
       
         <tags>
             
-            <tag> Rust </tag>
-            
             <tag> DevOps </tag>
+            
+            <tag> Rust </tag>
             
             <tag> 系統監控 </tag>
             
