@@ -76,7 +76,7 @@
       <link href="/2026/05/28/agent-rules-%E6%8A%8A-prompt-%E7%95%B6%E8%A8%AD%E5%AE%9A%E6%AA%94-Claude-Code-%E8%B7%9F-Cursor-%E5%85%B1%E7%94%A8-22-%E5%80%8B-slash-%E6%8C%87%E4%BB%A4%E7%9A%84%E5%B7%A5%E4%BD%9C%E6%B5%81/"/>
       <url>/2026/05/28/agent-rules-%E6%8A%8A-prompt-%E7%95%B6%E8%A8%AD%E5%AE%9A%E6%AA%94-Claude-Code-%E8%B7%9F-Cursor-%E5%85%B1%E7%94%A8-22-%E5%80%8B-slash-%E6%8C%87%E4%BB%A4%E7%9A%84%E5%B7%A5%E4%BD%9C%E6%B5%81/</url>
       
-        <content type="html"><![CDATA[<p>寫一個禮拜的 Claude Code 你會發現一件事：你一直在重複貼類似的提示。</p><p>「幫我寫個 conventional commit」、「用 Five Whys 找根因」、「幫我審 PR 邊界條件」、「先寫 failing test 再修」——每天從零開始打一遍，品質還飄。</p><p>agent-rules 解的就是這個。它的觀點很單純：<strong>prompt 不該每次重打，prompt 該被當成設定檔。</strong></p><p>5.7k stars &#x2F; 514 forks，是目前 Claude Code 規則集合裡名氣最大的之一。作者 Peter Steinberger 是 PSPDFKit 創辦人，習慣把工程紀律寫死成可執行的東西。這個 repo 把工程師日常會反覆下的提示，整理成 22 個 markdown 檔案，丟進 <code>~/.claude/commands/</code>，之後在 Claude Code 裡打 <code>/commit</code>、<code>/bug-fix</code>、<code>/pr-review</code> 就會跑。</p><p>跟 Linux command 同一個直覺。</p><hr><h2 id="為什麼這件事不顯而易見"><a href="#為什麼這件事不顯而易見" class="headerlink" title="為什麼這件事不顯而易見"></a>為什麼這件事不顯而易見</h2><p>大部分人用 AI 寫 code 的工作流是這樣的：開 chat、貼程式碼、口頭描述任務、等回應、修一輪、再修一輪。每一輪都要把上下文跟期望重新講一遍。</p><p>這跟「每次煮飯都從頭背一遍食譜」沒兩樣。</p><p>把食譜寫在牆上，按一下就跑——這個動作的價值不在「省幾秒打字」，在於<strong>每次跑的版本是同一個版本</strong>。你不會今天 commit message 偷懶不寫 scope、明天又加上去；不會這次 bug fix 忘了先寫 failing test、下次又補回來。工程紀律的關鍵不是「我懂這個道理」，是「我每次都會做」。</p><p>把這層紀律從你的腦袋移到 markdown 檔，agent 才會穩定執行。</p><blockquote><p>agent-rules 本質不是 framework，不是函式庫，是<strong>精煉過的 prompt 範本庫</strong>。</p></blockquote><hr><h2 id="倉庫結構：三層各自負責一件事"><a href="#倉庫結構：三層各自負責一件事" class="headerlink" title="倉庫結構：三層各自負責一件事"></a>倉庫結構：三層各自負責一件事</h2><p>整個 repo 設計成三層，各自做不同等級的事：</p><table><thead><tr><th>層級</th><th>用途</th><th>安裝位置</th></tr></thead><tbody><tr><td><strong>project-rules&#x2F;</strong></td><td>22 個可重用的 slash command（commit &#x2F; bug-fix &#x2F; pr-review 等）</td><td><code>~/.claude/commands/</code> 或 <code>.cursor/rules/</code></td></tr><tr><td><strong>global-rules&#x2F;</strong></td><td>帳號層級的設定：MCP server 安裝腳本、issue 模板、terminal title 工具</td><td><code>~/.claude/CLAUDE.md</code>、shell rc</td></tr><tr><td><strong>docs&#x2F;</strong></td><td>Swift &#x2F; Apple 領域的大型參考文件（appkit &#x2F; swiftui &#x2F; uikit 各百萬字）</td><td>按需 import</td></tr></tbody></table><p>核心是 <code>project-rules/</code>，22 個 <code>.mdc</code> 檔案撐起整個工作流的體驗。</p><hr><h2 id="為什麼用-mdc-副檔名（這是個小細節，但很聰明）"><a href="#為什麼用-mdc-副檔名（這是個小細節，但很聰明）" class="headerlink" title="為什麼用 .mdc 副檔名（這是個小細節，但很聰明）"></a>為什麼用 <code>.mdc</code> 副檔名（這是個小細節，但很聰明）</h2><p><code>.mdc</code> 本來是 <strong>Cursor 的 rules 格式</strong>：純 markdown 加上 YAML frontmatter，可以宣告 <code>description</code>、<code>globs</code>、<code>alwaysApply</code>：</p><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="attr">description:</span> <span class="string">Clear,</span> <span class="string">one-line</span> <span class="string">description</span> <span class="string">of</span> <span class="string">what</span> <span class="string">the</span> <span class="string">rule</span> <span class="string">enforces</span></span><br><span class="line"><span class="attr">globs:</span> <span class="string">path/to/files/*.ext,</span> <span class="string">other/path/**/*</span></span><br><span class="line"><span class="attr">alwaysApply:</span> <span class="literal">false</span></span><br><span class="line"><span class="meta">---</span></span><br></pre></td></tr></table></figure><p>Claude Code 沒有這個概念，但它把 <code>.mdc</code> 當成普通 markdown 讀，所以<strong>同一份檔案可以同時餵給 Cursor 跟 Claude Code</strong>。</p><p>跨工具兼容的第一步不是寫適配器，是選對副檔名。這個觀察應用到自己的規則庫上，可以省掉很多重複維護。</p><hr><h2 id="22-個指令選四類有代表性的看"><a href="#22-個指令選四類有代表性的看" class="headerlink" title="22 個指令選四類有代表性的看"></a>22 個指令選四類有代表性的看</h2><h3 id="Git-GitHub"><a href="#Git-GitHub" class="headerlink" title="Git &amp; GitHub"></a>Git &amp; GitHub</h3><table><thead><tr><th>指令</th><th>用途</th></tr></thead><tbody><tr><td><code>/commit</code></td><td>完整版：跑 pre-commit checks、偵測 commit type、用 emoji + conventional 格式產出訊息、建議拆 commit</td></tr><tr><td><code>/commit-fast</code></td><td>快速版：生成 3 個訊息候選並自動採用第一個</td></tr><tr><td><code>/bug-fix</code></td><td>全流程：建 issue → 開 branch → 寫 failing test → 修 → push → 開 PR（含 <code>Fixes #N</code>）</td></tr><tr><td><code>/pr-review</code></td><td>6 種 persona 同時審：PM &#x2F; Dev &#x2F; QA &#x2F; Security &#x2F; DevOps &#x2F; UX</td></tr><tr><td><code>/analyze-issue</code></td><td>用 <code>gh issue view</code> 抓 issue，輸出 10 段技術 spec</td></tr></tbody></table><h3 id="Code-Quality"><a href="#Code-Quality" class="headerlink" title="Code Quality"></a>Code Quality</h3><table><thead><tr><th>指令</th><th>用途</th></tr></thead><tbody><tr><td><code>/check</code></td><td>跑 quality gate。<strong>明文禁止 commit、禁止改版號</strong>，純驗證</td></tr><tr><td><code>/clean</code></td><td>跑 formatter + type checker 修到全綠</td></tr><tr><td><code>/code-analysis</code></td><td>6 種分析菜單：knowledge graph &#x2F; quality &#x2F; performance &#x2F; security &#x2F; architecture &#x2F; coverage</td></tr></tbody></table><h3 id="Development-Workflow"><a href="#Development-Workflow" class="headerlink" title="Development Workflow"></a>Development Workflow</h3><table><thead><tr><th>指令</th><th>用途</th></tr></thead><tbody><tr><td><code>/implement-task</code></td><td>5 階段方法論：think strategy → evaluate → tradeoffs → implement → checklist</td></tr><tr><td><code>/context-prime</code></td><td>讀 README、CLAUDE.md、<code>git ls-files</code>，建立對陌生專案的初步理解</td></tr><tr><td><code>/five</code></td><td>Five Whys 根因分析：鏈式追問五次直到 root cause</td></tr><tr><td><code>/mermaid</code></td><td>從 SQL &#x2F; source code 抽實體與關係，輸出 mermaid 圖並用 <code>mmdc</code> 驗證</td></tr></tbody></table><h3 id="Meta（規則自己進化）"><a href="#Meta（規則自己進化）" class="headerlink" title="Meta（規則自己進化）"></a>Meta（規則自己進化）</h3><table><thead><tr><th>指令</th><th>用途</th></tr></thead><tbody><tr><td><code>/create-command</code></td><td>用 agent 幫你寫新的 slash command（meta-bootstrap）</td></tr><tr><td><code>/continuous-improvement</code></td><td>觀察 codebase 的 pattern，當某個模式出現 3 次以上就建議寫成新規則</td></tr><tr><td><code>/cursor-rules-meta-guide</code></td><td>規範 <code>.mdc</code> 應該怎麼寫（含 DO &#x2F; DON’T 對照範例）</td></tr></tbody></table><hr><h2 id="安裝：兩個指令解決"><a href="#安裝：兩個指令解決" class="headerlink" title="安裝：兩個指令解決"></a>安裝：兩個指令解決</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 1. clone repo</span></span><br><span class="line">git <span class="built_in">clone</span> https://github.com/steipete/agent-rules</span><br><span class="line"><span class="built_in">cd</span> agent-rules</span><br><span class="line"></span><br><span class="line"><span class="comment"># 2. 跑安裝腳本</span></span><br><span class="line">./install-project-rules.sh</span><br></pre></td></tr></table></figure><p>腳本做的事很單純：在 <code>~/.claude/CLAUDE.md</code> 加一行 <code>@&lt;repo_path&gt;/project-rules</code>，靠 Claude Code 的 import 語法把 22 個 <code>.mdc</code> 全部納入。裝完直接打 <code>/commit</code>、<code>/bug-fix</code> 就能用。</p><p>給 Cursor 的話，<code>.mdc</code> 本來就是 Cursor 的原生格式，把 <code>project-rules/</code> 整個丟進專案的 <code>.cursor/rules/</code> 就好。</p><hr><h2 id="真正值得偷的不是指令，是五個設計手法"><a href="#真正值得偷的不是指令，是五個設計手法" class="headerlink" title="真正值得偷的不是指令，是五個設計手法"></a>真正值得偷的不是指令，是五個設計手法</h2><p>讀完 22 個規則之後，會發現有些手法可以直接抄到自己的規則集裡。這部分比指令本身更有複利價值。</p><h3 id="1-二段式工作流（完整版-vs-快速版）"><a href="#1-二段式工作流（完整版-vs-快速版）" class="headerlink" title="1. 二段式工作流（完整版 vs 快速版）"></a>1. 二段式工作流（完整版 vs 快速版）</h3><p><code>commit.mdc</code> 跟 <code>commit-fast.mdc</code> 是同一件事的兩種精度。完整版做安全把關（lint、pre-commit hook、拆 commit 建議），快速版省掉互動直接出 3 個訊息選一個。</p><p><strong>同一個任務做兩個版本，依場合切換</strong>。趕時間用 fast，要進 production 用完整版。這個 pattern 套到自己的規則集很實用——<code>/test-quick</code> vs <code>/test-thorough</code>、<code>/review-self</code> vs <code>/review-team</code>。</p><h3 id="2-多-persona-自我審查"><a href="#2-多-persona-自我審查" class="headerlink" title="2. 多 persona 自我審查"></a>2. 多 persona 自我審查</h3><p><code>pr-review.mdc</code> 用 6 個角色同時看一段 PR：</p><ul><li><strong>PM</strong>：功能符合需求嗎？</li><li><strong>Dev</strong>：code quality 與架構合理嗎？</li><li><strong>QA</strong>：測試覆蓋率與邊界條件？</li><li><strong>Security</strong>：資安漏洞？</li><li><strong>DevOps</strong>：部署與監控影響？</li><li><strong>UX</strong>：使用者體驗變化？</li></ul><p>比起單一視角的 reviewer，這種「多角色同步檢視」能撈出更多問題。LLM 在角色切換上其實很順——你給它一個角色 + 一個任務，它就會用那個角色的優先序看事情。可以直接借用這個 prompt 結構，連 persona 都不用改。</p><h3 id="3-強制紀律：把禁區寫在最前面、用大寫"><a href="#3-強制紀律：把禁區寫在最前面、用大寫" class="headerlink" title="3. 強制紀律：把禁區寫在最前面、用大寫"></a>3. 強制紀律：把禁區寫在最前面、用大寫</h3><p><code>/check</code> 規則開頭寫死：</p><blockquote><p>DO NOT commit. DO NOT change version numbers. Only verify.</p></blockquote><p><code>mcp-inspector-debugging.mdc</code> 開頭警告：</p><blockquote><p>DO NOT RUN BLOCKING TERMINAL COMMANDS</p></blockquote><p>這比寫一堆解釋有用。<strong>LLM 容易越界做副作用，最有效的方法就是在指令最前面用大寫寫死禁區</strong>。寫散文式的引導 LLM 容易自己腦補；寫成大寫禁令它會當作 hard constraint。</p><p>這個觀察對寫任何 prompt 都適用——你想阻止 AI 做某件事，與其解釋為什麼不該做，不如直接禁止它做。</p><h3 id="4-編號流程化"><a href="#4-編號流程化" class="headerlink" title="4. 編號流程化"></a>4. 編號流程化</h3><p>所有規則都遵循固定骨架：</p><figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="section"># Title</span></span><br><span class="line">One-line description</span><br><span class="line"></span><br><span class="line"><span class="section">## Usage</span></span><br><span class="line"><span class="section">## Process</span></span><br><span class="line"><span class="bullet">  1.</span> Step one</span><br><span class="line"><span class="bullet">  2.</span> Step two</span><br><span class="line"><span class="bullet">  3.</span> Step three</span><br><span class="line"><span class="section">## Best Practices</span></span><br></pre></td></tr></table></figure><p>寫散文 LLM 容易漏步驟，<strong>全部拆成編號讓它逐條執行</strong>，準確度差很多。</p><p>這也是寫文件的反直覺：人類讀者喜歡散文，但你的目標讀者是 LLM。LLM 喜歡編號。</p><h3 id="5-self-evolving-機制"><a href="#5-self-evolving-機制" class="headerlink" title="5. self-evolving 機制"></a>5. self-evolving 機制</h3><p><code>continuous-improvement.mdc</code> 規定：當 agent 在你的 codebase 觀察到某個 pattern 出現 3 次以上，就主動建議把它寫成新規則。<code>/create-command</code> 直接用 agent 幫你產生新指令的骨架。</p><p>把規則集當成「會自己進化的東西」來設計，而不是寫完就鎖死的靜態文件。這個視角差異會決定你的規則庫一年後是更精煉還是更笨重。</p><hr><h2 id="實際應用情境"><a href="#實際應用情境" class="headerlink" title="實際應用情境"></a>實際應用情境</h2><h3 id="每日-commit-加速"><a href="#每日-commit-加速" class="headerlink" title="每日 commit 加速"></a>每日 commit 加速</h3><p>寫完功能不用想 commit message 怎麼寫，直接打 <code>/commit-fast</code> 就會自動偵測檔案性質、選 type、加 emoji、產 conventional 格式。一天省幾分鐘，一個月省半小時。</p><h3 id="修-bug-走完整流程"><a href="#修-bug-走完整流程" class="headerlink" title="修 bug 走完整流程"></a>修 bug 走完整流程</h3><p>碰到 bug 別急著改 code，先打 <code>/bug-fix</code>。它會引導：建 issue → 開 <code>fix/xxx</code> branch → <strong>先寫能重現的 failing test</strong> → 實作修復 → push → 開 PR 連動 issue。整個 TDD 流程被規則化，不會省略寫測試這一步。</p><h3 id="PR-送審前自我檢查"><a href="#PR-送審前自我檢查" class="headerlink" title="PR 送審前自我檢查"></a>PR 送審前自我檢查</h3><p>要送 PR 給 reviewer 之前先跑 <code>/pr-review</code>，六個 persona 自己先打過一遍。比起拿給人看再被打回來，效率高很多。</p><h3 id="接手陌生-codebase"><a href="#接手陌生-codebase" class="headerlink" title="接手陌生 codebase"></a>接手陌生 codebase</h3><p>第一次進新專案，打 <code>/context-prime</code>。agent 會讀 README、CLAUDE.md、<code>git ls-files</code> 給一份結構摘要，比自己 <code>tree</code> 半天有效率。</p><h3 id="把模糊需求變成技術-spec"><a href="#把模糊需求變成技術-spec" class="headerlink" title="把模糊需求變成技術 spec"></a>把模糊需求變成技術 spec</h3><p>業務丟一個 issue 連結過來只有兩句話描述，打 <code>/analyze-issue &lt;issue#&gt;</code>，agent 用 <code>gh issue view</code> 抓回來，產出 10 段式技術規格（要改哪些檔案、要新建哪些檔案、out of scope、success criteria）。</p><h3 id="畫架構圖"><a href="#畫架構圖" class="headerlink" title="畫架構圖"></a>畫架構圖</h3><p>要產 ER diagram 或 sequence diagram，丟 schema 或 code 給 <code>/mermaid</code>，輸出可驗證的 mermaid 語法，還會用 <code>mmdc</code> 確認語法正確。比手畫快太多。</p><hr><h2 id="但是有些限制要知道"><a href="#但是有些限制要知道" class="headerlink" title="但是有些限制要知道"></a>但是有些限制要知道</h2><p><strong>作者已停止積極維護</strong>。README 明示這是 2025 年中的舊作，新工作在 <a href="https://github.com/steipete/agent-scripts">steipete&#x2F;agent-scripts</a>。把這個 repo 當作學習範本可以；當長期相依套件要三思。</p><p>其他幾個踩坑點：</p><ul><li><strong>不少規則是 macOS 專用</strong>：<code>safari-automation</code>、<code>screenshot-automation</code>、<code>mcp-peekaboo-setup</code>、<code>terminal-title-wrapper</code> 在 Linux &#x2F; Windows 跑不起來</li><li><strong>docs&#x2F; 巨型檔案會吃 context</strong>：<code>appkit.md</code>（2.3MB）、<code>swiftui.md</code>（1.8MB）這種等級的文件直接 alwaysApply 會炸 context window，建議按需 import</li><li><strong>強綁定作者的 MCP 生態</strong>：推薦的 Peekaboo &#x2F; Agent &#x2F; Automator 都是 @steipete 自己發的 npm 套件，用之前自己評估信任邊界</li><li><strong>commit 規則內建 emoji</strong>：對禁用 emoji 的企業 commit convention 不友善，要自己改規則</li><li>**<code>/check</code> 假設專案有 <code>npm run check</code>**：其他語言沒提供 fallback，要自己改</li></ul><p>適合誰用：</p><ul><li>把 Claude Code 或 Cursor 當主要 AI pair programmer 的工程師</li><li>想自己寫 <code>.mdc</code> 規則但缺範本參考的人</li><li>macOS &#x2F; iOS &#x2F; Swift 開發者（<code>docs/</code> 對你最有用）</li><li>對「prompt as config」這個觀念有興趣、想看精煉範例的人</li></ul><p>不適合：</p><ul><li>只用 GitHub Copilot、完全不用 Claude Code &#x2F; Cursor 的人</li><li>純 Linux &#x2F; Windows 開發者（一半 automation 規則跑不起來）</li><li>期待持續更新與社群維護的人（請改追 agent-scripts）</li></ul><hr><h2 id="收尾：背後的兩條線"><a href="#收尾：背後的兩條線" class="headerlink" title="收尾：背後的兩條線"></a>收尾：背後的兩條線</h2><p>agent-rules 的價值不在 22 個指令本身，在它把兩件事示範清楚了。</p><p><strong>第一條線：prompt 不是文字，prompt 是設定檔。</strong> 一旦你接受這個觀念，你就會開始把所有反覆寫的提示都抽出來、放進版本控管、加上 review 流程。這個轉變對工程紀律的影響，比換一個更新的模型還大。</p><p><strong>第二條線：規則庫應該會自己長大。</strong> 寫完就鎖死的規則庫只會越用越過時。把 <code>/create-command</code> 跟 <code>/continuous-improvement</code> 放進規則集裡，等於讓規則庫變成一個會觀察、會建議的東西。</p><p>挑一個你最常下的 prompt，寫成 <code>.mdc</code> 丟進 <code>~/.claude/commands/</code>，明天打那個 slash 試試看。比你以為的還順。</p><hr><h2 id="相關連結"><a href="#相關連結" class="headerlink" title="相關連結"></a>相關連結</h2><ul><li><strong>Repo</strong>：<a href="https://github.com/steipete/agent-rules">github.com&#x2F;steipete&#x2F;agent-rules</a></li><li><strong>作者新作</strong>：<a href="https://github.com/steipete/agent-scripts">github.com&#x2F;steipete&#x2F;agent-scripts</a></li><li><strong>作者</strong>：<a href="https://steipete.me/">Peter Steinberger</a>（PSPDFKit 創辦人）</li><li><strong>License</strong>：MIT</li><li><strong>狀態</strong>：5.7k stars &#x2F; 514 forks（2026-05 統計）</li></ul>]]></content>
+        <content type="html"><![CDATA[<p>下午要送 PR 之前，你又打了一次那段熟到不行的提示：「幫我審一下這個 PR 的邊界條件、有沒有資安問題、測試夠不夠」。昨天打過、上禮拜也打過，每次措辭都差一點，品質就跟著飄一點。</p><p>commit 也是。今天心血來潮把 scope 寫好、加了 conventional 格式，明天趕時間就退化成一句「fix bug」。修 bug 更慘——你明明知道該先寫一個能重現的 failing test 再動手，但十次有六次直接改 code，測試事後補（或根本沒補）。</p><p>問題不在你不懂這些紀律，在於<strong>紀律放在腦袋裡，每次都要靠自制力重新執行一遍</strong>。</p><p>你可能試過半套解法：把常用提示存成備忘錄、貼到一個 snippets app、甚至塞進 Raycast。能省幾秒打字，但治不了根——因為每次貼出去的還是「大概那個意思」的版本，不是同一個版本。</p><p>agent-rules 切進來的，正是這一步。它的主張很直接：<strong>prompt 不該每次重打，prompt 該被當成設定檔。</strong> 把那段 PR review 的提示寫死成一個檔案，丟進 <code>~/.claude/commands/</code>，之後在 Claude Code 裡打 <code>/pr-review</code> 就跑——跟你打 <code>/commit</code>、<code>/bug-fix</code> 一樣，跟 Linux command 同一個直覺。</p><p>5.7k stars &#x2F; 514 forks，是目前 Claude Code 規則集合裡名氣最大的之一。作者 Peter Steinberger 是 PSPDFKit 創辦人，習慣把工程紀律寫死成可執行的東西。這個 repo 把工程師日常反覆下的提示，整理成 22 個 markdown 檔，把「我懂這個道理」變成「我每次都會做」。</p><hr><h2 id="倉庫結構：三層各自負責一件事"><a href="#倉庫結構：三層各自負責一件事" class="headerlink" title="倉庫結構：三層各自負責一件事"></a>倉庫結構：三層各自負責一件事</h2><p>整個 repo 設計成三層，各做不同等級的事：</p><table><thead><tr><th>層級</th><th>用途</th><th>安裝位置</th></tr></thead><tbody><tr><td><strong>project-rules&#x2F;</strong></td><td>22 個可重用的 slash command（commit &#x2F; bug-fix &#x2F; pr-review 等）</td><td><code>~/.claude/commands/</code> 或 <code>.cursor/rules/</code></td></tr><tr><td><strong>global-rules&#x2F;</strong></td><td>帳號層級設定：MCP server 安裝腳本、issue 模板、terminal title 工具</td><td><code>~/.claude/CLAUDE.md</code>、shell rc</td></tr><tr><td><strong>docs&#x2F;</strong></td><td>Swift &#x2F; Apple 領域的大型參考文件（appkit &#x2F; swiftui &#x2F; uikit 各百萬字）</td><td>按需 import</td></tr></tbody></table><p>核心是 <code>project-rules/</code>，22 個 <code>.mdc</code> 檔撐起整個工作流體驗。</p><h2 id="為什麼用-mdc-副檔名（小細節，但很聰明）"><a href="#為什麼用-mdc-副檔名（小細節，但很聰明）" class="headerlink" title="為什麼用 .mdc 副檔名（小細節，但很聰明）"></a>為什麼用 <code>.mdc</code> 副檔名（小細節，但很聰明）</h2><p><code>.mdc</code> 本來是 <strong>Cursor 的 rules 格式</strong>：純 markdown 加 YAML frontmatter，可以宣告 <code>description</code>、<code>globs</code>、<code>alwaysApply</code>：</p><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="attr">description:</span> <span class="string">Clear,</span> <span class="string">one-line</span> <span class="string">description</span> <span class="string">of</span> <span class="string">what</span> <span class="string">the</span> <span class="string">rule</span> <span class="string">enforces</span></span><br><span class="line"><span class="attr">globs:</span> <span class="string">path/to/files/*.ext,</span> <span class="string">other/path/**/*</span></span><br><span class="line"><span class="attr">alwaysApply:</span> <span class="literal">false</span></span><br><span class="line"><span class="meta">---</span></span><br></pre></td></tr></table></figure><p>Claude Code 沒有這個概念，但它把 <code>.mdc</code> 當普通 markdown 讀，所以同一份檔案可以同時餵給 Cursor 跟 Claude Code。跨工具兼容的第一步不是寫適配器，是選對副檔名——這個觀察套到自己的規則庫上，可以省掉很多重複維護。</p><hr><h2 id="22-個指令，挑四類有代表性的看"><a href="#22-個指令，挑四類有代表性的看" class="headerlink" title="22 個指令，挑四類有代表性的看"></a>22 個指令，挑四類有代表性的看</h2><h3 id="Git-GitHub"><a href="#Git-GitHub" class="headerlink" title="Git &amp; GitHub"></a>Git &amp; GitHub</h3><table><thead><tr><th>指令</th><th>用途</th></tr></thead><tbody><tr><td><code>/commit</code></td><td>完整版：跑 pre-commit checks、偵測 commit type、用 emoji + conventional 格式產出訊息、建議拆 commit</td></tr><tr><td><code>/commit-fast</code></td><td>快速版：生成 3 個訊息候選並自動採用第一個</td></tr><tr><td><code>/bug-fix</code></td><td>全流程：建 issue → 開 branch → 寫 failing test → 修 → push → 開 PR（含 <code>Fixes #N</code>）</td></tr><tr><td><code>/pr-review</code></td><td>6 種 persona 同時審：PM &#x2F; Dev &#x2F; QA &#x2F; Security &#x2F; DevOps &#x2F; UX</td></tr><tr><td><code>/analyze-issue</code></td><td>用 <code>gh issue view</code> 抓 issue，輸出 10 段技術 spec</td></tr></tbody></table><h3 id="Code-Quality"><a href="#Code-Quality" class="headerlink" title="Code Quality"></a>Code Quality</h3><table><thead><tr><th>指令</th><th>用途</th></tr></thead><tbody><tr><td><code>/check</code></td><td>跑 quality gate。<strong>明文禁止 commit、禁止改版號</strong>，純驗證</td></tr><tr><td><code>/clean</code></td><td>跑 formatter + type checker 修到全綠</td></tr><tr><td><code>/code-analysis</code></td><td>6 種分析菜單：knowledge graph &#x2F; quality &#x2F; performance &#x2F; security &#x2F; architecture &#x2F; coverage</td></tr></tbody></table><h3 id="Development-Workflow"><a href="#Development-Workflow" class="headerlink" title="Development Workflow"></a>Development Workflow</h3><table><thead><tr><th>指令</th><th>用途</th></tr></thead><tbody><tr><td><code>/implement-task</code></td><td>5 階段方法論：think strategy → evaluate → tradeoffs → implement → checklist</td></tr><tr><td><code>/context-prime</code></td><td>讀 README、CLAUDE.md、<code>git ls-files</code>，建立對陌生專案的初步理解</td></tr><tr><td><code>/five</code></td><td>Five Whys 根因分析：鏈式追問五次直到 root cause</td></tr><tr><td><code>/mermaid</code></td><td>從 SQL &#x2F; source code 抽實體與關係，輸出 mermaid 圖並用 <code>mmdc</code> 驗證</td></tr></tbody></table><h3 id="Meta（規則自己進化）"><a href="#Meta（規則自己進化）" class="headerlink" title="Meta（規則自己進化）"></a>Meta（規則自己進化）</h3><table><thead><tr><th>指令</th><th>用途</th></tr></thead><tbody><tr><td><code>/create-command</code></td><td>用 agent 幫你寫新的 slash command（meta-bootstrap）</td></tr><tr><td><code>/continuous-improvement</code></td><td>觀察 codebase 的 pattern，某個模式出現 3 次以上就建議寫成新規則</td></tr><tr><td><code>/cursor-rules-meta-guide</code></td><td>規範 <code>.mdc</code> 應該怎麼寫（含 DO &#x2F; DON’T 對照範例）</td></tr></tbody></table><p>安裝只要兩步：clone repo，跑 <code>./install-project-rules.sh</code>。腳本做的事很單純——在 <code>~/.claude/CLAUDE.md</code> 加一行 <code>@&lt;repo_path&gt;/project-rules</code>，靠 Claude Code 的 import 語法把 22 個 <code>.mdc</code> 全納入，裝完直接打 <code>/commit</code>、<code>/bug-fix</code> 就能用。給 Cursor 的話，把 <code>project-rules/</code> 整個丟進專案的 <code>.cursor/rules/</code> 就好。</p><hr><h2 id="真正值得偷的不是指令，是五個設計手法"><a href="#真正值得偷的不是指令，是五個設計手法" class="headerlink" title="真正值得偷的不是指令，是五個設計手法"></a>真正值得偷的不是指令，是五個設計手法</h2><p>讀完 22 個規則會發現，有些手法可以直接抄到自己的規則集裡。這部分比指令本身更有複利價值。</p><p><strong>一、二段式工作流（完整版 vs 快速版）。</strong> <code>commit.mdc</code> 跟 <code>commit-fast.mdc</code> 是同一件事的兩種精度。完整版做安全把關，快速版省掉互動直接出 3 個選一個。趕時間用 fast，要進 production 用完整版。這個 pattern 套自己的規則集很實用——<code>/test-quick</code> vs <code>/test-thorough</code>、<code>/review-self</code> vs <code>/review-team</code>。</p><p><strong>二、多 persona 自我審查。</strong> <code>pr-review.mdc</code> 用 6 個角色同時看一段 PR：PM 看需求、Dev 看架構、QA 看覆蓋率與邊界、Security 看漏洞、DevOps 看部署影響、UX 看體驗變化。比單一視角撈出更多問題。LLM 切換角色其實很順——給它一個角色加一個任務，它就用那個角色的優先序看事情，這個 prompt 結構連 persona 都不用改就能借。</p><p><strong>三、把禁區寫在最前面、用大寫。</strong> <code>/check</code> 規則開頭寫死 <code>DO NOT commit. DO NOT change version numbers. Only verify.</code>，<code>mcp-inspector-debugging.mdc</code> 開頭警告 <code>DO NOT RUN BLOCKING TERMINAL COMMANDS</code>。LLM 容易越界做副作用，最有效的方法就是在指令最前面用大寫寫死禁區。寫散文式的引導它會自己腦補；寫成大寫禁令它會當 hard constraint。</p><p><strong>四、編號流程化。</strong> 所有規則都遵循固定骨架：Title → Usage → Process（編號步驟）→ Best Practices。寫散文 LLM 容易漏步驟，全拆成編號讓它逐條執行，準確度差很多。這也是寫文件的反直覺——人類讀者喜歡散文，但你的目標讀者是 LLM，LLM 喜歡編號。</p><p><strong>五、self-evolving 機制。</strong> <code>continuous-improvement.mdc</code> 規定：agent 在 codebase 觀察到某個 pattern 出現 3 次以上，就主動建議寫成新規則；<code>/create-command</code> 直接用 agent 幫你產生新指令骨架。把規則集當成「會自己長大的東西」設計，而不是寫完就鎖死的靜態文件——這個視角差異會決定你的規則庫一年後是更精煉還是更笨重。</p><p>實際跑起來，最有感的幾個場景：寫完功能打 <code>/commit-fast</code> 不用想訊息怎麼寫；碰到 bug 先打 <code>/bug-fix</code> 強制走「先寫 failing test」的 TDD 流程；送審前先用 <code>/pr-review</code> 讓六個 persona 自己打一遍；接手陌生專案打 <code>/context-prime</code> 拿結構摘要；業務丟個兩句話的 issue 連結，<code>/analyze-issue</code> 幫你產出 10 段技術規格。</p><hr><h2 id="動手前要知道的幾件事"><a href="#動手前要知道的幾件事" class="headerlink" title="動手前要知道的幾件事"></a>動手前要知道的幾件事</h2><p>最重要的一點：<strong>作者已停止積極維護</strong>。README 明示這是 2025 年中的舊作，新工作在 <a href="https://github.com/steipete/agent-scripts">steipete&#x2F;agent-scripts</a>。當學習範本可以，當長期相依套件要三思。</p><p>其他踩坑點：不少規則是 macOS 專用（<code>safari-automation</code>、<code>screenshot-automation</code>、<code>terminal-title-wrapper</code> 在 Linux &#x2F; Windows 跑不起來）；<code>docs/</code> 的巨型檔案會吃 context（<code>appkit.md</code> 2.3MB、<code>swiftui.md</code> 1.8MB，直接 alwaysApply 會炸 context window，建議按需 import）；推薦的 MCP 生態（Peekaboo &#x2F; Agent &#x2F; Automator）都是作者自己發的 npm 套件，用前自己評估信任邊界；commit 規則內建 emoji，對禁用 emoji 的企業 convention 不友善；<code>/check</code> 假設專案有 <code>npm run check</code>，其他語言要自己改 fallback。</p><p>換句話說，把 Claude Code 或 Cursor 當主要 AI pair programmer、想找 <code>.mdc</code> 範本參考、或做 macOS&#x2F;iOS&#x2F;Swift 的人，這個 repo 撈得到東西。只用 GitHub Copilot、純 Linux&#x2F;Windows、或期待持續更新的人，可以直接跳過去看 agent-scripts。</p><hr><h2 id="回到那段-PR-review-提示"><a href="#回到那段-PR-review-提示" class="headerlink" title="回到那段 PR review 提示"></a>回到那段 PR review 提示</h2><p>繞了一圈，回到開頭那個每天重打提示的場景。agent-rules 真正示範清楚的有兩件事：第一，prompt 一旦被當成設定檔，你就會開始把所有反覆寫的提示抽出來、放進版本控管、加上 review 流程——這個轉變對工程紀律的影響，比換一個更新的模型還大。第二，規則庫應該會自己長大，寫完就鎖死的只會越用越過時。</p><p>不用一次搬 22 個。挑你今天最常下的那一個 prompt——大概就是 commit 或 PR review——寫成一個 <code>.mdc</code> 丟進 <code>~/.claude/commands/</code>，明天打那個 slash 試試看。比你以為的還順。</p><hr><h2 id="相關連結"><a href="#相關連結" class="headerlink" title="相關連結"></a>相關連結</h2><ul><li><strong>Repo</strong>：<a href="https://github.com/steipete/agent-rules">github.com&#x2F;steipete&#x2F;agent-rules</a></li><li><strong>作者新作</strong>：<a href="https://github.com/steipete/agent-scripts">github.com&#x2F;steipete&#x2F;agent-scripts</a></li><li><strong>作者</strong>：<a href="https://steipete.me/">Peter Steinberger</a>（PSPDFKit 創辦人）</li><li><strong>License</strong>：MIT</li><li><strong>狀態</strong>：5.7k stars &#x2F; 514 forks（2026-05 統計）</li></ul>]]></content>
       
       
       <categories>
@@ -88,13 +88,13 @@
       
         <tags>
             
+            <tag> Claude Code </tag>
+            
             <tag> AI Agent </tag>
             
             <tag> 開源 </tag>
             
             <tag> Cursor </tag>
-            
-            <tag> Claude Code </tag>
             
             <tag> Prompt Engineering </tag>
             
@@ -121,9 +121,9 @@
       
         <tags>
             
-            <tag> AI Agent </tag>
-            
             <tag> Claude Code </tag>
+            
+            <tag> AI Agent </tag>
             
             <tag> 開發工具 </tag>
             
@@ -177,7 +177,7 @@
       <link href="/2026/05/27/Mole-%E7%94%A8%E4%B8%80%E5%80%8B-binary-%E5%8F%96%E4%BB%A3-CleanMyMac-%E5%85%A8%E5%AE%B6%E6%A1%B6%E7%9A%84%E9%96%8B%E6%BA%90-Mac-%E6%B8%85%E7%90%86-CLI/"/>
       <url>/2026/05/27/Mole-%E7%94%A8%E4%B8%80%E5%80%8B-binary-%E5%8F%96%E4%BB%A3-CleanMyMac-%E5%85%A8%E5%AE%B6%E6%A1%B6%E7%9A%84%E9%96%8B%E6%BA%90-Mac-%E6%B8%85%E7%90%86-CLI/</url>
       
-        <content type="html"><![CDATA[<p>四個 app 同時失去存在理由。</p><p>CleanMyMac 一年 89 美金、AppCleaner、DaisyDisk、iStat Menus——這四個 Mac 上最常駐的清理 &#x2F; 監控 GUI，加起來年費可以買半張 RTX 5070。Mole 用一個 Shell + Go 寫的 binary 把它們的核心功能全壓進去，CLI 永遠免費，可以丟進腳本、可以塞進排程、可以串 Raycast。</p><p>GitHub 上 38K+ stars，安裝指令一行：<code>brew install mole</code>。它不是「又一個 cleaner」——它是一個反向證明：那些賣你年訂閱的功能，其實本來就該是 CLI。</p><hr><h2 id="為什麼會冒出來這個工具"><a href="#為什麼會冒出來這個工具" class="headerlink" title="為什麼會冒出來這個工具"></a>為什麼會冒出來這個工具</h2><p>Mac 用一兩年之後一定會撞到三件事：硬碟空間不知道被誰吃光、卸載 app 留下一堆殘骸、機器變慢但又找不到原因。</p><p>市面上的解法分兩派。一派是付年費的 GUI（CleanMyMac X 一年 89 美金、Setapp 一個月 9.99 美金），另一派是 GUI 工具又肥又愛背景常駐——CleanMyMac 自己就會吃 300MB+ 記憶體，諷刺得很。</p><p>Mole 走完全反方向：純 CLI、單一 binary、不開機自啟、不送遙測。要清理才叫它出來，平時根本看不到。</p><p>打個比方。如果 CleanMyMac 是 IDE，Mole 就是 <code>vim + grep + awk</code> 組合：工具樸素，威力一點不輸，而且可以拼起來用。GUI 適合「不會 terminal 的人」，CLI 適合「不想每次都點滑鼠的人」——而後者的長期摩擦成本，遠比前者低。</p><hr><h2 id="七個指令對應七個商業工具"><a href="#七個指令對應七個商業工具" class="headerlink" title="七個指令對應七個商業工具"></a>七個指令對應七個商業工具</h2><p>Mole 把所有功能塞進七個指令，每個都對應到一個傳統商業工具的某個核心功能：</p><p><code>mo status</code> — 即時看 CPU、GPU、記憶體、磁碟 I&#x2F;O、top processes，按 <code>q</code> 退出。這是免費版的 iStat Menus。</p><p><code>mo analyze</code> — 進入視覺化磁碟瀏覽器，方向鍵或 Vim 的 <code>h/j/k/l</code> 都能用。一層一層往下鑽，找那種「明明是個小 app 卻佔 5GB」的東西。對標 DaisyDisk。</p><p><code>mo clean</code> — 清快取、log、暫存、瀏覽器快取、Xcode derived data、iOS simulator 快取。對標 CleanMyMac 的核心。</p><p><code>mo uninstall</code> — 互動選擇要卸載的 app，會顯示每個 app 的大小跟最近使用時間。它會把 app 本體、<code>~/Library/Preferences</code> 設定檔、launch daemon、隱藏快取一次清掉，常見一個 app 會清出 12 個位置、52 個關聯檔案。對標 AppCleaner，但更狠。</p><p><code>mo purge</code> — 等等講，這是開發者最有感的指令。</p><p><code>mo optimize</code> — 跑系統最佳化，清 dyld cache、重建 spotlight 索引這類東西。</p><p><code>mo touchid</code> — 設定 sudo 用指紋認證，每次清理不用打密碼。</p><p>不知道從哪開始？打 <code>mo</code> 就會進入互動式選單。</p><hr><h2 id="第一次用建議的順序"><a href="#第一次用建議的順序" class="headerlink" title="第一次用建議的順序"></a>第一次用建議的順序</h2><p>直接 <code>mo clean</code> 是新手最常踩的坑——你不知道它要清什麼。建議按下面順序走：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 1. 看儀表板，先了解機器狀況</span></span><br><span class="line">mo status</span><br><span class="line"></span><br><span class="line"><span class="comment"># 2. 找空間黑洞</span></span><br><span class="line">mo analyze</span><br><span class="line"></span><br><span class="line"><span class="comment"># 3. 預覽要清什麼（不會真的清）</span></span><br><span class="line">mo clean --dry-run</span><br><span class="line"></span><br><span class="line"><span class="comment"># 4. 確認沒事再實際清</span></span><br><span class="line">mo clean</span><br></pre></td></tr></table></figure><p><code>--dry-run</code> 是 Mole 最重要的安全閥。第一次跑任何清理指令一律先加，看一眼會清什麼，確認沒事再執行真的清理。Medium 上有人實測一次清出 25GB，雖然不是每台都這麼誇張，但 5~10GB 是常態。</p><p>這個流程的設計哲學跟 <code>git</code> 很像：你不會直接 <code>git push --force</code>，你會先 <code>git status</code>、<code>git diff</code>、確認、再動手。GUI 工具往往把這個流程壓成一個按鈕，使用者按了之後才知道發生什麼事——這對「快速」是好事，對「可控」是災難。</p><hr><h2 id="開發者最有感：mo-purge"><a href="#開發者最有感：mo-purge" class="headerlink" title="開發者最有感：mo purge"></a>開發者最有感：mo purge</h2><p>如果你是工程師，這指令大概會幫你清出最多空間。</p><p>它會掃描指定路徑下的所有專案，找出可以重新生成的構件目錄：</p><ul><li><code>node_modules</code> — Node.js 套件</li><li><code>target</code> — Rust &#x2F; Java 編譯產物</li><li><code>.build</code> — Swift Package Manager</li><li><code>build</code> &#x2F; <code>dist</code> — 各種前端框架的編譯輸出</li><li><code>venv</code> &#x2F; <code>.venv</code> — Python 虛擬環境</li></ul><p>做前端的人都懂，<code>node_modules</code> 動輒 500MB，五個專案就 2.5GB。手動 <code>find . -name node_modules -exec rm -rf &#123;&#125; +</code> 速度快但很容易連活躍專案一起砍。</p><p><code>mo purge</code> 的貼心之處：7 天內動過的專案會預設取消勾選，你要主動點才會清。這個設計細節省下的「跑 <code>pnpm install</code> 等十分鐘」的痛苦，光這點就值得安裝。</p><p>要自訂掃描路徑：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 用旗標指定</span></span><br><span class="line">mo purge --paths ~/code,~/work</span><br><span class="line"></span><br><span class="line"><span class="comment"># 或寫進設定檔</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&#x27;~/code&#x27;</span> &gt;&gt; ~/.config/mole/purge_paths</span><br><span class="line"><span class="built_in">echo</span> <span class="string">&#x27;~/work&#x27;</span> &gt;&gt; ~/.config/mole/purge_paths</span><br></pre></td></tr></table></figure><hr><h2 id="CLI-的真正威力：–json"><a href="#CLI-的真正威力：–json" class="headerlink" title="CLI 的真正威力：–json"></a>CLI 的真正威力：–json</h2><p>Mole 所有指令都支援 <code>--json</code> 輸出。這是它跟 GUI 工具最大的差別，也是它真正贏的地方。</p><p>GUI 工具的清理結果只能用眼睛看。Mole 的清理結果可以寫進排程、寫進稽核 log、寫進 CI pipeline。</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 每週日凌晨 3 點自動清理快取（crontab）</span></span><br><span class="line">0 3 * * 0 mo clean --json &gt;&gt; ~/Library/Logs/mole-weekly.log</span><br></pre></td></tr></table></figure><p>公司 IT 可以把 <code>mo clean --dry-run --json</code> 塞進 MDM 部署腳本，每週幫員工自動清快取、每月跑一次 <code>mo optimize</code>，運作紀錄寫到 <code>~/Library/Logs/mole/operations.log</code>，稽核時撈出來看。</p><p>GUI 工具做不到這件事——你不能把 CleanMyMac 的點擊動作寫進 cron。能用 CLI 的東西就用 CLI，是個被低估的長期生產力複利。</p><p>V1.35.0 開始 Mole 還支援清理 Claude Code、Cursor 的快取，這對每天用 AI coding 的人特別有用——這些工具的 context 快取、embedding 索引、聊天紀錄累積得很快，常常一個月就吃掉幾 GB。</p><hr><h2 id="使用情境"><a href="#使用情境" class="headerlink" title="使用情境"></a>使用情境</h2><p><strong>接手二手 &#x2F; 公司舊 Mac</strong>：剛拿到一台用了一兩年的 Mac，硬碟剩 10GB，不知從何下手。<code>mo analyze</code> 看空間分佈、<code>mo clean --dry-run</code> 看能清什麼，10 分鐘內可以多回 20~30GB。</p><p><strong>不想被訂閱經濟綁住</strong>：CleanMyMac X 一年 89 美金、Setapp 一個月 9.99 美金，加起來一年快 4000 台幣只是為了清快取。Mole CLI 永遠免費（GUI 版才 9 美金終身）。對於只用清理功能的人來說，這個價差不是「省一點錢」，是「根本沒有同一個 tier 的競品」。</p><p><strong>開發機磁碟長期被構件吃光</strong>：<code>mo purge</code> 一次清完還保留 7 天內活躍專案，比手動 <code>find + rm</code> 安全又省事。</p><p><strong>卸載一堆試用過的 app</strong>：試了 Notion、Obsidian、Logseq、Bear，最後只留一個。其他三個的設定檔、快取、launch daemon 都還散在系統各處。<code>mo uninstall</code> 一次清乾淨。</p><hr><h2 id="限制要先講清楚"><a href="#限制要先講清楚" class="headerlink" title="限制要先講清楚"></a>限制要先講清楚</h2><p>只支援 macOS。Windows 在 <code>windows</code> 分支但實驗性，Linux 完全沒計畫。如果你工作流程是 macOS + Linux 混用，Linux 那邊還是要找別的工具（BleachBit 是合理選擇）。</p><p>iTerm2 相容性有問題——互動選單會亂掉、色彩會錯。iTerm2 是 macOS 開發者最常用的終端機之一，這點要特別注意。如果你慣用 iTerm2，可能要切到 Ghostty、Warp、WezTerm、Alacritty、kitty 其中一個跑 Mole。</p><p>某些清理需要 sudo，建議搭配 <code>mo touchid</code> 設定指紋認證，每次清理不用打密碼。</p><p>AI 工具快取的識別範圍目前只有 Claude Code、Cursor。Aider、Cline、Continue 這類較新的工具還沒納入，要等後續版本。</p><hr><h2 id="真正的問題其實是什麼"><a href="#真正的問題其實是什麼" class="headerlink" title="真正的問題其實是什麼"></a>真正的問題其實是什麼</h2><p>讀到這裡，你可能會覺得這是「省 89 美金」的故事。其實不是。</p><p>真正的問題是：為什麼一個年費 89 美金的 GUI 工具，它的核心功能可以被一個 Shell + Go binary 在 80 天內衝到 38K stars？</p><p>答案不是「Mole 厲害」——答案是「CleanMyMac 賣的不是技術，是介面與品牌信任」。當有人把同樣的清理邏輯做成可審計、可腳本化、可自動化的 CLI，付費 GUI 就會在「願意打開 terminal 的人」這個市場區段瞬間蒸發。</p><p>這不是 Mole vs CleanMyMac 的故事，是 CLI 工具 vs GUI 訂閱 SaaS 的微縮版。同樣的劇本，在 Notion vs Obsidian、Postman vs <code>curl + jq</code>、Sequel Pro vs <code>psql</code>、Docker Desktop vs OrbStack 各自上演過一遍。</p><p>值不值得換看你自己。但這個趨勢——「能 CLI 化的功能會慢慢 CLI 化」——是 Mac 軟體生態未來五年的隱性主旋律。</p><blockquote><p>來源：<a href="https://github.com/tw93/Mole">tw93&#x2F;Mole on GitHub</a>、<a href="https://github.com/tw93/Mole/blob/main/README.md">Mole CLI 官方說明</a>、<a href="https://ddewhurst.com/blog/mole-open-source-bash-go-tool-replacing-paid-mac-apps/">Open Source Bash+Go tool replacing $60+ paid Mac apps</a></p></blockquote>]]></content>
+        <content type="html"><![CDATA[<p>以前要把一台 Mac 清乾淨，是一套儀式。</p><p>先開 CleanMyMac 掃快取，再開 DaisyDisk 看是誰把硬碟吃光，卸載 app 得另外開 AppCleaner 才不會留殘骸，想知道機器為什麼變慢還要瞄一眼選單列上的 iStat Menus。四個視窗、四套年費，而且這幾個工具自己就愛背景常駐——CleanMyMac 光待機就吃 300MB+ 記憶體，挺諷刺的。</p><p>同樣這套動作，現在用 <code>brew install mole</code> 裝完一個 binary 就全包了。下面我們把「清一次 Mac」這件事，舊做法跟新做法逐項擺在一起看。</p><hr><h2 id="看機器狀況：選單列-vs-mo-status"><a href="#看機器狀況：選單列-vs-mo-status" class="headerlink" title="看機器狀況：選單列 vs mo status"></a>看機器狀況：選單列 vs <code>mo status</code></h2><p>舊做法是讓 iStat Menus 常駐在選單列，CPU、記憶體、磁碟 I&#x2F;O 隨時掛在那。問題是你 99% 的時間根本沒在看它，它卻 99% 的時間都在跑。</p><p><code>mo status</code> 把同樣的儀表板變成「要看才叫出來」：即時顯示 CPU、GPU、記憶體、磁碟 I&#x2F;O、top processes，看完按 <code>q</code> 退出，平時不佔任何資源。監控本來就不該是常駐服務，是隨叫隨到的查詢。</p><h2 id="找空間黑洞：DaisyDisk-vs-mo-analyze"><a href="#找空間黑洞：DaisyDisk-vs-mo-analyze" class="headerlink" title="找空間黑洞：DaisyDisk vs mo analyze"></a>找空間黑洞：DaisyDisk vs <code>mo analyze</code></h2><p>DaisyDisk 的賣點是那張漂亮的環狀圖。<code>mo analyze</code> 給你的是一個能用方向鍵、也能用 Vim <code>h/j/k/l</code> 鑽的視覺化磁碟瀏覽器，一層層往下找那種「明明是個小 app 卻佔 5GB」的東西。少了動畫，多了鍵盤流，對慣用終端機的人反而更快。</p><h2 id="卸載與清理：一鍵全清-vs-先預覽再動手"><a href="#卸載與清理：一鍵全清-vs-先預覽再動手" class="headerlink" title="卸載與清理：一鍵全清 vs 先預覽再動手"></a>卸載與清理：一鍵全清 vs 先預覽再動手</h2><p>這是兩種做法差最多的地方。</p><p>AppCleaner 卸載 app 算乾淨了，但 <code>mo uninstall</code> 更狠——互動選擇要砍的 app，顯示每個的大小跟最近使用時間，然後把本體、<code>~/Library/Preferences</code> 設定檔、launch daemon、隱藏快取一次清掉，常見一個 app 清出 12 個位置、52 個關聯檔案。</p><p>清快取則是 <code>mo clean</code>：快取、log、暫存、瀏覽器快取、Xcode derived data、iOS simulator 快取，對標 CleanMyMac 的核心功能。但這裡有個關鍵差異——GUI 工具往往把整個流程壓成一個按鈕，你按下去之後才知道發生了什麼。Mole 走的是 <code>git</code> 的路子：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">mo status          <span class="comment"># 1. 先看機器狀況</span></span><br><span class="line">mo analyze         <span class="comment"># 2. 找空間黑洞</span></span><br><span class="line">mo clean --dry-run <span class="comment"># 3. 預覽要清什麼（不會真的清）</span></span><br><span class="line">mo clean           <span class="comment"># 4. 確認沒事再實際清</span></span><br></pre></td></tr></table></figure><p><code>--dry-run</code> 是整套工具最重要的安全閥。你不會直接 <code>git push --force</code>，你會先 <code>status</code>、<code>diff</code>、確認、再動手；清磁碟也該這樣。GUI 把這個流程簡化成一鍵，對「快」是好事，對「可控」是災難。Medium 上有人實測一次清出 25GB，5~10GB 則是常態。</p><p>剩下三個指令補齊全套：<code>mo optimize</code> 清 dyld cache、重建 spotlight 索引；<code>mo touchid</code> 設定 sudo 用指紋認證，清理不用每次打密碼；不知道從哪開始就直接打 <code>mo</code> 進互動選單。</p><hr><h2 id="開發者最有感的差異：mo-purge"><a href="#開發者最有感的差異：mo-purge" class="headerlink" title="開發者最有感的差異：mo purge"></a>開發者最有感的差異：<code>mo purge</code></h2><p>如果你是工程師，新舊做法的差距在這個指令上最明顯。</p><p>舊做法清編譯產物，要嘛手動 <code>find . -name node_modules -exec rm -rf &#123;&#125; +</code>，速度快但很容易連活躍專案一起砍；要嘛根本懶得清，放著 <code>node_modules</code> 一個專案 500MB，五個就 2.5GB。</p><p><code>mo purge</code> 掃描指定路徑下所有可重新生成的構件目錄——<code>node_modules</code>、Rust&#x2F;Java 的 <code>target</code>、Swift 的 <code>.build</code>、前端的 <code>build</code>&#x2F;<code>dist</code>、Python 的 <code>venv</code>&#x2F;<code>.venv</code>——然後做了一件 <code>find + rm</code> 不會幫你做的事：<strong>7 天內動過的專案預設取消勾選，你要主動點才會清</strong>。省下的「跑 <code>pnpm install</code> 等十分鐘」的痛苦，光這點就值得裝。</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mo purge --paths ~/code,~/work        <span class="comment"># 旗標指定掃描路徑</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&#x27;~/code&#x27;</span> &gt;&gt; ~/.config/mole/purge_paths  <span class="comment"># 或寫進設定檔</span></span><br></pre></td></tr></table></figure><hr><h2 id="真正拉開距離的地方：-json"><a href="#真正拉開距離的地方：-json" class="headerlink" title="真正拉開距離的地方：--json"></a>真正拉開距離的地方：<code>--json</code></h2><p>到這裡為止，新舊做法還只是「GUI 換成 CLI」。真正讓兩者不在同一個層級的，是 Mole 所有指令都支援 <code>--json</code>。</p><p>GUI 工具的清理結果只能用眼睛看，看完就沒了。Mole 的結果可以寫進排程、寫進稽核 log、寫進 CI pipeline：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 每週日凌晨 3 點自動清快取（crontab）</span></span><br><span class="line">0 3 * * 0 mo clean --json &gt;&gt; ~/Library/Logs/mole-weekly.log</span><br></pre></td></tr></table></figure><p>公司 IT 可以把 <code>mo clean --dry-run --json</code> 塞進 MDM 部署腳本，每週幫員工自動清快取、每月跑一次 <code>mo optimize</code>，紀錄寫到 log 裡稽核時撈出來看。你沒辦法把 CleanMyMac 的點擊動作寫進 cron——能用 CLI 的東西就 CLI 化，是個被低估的長期生產力複利。</p><p>V1.35.0 起 Mole 還能清 Claude Code、Cursor 的快取。這對每天用 AI coding 的人特別有感：context 快取、embedding 索引、聊天紀錄累積得很快，一個月就能吃掉幾 GB。</p><hr><h2 id="換之前要知道的幾件事"><a href="#換之前要知道的幾件事" class="headerlink" title="換之前要知道的幾件事"></a>換之前要知道的幾件事</h2><p>只支援 macOS。Windows 在 <code>windows</code> 分支但實驗性，Linux 完全沒計畫——混用 Linux 的話那邊還是得找別的工具（BleachBit 算合理選擇）。</p><p>iTerm2 相容性有問題，互動選單會亂掉、色彩會錯。iTerm2 是 macOS 開發者最常用的終端機之一，這點要特別注意；慣用的話可能得切 Ghostty、Warp、WezTerm、Alacritty、kitty 其中一個跑 Mole。</p><p>某些清理需要 sudo，建議搭 <code>mo touchid</code>。AI 工具快取目前只認 Claude Code、Cursor，Aider、Cline、Continue 還沒納入，要等後續版本。</p><hr><h2 id="這個轉變真正改變的是什麼"><a href="#這個轉變真正改變的是什麼" class="headerlink" title="這個轉變真正改變的是什麼"></a>這個轉變真正改變的是什麼</h2><p>把舊做法跟新做法擺完一輪，你可能會把它讀成「省 89 美金」的故事。但真正值得想的是另一件事：為什麼一個年費 89 美金的 GUI 工具，核心功能可以被一個 Shell + Go binary 在 80 天內衝到 38K stars？</p><p>答案不是 Mole 多厲害，而是 CleanMyMac 賣的從來不是技術，是介面與品牌信任。當有人把同樣的清理邏輯做成可審計、可腳本化、可自動化的 CLI，付費 GUI 就會在「願意打開 terminal 的人」這個區段瞬間蒸發。Notion 對 Obsidian、Postman 對 <code>curl + jq</code>、Sequel Pro 對 <code>psql</code>、Docker Desktop 對 OrbStack，同樣的劇本都演過一遍。</p><p>換不換看你自己。但「能 CLI 化的功能會慢慢 CLI 化」這條暗線，大概會是 Mac 軟體生態未來五年的隱性主旋律。</p><blockquote><p>來源：<a href="https://github.com/tw93/Mole">tw93&#x2F;Mole on GitHub</a>、<a href="https://github.com/tw93/Mole/blob/main/README.md">Mole CLI 官方說明</a>、<a href="https://ddewhurst.com/blog/mole-open-source-bash-go-tool-replacing-paid-mac-apps/">Open Source Bash+Go tool replacing $60+ paid Mac apps</a></p></blockquote>]]></content>
       
       
       <categories>
@@ -228,9 +228,9 @@
             
             <tag> 教學 </tag>
             
-            <tag> AI 開發工具 </tag>
-            
             <tag> Code Review </tag>
+            
+            <tag> AI 開發工具 </tag>
             
         </tags>
       
@@ -290,11 +290,11 @@
       
         <tags>
             
+            <tag> Claude Code </tag>
+            
             <tag> AI Agent </tag>
             
             <tag> 開源 </tag>
-            
-            <tag> Claude Code </tag>
             
             <tag> 自動化 </tag>
             
@@ -329,9 +329,9 @@
             
             <tag> Anthropic </tag>
             
-            <tag> AI Agent </tag>
-            
             <tag> Claude Code </tag>
+            
+            <tag> AI Agent </tag>
             
             <tag> 教學 </tag>
             
@@ -492,9 +492,9 @@
             
             <tag> MCP </tag>
             
-            <tag> AI Agent </tag>
-            
             <tag> Claude Code </tag>
+            
+            <tag> AI Agent </tag>
             
             <tag> Prompt Engineering </tag>
             
@@ -587,9 +587,9 @@
             
             <tag> LLM </tag>
             
-            <tag> 開源 </tag>
-            
             <tag> Claude Code </tag>
+            
+            <tag> 開源 </tag>
             
             <tag> 開發工具 </tag>
             
@@ -771,11 +771,11 @@
       
         <tags>
             
+            <tag> Claude Code </tag>
+            
             <tag> AI Agent </tag>
             
             <tag> 開源 </tag>
-            
-            <tag> Claude Code </tag>
             
             <tag> Skills </tag>
             
@@ -804,9 +804,9 @@
             
             <tag> Claude </tag>
             
-            <tag> AI Agent </tag>
-            
             <tag> Claude Code </tag>
+            
+            <tag> AI Agent </tag>
             
         </tags>
       
@@ -862,11 +862,11 @@
       
         <tags>
             
+            <tag> Claude Code </tag>
+            
             <tag> AI Agent </tag>
             
             <tag> 開源 </tag>
-            
-            <tag> Claude Code </tag>
             
         </tags>
       
@@ -891,9 +891,9 @@
       
         <tags>
             
-            <tag> AI Agent </tag>
-            
             <tag> Claude Code </tag>
+            
+            <tag> AI Agent </tag>
             
             <tag> CLI </tag>
             
@@ -1257,9 +1257,9 @@
       
         <tags>
             
-            <tag> AI Agent </tag>
-            
             <tag> Claude Code </tag>
+            
+            <tag> AI Agent </tag>
             
             <tag> 教學 </tag>
             
@@ -1460,6 +1460,35 @@
     
     
     <entry>
+      <title>Claude Code Plan Mode 完整教學 — 讓 AI 先想清楚再動手的正確姿勢</title>
+      <link href="/2026/05/13/Claude-Code-Plan-Mode-%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8-%E8%AE%93-AI-%E5%85%88%E6%83%B3%E6%B8%85%E6%A5%9A%E5%86%8D%E5%8B%95%E6%89%8B%E7%9A%84%E6%AD%A3%E7%A2%BA%E5%A7%BF%E5%8B%A2/"/>
+      <url>/2026/05/13/Claude-Code-Plan-Mode-%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8-%E8%AE%93-AI-%E5%85%88%E6%83%B3%E6%B8%85%E6%A5%9A%E5%86%8D%E5%8B%95%E6%89%8B%E7%9A%84%E6%AD%A3%E7%A2%BA%E5%A7%BF%E5%8B%A2/</url>
+      
+        <content type="html"><![CDATA[<p>蓋房子的師傅不會拿到一塊地就開始砌牆。他先畫圖。樑柱位置、管線走向、承重計算——圖紙確認了，才叫水泥車進場。</p><p>你讓 AI 改程式碼的時候呢？直接下指令，它立刻開始動檔案。改了三個、砍了兩個、建了一個——你還沒搞清楚它的邏輯，事情已經做完了。運氣好，結果是對的。運氣不好，你在 <code>git diff</code> 裡面撈殘骸。</p><p>Plan Mode 就是那張圖紙。Claude 進入唯讀狀態——可以讀檔案、搜程式碼、分析依賴，但不能改任何東西。它把整個計畫攤開給你看，你確認了，它才動手。</p><hr><h2 id="為什麼「先規劃」反而更快"><a href="#為什麼「先規劃」反而更快" class="headerlink" title="為什麼「先規劃」反而更快"></a>為什麼「先規劃」反而更快</h2><p>這裡有個違反直覺的現象。</p><p>你可能覺得多一個規劃步驟會拖慢速度——原本直接做就好，現在還要先寫計畫、review 計畫、確認計畫，不是多繞了一圈？</p><p>實際操作完全相反。Anthropic 觀察到最有效率的 AI 輔助開發者遵循一個 80&#x2F;20 比例——80% 的時間花在規劃（理解需求、對應依賴、辨識邊界條件），只有 20% 的時間在監督程式碼執行。（<a href="https://docs.anthropic.com/en/docs/claude-code/best-practices">來源：Anthropic Claude Code Best Practices</a>）</p><p>不是因為他們動作慢。是因為計畫做好了，執行階段幾乎不需要回頭修。</p><p>反過來，不做計畫直接衝的人，表面上動作很快——Claude 噼里啪啦改了二十個檔案——但有三個改壞了，兩個漏了邊界條件，一個引入了 circular dependency。修這些問題花的時間，比一開始規劃的時間長三倍。</p><p>蓋房子也是。砌牆很快，拆牆重砌很慢。</p><hr><h2 id="三種方式進入-Plan-Mode"><a href="#三種方式進入-Plan-Mode" class="headerlink" title="三種方式進入 Plan Mode"></a>三種方式進入 Plan Mode</h2><p>看你的使用情境選一個。</p><h3 id="Shift-Tab-按兩次"><a href="#Shift-Tab-按兩次" class="headerlink" title="Shift+Tab 按兩次"></a>Shift+Tab 按兩次</h3><p>在任何 prompt 輸入框裡，按兩次 <code>Shift+Tab</code>，底部狀態列會切換到 plan mode。再按兩次切回正常模式。</p><p>這是最常用的方式。你正在跟 Claude 來回工作，突然遇到一個需要先想清楚的任務——按兩下，進 plan mode，描述需求，看完計畫，再按兩下切回去讓它執行。</p><h3 id="plan-指令"><a href="#plan-指令" class="headerlink" title="&#x2F;plan 指令"></a>&#x2F;plan 指令</h3><p>在 prompt 裡輸入 <code>/plan</code>，Claude 只會在這一輪回覆使用 plan mode。下一輪自動回到正常模式。</p><p>適合「偶爾想看一下計畫」的場景。你不想切換整個 session 的狀態，只是這一題想讓它先規劃。</p><h3 id="啟動時指定"><a href="#啟動時指定" class="headerlink" title="啟動時指定"></a>啟動時指定</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">claude --permission-mode plan</span><br></pre></td></tr></table></figure><p>整個 session 預設都在 plan mode。Claude 全程唯讀，只分析不動手。</p><p>什麼時候用？你拿到一個不熟悉的 codebase，想讓 Claude 幫你摸清楚結構、畫出模組關係、標記技術債——但你完全不想讓它改任何東西。</p><hr><h2 id="計畫出來了，然後呢"><a href="#計畫出來了，然後呢" class="headerlink" title="計畫出來了，然後呢"></a>計畫出來了，然後呢</h2><p>Claude 產出計畫之後，你不是只能說「好」或「不好」。</p><p>按 <code>Ctrl+G</code>，計畫檔案會在你的預設文字編輯器裡打開。你可以：</p><ul><li><strong>在步驟旁邊加行內備註</strong>——「這一步要注意 backward compatibility」</li><li><strong>刪掉你不同意的步驟</strong>——直接整段砍掉</li><li><strong>重新排列順序</strong>——你覺得應該先處理 migration 再改 API，把它拖上去</li><li><strong>補充遺漏的步驟</strong>——加一行「記得更新 README」</li></ul><p>存檔關閉，Claude 會讀取你的所有修改，更新後的計畫就是它接下來的執行藍圖。</p><p>這是 Plan Mode 跟「叫 Claude 先想一下」的根本差別。不是 Claude 想完你看一眼就算了——你可以動手改計畫，而且它會照著改過的版本做。</p><hr><p>停一下。</p><p>你可能會問：「我直接在 prompt 裡跟 Claude 說『先列出步驟再做』，效果不是一樣嗎？」</p><p>不一樣。差在權限。</p><p>用自然語言要求 Claude「先規劃」，它可能一邊規劃一邊就開始改檔案了——它覺得自己「已經想清楚了」。Plan Mode 是強制鎖定：Claude 在唯讀狀態下沒有修改檔案的權限，物理上做不到「邊想邊動手」。</p><p>就像你跟包商說「先畫圖再施工」，他可能畫到一半就開始敲牆了。但如果你把工具鎖在倉庫裡，他拿不到鐵鎚，就只能老老實實畫完。</p><hr><h2 id="什麼時候該用、什麼時候不用"><a href="#什麼時候該用、什麼時候不用" class="headerlink" title="什麼時候該用、什麼時候不用"></a>什麼時候該用、什麼時候不用</h2><p>不是每個任務都需要 Plan Mode。用在對的地方是省時間，用在錯的地方是浪費時間。</p><h3 id="該用的場景"><a href="#該用的場景" class="headerlink" title="該用的場景"></a>該用的場景</h3><p><strong>涉及三個以上檔案的改動。</strong> 一個檔案的改動，看完 diff 就知道對不對。三個以上的檔案，改動之間有依賴關係、有順序問題、有可能互相衝突——先看計畫再動手，可以預先抓到這些問題。</p><p><strong>Schema 變更。</strong> 資料庫 schema 一改，連帶影響 model、repository、service、controller、migration、test。這種牽一髮動全身的改動，不看計畫就執行是在賭運氣。</p><p><strong>安全敏感的程式碼。</strong> Authentication、authorization、encryption——這些地方改錯一個地方可能就是資安事件。Plan Mode 讓你在任何程式碼被修改之前就能審查整個策略。</p><p><strong>大型重構。</strong> 把一個 module 拆成三個、把 REST 換成 GraphQL、把 monolith 拆 microservice。這種量級的改動，沒有計畫等於沒有方向。</p><p><strong>不熟悉的 codebase。</strong> 接手一個新專案，讓 Claude 在 plan mode 下跑一遍——它會讀目錄結構、主要檔案、import 關係，幫你畫出一張地圖。比你自己一個一個檔案點開來看快十倍。</p><h3 id="不需要的場景"><a href="#不需要的場景" class="headerlink" title="不需要的場景"></a>不需要的場景</h3><p><strong>單一檔案的小改動。</strong> 改一個 typo、調一個 CSS 數值、加一行 log。直接做就好，規劃反而多此一舉。</p><p><strong>純讀取的問題。</strong> 「這個 function 回傳什麼型別？」「package.json 裡 express 是哪個版本？」——Claude 本來就只需要讀，不需要特別鎖唯讀。</p><hr><h2 id="跟其他功能怎麼搭"><a href="#跟其他功能怎麼搭" class="headerlink" title="跟其他功能怎麼搭"></a>跟其他功能怎麼搭</h2><p>Plan Mode 單獨用已經有價值，但跟其他功能組合起來效果更強。</p><p><strong>Plan Mode + Extended Thinking。</strong> Thinking 是 Claude 內部的推理深度，Plan Mode 是外部的權限控制。兩個同時開：Claude 用 thinking 做深度分析，用 plan mode 確保分析結果先給你看，不會直接變成程式碼。適合架構決策、技術方案比較這類需要深度思考的規劃任務。</p><p><strong>Plan Mode + Sub-agents。</strong> 先在 plan mode 下產出完整計畫，確認後退出 plan mode，讓 Claude 把計畫拆分成多個子任務，分派給 sub-agents 平行執行。規劃是一個人想清楚，執行是一群人同時做。</p><p><strong>Plan Mode + Git Worktrees。</strong> 用 plan mode 規劃一個實驗性的改動，確認計畫後在 worktree 裡執行——主分支完全不受影響。計畫不滿意？整個 worktree 砍掉重來，零成本。</p><hr><h2 id="一個完整的工作流範例"><a href="#一個完整的工作流範例" class="headerlink" title="一個完整的工作流範例"></a>一個完整的工作流範例</h2><p>用一個實際場景走一遍。</p><p>假設你要在一個 Spring Boot 專案裡加上 OAuth2 登入功能。這涉及 security config、filter chain、user entity、repository、controller、前端 callback handling——至少六七個檔案。</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">1. Shift+Tab x2 → 進入 Plan Mode</span><br><span class="line">2. 輸入：「加上 Google OAuth2 登入，要支援既有的 JWT token 機制」</span><br><span class="line">3. Claude 開始分析——讀 SecurityConfig、現有的 filter chain、User entity 結構</span><br><span class="line">4. 產出計畫：列出要修改的檔案、每個檔案改什麼、改動的順序、需要新增的依賴</span><br><span class="line">5. Ctrl+G → 在編輯器裡打開計畫</span><br><span class="line">6. 你看到它打算用 spring-security-oauth2-client，但你的專案已經有自訂的 token 處理邏輯</span><br><span class="line">7. 在對應步驟旁邊加備註：「保留現有 JwtTokenProvider，OAuth2 登入成功後走同一套 token 簽發流程」</span><br><span class="line">8. 存檔</span><br><span class="line">9. Claude 讀取你的修改，調整計畫</span><br><span class="line">10. 確認沒問題 → Shift+Tab x2 → 退出 Plan Mode</span><br><span class="line">11. Claude 照著計畫開始執行</span><br></pre></td></tr></table></figure><p>整個過程你全程掌握方向。不是 Claude 決定怎麼做，是你決定怎麼做，Claude 負責執行。</p><hr><h2 id="你帶走的那張圖"><a href="#你帶走的那張圖" class="headerlink" title="你帶走的那張圖"></a>你帶走的那張圖</h2><p>回到一開始的蓋房子。</p><p>圖紙的價值不是讓施工變慢。是讓你在第一根樑柱立起來之前，就能看到整棟房子的樣子——哪裡承重不夠、哪裡管線打架、哪裡動線不合理。</p><p>Plan Mode 就是這張圖紙。Claude 在唯讀狀態下畫出完整的施工計畫，你審查、標註、修改，確認了才讓它動工。</p><p>有個更深層的 insight：大部分人用 AI 寫程式的方式是「描述需求 → 等結果 → 看對不對」。這是把 AI 當成黑盒。Plan Mode 把這個流程改成「描述需求 → 看計畫 → 調整計畫 → 執行計畫」——你介入的不是結果，是過程。</p><p>能介入過程的人，控制的是方向。只能看結果的人，控制的是運氣。</p><p>試一次就知道差別。下次遇到一個涉及三個以上檔案的改動，按兩下 <code>Shift+Tab</code>，讓 Claude 先畫圖再動工。</p><p>不過有一個我還在摸索的問題——當計畫很長（超過 50 個步驟），<code>Ctrl+G</code> 打開的編輯器體驗其實不太好，scroll 來 scroll 去很容易迷路。如果你有更好的 review 大型計畫的方式，歡迎跟我說。</p>]]></content>
+      
+      
+      <categories>
+          
+          <category> Claude Code </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> Claude Code </tag>
+            
+            <tag> Plan Mode </tag>
+            
+            <tag> AI 開發工具 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>Awesome — GitHub 上 Star 最多的開源資源策展清單</title>
       <link href="/2026/05/13/Awesome-GitHub-%E4%B8%8A-Star-%E6%9C%80%E5%A4%9A%E7%9A%84%E9%96%8B%E6%BA%90%E8%B3%87%E6%BA%90%E7%AD%96%E5%B1%95%E6%B8%85%E5%96%AE/"/>
       <url>/2026/05/13/Awesome-GitHub-%E4%B8%8A-Star-%E6%9C%80%E5%A4%9A%E7%9A%84%E9%96%8B%E6%BA%90%E8%B3%87%E6%BA%90%E7%AD%96%E5%B1%95%E6%B8%85%E5%96%AE/</url>
@@ -1489,35 +1518,6 @@
     
     
     <entry>
-      <title>Claude Code Plan Mode 完整教學 — 讓 AI 先想清楚再動手的正確姿勢</title>
-      <link href="/2026/05/13/Claude-Code-Plan-Mode-%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8-%E8%AE%93-AI-%E5%85%88%E6%83%B3%E6%B8%85%E6%A5%9A%E5%86%8D%E5%8B%95%E6%89%8B%E7%9A%84%E6%AD%A3%E7%A2%BA%E5%A7%BF%E5%8B%A2/"/>
-      <url>/2026/05/13/Claude-Code-Plan-Mode-%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8-%E8%AE%93-AI-%E5%85%88%E6%83%B3%E6%B8%85%E6%A5%9A%E5%86%8D%E5%8B%95%E6%89%8B%E7%9A%84%E6%AD%A3%E7%A2%BA%E5%A7%BF%E5%8B%A2/</url>
-      
-        <content type="html"><![CDATA[<p>蓋房子的師傅不會拿到一塊地就開始砌牆。他先畫圖。樑柱位置、管線走向、承重計算——圖紙確認了，才叫水泥車進場。</p><p>你讓 AI 改程式碼的時候呢？直接下指令，它立刻開始動檔案。改了三個、砍了兩個、建了一個——你還沒搞清楚它的邏輯，事情已經做完了。運氣好，結果是對的。運氣不好，你在 <code>git diff</code> 裡面撈殘骸。</p><p>Plan Mode 就是那張圖紙。Claude 進入唯讀狀態——可以讀檔案、搜程式碼、分析依賴，但不能改任何東西。它把整個計畫攤開給你看，你確認了，它才動手。</p><hr><h2 id="為什麼「先規劃」反而更快"><a href="#為什麼「先規劃」反而更快" class="headerlink" title="為什麼「先規劃」反而更快"></a>為什麼「先規劃」反而更快</h2><p>這裡有個違反直覺的現象。</p><p>你可能覺得多一個規劃步驟會拖慢速度——原本直接做就好，現在還要先寫計畫、review 計畫、確認計畫，不是多繞了一圈？</p><p>實際操作完全相反。Anthropic 觀察到最有效率的 AI 輔助開發者遵循一個 80&#x2F;20 比例——80% 的時間花在規劃（理解需求、對應依賴、辨識邊界條件），只有 20% 的時間在監督程式碼執行。（<a href="https://docs.anthropic.com/en/docs/claude-code/best-practices">來源：Anthropic Claude Code Best Practices</a>）</p><p>不是因為他們動作慢。是因為計畫做好了，執行階段幾乎不需要回頭修。</p><p>反過來，不做計畫直接衝的人，表面上動作很快——Claude 噼里啪啦改了二十個檔案——但有三個改壞了，兩個漏了邊界條件，一個引入了 circular dependency。修這些問題花的時間，比一開始規劃的時間長三倍。</p><p>蓋房子也是。砌牆很快，拆牆重砌很慢。</p><hr><h2 id="三種方式進入-Plan-Mode"><a href="#三種方式進入-Plan-Mode" class="headerlink" title="三種方式進入 Plan Mode"></a>三種方式進入 Plan Mode</h2><p>看你的使用情境選一個。</p><h3 id="Shift-Tab-按兩次"><a href="#Shift-Tab-按兩次" class="headerlink" title="Shift+Tab 按兩次"></a>Shift+Tab 按兩次</h3><p>在任何 prompt 輸入框裡，按兩次 <code>Shift+Tab</code>，底部狀態列會切換到 plan mode。再按兩次切回正常模式。</p><p>這是最常用的方式。你正在跟 Claude 來回工作，突然遇到一個需要先想清楚的任務——按兩下，進 plan mode，描述需求，看完計畫，再按兩下切回去讓它執行。</p><h3 id="plan-指令"><a href="#plan-指令" class="headerlink" title="&#x2F;plan 指令"></a>&#x2F;plan 指令</h3><p>在 prompt 裡輸入 <code>/plan</code>，Claude 只會在這一輪回覆使用 plan mode。下一輪自動回到正常模式。</p><p>適合「偶爾想看一下計畫」的場景。你不想切換整個 session 的狀態，只是這一題想讓它先規劃。</p><h3 id="啟動時指定"><a href="#啟動時指定" class="headerlink" title="啟動時指定"></a>啟動時指定</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">claude --permission-mode plan</span><br></pre></td></tr></table></figure><p>整個 session 預設都在 plan mode。Claude 全程唯讀，只分析不動手。</p><p>什麼時候用？你拿到一個不熟悉的 codebase，想讓 Claude 幫你摸清楚結構、畫出模組關係、標記技術債——但你完全不想讓它改任何東西。</p><hr><h2 id="計畫出來了，然後呢"><a href="#計畫出來了，然後呢" class="headerlink" title="計畫出來了，然後呢"></a>計畫出來了，然後呢</h2><p>Claude 產出計畫之後，你不是只能說「好」或「不好」。</p><p>按 <code>Ctrl+G</code>，計畫檔案會在你的預設文字編輯器裡打開。你可以：</p><ul><li><strong>在步驟旁邊加行內備註</strong>——「這一步要注意 backward compatibility」</li><li><strong>刪掉你不同意的步驟</strong>——直接整段砍掉</li><li><strong>重新排列順序</strong>——你覺得應該先處理 migration 再改 API，把它拖上去</li><li><strong>補充遺漏的步驟</strong>——加一行「記得更新 README」</li></ul><p>存檔關閉，Claude 會讀取你的所有修改，更新後的計畫就是它接下來的執行藍圖。</p><p>這是 Plan Mode 跟「叫 Claude 先想一下」的根本差別。不是 Claude 想完你看一眼就算了——你可以動手改計畫，而且它會照著改過的版本做。</p><hr><p>停一下。</p><p>你可能會問：「我直接在 prompt 裡跟 Claude 說『先列出步驟再做』，效果不是一樣嗎？」</p><p>不一樣。差在權限。</p><p>用自然語言要求 Claude「先規劃」，它可能一邊規劃一邊就開始改檔案了——它覺得自己「已經想清楚了」。Plan Mode 是強制鎖定：Claude 在唯讀狀態下沒有修改檔案的權限，物理上做不到「邊想邊動手」。</p><p>就像你跟包商說「先畫圖再施工」，他可能畫到一半就開始敲牆了。但如果你把工具鎖在倉庫裡，他拿不到鐵鎚，就只能老老實實畫完。</p><hr><h2 id="什麼時候該用、什麼時候不用"><a href="#什麼時候該用、什麼時候不用" class="headerlink" title="什麼時候該用、什麼時候不用"></a>什麼時候該用、什麼時候不用</h2><p>不是每個任務都需要 Plan Mode。用在對的地方是省時間，用在錯的地方是浪費時間。</p><h3 id="該用的場景"><a href="#該用的場景" class="headerlink" title="該用的場景"></a>該用的場景</h3><p><strong>涉及三個以上檔案的改動。</strong> 一個檔案的改動，看完 diff 就知道對不對。三個以上的檔案，改動之間有依賴關係、有順序問題、有可能互相衝突——先看計畫再動手，可以預先抓到這些問題。</p><p><strong>Schema 變更。</strong> 資料庫 schema 一改，連帶影響 model、repository、service、controller、migration、test。這種牽一髮動全身的改動，不看計畫就執行是在賭運氣。</p><p><strong>安全敏感的程式碼。</strong> Authentication、authorization、encryption——這些地方改錯一個地方可能就是資安事件。Plan Mode 讓你在任何程式碼被修改之前就能審查整個策略。</p><p><strong>大型重構。</strong> 把一個 module 拆成三個、把 REST 換成 GraphQL、把 monolith 拆 microservice。這種量級的改動，沒有計畫等於沒有方向。</p><p><strong>不熟悉的 codebase。</strong> 接手一個新專案，讓 Claude 在 plan mode 下跑一遍——它會讀目錄結構、主要檔案、import 關係，幫你畫出一張地圖。比你自己一個一個檔案點開來看快十倍。</p><h3 id="不需要的場景"><a href="#不需要的場景" class="headerlink" title="不需要的場景"></a>不需要的場景</h3><p><strong>單一檔案的小改動。</strong> 改一個 typo、調一個 CSS 數值、加一行 log。直接做就好，規劃反而多此一舉。</p><p><strong>純讀取的問題。</strong> 「這個 function 回傳什麼型別？」「package.json 裡 express 是哪個版本？」——Claude 本來就只需要讀，不需要特別鎖唯讀。</p><hr><h2 id="跟其他功能怎麼搭"><a href="#跟其他功能怎麼搭" class="headerlink" title="跟其他功能怎麼搭"></a>跟其他功能怎麼搭</h2><p>Plan Mode 單獨用已經有價值，但跟其他功能組合起來效果更強。</p><p><strong>Plan Mode + Extended Thinking。</strong> Thinking 是 Claude 內部的推理深度，Plan Mode 是外部的權限控制。兩個同時開：Claude 用 thinking 做深度分析，用 plan mode 確保分析結果先給你看，不會直接變成程式碼。適合架構決策、技術方案比較這類需要深度思考的規劃任務。</p><p><strong>Plan Mode + Sub-agents。</strong> 先在 plan mode 下產出完整計畫，確認後退出 plan mode，讓 Claude 把計畫拆分成多個子任務，分派給 sub-agents 平行執行。規劃是一個人想清楚，執行是一群人同時做。</p><p><strong>Plan Mode + Git Worktrees。</strong> 用 plan mode 規劃一個實驗性的改動，確認計畫後在 worktree 裡執行——主分支完全不受影響。計畫不滿意？整個 worktree 砍掉重來，零成本。</p><hr><h2 id="一個完整的工作流範例"><a href="#一個完整的工作流範例" class="headerlink" title="一個完整的工作流範例"></a>一個完整的工作流範例</h2><p>用一個實際場景走一遍。</p><p>假設你要在一個 Spring Boot 專案裡加上 OAuth2 登入功能。這涉及 security config、filter chain、user entity、repository、controller、前端 callback handling——至少六七個檔案。</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">1. Shift+Tab x2 → 進入 Plan Mode</span><br><span class="line">2. 輸入：「加上 Google OAuth2 登入，要支援既有的 JWT token 機制」</span><br><span class="line">3. Claude 開始分析——讀 SecurityConfig、現有的 filter chain、User entity 結構</span><br><span class="line">4. 產出計畫：列出要修改的檔案、每個檔案改什麼、改動的順序、需要新增的依賴</span><br><span class="line">5. Ctrl+G → 在編輯器裡打開計畫</span><br><span class="line">6. 你看到它打算用 spring-security-oauth2-client，但你的專案已經有自訂的 token 處理邏輯</span><br><span class="line">7. 在對應步驟旁邊加備註：「保留現有 JwtTokenProvider，OAuth2 登入成功後走同一套 token 簽發流程」</span><br><span class="line">8. 存檔</span><br><span class="line">9. Claude 讀取你的修改，調整計畫</span><br><span class="line">10. 確認沒問題 → Shift+Tab x2 → 退出 Plan Mode</span><br><span class="line">11. Claude 照著計畫開始執行</span><br></pre></td></tr></table></figure><p>整個過程你全程掌握方向。不是 Claude 決定怎麼做，是你決定怎麼做，Claude 負責執行。</p><hr><h2 id="你帶走的那張圖"><a href="#你帶走的那張圖" class="headerlink" title="你帶走的那張圖"></a>你帶走的那張圖</h2><p>回到一開始的蓋房子。</p><p>圖紙的價值不是讓施工變慢。是讓你在第一根樑柱立起來之前，就能看到整棟房子的樣子——哪裡承重不夠、哪裡管線打架、哪裡動線不合理。</p><p>Plan Mode 就是這張圖紙。Claude 在唯讀狀態下畫出完整的施工計畫，你審查、標註、修改，確認了才讓它動工。</p><p>有個更深層的 insight：大部分人用 AI 寫程式的方式是「描述需求 → 等結果 → 看對不對」。這是把 AI 當成黑盒。Plan Mode 把這個流程改成「描述需求 → 看計畫 → 調整計畫 → 執行計畫」——你介入的不是結果，是過程。</p><p>能介入過程的人，控制的是方向。只能看結果的人，控制的是運氣。</p><p>試一次就知道差別。下次遇到一個涉及三個以上檔案的改動，按兩下 <code>Shift+Tab</code>，讓 Claude 先畫圖再動工。</p><p>不過有一個我還在摸索的問題——當計畫很長（超過 50 個步驟），<code>Ctrl+G</code> 打開的編輯器體驗其實不太好，scroll 來 scroll 去很容易迷路。如果你有更好的 review 大型計畫的方式，歡迎跟我說。</p>]]></content>
-      
-      
-      <categories>
-          
-          <category> Claude Code </category>
-          
-      </categories>
-      
-      
-        <tags>
-            
-            <tag> Claude Code </tag>
-            
-            <tag> AI 開發工具 </tag>
-            
-            <tag> Plan Mode </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    
-    
-    <entry>
       <title>Claude Code /goal 命令完整教學 — 設定完成條件讓 AI 自己跑到結束</title>
       <link href="/2026/05/12/Claude-Code-Goal-%E5%91%BD%E4%BB%A4%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8-%E8%A8%AD%E5%AE%9A%E5%AE%8C%E6%88%90%E6%A2%9D%E4%BB%B6%E8%AE%93-AI-%E8%87%AA%E5%B7%B1%E8%B7%91%E5%88%B0%E7%B5%90%E6%9D%9F/"/>
       <url>/2026/05/12/Claude-Code-Goal-%E5%91%BD%E4%BB%A4%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8-%E8%A8%AD%E5%AE%9A%E5%AE%8C%E6%88%90%E6%A2%9D%E4%BB%B6%E8%AE%93-AI-%E8%87%AA%E5%B7%B1%E8%B7%91%E5%88%B0%E7%B5%90%E6%9D%9F/</url>
@@ -1534,9 +1534,9 @@
       
         <tags>
             
-            <tag> AI Agent </tag>
-            
             <tag> Claude Code </tag>
+            
+            <tag> AI Agent </tag>
             
             <tag> 自動化 </tag>
             
@@ -1658,11 +1658,11 @@
             
             <tag> AI與科技新聞 </tag>
             
-            <tag> MCP </tag>
-            
             <tag> OpenAI </tag>
             
             <tag> 資安 </tag>
+            
+            <tag> MCP </tag>
             
             <tag> Anthropic </tag>
             
@@ -1689,9 +1689,9 @@
       
         <tags>
             
-            <tag> AI Agent </tag>
-            
             <tag> Claude Code </tag>
+            
+            <tag> AI Agent </tag>
             
             <tag> GitHub </tag>
             
@@ -2843,9 +2843,9 @@
             
             <tag> AI與科技新聞 </tag>
             
-            <tag> MCP </tag>
-            
             <tag> 資安 </tag>
+            
+            <tag> MCP </tag>
             
             <tag> Cursor </tag>
             
@@ -2876,9 +2876,9 @@
             
             <tag> MCP </tag>
             
-            <tag> AI Agent </tag>
-            
             <tag> Claude Code </tag>
+            
+            <tag> AI Agent </tag>
             
             <tag> 教學 </tag>
             
@@ -2909,9 +2909,9 @@
             
             <tag> Claude Code </tag>
             
-            <tag> CLI </tag>
-            
             <tag> Rust </tag>
+            
+            <tag> CLI </tag>
             
             <tag> RTK </tag>
             
@@ -3105,9 +3105,9 @@
       
         <tags>
             
-            <tag> MCP </tag>
-            
             <tag> 資安 </tag>
+            
+            <tag> MCP </tag>
             
             <tag> AI Agent </tag>
             
@@ -3171,9 +3171,9 @@
             
             <tag> Claude Code </tag>
             
-            <tag> 自動化 </tag>
-            
             <tag> Hooks </tag>
+            
+            <tag> 自動化 </tag>
             
             <tag> 教學 </tag>
             
@@ -3363,11 +3363,11 @@
             
             <tag> AI與科技新聞 </tag>
             
-            <tag> MCP </tag>
-            
             <tag> OpenAI </tag>
             
             <tag> 資安 </tag>
+            
+            <tag> MCP </tag>
             
             <tag> AI 安全 </tag>
             
@@ -3489,9 +3489,9 @@
       
         <tags>
             
-            <tag> AI Agent </tag>
-            
             <tag> Claude Code </tag>
+            
+            <tag> AI Agent </tag>
             
             <tag> Agent Skills </tag>
             
@@ -3522,9 +3522,9 @@
       
         <tags>
             
-            <tag> AI Agent </tag>
-            
             <tag> Claude Code </tag>
+            
+            <tag> AI Agent </tag>
             
             <tag> GitHub Copilot </tag>
             
@@ -3588,11 +3588,11 @@
       
         <tags>
             
+            <tag> Claude Code </tag>
+            
             <tag> AI Agent </tag>
             
             <tag> 開源 </tag>
-            
-            <tag> Claude Code </tag>
             
             <tag> Prompt Engineering </tag>
             
@@ -3654,9 +3654,9 @@
             
             <tag> AI與科技新聞 </tag>
             
-            <tag> MCP </tag>
-            
             <tag> OpenAI </tag>
+            
+            <tag> MCP </tag>
             
             <tag> Claude Code </tag>
             
@@ -3751,11 +3751,11 @@
             
             <tag> TDD </tag>
             
-            <tag> SDD </tag>
-            
             <tag> GH-300 </tag>
             
             <tag> Responsible AI </tag>
+            
+            <tag> SDD </tag>
             
         </tags>
       
@@ -3941,9 +3941,9 @@
       
         <tags>
             
-            <tag> AI Agent </tag>
-            
             <tag> Claude Code </tag>
+            
+            <tag> AI Agent </tag>
             
             <tag> Skills </tag>
             
@@ -4164,13 +4164,13 @@
       
         <tags>
             
-            <tag> AI Agent </tag>
-            
             <tag> Claude Code </tag>
             
-            <tag> DevOps </tag>
+            <tag> AI Agent </tag>
             
             <tag> Rust </tag>
+            
+            <tag> DevOps </tag>
             
             <tag> Discord </tag>
             
@@ -4298,11 +4298,11 @@
             
             <tag> Azure </tag>
             
+            <tag> Performance </tag>
+            
             <tag> DP-300 </tag>
             
             <tag> SQL Server </tag>
-            
-            <tag> Performance </tag>
             
             <tag> Monitoring </tag>
             
@@ -4831,11 +4831,11 @@
       
         <tags>
             
+            <tag> Claude Code </tag>
+            
             <tag> Cursor </tag>
             
             <tag> Copilot </tag>
-            
-            <tag> Claude Code </tag>
             
             <tag> 開發工具 </tag>
             
@@ -5226,9 +5226,9 @@
       
         <tags>
             
-            <tag> MCP </tag>
-            
             <tag> LLM </tag>
+            
+            <tag> MCP </tag>
             
             <tag> Microsoft </tag>
             
@@ -5259,9 +5259,9 @@
             
             <tag> AI與科技新聞 </tag>
             
-            <tag> 理財 </tag>
-            
             <tag> Gemini </tag>
+            
+            <tag> 理財 </tag>
             
             <tag> Claude Code </tag>
             
@@ -5319,9 +5319,9 @@
             
             <tag> MCP </tag>
             
-            <tag> AI Agent </tag>
-            
             <tag> Claude Code </tag>
+            
+            <tag> AI Agent </tag>
             
         </tags>
       
@@ -5524,9 +5524,9 @@
       
         <tags>
             
-            <tag> AI Agent </tag>
-            
             <tag> Claude Code </tag>
+            
+            <tag> AI Agent </tag>
             
             <tag> Code Review </tag>
             
@@ -5611,13 +5611,13 @@
       
         <tags>
             
-            <tag> MCP </tag>
-            
             <tag> LLM </tag>
             
-            <tag> AI Agent </tag>
+            <tag> MCP </tag>
             
             <tag> Claude Code </tag>
+            
+            <tag> AI Agent </tag>
             
         </tags>
       
@@ -5671,9 +5671,9 @@
             
             <tag> AI與科技新聞 </tag>
             
-            <tag> 資安 </tag>
-            
             <tag> LLM </tag>
+            
+            <tag> 資安 </tag>
             
         </tags>
       
@@ -5762,9 +5762,9 @@
             
             <tag> MCP </tag>
             
-            <tag> AI Agent </tag>
-            
             <tag> Claude Code </tag>
+            
+            <tag> AI Agent </tag>
             
             <tag> Rust </tag>
             
@@ -5820,11 +5820,11 @@
             
             <tag> AI與科技新聞 </tag>
             
-            <tag> MCP </tag>
-            
             <tag> OpenAI </tag>
             
             <tag> 資安 </tag>
+            
+            <tag> MCP </tag>
             
         </tags>
       
@@ -5851,9 +5851,9 @@
             
             <tag> Claude </tag>
             
-            <tag> 自動化 </tag>
-            
             <tag> macOS </tag>
+            
+            <tag> 自動化 </tag>
             
         </tags>
       
@@ -5911,9 +5911,9 @@
             
             <tag> 資安 </tag>
             
-            <tag> 理財 </tag>
-            
             <tag> Gemini </tag>
+            
+            <tag> 理財 </tag>
             
         </tags>
       
@@ -6029,9 +6029,9 @@
             
             <tag> Claude Code </tag>
             
-            <tag> 自動化 </tag>
-            
             <tag> macOS </tag>
+            
+            <tag> 自動化 </tag>
             
             <tag> 教學 </tag>
             
@@ -6060,9 +6060,9 @@
             
             <tag> AI與科技新聞 </tag>
             
-            <tag> MCP </tag>
-            
             <tag> 資安 </tag>
+            
+            <tag> MCP </tag>
             
             <tag> Anthropic </tag>
             
@@ -6184,9 +6184,9 @@
             
             <tag> AI與科技新聞 </tag>
             
-            <tag> MCP </tag>
-            
             <tag> Apple </tag>
+            
+            <tag> MCP </tag>
             
             <tag> Anthropic </tag>
             
@@ -6354,9 +6354,9 @@
       
         <tags>
             
-            <tag> DevOps </tag>
-            
             <tag> Rust </tag>
+            
+            <tag> DevOps </tag>
             
             <tag> 系統監控 </tag>
             
@@ -6414,9 +6414,9 @@
             
             <tag> AI與科技新聞 </tag>
             
-            <tag> MCP </tag>
-            
             <tag> 資安 </tag>
+            
+            <tag> MCP </tag>
             
             <tag> Google </tag>
             
@@ -6476,9 +6476,9 @@
             
             <tag> AI與科技新聞 </tag>
             
-            <tag> MCP </tag>
-            
             <tag> 資安 </tag>
+            
+            <tag> MCP </tag>
             
             <tag> Anthropic </tag>
             
@@ -6534,9 +6534,9 @@
       
         <tags>
             
-            <tag> AI Agent </tag>
-            
             <tag> Claude Code </tag>
+            
+            <tag> AI Agent </tag>
             
             <tag> Skills </tag>
             
@@ -6646,9 +6646,9 @@
       
         <tags>
             
-            <tag> AI Agent </tag>
-            
             <tag> Claude Code </tag>
+            
+            <tag> AI Agent </tag>
             
             <tag> 自動化 </tag>
             
@@ -6677,11 +6677,11 @@
             
             <tag> AI與科技新聞 </tag>
             
+            <tag> LLM </tag>
+            
             <tag> Claude </tag>
             
             <tag> OpenAI </tag>
-            
-            <tag> LLM </tag>
             
             <tag> Apple </tag>
             
@@ -6768,11 +6768,11 @@
             
             <tag> Claude </tag>
             
-            <tag> MCP </tag>
-            
             <tag> OpenAI </tag>
             
             <tag> 資安 </tag>
+            
+            <tag> MCP </tag>
             
         </tags>
       
@@ -6907,9 +6907,9 @@
             
             <tag> AI與科技新聞 </tag>
             
-            <tag> 資安 </tag>
-            
             <tag> LLM </tag>
+            
+            <tag> 資安 </tag>
             
         </tags>
       
