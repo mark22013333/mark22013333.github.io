@@ -4,6 +4,105 @@
   
     
     <entry>
+      <title>Claude Code MCP Tool Search 完整教學 — 工具太多塞爆 context 怎麼辦</title>
+      <link href="/2026/06/01/Claude-Code-MCP-Tool-Search-%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8-%E5%B7%A5%E5%85%B7%E5%A4%AA%E5%A4%9A%E5%A1%9E%E7%88%86-context-%E6%80%8E%E9%BA%BC%E8%BE%A6/"/>
+      <url>/2026/06/01/Claude-Code-MCP-Tool-Search-%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8-%E5%B7%A5%E5%85%B7%E5%A4%AA%E5%A4%9A%E5%A1%9E%E7%88%86-context-%E6%80%8E%E9%BA%BC%E8%BE%A6/</url>
+      
+        <content type="html"><![CDATA[<p>你接了五個 MCP server——GitHub、Slack、Sentry、Grafana、Splunk——打開 Claude Code，一個字都還沒輸入，context 已經被吃掉三分之一。</p><p>先別急著問怎麼修。先搞清楚一件更基本的事：那三分之一，到底是被什麼東西佔走的？把這個搞懂，後面的解法你會覺得理所當然，甚至能自己想到。</p><h2 id="那些-token-是被「說明書」吃掉的"><a href="#那些-token-是被「說明書」吃掉的" class="headerlink" title="那些 token 是被「說明書」吃掉的"></a>那些 token 是被「說明書」吃掉的</h2><p>當你給 Claude 接上一個工具，Claude 並不是「知道有這個工具存在」就好。它必須拿到那個工具的完整使用說明書，才能正確呼叫它。這份說明書包含三樣東西：工具的名字、一段描述它能幹嘛的文字、還有最佔空間的——完整的參數結構（JSON schema），每個參數叫什麼、是什麼型別、必填還是選填、有什麼限制，全部都要寫清楚。</p><p>一個工具的說明書，可能就是幾百到上千個 token。而一個典型的多 server 設定，大概 58 個工具，全部說明書加起來大約 55,000 token。有人實測接到一定數量後，光是這些定義就吃掉 66,000 token。對一個 200K context 的模型來說，你還沒開始工作，工作記憶就先被一疊「待命中、但這次根本用不到」的說明書佔走了三分之一。</p><p>這裡有個關鍵要看清楚：傳統的做法是<strong>所有工具的說明書，在對話一開始就全部攤開塞進 context</strong>，不管你這次的任務用不用得到。你今天只是想叫它看一下 GitHub 的 PR，但 Slack、Grafana、Splunk 那幾十份說明書照樣佔著位置陪你坐到散場。</p><h2 id="它害你的，不只是記憶體"><a href="#它害你的，不只是記憶體" class="headerlink" title="它害你的，不只是記憶體"></a>它害你的，不只是記憶體</h2><p>如果問題只是「吃掉一些 token」，那還算單純，頂多就是貴一點、context 短一點。但它其實是雙重損失，而第二重比第一重更隱蔽。</p><p>想像你要修一個水龍頭，結果有人把整間五金行的工具——電鑽、砂輪機、各種尺寸的扳手板手、焊槍——全部倒在你的工作桌上。你需要的只是一支六分扳手。現在桌上攤了五十樣東西，你光是「在這堆裡認出那支扳手」就要多花力氣，而且很容易順手抓錯一支。</p><p>模型選工具就是這樣。當 context 裡同時攤著 50 多個工具的說明書，模型挑對工具的準確率會下降——選項太多本身就是雜訊。所以這 55K token 不只是「佔空間」，它還主動讓 Claude 變笨。你付了雙倍的代價：又貴、又選得更差。</p><h2 id="Tool-Search：先給索引，要用再抽"><a href="#Tool-Search：先給索引，要用再抽" class="headerlink" title="Tool Search：先給索引，要用再抽"></a>Tool Search：先給索引，要用再抽</h2><p>現在來看解法。一旦你想通了問題是「不該把整間五金行都倒上桌」，解法幾乎是自己浮出來的——你需要的不是把工具搬上桌，是一張<strong>館藏索引</strong>。</p><p>這就是 Tool Search 在做的事。它的機制可以拆成四步：</p><p>第一步，你在提供工具定義時，把那些不必馬上載入的工具標上 <code>defer_loading: true</code>（在 Claude Code 裡，這對 MCP 工具是預設行為）。被標記的工具，它們的完整說明書不會一開始就進 context。</p><p>第二步，Claude 對話開始時，眼前只看到兩樣東西：一個「搜尋工具的工具」（tool search tool 本身），加上少數沒被 defer 的常用工具。它知道「外面還有很多工具」，但手上只有一張能去查的索引卡，沒有那五十份說明書。</p><p>第三步，當任務真的需要某個工具時，Claude 用那個搜尋工具去查——比方它要操作 GitHub，就搜尋跟 GitHub 相關的工具。API 回傳 3 到 5 個最相關的 <code>tool_reference</code>，這些 reference 會被自動展開成完整的工具定義。</p><p>第四步，Claude 從這幾個剛剛抓進來的工具裡挑一個、填好參數、呼叫。任務需要哪本書，才去架上把哪本抽下來，用完它就在那，不需要的那四十幾本從頭到尾沒上過你的桌子。</p><p>效果有多大？傳統做法 50+ 工具吃掉約 77K token，換成 Tool Search 之後降到約 8.7K，省下將近 85%，保住了 95% 的 context。而那個搜尋工具本身，只佔大約 500 token——用 500 token 的索引，換掉 77K 的說明書堆，這筆帳怎麼算都划算。</p><blockquote><p>機制細節參考 <a href="https://platform.claude.com/docs/en/agents-and-tools/tool-use/tool-search-tool">Claude API 官方文件 — Tool search tool</a>。</p></blockquote><h2 id="在-Claude-Code-裡，它已經幫你開好了"><a href="#在-Claude-Code-裡，它已經幫你開好了" class="headerlink" title="在 Claude Code 裡，它已經幫你開好了"></a>在 Claude Code 裡，它已經幫你開好了</h2><p>講了半天原理，實際操作其實很無感——這正是它做得好的地方。</p><p>在 Claude Code 2.1.x，Tool Search 已經是預設開啟的：它會自動 defer 掉所有 MCP 工具的定義，等到某個任務需要時才去發現、載入。控制它的環境變數是 <code>ENABLE_TOOL_SEARCH</code>。也就是說，如果你用的是近期版本、又接了一堆 MCP server，你很可能已經在享受這個機制的好處，只是沒察覺。</p><p>我自己這個工作階段就是活生生的例子：啟動時我看到的是一份「延遲工具」清單——只有工具名字，沒有任何參數說明。要等我真的需要查 Notion、查某個 API 的時候，才去把那份完整的 schema 抓進來。整間五金行的工具確實都在，但它們乖乖待在架上，沒有一開始就倒到我桌上。</p><h2 id="它還沒解乾淨的部分"><a href="#它還沒解乾淨的部分" class="headerlink" title="它還沒解乾淨的部分"></a>它還沒解乾淨的部分</h2><p>工具介紹最該老實的地方，就是講清楚它哪裡還不行。Tool Search 不是萬靈丹，社群已經回報了幾個邊角：</p><p>有人發現 HTTP &#x2F; Streamable HTTP 類型的 MCP 工具沒有被正確 defer，結果每個 session 還是會 upfront 載入 120K token（issue #40314）——也就是說，這個機制目前對 stdio 類型的 server 最有效，HTTP transport 還有漏網的情況。另外也有人回報，當工具沒有超過 context 的某個比例門檻時，Tool Search 不會自動啟用（issue #18298），這在工具不多不少、剛好卡在門檻附近時會有點尷尬。</p><p>所以實務上，如果你接的 MCP 很多、又發現 context 莫名其妙被吃掉，值得去確認一下 <code>ENABLE_TOOL_SEARCH</code> 的狀態、以及你的 server 是哪種 transport，而不是假設「反正新版會自動處理」。</p><h2 id="同一招，會在很多地方再遇到"><a href="#同一招，會在很多地方再遇到" class="headerlink" title="同一招，會在很多地方再遇到"></a>同一招，會在很多地方再遇到</h2><p>退一步看，Tool Search 真正的價值不在「省了 85% token」這個數字，而在它示範了一個你會一再用到的模式：<strong>當資源有限時，先給索引、不給全文，需要時才載入。</strong></p><p>這個模式有個名字叫 progressive disclosure（漸進揭露）。它的對立面，是「把所有可能用到的東西一次全攤開」——而那幾乎永遠是錯的，因為 context 是有物理上限的稀缺資源，你攤開的每樣東西都在跟「你真正在想的事」搶空間。</p><p>看懂這一點，你會發現它到處都是。你的 <code>CLAUDE.md</code> 不該寫成 3000 行的百科全書，而該是一張地圖，指向需要時才去讀的細節；一個設計良好的 skill，是先給一句「我能幹嘛」，要用才展開完整指引；連 AI 的長期記憶，本質上也是同一個問題——不可能把所有記憶都塞進當下這次對話，只能先給索引、按需召回。Tool Search 只是這個模式在「工具」這個維度上的一次具體實作。</p><p>下次你看到任何「東西多到塞不下」的場景，先別急著買更大的桌子。先問一句：我是不是該給它一張索引，而不是把整座圖書館都搬上來？這個提問，比這篇講的任何一個指令都值錢。</p>]]></content>
+      
+      
+      <categories>
+          
+          <category> 教學 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> AI Agent </tag>
+            
+            <tag> MCP </tag>
+            
+            <tag> Claude Code </tag>
+            
+            <tag> 自動化 </tag>
+            
+            <tag> CLI </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>AI 與科技新聞摘要 20260601</title>
+      <link href="/2026/06/01/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260601/"/>
+      <url>/2026/06/01/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260601/</url>
+      
+        <content type="html"><![CDATA[<p>這陣子的新聞有個藏得很好的共通點：所有「往上」的數字背後，都有一筆沒被算進去的「往下」。能力往上、估值往上、自動化程度往上——而對應的風險沒有消失，只是被塞進了「預設信任」「私募估值」這些看起來很穩的容器裡。下面五則，可以順著這條線看。</p><h2 id="一、TrustFall：一個-Enter-鍵，打穿四個-AI-coding-工具"><a href="#一、TrustFall：一個-Enter-鍵，打穿四個-AI-coding-工具" class="headerlink" title="一、TrustFall：一個 Enter 鍵，打穿四個 AI coding 工具"></a>一、TrustFall：一個 Enter 鍵，打穿四個 AI coding 工具</h2><p>資安研究機構 Adversa.AI 公開了一個叫 TrustFall 的漏洞，一次命中 Claude Code、Cursor CLI、Gemini CLI、GitHub Copilot CLI 四個工具。攻擊路徑簡單到令人不安：把惡意 repo 放上 GitHub，裡面塞兩個 JSON 檔（<code>.mcp.json</code> 和 <code>.claude/settings.json</code>），受害者 clone 下來、在「Is this a project you trust?」那個信任視窗按下預設的「Yes」，攻擊者控制的 MCP server 就帶著開發者的完整權限被自動執行——一鍵變後門。</p><p>值得停下來看的是 Anthropic 的回應：他們審查後把這份報告判為「在威脅模型之外」，理由是按下「我信任這個資料夾」就等於同意了整份專案設定，信任視窗之後的自動執行是「邊界照設計運作」。</p><p>這個回應本身沒錯，但它暴露了一個更深的問題。把風險的閘門設計成「一個你每天按幾十次、預設選項就是 Yes」的對話框，等於把一個高破壞性的決策偽裝成例行公事。早期版本的這個視窗本來還提供第三個選項——「信任資料夾，但停用 MCP」——後來被拿掉了。摩擦被磨平的地方，往往就是下行風險悄悄堆積的地方。便利和安全在這裡是直接對沖的，而預設值決定了大多數人站在哪一邊。</p><blockquote><p>來源：<a href="https://adversa.ai/blog/trustfall-coding-agent-security-flaw-rce-claude-cursor-gemini-cli-copilot/">Adversa AI — TrustFall</a>、<a href="https://www.theregister.com/security/2026/05/07/claude-code-trust-prompt-can-trigger-one-click-rce/5235319">The Register</a>、<a href="https://www.helpnetsecurity.com/2026/05/07/trustfall-ai-coding-cli-vulnerability-research/">Help Net Security</a></p></blockquote><h2 id="二、SymJack：同一週，第二招，這次是五到六個"><a href="#二、SymJack：同一週，第二招，這次是五到六個" class="headerlink" title="二、SymJack：同一週，第二招，這次是五到六個"></a>二、SymJack：同一週，第二招，這次是五到六個</h2><p>如果 TrustFall 是孤例，你可以說它是某個工具的疏忽。但同一段時間，另一個叫 SymJack 的漏洞用 symlink 劫持的手法，一口氣打穿了五到六個 AI coding agent（Claude Code、Cursor、Antigravity、Copilot、Grok 都在名單上）。Adversa 給它的標題很傳神：「那個核准視窗在騙你。」</p><p>兩起事件不該被當成兩個獨立的 bug 來修。它們指向的是同一個結構：這一整代 agentic coding 工具，骨子裡都採用了「預設信任、自動執行」的設計哲學。當不同團隊、不同公司、各自獨立做出來的產品，被同一類手法接連攻破，那就不是哪一家寫錯了一行 code——是這個範式本身有共同的脆弱點。複雜系統的崩潰很少來自單一零件，而是來自所有零件共享的那個隱性假設。這裡的隱性假設是：「使用者 clone 的 repo 是善意的。」</p><blockquote><p>來源：<a href="https://adversa.ai/blog/the-approval-prompt-is-lying-to-you-symlink-rce-in-five-ai-coding-agents-claude-code-cursor-antigravity-copilot-grok-build/">Adversa AI — Symlink RCE</a>、<a href="https://www.securityweek.com/ai-coding-agents-could-fuel-next-supply-chain-crisis/">SecurityWeek</a></p></blockquote><h2 id="三、OpenAI-Daybreak：用來防守的模型，跟用來進攻的，是同一個"><a href="#三、OpenAI-Daybreak：用來防守的模型，跟用來進攻的，是同一個" class="headerlink" title="三、OpenAI Daybreak：用來防守的模型，跟用來進攻的，是同一個"></a>三、OpenAI Daybreak：用來防守的模型，跟用來進攻的，是同一個</h2><p>OpenAI 推出了資安平台 Daybreak，核心是三個模型：GPT-5.5（一般用途，標準防護）、GPT-5.5 with Trusted Access for Cyber（給授權環境裡的防禦工作）、以及 GPT-5.5-Cyber（一個「寬鬆版」模型，專門給紅隊、滲透測試、受控驗證用）。搭配 Codex Security，它能對一個 repo 建出可編輯的威脅模型、在隔離環境裡找漏洞並驗證、然後提出修補。Akamai、Cisco、Cloudflare、CrowdStrike、Palo Alto 等一票公司已經在接。</p><p>這件事的兩面性很值得玩味。同一套能力，掛上「Trusted Access」就是防禦、拿掉約束就是攻擊——差別只在誰拿到鑰匙、在什麼環境裡跑。把「找漏洞並寫出能用的 exploit」這種能力產品化，本質上是雙刃的：它讓防守方更快補洞，也讓任何拿到同等模型的人更快找到洞。真正決定這把刀往哪砍的，不是模型本身，是存取控制這層治理。而治理的歷史告訴我們，鑰匙最後總會流出去。</p><blockquote><p>來源：<a href="https://thehackernews.com/2026/05/openai-launches-daybreak-for-ai-powered.html">The Hacker News</a>、<a href="https://openai.com/daybreak/">OpenAI Daybreak</a></p></blockquote><h2 id="四、OpenAI-準備機密遞件-IPO，估值-730B"><a href="#四、OpenAI-準備機密遞件-IPO，估值-730B" class="headerlink" title="四、OpenAI 準備機密遞件 IPO，估值 $730B"></a>四、OpenAI 準備機密遞件 IPO，估值 $730B</h2><p>OpenAI 正準備在未來幾週內機密遞交 IPO 文件，承銷找了高盛和摩根士丹利，最快九月可能上市，私募市場估值 $730B。</p><p>把一家還在燒大錢搶算力、商業模式仍在劇烈變動的公司推向公開市場，這個動作本身就是一種訊號。IPO 不只是籌資，它是把估值的定價權從少數幾家創投手裡，交給每天都會重新投票的公開市場。對一家敘事高度依賴「未來」的公司來說，這是把自己暴露在更高頻、更不留情的檢驗下。能不能撐住，要看它賣的到底是當下的現金流，還是一個還沒兌現的故事。</p><blockquote><p>來源：<a href="https://llm-stats.com/ai-news">LLM-Stats AI News</a></p></blockquote><h2 id="五、Anthropic：Q1-營收年增-80-倍，ARR-衝破-44B"><a href="#五、Anthropic：Q1-營收年增-80-倍，ARR-衝破-44B" class="headerlink" title="五、Anthropic：Q1 營收年增 80 倍，ARR 衝破 $44B"></a>五、Anthropic：Q1 營收年增 80 倍，ARR 衝破 $44B</h2><p>對照組來了。Anthropic 揭露 Q1 2026 營收年增 80 倍，ARR 已突破 $44B，同時那輪至少 $30B、估值 $900B 以上的募資，預計五月底前完成，由 Sequoia、Dragoneer、Greenoaks、Altimeter 共同領投。</p><p>兩家公司，兩條不同的資本路線。一家走向公開市場接受日線級別的拷問，另一家在私募端把估值繼續往上堆。$900B 是個會讓人本能想反問的數字——它對應的是「已經發生的營收」，還是「市場相信會發生的未來」？80 倍的成長率很驚人，但成長率這種東西，分母小的時候總是好看，能不能在分母變大之後維持，才是真正的考題。對這類數字，比起跟著興奮，更實用的姿態是先問一句：這個漂亮的平均值，藏起了哪個還沒攤開的極端情況？</p><blockquote><p>來源：<a href="https://www.axios.com/2026/05/21/google-ai-anthropic-openai-war">Axios</a>、<a href="https://llm-stats.com/ai-news">LLM-Stats AI News</a></p></blockquote><hr><p>把這五則並排，會發現它們其實在回答同一個問題的不同版本：<strong>當一個東西快速往上，往下的那一面跑哪去了？</strong> TrustFall 和 SymJack 告訴你，它被藏進了一個你每天按 Yes 的對話框；Daybreak 告訴你，它被藏進了「誰拿到鑰匙」的治理縫隙；兩條資本路線告訴你，它被折算進了一個你看不見支撐的估值數字。</p><p>這些風險都沒有消失。它們只是換了一個讓你比較不會去看的地方待著。而越是大家都覺得「這很安全、這很穩、這預設就好」的地方，越值得你親自去掀開來看一眼。</p>]]></content>
+      
+      
+      <categories>
+          
+          <category> AI與科技新聞 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> AI與科技新聞 </tag>
+            
+            <tag> 資安 </tag>
+            
+            <tag> AI Agent </tag>
+            
+            <tag> OpenAI </tag>
+            
+            <tag> Anthropic </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>Cua — 讓 AI 用任何模型操控電腦的開源基礎設施</title>
+      <link href="/2026/06/01/Cua-%E8%AE%93-AI-%E7%94%A8%E4%BB%BB%E4%BD%95%E6%A8%A1%E5%9E%8B%E6%93%8D%E6%8E%A7%E9%9B%BB%E8%85%A6%E7%9A%84%E9%96%8B%E6%BA%90%E5%9F%BA%E7%A4%8E%E8%A8%AD%E6%96%BD/"/>
+      <url>/2026/06/01/Cua-%E8%AE%93-AI-%E7%94%A8%E4%BB%BB%E4%BD%95%E6%A8%A1%E5%9E%8B%E6%93%8D%E6%8E%A7%E9%9B%BB%E8%85%A6%E7%9A%84%E9%96%8B%E6%BA%90%E5%9F%BA%E7%A4%8E%E8%A8%AD%E6%96%BD/</url>
+      
+        <content type="html"><![CDATA[<p>讓 AI 用電腦，最難的部分其實不是 AI。</p><p>這句話聽起來怪，因為過去兩年所有人的注意力都在模型上——它看不看得懂截圖、推不推得出下一步該點哪。但這件事其實早就解掉了。現在隨便一個支援 computer-use 的 LLM，給它一張螢幕截圖，它就能告訴你「滑鼠移到座標 (840, 312) 按一下，然後輸入這串字」。看畫面、理解、輸出操作指令，這條鏈路已經是商品。真正讓你做不出一個能用的桌面 Agent 的，是螢幕背後那台電腦。</p><p>虛擬機誰來開？開好之後螢幕截圖怎麼抓出來？模型吐回來的「點 (840, 312)」這個滑鼠事件，要怎麼真的注入到那台機器裡？Linux、macOS、Windows、Android 各自一套 API，差異怎麼抹平？最要命的是——Agent 在那邊亂點的時候，怎麼確定它不會把你正在用的這台筆電給搞爛？</p><p>這些全部都不是模型問題。是基礎設施問題。而 <a href="https://github.com/trycua/cua">Cua</a>（Computer-Use Agent，15.5K stars，MIT 授權）做的事，就是把這一整層包起來。</p><h2 id="模型是可替換零件，環境才是地基"><a href="#模型是可替換零件，環境才是地基" class="headerlink" title="模型是可替換零件，環境才是地基"></a>模型是可替換零件，環境才是地基</h2><p>先把這件事講透，因為它是理解 Cua 為什麼長這樣的關鍵。</p><p>你可以把整個 computer-use Agent 拆成兩半。上半是「腦」——看畫面、做決策，這是模型的工作。下半是「身體」——一台真的能被操控、被觀察、被隔離的電腦，這是環境的工作。大家盯著上半看了兩年，但能不能交付一個可用的產品，卡點幾乎都在下半。</p><p>Cua 對這件事的態度很乾脆：腦袋是可以隨時換的零件。它透過 liteLLM 統一呼叫，目前支援 20+ 種模型，你的 Agent 程式碼不會因為今天用 Claude、明天換 GPT-4o 而要重寫。它甚至有個叫 Composite Agent 的設計，讓你用 <code>model_a+model_b</code> 的語法把兩個模型串起來——一個負責「看」（grounding，認出畫面上哪個是按鈕），一個負責「想」（reasoning，決定該按哪個）：</p><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># GTA1 負責 UI 元素偵測，GPT-4o 負責推理決策</span></span><br><span class="line">agent = ComputerAgent(</span><br><span class="line">    model=<span class="string">&quot;huggingface-local/HelloKKMe/GTA1-7B+openai/gpt-4o&quot;</span>,</span><br><span class="line">    tools=[computer]</span><br><span class="line">)</span><br></pre></td></tr></table></figure><p>你看，連「腦」本身都能拆成兩塊隨意組裝。這正好說明了它的世界觀：模型那層是流動的、可插拔的，所以工程的重心不在那。重心在底下那台機器。</p><p>打個比方。把 AI Agent 想成一個剛拿到駕照的學徒，模型是他的判斷力——能不能看懂路況、決定要不要踩煞車。但你不會讓一個學徒直接開你的車上高速公路。你會給他一個駕訓場：場地是封閉的，撞了也只是撞護欄，練完場地一推平就能重來。Cua 就是那個駕訓場。它真正的價值，不在於把學徒教得多聰明，而在於它先把那個「撞了不會出人命」的封閉場地給你蓋好了。</p><h2 id="把地基拆開來看"><a href="#把地基拆開來看" class="headerlink" title="把地基拆開來看"></a>把地基拆開來看</h2><p>Cua 是個 monorepo，裡面塞了十幾個子專案，但核心邏輯只有三層，由上往下一層比一層更貼近硬體：</p><ul><li><strong>cua-agent</strong>——Agent Loop 引擎。負責跑「截圖 → 送 LLM → 拿回操作指令 → 執行 → 再截圖」這個循環。它接的是上面那 20+ 種模型。</li><li><strong>cua-computer</strong>——統一操作介面。把滑鼠、鍵盤、螢幕、剪貼簿這些操作抽象成一組固定的 API，這樣不管底下是什麼系統，上層程式碼都長一樣。</li><li><strong>Sandbox</strong>——虛擬環境管理。根據你指定的 Image 類型，自動去選對應的執行底層：Docker 跑 Linux 容器、QEMU 跑各種 VM、Lume 跑 macOS VM（Apple Silicon 限定）、或直接連 cua.ai 雲端。</li></ul><p>中間那層 <code>cua-computer</code> 是整個設計最聰明的地方。它把「人類能對一台電腦做的事」整理成 12 個介面：mouse、keyboard、screen、shell、clipboard、window、terminal、files、mobile（Android 觸控）、apps、tunnel。你寫 Agent 的時候，呼叫的永遠是這組抽象，至於底下這台機器到底是 Ubuntu 容器還是 macOS VM，你不用管——差異被這層吃掉了。最小的範例長這樣：</p><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> cua <span class="keyword">import</span> Sandbox, Image</span><br><span class="line"></span><br><span class="line"><span class="comment"># 開一個 Linux 沙箱，用完自動銷毀</span></span><br><span class="line"><span class="keyword">async</span> <span class="keyword">with</span> Sandbox.ephemeral(Image.linux()) <span class="keyword">as</span> sb:</span><br><span class="line">    result = <span class="keyword">await</span> sb.shell.run(<span class="string">&quot;echo hello&quot;</span>)   <span class="comment"># 跑 shell 指令</span></span><br><span class="line">    screenshot = <span class="keyword">await</span> sb.screenshot()          <span class="comment"># 截圖</span></span><br><span class="line">    <span class="keyword">await</span> sb.mouse.click(<span class="number">100</span>, <span class="number">200</span>)              <span class="comment"># 點座標</span></span><br></pre></td></tr></table></figure><p>注意 <code>Sandbox.ephemeral</code> 這個字。ephemeral 是「短暫的、用完即丟」的意思——這個沙箱開出來，<code>async with</code> 區塊一結束就自動銷毀。這不是裝飾。它正是前面那個「撞了不會出人命」承諾的具體實作：Agent 在這裡面再怎麼亂搞，跑壞了、裝了奇怪的東西、把系統搞到開不了機，都無所謂，反正它本來就要被銷毀，下一次重開一個乾淨的。要把整段控制權交給一個會自己亂點的 AI，這層隔離不是加分項，是前提。</p><h2 id="一個你不會在規格表上注意到的細節"><a href="#一個你不會在規格表上注意到的細節" class="headerlink" title="一個你不會在規格表上注意到的細節"></a>一個你不會在規格表上注意到的細節</h2><p>Cua 裡面有個元件叫 Cua Driver，我覺得它解的問題最能說明這群人到底在想什麼。</p><p>一般的 computer-use 方案有個很煩的副作用：Agent 在操作的時候，它要搶走你的滑鼠跟鍵盤焦點。也就是說 AI 在那邊點來點去的那幾分鐘，你這台電腦等於被它徵用了，你只能在旁邊乾瞪眼，手不能碰。對一個想讓 AI 在背景幫你跑雜事的人來說，這很荒謬——我請了個助理，結果他工作的時候我自己得停工。</p><p>Cua Driver 用 macOS 的私有 API（SkyLight）把這件事繞過去了：截圖不需要視窗跑到前景、滑鼠鍵盤事件直接注入到指定的那個視窗、而且 Agent 有它自己獨立的游標（用覆蓋層顯示）。結果就是 AI 在操控某個視窗的同時，你還能用你自己的滑鼠在別的視窗繼續做事，兩條游標各做各的。它甚至能透過 MCP 協定接進 Claude Code：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 把 Cua Driver 加到 Claude Code 當 MCP server</span></span><br><span class="line">claude mcp add --transport stdio cua-driver -- cua-driver mcp</span><br></pre></td></tr></table></figure><p>接上之後，Claude Code 就能直接操控你的 Figma、瀏覽器或其他原生 app——從寫程式、做 UI、到開瀏覽器測試，一條龍。當然這招有代價：用了私有 API，所以只支援 macOS，而且要開 Accessibility 和 Screen Recording 權限，沒辦法跨平台。</p><p>我之所以特別講這個，是因為「搶不搶焦點」這種事不會出現在任何功能比較表上。它只有真的天天用、被那個「AI 工作時我不能用電腦」煩過的人，才會把它當回事去解。這通常是一個工具值不值得看的訊號。</p><h2 id="它不適合什麼，得先說清楚"><a href="#它不適合什麼，得先說清楚" class="headerlink" title="它不適合什麼，得先說清楚"></a>它不適合什麼，得先說清楚</h2><p>工具介紹文最容易騙人的地方，就是只講它行的部分。Cua 有幾條硬限制，你決定要不要投時間之前該知道：</p><p>macOS 虛擬化<strong>只限 Apple Silicon</strong>——這是 Apple Virtualization.Framework 的限制，不是 Cua 偷懶，Intel Mac 跟 Linux&#x2F;Windows 上你別想跑 macOS VM。<code>cua-som</code>（負責 UI 元素偵測那塊）依賴 ultralytics，是 <strong>AGPL-3.0 授權</strong>，商業使用要特別留意，其他模組才是 MIT。Anthropic 那邊建議截圖<strong>解析度上限 1024×768</strong>，超過會被內部縮放、可能害座標對不準。Android runtime 跟 Windows 的 Hyper-V sandbox 都還在早期開發。本地跑 UI-TARS、Qwen3-VL 這類視覺模型需要 GPU（CUDA 或 Apple Silicon MPS），不然就得走雲端、自己準備 API key。</p><p>換句話說，如果你是要在 CI 裡用 Linux 容器跑 GUI 自動化測試、或在 Apple Silicon 上讓 Agent 操作原生 app，Cua 現在就很好用；但如果你期待它在 Intel Mac 上變出一台 macOS VM，那是物理上做不到的事。</p><h2 id="真正改變的不是這個工具"><a href="#真正改變的不是這個工具" class="headerlink" title="真正改變的不是這個工具"></a>真正改變的不是這個工具</h2><p>退一步看，Cua 的故事其實在講一件更大的事。</p><p>當一個能力的「模型部分」變成商品——任何人都能用一行設定切換 20 種模型、computer-use 不再是某家獨佔的黑魔法——價值就會整個往下移，移到那層沒人想碰、但少了就什麼都跑不起來的工程：怎麼讓它在隔離環境裡安全地跑、跑完能乾淨銷毀、出錯不會波及你真正在用的機器。Cua 之所以拿得到 15.5K 顆星，不是因為它的 Agent 比別人聰明，正好相反——它幾乎不碰「聰明」這件事，它把聰明留給可替換的模型，自己專心去鋪那層地基。</p><p>這個模式值得記住，因為它不只發生在 computer-use。每一次有個 AI 能力從「魔法」變成「商品」，下一個值錢的位置，就是那層把魔法變得能安全、能重複、能交付的基礎設施。看懂哪一層正在變成商品，你大概就猜得到下一個機會在哪。</p><hr><blockquote><p>本文整理自個人知識庫筆記，原始專案請見 <a href="https://github.com/trycua/cua">trycua&#x2F;cua（GitHub）</a>。Cua 為 MIT 授權（cua-som 模組為 AGPL-3.0），技術細節以官方文件為準。</p></blockquote>]]></content>
+      
+      
+      <categories>
+          
+          <category> AI 開發工具 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> AI Agent </tag>
+            
+            <tag> 開源 </tag>
+            
+            <tag> MCP </tag>
+            
+            <tag> macOS </tag>
+            
+            <tag> Python </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>工程師為什麼特別難睡 — 拆解那個被你怪錯的元兇</title>
       <link href="/2026/05/31/%E5%B7%A5%E7%A8%8B%E5%B8%AB%E7%82%BA%E4%BB%80%E9%BA%BC%E7%89%B9%E5%88%A5%E9%9B%A3%E7%9D%A1-%E6%8B%86%E8%A7%A3%E9%82%A3%E5%80%8B%E8%A2%AB%E4%BD%A0%E6%80%AA%E9%8C%AF%E7%9A%84%E5%85%83%E5%85%87/"/>
       <url>/2026/05/31/%E5%B7%A5%E7%A8%8B%E5%B8%AB%E7%82%BA%E4%BB%80%E9%BA%BC%E7%89%B9%E5%88%A5%E9%9B%A3%E7%9D%A1-%E6%8B%86%E8%A7%A3%E9%82%A3%E5%80%8B%E8%A2%AB%E4%BD%A0%E6%80%AA%E9%8C%AF%E7%9A%84%E5%85%83%E5%85%87/</url>
