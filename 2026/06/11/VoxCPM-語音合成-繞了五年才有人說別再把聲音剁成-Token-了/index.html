@@ -1,0 +1,372 @@
+<!DOCTYPE html><html lang="zh-TW" data-theme="dark"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>VoxCPM 語音合成 — 繞了五年才有人說，別再把聲音剁成 Token 了 | Cheng's Tech &amp; Life</title><meta name="author" content="Cheng®"><meta name="copyright" content="Cheng®"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#0d0d0d"><meta name="description" content="從 VALL-E 到 Bark，這幾年的 TTS 模型都在做同一件事：把聲音剁成離散 token。VoxCPM 反過來走連續表徵，先別管它能合成多自然，先看它為什麼敢把那一步整個拔掉。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="VoxCPM 語音合成 — 繞了五年才有人說，別再把聲音剁成 Token 了">
+<meta property="og:url" content="https://mark22013333.github.io/2026/06/11/VoxCPM-%E8%AA%9E%E9%9F%B3%E5%90%88%E6%88%90-%E7%B9%9E%E4%BA%86%E4%BA%94%E5%B9%B4%E6%89%8D%E6%9C%89%E4%BA%BA%E8%AA%AA%E5%88%A5%E5%86%8D%E6%8A%8A%E8%81%B2%E9%9F%B3%E5%89%81%E6%88%90-Token-%E4%BA%86/index.html">
+<meta property="og:site_name" content="Cheng&#39;s Tech &amp; Life">
+<meta property="og:description" content="從 VALL-E 到 Bark，這幾年的 TTS 模型都在做同一件事：把聲音剁成離散 token。VoxCPM 反過來走連續表徵，先別管它能合成多自然，先看它為什麼敢把那一步整個拔掉。">
+<meta property="og:locale" content="zh_TW">
+<meta property="og:image" content="https://mark22013333.github.io/img/20260611-01.webp">
+<meta property="article:published_time" content="2026-06-11T15:15:00.000Z">
+<meta property="article:modified_time" content="2026-06-11T14:26:47.778Z">
+<meta property="article:author" content="Cheng®">
+<meta property="article:tag" content="LLM">
+<meta property="article:tag" content="開源">
+<meta property="article:tag" content="AI 模型">
+<meta property="article:tag" content="Python">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://mark22013333.github.io/img/20260611-01.webp"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "VoxCPM 語音合成 — 繞了五年才有人說，別再把聲音剁成 Token 了",
+  "url": "https://mark22013333.github.io/2026/06/11/VoxCPM-%E8%AA%9E%E9%9F%B3%E5%90%88%E6%88%90-%E7%B9%9E%E4%BA%86%E4%BA%94%E5%B9%B4%E6%89%8D%E6%9C%89%E4%BA%BA%E8%AA%AA%E5%88%A5%E5%86%8D%E6%8A%8A%E8%81%B2%E9%9F%B3%E5%89%81%E6%88%90-Token-%E4%BA%86/",
+  "image": "https://mark22013333.github.io/img/20260611-01.webp",
+  "datePublished": "2026-06-11T15:15:00.000Z",
+  "dateModified": "2026-06-11T14:26:47.778Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "Cheng®",
+      "url": "https://mark22013333.github.io"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://mark22013333.github.io/2026/06/11/VoxCPM-%E8%AA%9E%E9%9F%B3%E5%90%88%E6%88%90-%E7%B9%9E%E4%BA%86%E4%BA%94%E5%B9%B4%E6%89%8D%E6%9C%89%E4%BA%BA%E8%AA%AA%E5%88%A5%E5%86%8D%E6%8A%8A%E8%81%B2%E9%9F%B3%E5%89%81%E6%88%90-Token-%E4%BA%86/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//www.google-analytics.com" crossorigin=""/><link rel="preconnect" href="//fonts.googleapis.com" crossorigin=""/><link rel="preconnect" href="//busuanzi.ibruce.info"/><meta name="google-site-verification" content="6ywUr8k2n_CT1PFYJzlSvI3CZ-JmJ55RYbA39VrFBDs"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!true && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          const hour = new Date().getHours()
+          const isNight = hour <= 9 || hour >= 18
+          if (theme === undefined) isNight ? activateDarkMode() : activateLightMode()
+          else theme === 'light' ? activateLightMode() : activateDarkMode()
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script async="async" src="https://www.googletagmanager.com/gtag/js?id=G-JBV14NRDH3"></script><script>window.dataLayer = window.dataLayer || []
+function gtag(){dataLayer.push(arguments)}
+gtag('js', new Date())
+gtag('config', 'G-JBV14NRDH3')
+btf.addGlobalFn('pjaxComplete', () => {
+  gtag('config', 'G-JBV14NRDH3', {'page_path': window.location.pathname})
+}, 'google_analytics')
+</script><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Titillium+Web&amp;display=swap" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"pagination":{"enable":false,"hitsPerPage":8},"languages":{"hits_empty":"找不到符合您查詢的內容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '複製成功',
+    error: '複製失敗',
+    noSupport: '瀏覽器不支援'
+  },
+  relativeDate: {
+    homepage: false,
+    post: true
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '剛剛',
+    min: '分鐘前',
+    hour: '小時前',
+    day: '天前',
+    month: '個月前'
+  },
+  copyright: {"limitCount":1,"languages":{"author":"作者: Cheng®","link":"連結: ","source":"來源: Cheng's Tech & Life","info":"著作權歸作者所有。如需商業轉載，請聯絡作者獲得授權，非商業轉載請註明出處😁。"}},
+  lightbox: 'fancybox',
+  Snackbar: {"chs_to_cht":"已切換為繁體中文","cht_to_chs":"已切換為簡體中文","day_to_night":"已切換為深色模式","night_to_day":"已切換為淺色模式","bgLight":"#49b1f5","bgDark":"#1f1f1f","position":"top-center"},
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid/dist/infinitegrid.min.js',
+    buttonText: '載入更多'
+  },
+  isPhotoFigcaption: true,
+  islazyloadPlugin: false,
+  isAnchor: true,
+  percent: {
+    toc: true,
+    rightside: true,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'VoxCPM 語音合成 — 繞了五年才有人說，別再把聲音剁成 Token 了',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><link rel="stylesheet" href="/css/kkbox-player.css"><link rel="stylesheet" href="/css/tag-cloud-fancy.css"><link rel="stylesheet" href="/css/font-resize.css"><link rel="stylesheet" href="/css/dark-palette.css"><link rel="stylesheet" href="/css/loading-override.css"><link rel="stylesheet" href="/css/series-showcase.css"><link rel="stylesheet" href="/css/search-tags.css"><link rel="alternate" href="/atom.xml" title="Cheng's Tech & Life" type="application/atom+xml">
+</head><body><div id="loading-box"><div class="loading-glass-overlay"></div><div class="loading-indicator"><div class="loading-dot"></div><div class="loading-dot"></div><div class="loading-dot"></div></div></div><script>(()=>{
+  const $loadingBox = document.getElementById('loading-box')
+  const $body = document.body
+  const preloader = {
+    endLoading: () => {
+      if ($loadingBox.classList.contains('loaded')) return
+      $body.style.overflow = ''
+      $loadingBox.classList.add('loaded')
+    },
+    initLoading: () => {
+      $body.style.overflow = 'hidden'
+      $loadingBox.classList.remove('loaded')
+    }
+  }
+
+  preloader.initLoading()
+
+  if (document.readyState === 'complete') {
+    preloader.endLoading()
+  } else {
+    window.addEventListener('load', preloader.endLoading)
+    document.addEventListener('DOMContentLoaded', preloader.endLoading)
+    setTimeout(preloader.endLoading, 7000)
+  }
+
+  if (true) {
+    btf.addGlobalFn('pjaxSend', preloader.initLoading, 'preloader_init')
+    btf.addGlobalFn('pjaxComplete', preloader.endLoading, 'preloader_end')
+  }
+})()</script><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="https://lh3.googleusercontent.com/pw/ABLVV87_po8nBc6F_tXcoYDmtzMGWxHuhhrbguYILCjmjWKLOS8DTpubm0YoQLKgjyjRIZyV5TjYe7XVEz_YU4squfr37GTZqPZP1hlMVZ_MIgXpTxWu73M=w1200" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">312</div></a><a href="/tags/"><div class="headline">標籤</div><div class="length-num">218</div></a><a href="/categories/"><div class="headline">分類</div><div class="length-num">21</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首頁-Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 時間軸-archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 標籤-tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分類-Categories</span></a></div><div class="menus_item"><a class="site-page" href="/series/"><i class="fa-fw fas fa-layer-group"></i><span> 系列-Series</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-list"></i><span> 其他列表</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音樂-Music</span></a></li><li><a class="site-page child" href="/gallery/"><i class="fa-fw fas fa-images"></i><span> 畫館-Gallery</span></a></li></ul></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg fixed" id="page-header" style="background-image: url(/img/20260611-01.webp);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><img class="site-icon" src="https://lh3.googleusercontent.com/pw/ABLVV87_po8nBc6F_tXcoYDmtzMGWxHuhhrbguYILCjmjWKLOS8DTpubm0YoQLKgjyjRIZyV5TjYe7XVEz_YU4squfr37GTZqPZP1hlMVZ_MIgXpTxWu73M=w1200" alt="Logo"><span class="site-name">Cheng's Tech &amp; Life</span></a><a class="nav-page-title" href="/"><span class="site-name">VoxCPM 語音合成 — 繞了五年才有人說，別再把聲音剁成 Token 了</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首頁</span></span></a></span><div id="menus"><div id="search-button" title="Ctrl+K / Cmd+K"><span class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜尋</span></span></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首頁-Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 時間軸-archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 標籤-tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分類-Categories</span></a></div><div class="menus_item"><a class="site-page" href="/series/"><i class="fa-fw fas fa-layer-group"></i><span> 系列-Series</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-list"></i><span> 其他列表</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音樂-Music</span></a></li><li><a class="site-page child" href="/gallery/"><i class="fa-fw fas fa-images"></i><span> 畫館-Gallery</span></a></li></ul></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">VoxCPM 語音合成 — 繞了五年才有人說，別再把聲音剁成 Token 了</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">發表於</span><time class="post-meta-date-created" datetime="2026-06-11T15:15:00.000Z" title="發表於 2026-06-11 23:15:00">2026-06-11</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新於</span><time class="post-meta-date-updated" datetime="2026-06-11T14:26:47.778Z" title="更新於 2026-06-11 22:26:47">2026-06-11</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/AI-ML/">AI / ML</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">總字數:</span><span class="word-count">2.5k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">閱讀時間:</span><span>7分鐘</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">瀏覽量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><p>把時間倒回 2023 年初。那時候語音合成圈子最熱的東西叫 VALL-E，微軟丟出來的。它做了一件當時看起來理所當然的事：把一段聲音先壓成一串離散的 token，然後拿語言模型去預測下一個 token，就像 GPT 預測下一個字一樣。聲音被它當成另一種語言來處理。</p>
+<p>這個想法太順了。語言模型那幾年正在橫掃一切，誰都想把自己的領域「翻譯」成 token 序列，這樣就能搭上那班車。於是 Bark 這麼做、ChatTTS 這麼做、阿里的 CosyVoice 也這麼做。差別只在 token 怎麼切、切幾層、解碼器長什麼樣。整個領域有志一同地往同一個方向走了好幾年。</p>
+<p>VoxCPM 是清華 OpenBMB 團隊做的開源 TTS，最新版叫 VoxCPM2。它最值得停下來看一眼的地方，不是它支援 30 種語言、也不是 48kHz 的輸出，而是它在所有人都覺得理所當然的那一步上，按了暫停鍵：<strong>它不做離散化</strong>。</p>
+<h2 id="先搞懂大家到底在剁什麼"><a href="#先搞懂大家到底在剁什麼" class="headerlink" title="先搞懂大家到底在剁什麼"></a>先搞懂大家到底在剁什麼</h2><p>「離散 token 化」聽起來很玄，拆開其實不難。</p>
+<p>聲音本身是連續的——空氣壓力隨時間平滑變化的一條曲線。電腦存不下無窮多的點，所以要採樣。但採樣完還是一大堆浮點數，直接餵給語言模型太貴。於是有人想了個招：訓練一個編碼器（像 EnCodec、SoundStream），把這堆連續訊號對應到一張「碼本」裡有限的幾千個格子，每一小段聲音就近似成「第幾號格子」。這串格子編號，就是 audio token。</p>
+<p>這一步等於把聲音做了一次 JPEG 壓縮。你把高解析度照片存成 JPEG，檔案小了、好傳了，但放大看會發現邊緣有色塊、漸層有斷階——那些被量化掉的細節，回不來了。聲音也一樣，音色裡最細緻的那些泛音、換氣時的氣聲、情緒帶來的微小顫抖，很容易在「歸到最近的格子」這一步被抹平。</p>
+<p>所以這幾年 TTS 聽起來「對，但少了點什麼」的那個「少了點什麼」，很大一部分就是在離散化這關漏掉的。大家不是不知道，是覺得這是搭語言模型便車必須付的過路費。</p>
+<h2 id="VoxCPM-的選擇：那一步乾脆別做了"><a href="#VoxCPM-的選擇：那一步乾脆別做了" class="headerlink" title="VoxCPM 的選擇：那一步乾脆別做了"></a>VoxCPM 的選擇：那一步乾脆別做了</h2><p>VoxCPM 的做法，用一句話講：<strong>文字 → 語言模型生成連續向量 → 擴散模型把細節長回來</strong>。中間沒有碼本，沒有把聲音歸格子那一步。</p>
+<p>它怎麼敢拿掉？因為它換了一個對細節更有耐心的工具——擴散模型。</p>
+<p>這裡借個畫圖的比喻會清楚很多。離散 token 的路線，像是要求模型一筆到位、直接畫出成品，畫錯了也只能將就。擴散模型的路線反過來：先給你一張很糊的草稿，然後一步一步去噪、修細節，模糊的地方慢慢顯影成清晰的圖。VoxCPM 就是讓語言模型先在「模糊的連續空間」裡生成一個粗略表徵，再讓擴散模型一步步把它精修成乾淨的聲波。整條管線從頭到尾都在連續的數值上跑，沒有任何一刻需要把聲音塞進有限的格子裡。</p>
+<p>如果你把它的生成流程攤開，會看到五個接力的元件，各管一段粒度：</p>
+<p>最前面是 <strong>LocEnc</strong>，局部編碼器。它把聲音切成一塊塊 patch，用小型 Transformer 抽局部特徵——概念上跟 Vision Transformer 把圖片切成方格再讀的做法是同一套。接著是 <strong>TSLM</strong>，核心語言模型，backbone 用的是 MiniCPM-4，自回歸地建立「文字」跟「語音表徵」之間的對應。再來 <strong>RALM</strong> 是個八層的殘差模型，專門撿 TSLM 沒顧到的聲學細節補回去。然後 <strong>LocDiT</strong> 是基於 Conditional Flow Matching 的擴散 Transformer，負責把粗表徵還原成精細語音。最後 <strong>AudioVAE V2</strong> 收尾，這個解碼器有個很巧的設計：吃 16kHz 進去、吐 48kHz 出來，等於把超解析度直接內建在最後一關。</p>
+<p>你不用記住每個縮寫。重點是這個分工背後的思路——<strong>把「決定說什麼」跟「把細節畫漂亮」拆成兩種專長的模型</strong>，而不是逼一個語言模型用離散 token 把兩件事一起幹完。</p>
+<h2 id="工程上它沒有想像中嬌貴"><a href="#工程上它沒有想像中嬌貴" class="headerlink" title="工程上它沒有想像中嬌貴"></a>工程上它沒有想像中嬌貴</h2><p>理論漂亮歸漂亮，能不能在自己機器上跑才是工程師會關心的。這部分我是整理 Notion 筆記裡的安裝紀錄，幾個關鍵的坑值得先講在前面。</p>
+<p>官方文件寫著要 NVIDIA CUDA，但筆記裡的實測是 Apple Silicon 的 MPS 也能跑——模型會自動偵測到 MPS、用 bfloat16 載入，只是 <code>torch.compile</code> 那層優化只支援 CUDA 所以會被跳過，速度慢一點但功能正常。M 系列晶片上大約 1 token&#x2F;s，一句中文要等 40 秒左右。VRAM&#x2F;統一記憶體抓 8GB 上下。</p>
+<p>真正會卡死人的是兩個 macOS 特有的坑。第一個，Homebrew 裝的 Python 現在預設禁止全域 <code>pip install</code>（PEP 668），而且系統 Python 常常是 3.13、3.14 這種太新的版本，VoxCPM 只吃 3.10~3.12。解法是老老實實開一個虛擬環境：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># VoxCPM 只支援 3.10~3.12，太新的版本依賴會裝不起來</span></span><br><span class="line">brew install python@3.11</span><br><span class="line">python3.11 -m venv ~/voxcpm-env</span><br><span class="line"><span class="built_in">source</span> ~/voxcpm-env/bin/activate</span><br><span class="line">pip install voxcpm</span><br></pre></td></tr></table></figure>
+
+<p>第二個坑更陰——跑官方的 Gradio Web Demo 時，<code>app.py</code> 不在 pip 套件裡（要自己去 repo 抓），而且第一次啟動會卡在背景下載一個 893MB 的 FunASR 模型，下載完之前 Gradio 根本不會真的起來。在台灣這種頻寬可能要等上好一陣子，看起來像當掉其實是在下載。知道這件事，就不會在那邊狂按 Ctrl+C 了。</p>
+<p>純用 Python API 反而最乾淨：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> voxcpm <span class="keyword">import</span> VoxCPM</span><br><span class="line"><span class="keyword">import</span> soundfile <span class="keyword">as</span> sf</span><br><span class="line"></span><br><span class="line">model = VoxCPM.from_pretrained(<span class="string">&quot;openbmb/VoxCPM2&quot;</span>, load_denoiser=<span class="literal">False</span>)</span><br><span class="line">wav = model.generate(</span><br><span class="line">    text=<span class="string">&quot;你好，這段聲音沒有經過任何離散 token 化。&quot;</span>,</span><br><span class="line">    cfg_value=<span class="number">2.0</span>,           <span class="comment"># CFG 引導強度</span></span><br><span class="line">    inference_timesteps=<span class="number">10</span>,  <span class="comment"># 擴散步數，越多越精緻也越慢</span></span><br><span class="line">)</span><br><span class="line">sf.write(<span class="string">&quot;demo.wav&quot;</span>, wav, model.tts_model.sample_rate)</span><br></pre></td></tr></table></figure>
+
+<p>那個 <code>inference_timesteps</code> 很值得玩味——它就是擴散模型「修幾次草稿」的次數。調大，細節更穩、更慢；調小，快但偶爾糊。這個旋鈕本身就是連續表徵路線才給得起的，離散 token 一旦定下來就是定下來了，沒有「再修一輪」這種選項。</p>
+<h2 id="它能做的事，跟它說自己做不到的事"><a href="#它能做的事，跟它說自己做不到的事" class="headerlink" title="它能做的事，跟它說自己做不到的事"></a>它能做的事，跟它說自己做不到的事</h2><p>VoxCPM2 有個我覺得最像玩具又最實用的功能叫 Voice Design——你不給任何參考音檔，直接用一句話描述想要的聲音，它生給你：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">wav = model.generate(</span><br><span class="line">    text=<span class="string">&quot;(A warm, deep male voice, middle-aged, speaking slowly) 歡迎收聽今天的節目。&quot;</span>,</span><br><span class="line">    cfg_value=<span class="number">2.0</span>, inference_timesteps=<span class="number">10</span>,</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<p>性別、年齡、語氣、語速都能寫進那串括號描述裡。代價是每次生出來的音色會有點不一樣，官方自己也建議跑個 1~3 次挑最順耳的。另一條路是 Voice Cloning，給一段參考音檔讓它抽音色；如果你連那段音檔的逐字稿也一起給（Ultimate Clone 模式），還原度會明顯更高——因為模型等於拿到了「這個聲音是怎麼把這些字唸出來的」這份對照表，接話接得更無縫。</p>
+<p>難得的是這份筆記也老實列了它的短板。30 種語言裡，核心的中英日韓法德表現最好，阿拉伯語、印地語、粵語、羅馬尼亞語的字錯率偏高；列進去的中國方言基本是實驗性質，沒有獨立基準。它純粹是 TTS，不附語音辨識，要 STT 得另外接。還有一條寫得很重的紅線：語音克隆的濫用風險明擺著，官方明文禁止拿去假冒身份、製造假訊息，並建議所有 AI 生成的語音都該明確標示。這條不是法律免責聲明，是這類技術成熟後每個用它的人都得自己先想清楚的事。</p>
+<h2 id="真正的故事，比一個-TTS-模型大"><a href="#真正的故事，比一個-TTS-模型大" class="headerlink" title="真正的故事，比一個 TTS 模型大"></a>真正的故事，比一個 TTS 模型大</h2><p>繞回開頭那條時間線。VoxCPM 有意思的地方，從來不是「又一個更自然的語音模型」——它有意思，是因為它示範了一件事：當整個領域為了搭某班車而集體接受某個妥協時，那個妥協往往不是物理定律，只是一時的工程便利。</p>
+<p>把連續訊號剁成離散 token，是為了讓聲音長得像文字、好餵給語言模型。但聲音本來就不是文字。等到擴散模型這種「對連續數值有耐心」的工具夠成熟了，回頭就會發現當初那道過路費根本不必交。同樣的劇情，在影像生成從像素自回歸走向 latent diffusion 時演過一次，現在輪到語音。</p>
+<p>所以下次再看到某個領域所有人都用同一套管線、卡在同一個地方上不去，值得問一句：大家共同接受的那個「沒辦法，只能這樣」的步驟，到底是真的沒辦法，還是只是還沒有人敢把它拔掉試試看。VoxCPM 拔了，聲音沒垮，反而更乾淨。下一個被拔掉的妥協會在哪，才是這條時間線真正還沒寫完的部分。</p>
+<blockquote>
+<p>整理自開發知識庫筆記，內容含個人安裝實測紀錄。技術細節以官方為準。<br>原文來源：<a target="_blank" rel="noopener" href="https://github.com/OpenBMB/VoxCPM">VoxCPM GitHub Repo</a>、<a target="_blank" rel="noopener" href="https://arxiv.org/abs/2509.24650">技術報告 (ICLR 2026)</a></p>
+</blockquote>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://mark22013333.github.io">Cheng®</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章連結: </span><span class="post-copyright-info"><a href="https://mark22013333.github.io/2026/06/11/VoxCPM-%E8%AA%9E%E9%9F%B3%E5%90%88%E6%88%90-%E7%B9%9E%E4%BA%86%E4%BA%94%E5%B9%B4%E6%89%8D%E6%9C%89%E4%BA%BA%E8%AA%AA%E5%88%A5%E5%86%8D%E6%8A%8A%E8%81%B2%E9%9F%B3%E5%89%81%E6%88%90-Token-%E4%BA%86/">https://mark22013333.github.io/2026/06/11/VoxCPM-語音合成-繞了五年才有人說別再把聲音剁成-Token-了/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版權聲明: </span><span class="post-copyright-info">本部落格所有文章除特別聲明外，均採用<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 授權協議。轉載請註明來源 <a href="https://mark22013333.github.io" target="_blank">Cheng's Tech & Life</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/LLM/">LLM</a><a class="post-meta__tags" href="/tags/%E9%96%8B%E6%BA%90/">開源</a><a class="post-meta__tags" href="/tags/AI-%E6%A8%A1%E5%9E%8B/">AI 模型</a><a class="post-meta__tags" href="/tags/Python/">Python</a></div><div class="post-share"><div class="social-share" data-image="/img/20260611-01.webp" data-sites="facebook,x"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><div class="post-reward"><div class="reward-badges"><a class="sponsor-glow-btn" href="https://www.buymeacoffee.com/mark22013333" target="_blank" rel="noopener noreferrer" title="Buy Me A Coffee"><img src="https://img.shields.io/badge/Buy_Me_A_Coffee-FFDD00?style=for-the-badge&amp;logo=buy-me-a-coffee&amp;logoColor=black" alt="Buy Me A Coffee"/></a><a class="sponsor-glow-btn" href="https://p.ecpay.com.tw/EFC3F8F" target="_blank" rel="noopener noreferrer" title="綠界贊助"><img src="https://img.shields.io/badge/☕_%E8%AB%8B%E6%88%91%E5%96%9D%E6%9D%AF%E5%92%96%E5%95%A1-Donate-11998e?style=for-the-badge&amp;logo=coffee&amp;logoColor=white" alt="綠界贊助"/></a><a class="sponsor-glow-btn" href="https://calendly.com/markcheng00806-intumit/15min" target="_blank" rel="noopener noreferrer" title="預約時間"><img src="https://img.shields.io/badge/📅_%E9%A0%90%E7%B4%84_15_%E5%88%86%E9%90%98-Book_Time-0072ff?style=for-the-badge" alt="預約時間"/></a><p class="reward-badges-note">你的鼓勵將被轉換為我明天繼續加班的動力（真的）。 ❤️</p></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2026/06/10/Claude-Code-safe-mode-%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8-%E4%BD%A0%E7%9A%84-AI-%E5%A3%9E%E6%8E%89%E6%99%82%E5%85%88%E6%8A%8A%E6%89%80%E6%9C%89%E5%AE%A2%E8%A3%BD%E5%8C%96%E9%97%9C%E6%8E%89%E5%86%8D%E8%AA%AA/" title="Claude Code --safe-mode 完整教學 — 你的 AI 壞掉時，先把所有客製化關掉再說"><img class="cover" src="/img/20260610-03.webp" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">Claude Code --safe-mode 完整教學 — 你的 AI 壞掉時，先把所有客製化關掉再說</div></div><div class="info-2"><div class="info-item-1">先問你一個會決定要不要讀下去的問題：你的 Claude Code，是不是已經被你自己改到認不出來了？ 裝了五六個 plugin、寫了一份越長越像憲法的 CLAUDE.md、掛了幾個 hook 在存檔時自動跑、接了三四個 MCP server。某天它開始怪怪的——一進 session 第一句話就莫名其妙切去 fallback 模型、某個指令行為跟昨天不一樣、或者就是慢得不正常。這時候你要回答的問題只有一個：這麼多客製化，到底是哪一個在搞鬼？ 過去的答案很土法煉鋼：一個一個關掉,關一個試一次,看什麼時候恢復正常。Claude Code 在 6 月 8 日的 v2.1.169 加進來的 --safe-mode，就是來終結這個過程的。但這篇真正想講清楚的，是它「救得了」跟「救不了」的那條界線——因為搞錯這條線，你會對著一個它根本治不了的病猛灌它的藥。 它在做的事，就是醫生的「停藥觀察」想像你身體出了狀況，同時在吃五種保健食品、三種藥。醫生不會猜，他會請你全部停掉，看症狀還在不在。如果停光了就好了，問題出在某個你吃的東西，再一個一個加回來找兇手；如果全停了症狀還在，那代表病根本不在這些藥上...</div></div></div></a><a class="pagination-related" href="/2026/06/11/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260611/" title="AI 與科技新聞摘要 20260611"><img class="cover" src="/img/20260611-02.webp" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">AI 與科技新聞摘要 20260611</div></div><div class="info-2"><div class="info-item-1">這幾天的消息有個很容易被忽略的共同點：沒有一條是「某個模型又變強了」。它們講的全是 AI 怎麼被接進你已經在用的東西——既有的雲端採購預算、既有的 IDE、既有的 VPN 閘道。模型強不強這場仗大致打完了，現在比的是誰能把自己塞進你已經繞不開的流程裡。這件事比多幾分 benchmark 危險得多，因為你一旦接上去，要拔就難了。 一、OpenAI 把模型塞進 Oracle 的採購單，企業用既有雲端額度就能買6 月 10 到 11 日，OpenAI 宣布跟 Oracle 合作：OCI（Oracle Cloud Infrastructure）的客戶，未來幾週內可以拿手上已經承諾的 Oracle Universal Credits，直接折抵 OpenAI 的前沿模型和 Codex。講白話，就是企業不用再為了用 AI 另外簽一份合約、走一遍採購流程，原本買 Oracle 雲端的預算直接挪過來用。 這一步聰明在它根本不碰技術，碰的是摩擦力。大公司導入 AI 最大的卡點從來不是模型不夠好，是法務、採購、資安要重新審一遍新供應商，這一審就是好幾個月。OpenAI 等於繞過這整關，直接站到企業早就...</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相關推薦</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2026/05/19/x-algorithm-X-%E5%B9%B3%E5%8F%B0%E7%82%BA%E4%BD%A0%E6%8E%A8%E8%96%A6%E6%8E%A8%E8%96%A6%E6%BC%94%E7%AE%97%E6%B3%95%E5%AE%8C%E6%95%B4%E8%A7%A3%E6%9E%90/" title="x-algorithm — X 平台「為你推薦」推薦演算法完整解析"><img class="cover" src="/img/20260519-01.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-05-19</div><div class="info-item-2">x-algorithm — X 平台「為你推薦」推薦演算法完整解析</div></div><div class="info-2"><div class="info-item-1">你以為推薦演算法是在「猜你喜歡什麼」。不是。它在預測你「會做什麼動作」。 xAI 把 X 平台「為你推薦」的完整推薦系統原始碼丟上了 GitHub。不是示意圖，不是論文，是真的在跑的那套程式碼。從幾十億則貼文裡，即時幫你挑出最相關的幾十則——決定你每天打開 X 會看到什麼。 23,761 顆星，Apache 2.0 授權。這是目前公開過最完整的 production-level 社群推薦系統，包含檢索、排序、過濾、廣告混合、內容安全，整條鏈路一次攤開。 不是猜你喜歡，是算你會幹嘛先搞懂一件事：推薦系統不是在做「你喜歡貓所以推貓」這種事。 想像你走進一間有三萬道菜的自助餐。餐廳不可能讓你一道一道看，所以它分兩步：第一步，服務生先從三萬道菜裡撈出三百道你可能感興趣的（粗篩）；第二步，主廚根據你的口味、今天的心情、甚至你上次剩了什麼菜沒吃，幫你排出最上面那十道。 x-algorithm 就是這樣。Two-Tower Retrieval 負責粗篩，Transformer Ranking 負責精排。 粗篩用的是「雙塔模型」——一邊是你的使用者特徵，一邊是貼文特徵，兩邊各自算出一個向量，距離...</div></div></div></a><a class="pagination-related" href="/2026/05/29/whisper-guard-%E7%A0%8D%E6%8E%89-87-%E8%B6%B4-Whisper-%E5%B9%BB%E8%A6%BA%E7%9A%84%E4%B8%8D%E6%98%AF%E5%A4%A7%E6%A8%A1%E5%9E%8B-%E6%98%AF%E4%B8%80%E5%80%8B-400-%E8%A1%8C%E7%9A%84%E8%A6%8F%E5%89%87%E5%BC%95%E6%93%8E/" title="whisper-guard — 砍掉 87% Whisper 幻覺的不是大模型，是一個 400 行的規則引擎"><img class="cover" src="/img/20260529-01.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-05-29</div><div class="info-item-2">whisper-guard — 砍掉 87% Whisper 幻覺的不是大模型，是一個 400 行的規則引擎</div></div><div class="info-2"><div class="info-item-1">Whisper 最會騙你的時刻，是它最心虛的時刻。 用過 Whisper 的人大概都撞過這個牆：一段明明安靜無聲的停頓，轉錄結果卻憑空冒出「謝謝觀看」、「記得訂閱」，或者同一句話像跳針一樣重複十幾遍。這不是 bug，是模型的天性——它在沒有有效輸入的時候，還是會硬擠出一點東西來。你可以想成一個被訓練到「必須開口」的人，被丟進一個沒人講話的房間，他不會閉嘴，他會開始編。Whisper 訓練資料裡塞了海量的 YouTube 字幕，所以它編出來的，往往就是那幾句最常出現的片尾台詞。 碰到這種狀況，工程師的直覺反應幾乎是反射性的：那就再串一個 LLM 在後面，讓它讀一遍轉錄結果，把不通順、明顯亂入的句子清掉。畢竟 2026 年了，什麼問題不是丟給大模型解決的？ 這個直覺是錯的。而且錯得很乾脆。 一個 benchmark，把直覺打回原形whisper-guard 這個專案的作者跑了一組對照實驗，數字攤開來看，很難不被嚇到。 同一份音檔，原始 Whisper 跑出來有 16 次幻覺，耗時 47.7 秒。接著試「只加 LLM 後處理」這條多數人會選的路：幻覺數字是多少？16 次。一次都沒少。減...</div></div></div></a><a class="pagination-related" href="/2026/06/06/InfiniteTalk-%E8%AE%93%E7%85%A7%E7%89%87%E9%96%8B%E5%8F%A3%E8%AA%AA%E8%A9%B1-%E6%9C%80%E9%9B%A3%E7%9A%84%E9%83%A8%E5%88%86%E5%BE%9E%E4%BE%86%E4%B8%8D%E6%98%AF%E5%98%B4%E5%B7%B4/" title="InfiniteTalk — 讓照片開口說話，最難的部分從來不是嘴巴"><img class="cover" src="/img/20260606-01.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-06-06</div><div class="info-item-2">InfiniteTalk — 讓照片開口說話，最難的部分從來不是嘴巴</div></div><div class="info-2"><div class="info-item-1">讓照片開口說話，最難的部分從來不是嘴巴。 這句話跟直覺相反。畢竟整個「影片配音」技術的歷史，就是一部對嘴型的歷史：找到嘴唇區域，把嘴型換成新音訊對應的形狀，對得越準越好。準確率變成唯一的 KPI，大家拼命把嘴唇的誤差壓到一毫米以內。 然後你看到成品，還是一眼假。 問題出在哪？你回想一下自己上次跟人講話的樣子。你的眉毛在動，頭在點，肩膀偶爾聳一下，講到重點身體會往前傾。說話是全身的事，嘴巴只是其中聲音出來的那個洞。傳統配音技術把嘴型換得再準，其他部位僵在那裡不動，看起來就像一個人在嚼口香糖，而不是在說話。換句話說，觀眾的大腦抓到的破綻，從來不在嘴唇的誤差，在嘴唇以外那一整片「死掉的區域」。 InfiniteTalk 是阿里巴巴 MeiGen-AI 團隊開源的框架，它值得寫一篇的原因，就是它把這個題目整個翻面了。 不對嘴，反而更像在說話InfiniteTalk 提出的範式叫 Sparse-Frame Video Dubbing。聽起來很學術，拆開來其實是一個很乾脆的取捨：不要逐幀去對齊嘴型，只給模型幾個關鍵幀當參考，剩下的動作讓它自由生成。 差別在哪？逐幀對齊是「控制」——你規定每一...</div></div></div></a><a class="pagination-related" href="/2026/06/04/Hermes-Agent-30-%E5%A4%A9%E9%80%B2%E5%8C%96%E8%A7%80%E5%AF%9F-%E8%87%AA%E6%88%91%E6%94%B9%E9%80%B2-Skills-%E8%AE%93-Agent-%E8%B6%8A%E7%94%A8%E8%B6%8A%E4%BE%BF%E5%AE%9C/" title="Hermes Agent 30 天進化觀察 — 自我改進 Skills 讓 Agent 越用越便宜"><img class="cover" src="/img/20260604-01.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-06-04</div><div class="info-item-2">Hermes Agent 30 天進化觀察 — 自我改進 Skills 讓 Agent 越用越便宜</div></div><div class="info-2"><div class="info-item-1">Agent 最值錢的能力，是記得自己怎麼學會的。 這句話聽起來像雞湯，但 Hermes Agent 過去 30 天的進化把它做成了程式碼。上次寫過在自家 VM 部署 Hermes 的踩坑記錄，那時它還是 v0.13.0，一套「能用的開源 AI 代理框架」。一個月後回頭看，數字有點誇張：152K stars、近 9 天 808 commits &#x2F; 633 PRs、版本從 v0.11 衝到 v0.14，在 OpenRouter 排行榜上超越 OpenClaw 變成第一。 量變不稀奇，開源專案衝星等的戲碼看多了。值得停下來看的是質變——它把「Agent 解過的題」變成了資產。 解一次，封裝一次Hermes v0.12 之後有個機制：Agent 完成一個用了 5 個以上工具呼叫的複雜任務後，會自動把解法封裝成一個 Skill。下次遇到類似問題，直接調用，不用重新摸索。 這個設計的威力要用數字才看得出來。社群有人實測 Autobrowse 爬 Hacker News：第一次跑，Agent 逐步點擊頁面，花了 102 秒、燒掉 1.46 美金。兩次迭代之後，它自己學會用 JS ev...</div></div></div></a><a class="pagination-related" href="/2026/05/14/Pixelle-Video-%E4%B8%80%E5%8F%A5%E8%A9%B1%E7%94%9F%E6%88%90%E5%AE%8C%E6%95%B4%E7%9F%AD%E5%BD%B1%E7%89%87%E7%9A%84-AI-%E7%B7%A8%E6%8E%92%E5%BC%95%E6%93%8E/" title="Pixelle-Video — 一句話生成完整短影片的 AI 編排引擎"><img class="cover" src="/img/20260514-01.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-05-14</div><div class="info-item-2">Pixelle-Video — 一句話生成完整短影片的 AI 編排引擎</div></div><div class="info-2"><div class="info-item-1">大部分人聽到「AI 影片生成」，腦中浮現的是 Sora、Kling 這類工具——輸入一段文字，模型吐出一段影片。 但仔細想一下：你上次需要的「影片」，真的是一段 10 秒的動畫片段嗎？還是一支有旁白、有配圖、有背景音樂的完整短影片？ Sora 解決的是前者。Pixelle-Video 解決的是後者。而這兩件事之間的距離，比大多數人以為的還要遠。  影片界的 LangChainPixelle-Video 是阿里巴巴達摩院開源的短影片自動生成引擎。你給它一個主題——比如「為什麼我們還沒有找到外星文明」——它會自動完成文案撰寫、AI 配圖、語音旁白、背景音樂，最後輸出一支完整的短影片。 注意，它不是一個模型。它是一個編排器。 這個區別很重要。就像 LangChain 把 LLM、Embedding、Vector DB 串起來做 RAG pipeline 一樣，Pixelle-Video 把 LLM（寫文案）、圖像生成模型（畫配圖）、影片生成模型（做動態）、TTS（唸旁白）串成一條影片 pipeline。每個環節你都可以自己換模型。 文案用 GPT-4o 或 Qwen？隨你。配圖用 FL...</div></div></div></a><a class="pagination-related" href="/2026/06/01/Cua-%E8%AE%93-AI-%E7%94%A8%E4%BB%BB%E4%BD%95%E6%A8%A1%E5%9E%8B%E6%93%8D%E6%8E%A7%E9%9B%BB%E8%85%A6%E7%9A%84%E9%96%8B%E6%BA%90%E5%9F%BA%E7%A4%8E%E8%A8%AD%E6%96%BD/" title="Cua — 讓 AI 用任何模型操控電腦的開源基礎設施"><img class="cover" src="/img/20260601-01.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-06-01</div><div class="info-item-2">Cua — 讓 AI 用任何模型操控電腦的開源基礎設施</div></div><div class="info-2"><div class="info-item-1">讓 AI 用電腦，最難的部分其實不是 AI。 這句話聽起來怪，因為過去兩年所有人的注意力都在模型上——它看不看得懂截圖、推不推得出下一步該點哪。但這件事其實早就解掉了。現在隨便一個支援 computer-use 的 LLM，給它一張螢幕截圖，它就能告訴你「滑鼠移到座標 (840, 312) 按一下，然後輸入這串字」。看畫面、理解、輸出操作指令，這條鏈路已經是商品。真正讓你做不出一個能用的桌面 Agent 的，是螢幕背後那台電腦。 虛擬機誰來開？開好之後螢幕截圖怎麼抓出來？模型吐回來的「點 (840, 312)」這個滑鼠事件，要怎麼真的注入到那台機器裡？Linux、macOS、Windows、Android 各自一套 API，差異怎麼抹平？最要命的是——Agent 在那邊亂點的時候，怎麼確定它不會把你正在用的這台筆電給搞爛？ 這些全部都不是模型問題。是基礎設施問題。而 Cua（Computer-Use Agent，15.5K stars，MIT 授權）做的事，就是把這一整層包起來。 模型是可替換零件，環境才是地基先把這件事講透，因為它是理解 Cua 為什麼長這樣的關鍵。 你可以把整...</div></div></div></a></div></div><hr class="custom-hr"/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 評論</span></div></div><div class="comment-wrap"><div><div id="giscus-wrap"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="https://lh3.googleusercontent.com/pw/ABLVV87_po8nBc6F_tXcoYDmtzMGWxHuhhrbguYILCjmjWKLOS8DTpubm0YoQLKgjyjRIZyV5TjYe7XVEz_YU4squfr37GTZqPZP1hlMVZ_MIgXpTxWu73M=w1200" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">Cheng®</div><div class="author-info-description">Backend Developer / 技術筆記 & AI 新聞分享</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">312</div></a><a href="/tags/"><div class="headline">標籤</div><div class="length-num">218</div></a><a href="/categories/"><div class="headline">分類</div><div class="length-num">21</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/mark22013333"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons"><a class="social-icon" href="https://github.com/mark22013333" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:mark22013333@gmail.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a></div><div class="card-info-sponsor"><a class="sponsor-glow-btn" href="https://www.buymeacoffee.com/mark22013333" target="_blank" rel="noopener noreferrer" title="Buy Me A Coffee"><img src="https://img.shields.io/badge/Buy_Me_A_Coffee-FFDD00?style=for-the-badge&amp;logo=buy-me-a-coffee&amp;logoColor=black" alt="Buy Me A Coffee"/></a><a class="sponsor-glow-btn" href="https://p.ecpay.com.tw/EFC3F8F" target="_blank" rel="noopener noreferrer" title="綠界贊助"><img src="https://img.shields.io/badge/☕_%E8%AB%8B%E6%88%91%E5%96%9D%E6%9D%AF%E5%92%96%E5%95%A1-Donate-11998e?style=for-the-badge&amp;logo=coffee&amp;logoColor=white" alt="綠界贊助"/></a><a class="sponsor-glow-btn" href="https://calendly.com/markcheng00806-intumit/15min" target="_blank" rel="noopener noreferrer" title="預約時間"><img src="https://img.shields.io/badge/📅_%E9%A0%90%E7%B4%84_15_%E5%88%86%E9%90%98-Book_Time-0072ff?style=for-the-badge" alt="預約時間"/></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">這裡記錄我在後端開發路上踩過的坑、學到的東西，也會分享每日 AI 與科技新聞觀點。歡迎一起交流！</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目錄</span><span class="toc-percentage"></span></div><div class="toc-content is-expand"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%88%E6%90%9E%E6%87%82%E5%A4%A7%E5%AE%B6%E5%88%B0%E5%BA%95%E5%9C%A8%E5%89%81%E4%BB%80%E9%BA%BC"><span class="toc-number">1.</span> <span class="toc-text">先搞懂大家到底在剁什麼</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#VoxCPM-%E7%9A%84%E9%81%B8%E6%93%87%EF%BC%9A%E9%82%A3%E4%B8%80%E6%AD%A5%E4%B9%BE%E8%84%86%E5%88%A5%E5%81%9A%E4%BA%86"><span class="toc-number">2.</span> <span class="toc-text">VoxCPM 的選擇：那一步乾脆別做了</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B7%A5%E7%A8%8B%E4%B8%8A%E5%AE%83%E6%B2%92%E6%9C%89%E6%83%B3%E5%83%8F%E4%B8%AD%E5%AC%8C%E8%B2%B4"><span class="toc-number">3.</span> <span class="toc-text">工程上它沒有想像中嬌貴</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%83%E8%83%BD%E5%81%9A%E7%9A%84%E4%BA%8B%EF%BC%8C%E8%B7%9F%E5%AE%83%E8%AA%AA%E8%87%AA%E5%B7%B1%E5%81%9A%E4%B8%8D%E5%88%B0%E7%9A%84%E4%BA%8B"><span class="toc-number">4.</span> <span class="toc-text">它能做的事，跟它說自己做不到的事</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%9C%9F%E6%AD%A3%E7%9A%84%E6%95%85%E4%BA%8B%EF%BC%8C%E6%AF%94%E4%B8%80%E5%80%8B-TTS-%E6%A8%A1%E5%9E%8B%E5%A4%A7"><span class="toc-number">5.</span> <span class="toc-text">真正的故事，比一個 TTS 模型大</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2026/06/11/Claude-Code-cd-%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8-%E5%9C%A8-monorepo-%E5%88%87%E7%9B%AE%E9%8C%84%E5%8F%88%E4%B8%8D%E7%94%A8%E9%87%8D%E7%87%92-prompt-cache/" title="Claude Code /cd 完整教學 — 在 monorepo 切目錄，又不用重燒 prompt cache"><img src="/img/20260611-03.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Claude Code /cd 完整教學 — 在 monorepo 切目錄，又不用重燒 prompt cache"/></a><div class="content"><a class="title" href="/2026/06/11/Claude-Code-cd-%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8-%E5%9C%A8-monorepo-%E5%88%87%E7%9B%AE%E9%8C%84%E5%8F%88%E4%B8%8D%E7%94%A8%E9%87%8D%E7%87%92-prompt-cache/" title="Claude Code /cd 完整教學 — 在 monorepo 切目錄，又不用重燒 prompt cache">Claude Code /cd 完整教學 — 在 monorepo 切目錄，又不用重燒 prompt cache</a><time datetime="2026-06-11T15:45:00.000Z" title="發表於 2026-06-11 23:45:00">2026-06-11</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/06/11/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260611/" title="AI 與科技新聞摘要 20260611"><img src="/img/20260611-02.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="AI 與科技新聞摘要 20260611"/></a><div class="content"><a class="title" href="/2026/06/11/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260611/" title="AI 與科技新聞摘要 20260611">AI 與科技新聞摘要 20260611</a><time datetime="2026-06-11T15:30:00.000Z" title="發表於 2026-06-11 23:30:00">2026-06-11</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/06/11/VoxCPM-%E8%AA%9E%E9%9F%B3%E5%90%88%E6%88%90-%E7%B9%9E%E4%BA%86%E4%BA%94%E5%B9%B4%E6%89%8D%E6%9C%89%E4%BA%BA%E8%AA%AA%E5%88%A5%E5%86%8D%E6%8A%8A%E8%81%B2%E9%9F%B3%E5%89%81%E6%88%90-Token-%E4%BA%86/" title="VoxCPM 語音合成 — 繞了五年才有人說，別再把聲音剁成 Token 了"><img src="/img/20260611-01.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="VoxCPM 語音合成 — 繞了五年才有人說，別再把聲音剁成 Token 了"/></a><div class="content"><a class="title" href="/2026/06/11/VoxCPM-%E8%AA%9E%E9%9F%B3%E5%90%88%E6%88%90-%E7%B9%9E%E4%BA%86%E4%BA%94%E5%B9%B4%E6%89%8D%E6%9C%89%E4%BA%BA%E8%AA%AA%E5%88%A5%E5%86%8D%E6%8A%8A%E8%81%B2%E9%9F%B3%E5%89%81%E6%88%90-Token-%E4%BA%86/" title="VoxCPM 語音合成 — 繞了五年才有人說，別再把聲音剁成 Token 了">VoxCPM 語音合成 — 繞了五年才有人說，別再把聲音剁成 Token 了</a><time datetime="2026-06-11T15:15:00.000Z" title="發表於 2026-06-11 23:15:00">2026-06-11</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/06/10/Claude-Code-safe-mode-%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8-%E4%BD%A0%E7%9A%84-AI-%E5%A3%9E%E6%8E%89%E6%99%82%E5%85%88%E6%8A%8A%E6%89%80%E6%9C%89%E5%AE%A2%E8%A3%BD%E5%8C%96%E9%97%9C%E6%8E%89%E5%86%8D%E8%AA%AA/" title="Claude Code --safe-mode 完整教學 — 你的 AI 壞掉時，先把所有客製化關掉再說"><img src="/img/20260610-03.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Claude Code --safe-mode 完整教學 — 你的 AI 壞掉時，先把所有客製化關掉再說"/></a><div class="content"><a class="title" href="/2026/06/10/Claude-Code-safe-mode-%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8-%E4%BD%A0%E7%9A%84-AI-%E5%A3%9E%E6%8E%89%E6%99%82%E5%85%88%E6%8A%8A%E6%89%80%E6%9C%89%E5%AE%A2%E8%A3%BD%E5%8C%96%E9%97%9C%E6%8E%89%E5%86%8D%E8%AA%AA/" title="Claude Code --safe-mode 完整教學 — 你的 AI 壞掉時，先把所有客製化關掉再說">Claude Code --safe-mode 完整教學 — 你的 AI 壞掉時，先把所有客製化關掉再說</a><time datetime="2026-06-10T15:45:00.000Z" title="發表於 2026-06-10 23:45:00">2026-06-10</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/06/10/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260610/" title="AI 與科技新聞摘要 20260610"><img src="/img/20260610-02.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="AI 與科技新聞摘要 20260610"/></a><div class="content"><a class="title" href="/2026/06/10/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260610/" title="AI 與科技新聞摘要 20260610">AI 與科技新聞摘要 20260610</a><time datetime="2026-06-10T15:30:00.000Z" title="發表於 2026-06-10 23:30:00">2026-06-10</time></div></div></div></div></div></div></main><footer id="footer" style="background-image: url(/img/20260611-01.webp);"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2024 - 2026 By Cheng®</span></div><div class="footer_custom_text">Written by Cheng® — 自律，從當下的一念開始。</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="閱讀模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日夜模式切換"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="單欄和雙欄切換"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="設定"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目錄"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="前往評論"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到頂端"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.umd.min.js"></script><script src="https://cdn.jsdelivr.net/npm/instant.page/instantpage.min.js" type="module"></script><script src="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.js"></script><div class="js-pjax"><script>(() => {
+  const isShuoshuo = GLOBAL_CONFIG_SITE.pageType === 'shuoshuo'
+  const option = {"mapping":"pathname","strict":0,"reactionsEnabled":1,"emitMetadata":0,"inputPosition":"bottom","lang":"zh-TW"}
+
+  const getGiscusTheme = theme => theme === 'dark' ? 'dark' : 'light'
+
+  const createScriptElement = config => {
+    const ele = document.createElement('script')
+    Object.entries(config).forEach(([key, value]) => {
+      ele.setAttribute(key, value)
+    })
+    return ele
+  }
+
+  const loadGiscus = (el = document, key) => {
+    const mappingConfig = isShuoshuo
+      ? { 'data-mapping': 'specific', 'data-term': key }
+      : { 'data-mapping': (option && option['data-mapping']) || 'pathname' }
+
+    const giscusConfig = {
+      src: 'https://giscus.app/client.js',
+      'data-repo': 'mark22013333/mark22013333.github.io',
+      'data-repo-id': 'R_kgDOLAxa6A',
+      'data-category-id': 'DIC_kwDOLAxa6M4C5eO9',
+      'data-theme': getGiscusTheme(document.documentElement.getAttribute('data-theme')),
+      'data-reactions-enabled': '1',
+      crossorigin: 'anonymous',
+      async: true,
+      ...option,
+      ...mappingConfig
+    }
+
+    const scriptElement = createScriptElement(giscusConfig)
+
+    el.querySelector('#giscus-wrap').appendChild(scriptElement)
+
+    if (isShuoshuo) {
+      window.shuoshuoComment.destroyGiscus = () => {
+        if (el.children.length) {
+          el.innerHTML = ''
+          el.classList.add('no-comment')
+        }
+      }
+    }
+  }
+
+  const changeGiscusTheme = theme => {
+    const iframe = document.querySelector('#giscus-wrap iframe')
+    if (iframe) {
+      const message = {
+        giscus: {
+          setConfig: {
+            theme: getGiscusTheme(theme)
+          }
+        }
+      }
+      iframe.contentWindow.postMessage(message, 'https://giscus.app')
+    }
+  }
+
+  btf.addGlobalFn('themeChange', changeGiscusTheme, 'giscus')
+
+  if (isShuoshuo) {
+    'Giscus' === 'Giscus'
+      ? window.shuoshuoComment = { loadComment: loadGiscus }
+      : window.loadOtherComment = loadGiscus
+    return
+  }
+
+  if ('Giscus' === 'Giscus' || !true) {
+    if (true) btf.loadComment(document.getElementById('giscus-wrap'), loadGiscus)
+    else loadGiscus()
+  } else {
+    window.loadOtherComment = loadGiscus
+  }
+})()</script></div><script src="/js/kkbox-player.js"></script><script src="/js/archives-pagination.js"></script><script src="/js/font-resize.js"></script><script src="/js/dark-palette.js"></script><script src="/js/series-showcase.js"></script><script src="/js/search-tags.js"></script><script defer="defer" id="fluttering_ribbon" mobile="false" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/canvas-fluttering-ribbon.min.js"></script><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/activate-power-mode.min.js"></script><script>POWERMODE.colorful = true;
+POWERMODE.shake = true;
+POWERMODE.mobile = true;
+document.body.addEventListener('input', POWERMODE);
+</script><script src="https://cdn.jsdelivr.net/npm/pjax/pjax.min.js" defer="defer"></script><script>document.addEventListener('DOMContentLoaded', () => {
+  const pjaxSelectors = ["meta[property=\"og:image\"]","meta[property=\"og:title\"]","meta[property=\"og:url\"]","meta[property=\"og:description\"]","link[rel=\"canonical\"]","head > title","#config-diff","#body-wrap","#rightside-config-hide","#rightside-config-show",".js-pjax"]
+
+  window.pjax = new Pjax({
+    elements: 'a:not([target="_blank"])',
+    selectors: pjaxSelectors,
+    cacheBust: false,
+    analytics: true,
+    scrollRestoration: false
+  })
+
+  const triggerPjaxFn = (val) => {
+    if (!val) return
+    Object.values(val).forEach(fn => {
+      try {
+        fn()
+      } catch (err) {
+        console.debug('Pjax callback failed:', err)
+      }
+    })
+  }
+
+  document.addEventListener('pjax:send', () => {
+    // removeEventListener
+    btf.removeGlobalFnEvent('pjaxSendOnce')
+    btf.removeGlobalFnEvent('themeChange')
+
+    // reset readmode
+    const $bodyClassList = document.body.classList
+    if ($bodyClassList.contains('read-mode')) $bodyClassList.remove('read-mode')
+
+    triggerPjaxFn(window.globalFn.pjaxSend)
+  })
+
+  document.addEventListener('pjax:complete', () => {
+    btf.removeGlobalFnEvent('pjaxCompleteOnce')
+    document.querySelectorAll('script[data-pjax]').forEach(item => {
+      const newScript = document.createElement('script')
+      const content = item.text || item.textContent || item.innerHTML || ""
+      Array.from(item.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value))
+      newScript.appendChild(document.createTextNode(content))
+      item.parentNode.replaceChild(newScript, item)
+    })
+
+    triggerPjaxFn(window.globalFn.pjaxComplete)
+  })
+
+  document.addEventListener('pjax:error', e => {
+    if (e.request.status === 404) {
+      true
+        ? pjax.loadUrl('/404.html')
+        : window.location.href = e.request.responseURL
+    }
+  })
+})</script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜尋</span><i class="fas fa-spinner fa-pulse" id="loading-status" hidden="hidden"></i><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="text-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  資料載入中</span></div><div class="local-search-input"><input placeholder="搜尋文章" type="text"/></div><hr/><div id="local-search-results"></div><div class="ais-Pagination" id="local-search-pagination" style="display:none;"><ul class="ais-Pagination-list"></ul></div><div id="local-search-stats"></div></div><div id="search-mask"></div><script src="/js/search/local-search.js"></script></div></div><script>window.__BLOG_TAGS__=[{"name":"Claude Code","count":99,"path":"tags/Claude-Code/"},{"name":"AI與科技新聞","count":79,"path":"tags/AI與科技新聞/"},{"name":"AI Agent","count":58,"path":"tags/AI-Agent/"},{"name":"資安","count":49,"path":"tags/資安/"},{"name":"Anthropic","count":48,"path":"tags/Anthropic/"},{"name":"教學","count":39,"path":"tags/教學/"},{"name":"OpenAI","count":38,"path":"tags/OpenAI/"},{"name":"開源","count":37,"path":"tags/開源/"},{"name":"MCP","count":36,"path":"tags/MCP/"},{"name":"自動化","count":33,"path":"tags/自動化/"},{"name":"Claude","count":28,"path":"tags/Claude/"},{"name":"開發工具","count":24,"path":"tags/開發工具/"},{"name":"Java","count":19,"path":"tags/Java/"},{"name":"工程師生活","count":17,"path":"tags/工程師生活/"},{"name":"Google","count":17,"path":"tags/Google/"},{"name":"CLI","count":15,"path":"tags/CLI/"},{"name":"Skills","count":14,"path":"tags/Skills/"},{"name":"Copilot","count":13,"path":"tags/Copilot/"},{"name":"GitHub","count":13,"path":"tags/GitHub/"},{"name":"DevOps","count":13,"path":"tags/DevOps/"},{"name":"LLM","count":12,"path":"tags/LLM/"},{"name":"AI 產業","count":11,"path":"tags/AI-產業/"},{"name":"Python","count":11,"path":"tags/Python/"},{"name":"Spring","count":11,"path":"tags/Spring/"},{"name":"Cursor","count":10,"path":"tags/Cursor/"},{"name":"健康","count":9,"path":"tags/健康/"},{"name":"AI 開發工具","count":9,"path":"tags/AI-開發工具/"},{"name":"Gemini","count":9,"path":"tags/Gemini/"},{"name":"Microsoft","count":9,"path":"tags/Microsoft/"},{"name":"Azure","count":9,"path":"tags/Azure/"},{"name":"微軟課程","count":9,"path":"tags/微軟課程/"},{"name":"資料庫","count":9,"path":"tags/資料庫/"},{"name":"GitHub Copilot","count":8,"path":"tags/GitHub-Copilot/"},{"name":"Elasticsearch","count":8,"path":"tags/Elasticsearch/"},{"name":"Apple","count":7,"path":"tags/Apple/"},{"name":"理財","count":7,"path":"tags/理財/"},{"name":"NVIDIA","count":6,"path":"tags/NVIDIA/"},{"name":"AI 模型","count":6,"path":"tags/AI-模型/"},{"name":"Rust","count":6,"path":"tags/Rust/"},{"name":"Performance","count":6,"path":"tags/Performance/"},{"name":"生活札記","count":6,"path":"tags/生活札記/"},{"name":"AI","count":5,"path":"tags/AI/"},{"name":"AZ-305","count":5,"path":"tags/AZ-305/"},{"name":"macOS","count":5,"path":"tags/macOS/"},{"name":"Code Review","count":5,"path":"tags/Code-Review/"},{"name":"Collections","count":5,"path":"tags/Collections/"},{"name":"併發","count":5,"path":"tags/併發/"},{"name":"Kiro","count":4,"path":"tags/Kiro/"},{"name":"AI 安全","count":4,"path":"tags/AI-安全/"},{"name":"Hooks","count":4,"path":"tags/Hooks/"},{"name":"Docker","count":4,"path":"tags/Docker/"},{"name":"DP-300","count":4,"path":"tags/DP-300/"},{"name":"SQL Server","count":4,"path":"tags/SQL-Server/"},{"name":"JSON","count":4,"path":"tags/JSON/"},{"name":"Stream","count":4,"path":"tags/Stream/"},{"name":"168斷食","count":3,"path":"tags/168斷食/"},{"name":"Mistral","count":3,"path":"tags/Mistral/"},{"name":"AI 法規","count":3,"path":"tags/AI-法規/"},{"name":"Windsurf","count":3,"path":"tags/Windsurf/"},{"name":"TDD","count":3,"path":"tags/TDD/"},{"name":"Agent","count":3,"path":"tags/Agent/"},{"name":"SDD","count":3,"path":"tags/SDD/"},{"name":"系統監控","count":3,"path":"tags/系統監控/"},{"name":"Prompt Engineering","count":3,"path":"tags/Prompt-Engineering/"},{"name":"遠端工作","count":3,"path":"tags/遠端工作/"},{"name":"生產力","count":2,"path":"tags/生產力/"},{"name":"Codex","count":2,"path":"tags/Codex/"},{"name":"Networking","count":2,"path":"tags/Networking/"},{"name":"Tool Use","count":2,"path":"tags/Tool-Use/"},{"name":"Multi-Model","count":2,"path":"tags/Multi-Model/"},{"name":"Claude Design","count":2,"path":"tags/Claude-Design/"},{"name":"Prototype","count":2,"path":"tags/Prototype/"},{"name":"Lucene","count":2,"path":"tags/Lucene/"},{"name":"旅遊","count":2,"path":"tags/旅遊/"},{"name":"專注力","count":1,"path":"tags/專注力/"},{"name":"軟體工程師","count":1,"path":"tags/軟體工程師/"},{"name":"職涯","count":1,"path":"tags/職涯/"},{"name":"2026","count":1,"path":"tags/2026/"},{"name":"Meta","count":1,"path":"tags/Meta/"},{"name":"Amazon","count":1,"path":"tags/Amazon/"},{"name":"AWS","count":1,"path":"tags/AWS/"},{"name":"資訊安全","count":1,"path":"tags/資訊安全/"},{"name":"Migration","count":1,"path":"tags/Migration/"},{"name":"Apify","count":1,"path":"tags/Apify/"},{"name":"爬蟲","count":1,"path":"tags/爬蟲/"},{"name":"Agent Skills","count":1,"path":"tags/Agent-Skills/"},{"name":"Addy Osmani","count":1,"path":"tags/Addy-Osmani/"},{"name":"工程紀律","count":1,"path":"tags/工程紀律/"},{"name":"UI 設計","count":1,"path":"tags/UI-設計/"},{"name":"Prompt Caching","count":1,"path":"tags/Prompt-Caching/"},{"name":"成本優化","count":1,"path":"tags/成本優化/"},{"name":"Function Calling","count":1,"path":"tags/Function-Calling/"},{"name":"Buddi","count":1,"path":"tags/Buddi/"},{"name":"notch","count":1,"path":"tags/notch/"},{"name":"CLAUDE.md","count":1,"path":"tags/CLAUDE-md/"},{"name":"Auto Memory","count":1,"path":"tags/Auto-Memory/"},{"name":"Project Setup","count":1,"path":"tags/Project-Setup/"},{"name":"Extended Thinking","count":1,"path":"tags/Extended-Thinking/"},{"name":"Reasoning","count":1,"path":"tags/Reasoning/"},{"name":"/goal","count":1,"path":"tags/goal/"},{"name":"VS Code","count":1,"path":"tags/VS-Code/"},{"name":"Monitor Tool","count":1,"path":"tags/Monitor-Tool/"},{"name":"Haiku","count":1,"path":"tags/Haiku/"},{"name":"Sonnet","count":1,"path":"tags/Sonnet/"},{"name":"Opus","count":1,"path":"tags/Opus/"},{"name":"Token 成本","count":1,"path":"tags/Token-成本/"},{"name":"Plan Mode","count":1,"path":"tags/Plan-Mode/"},{"name":"Routines","count":1,"path":"tags/Routines/"},{"name":"Ultraplan","count":1,"path":"tags/Ultraplan/"},{"name":"規劃","count":1,"path":"tags/規劃/"},{"name":"cloud","count":1,"path":"tags/cloud/"},{"name":"Voice Mode","count":1,"path":"tags/Voice-Mode/"},{"name":"Push-to-Talk","count":1,"path":"tags/Push-to-Talk/"},{"name":"Team","count":1,"path":"tags/Team/"},{"name":"Onboarding","count":1,"path":"tags/Onboarding/"},{"name":"Supply Chain","count":1,"path":"tags/Supply-Chain/"},{"name":"Cowork","count":1,"path":"tags/Cowork/"},{"name":"Plugin","count":1,"path":"tags/Plugin/"},{"name":"Subagent","count":1,"path":"tags/Subagent/"},{"name":"UX 設計","count":1,"path":"tags/UX-設計/"},{"name":"Managed Agents","count":1,"path":"tags/Managed-Agents/"},{"name":"Dreaming","count":1,"path":"tags/Dreaming/"},{"name":"Outcomes","count":1,"path":"tags/Outcomes/"},{"name":"Productivity","count":1,"path":"tags/Productivity/"},{"name":"CrewAI","count":1,"path":"tags/CrewAI/"},{"name":"Multi-Agent","count":1,"path":"tags/Multi-Agent/"},{"name":"Coolify","count":1,"path":"tags/Coolify/"},{"name":"self-hosted","count":1,"path":"tags/self-hosted/"},{"name":"PaaS","count":1,"path":"tags/PaaS/"},{"name":"Encryption","count":1,"path":"tags/Encryption/"},{"name":"Monitoring","count":1,"path":"tags/Monitoring/"},{"name":"Analyzer","count":1,"path":"tags/Analyzer/"},{"name":"IK","count":1,"path":"tags/IK/"},{"name":"中文搜尋","count":1,"path":"tags/中文搜尋/"},{"name":"Architecture","count":1,"path":"tags/Architecture/"},{"name":"Production","count":1,"path":"tags/Production/"},{"name":"Operations","count":1,"path":"tags/Operations/"},{"name":"CRUD","count":1,"path":"tags/CRUD/"},{"name":"bulk","count":1,"path":"tags/bulk/"},{"name":"alias","count":1,"path":"tags/alias/"},{"name":"REST API","count":1,"path":"tags/REST-API/"},{"name":"Mapping","count":1,"path":"tags/Mapping/"},{"name":"Template","count":1,"path":"tags/Template/"},{"name":"Schema","count":1,"path":"tags/Schema/"},{"name":"Aggregation","count":1,"path":"tags/Aggregation/"},{"name":"Search","count":1,"path":"tags/Search/"},{"name":"ELK Stack","count":1,"path":"tags/ELK-Stack/"},{"name":"internals","count":1,"path":"tags/internals/"},{"name":"Translog","count":1,"path":"tags/Translog/"},{"name":"Segment","count":1,"path":"tags/Segment/"},{"name":"GH-300","count":1,"path":"tags/GH-300/"},{"name":"Responsible AI","count":1,"path":"tags/Responsible-AI/"},{"name":"工具遷移","count":1,"path":"tags/工具遷移/"},{"name":"前端","count":1,"path":"tags/前端/"},{"name":"SpecKit","count":1,"path":"tags/SpecKit/"},{"name":"Lightpanda","count":1,"path":"tags/Lightpanda/"},{"name":"Headless Browser","count":1,"path":"tags/Headless-Browser/"},{"name":"Zig","count":1,"path":"tags/Zig/"},{"name":"Web Scraping","count":1,"path":"tags/Web-Scraping/"},{"name":"ETF","count":1,"path":"tags/ETF/"},{"name":"台股","count":1,"path":"tags/台股/"},{"name":"美股","count":1,"path":"tags/美股/"},{"name":"Mag-7","count":1,"path":"tags/Mag-7/"},{"name":"財報","count":1,"path":"tags/財報/"},{"name":"Jira","count":1,"path":"tags/Jira/"},{"name":"Atlassian","count":1,"path":"tags/Atlassian/"},{"name":"Multica","count":1,"path":"tags/Multica/"},{"name":"Open CoDesign","count":1,"path":"tags/Open-CoDesign/"},{"name":"AI Design","count":1,"path":"tags/AI-Design/"},{"name":"OpenCode","count":1,"path":"tags/OpenCode/"},{"name":"GPT","count":1,"path":"tags/GPT/"},{"name":"Skill","count":1,"path":"tags/Skill/"},{"name":"心智模型","count":1,"path":"tags/心智模型/"},{"name":"決策工具","count":1,"path":"tags/決策工具/"},{"name":"GPT-5.5","count":1,"path":"tags/GPT-5-5/"},{"name":"Discord","count":1,"path":"tags/Discord/"},{"name":"OpenScreen","count":1,"path":"tags/OpenScreen/"},{"name":"Screen Recording","count":1,"path":"tags/Screen-Recording/"},{"name":"AI VTuber","count":1,"path":"tags/AI-VTuber/"},{"name":"Project AIRI","count":1,"path":"tags/Project-AIRI/"},{"name":"TypeScript","count":1,"path":"tags/TypeScript/"},{"name":"RTK","count":1,"path":"tags/RTK/"},{"name":"Token 優化","count":1,"path":"tags/Token-優化/"},{"name":"Sonatype Guide","count":1,"path":"tags/Sonatype-Guide/"},{"name":"依賴管理","count":1,"path":"tags/依賴管理/"},{"name":"Stanford AI Index","count":1,"path":"tags/Stanford-AI-Index/"},{"name":"AI產業","count":1,"path":"tags/AI產業/"},{"name":"工程師職涯","count":1,"path":"tags/工程師職涯/"},{"name":"AI透明度","count":1,"path":"tags/AI透明度/"},{"name":"就業市場","count":1,"path":"tags/就業市場/"},{"name":"API","count":1,"path":"tags/API/"},{"name":"設計模式","count":1,"path":"tags/設計模式/"},{"name":"Whisper","count":1,"path":"tags/Whisper/"},{"name":"Speech-to-Text","count":1,"path":"tags/Speech-to-Text/"},{"name":"Flash Attention","count":1,"path":"tags/Flash-Attention/"},{"name":"TimesFM","count":1,"path":"tags/TimesFM/"},{"name":"時間序列","count":1,"path":"tags/時間序列/"},{"name":"基礎模型","count":1,"path":"tags/基礎模型/"},{"name":"ML","count":1,"path":"tags/ML/"},{"name":"包棟民宿","count":1,"path":"tags/包棟民宿/"},{"name":"台中","count":1,"path":"tags/台中/"},{"name":"南投","count":1,"path":"tags/南投/"},{"name":"苗栗","count":1,"path":"tags/苗栗/"},{"name":"時事評論","count":1,"path":"tags/時事評論/"},{"name":"能源","count":1,"path":"tags/能源/"},{"name":"AI 基礎建設","count":1,"path":"tags/AI-基礎建設/"},{"name":"台灣","count":1,"path":"tags/台灣/"},{"name":"MacBook","count":1,"path":"tags/MacBook/"},{"name":"淡江大橋","count":1,"path":"tags/淡江大橋/"},{"name":"淡水","count":1,"path":"tags/淡水/"},{"name":"建築","count":1,"path":"tags/建築/"},{"name":"週末","count":1,"path":"tags/週末/"},{"name":"Claude Skills","count":1,"path":"tags/Claude-Skills/"},{"name":"居家辦公","count":1,"path":"tags/居家辦公/"},{"name":"人體工學","count":1,"path":"tags/人體工學/"},{"name":"日本","count":1,"path":"tags/日本/"},{"name":"黃金週","count":1,"path":"tags/黃金週/"},{"name":"Golden Week","count":1,"path":"tags/Golden-Week/"}];</script></body></html>
