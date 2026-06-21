@@ -6,6 +6,7 @@
     { id: 'groove-pop', label: 'Groove Pop', url: '/music/yt-player.html?v=GSAI6bnf25A' },
     { id: 'groove-vibes', label: 'Groove Vibes', url: '/music/yt-player.html?v=3Q-x2HvOyrc' },
     { id: 'lofi-jazz', label: 'Lo-Fi Jazz', url: '/music/yt-player.html?v=7GRP7m5KVu8' },
+    { id: 'chill-reading', label: '讀書 Chill', url: '/music/yt-player.html?v=rh8dvk2nu6s' },
     { id: 'hymn-piano', label: '詩歌鋼琴', url: '/music/hymn-player.html' }
   ];
   var activeTab = TABS[0];
