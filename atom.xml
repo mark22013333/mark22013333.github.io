@@ -12,7 +12,7 @@
   <title>
     <![CDATA[Cheng's Tech & Life]]>
   </title>
-  <updated>2026-06-29T13:58:25.755Z</updated>
+  <updated>2026-06-29T15:25:56.811Z</updated>
   <entry>
     <author>
       <name>Cheng®</name>
@@ -30,7 +30,7 @@
     <published>2026-06-29T13:50:00.000Z</published>
     <summary>搞懂 Claude Code 的 fork 跟 subagent 差在哪：fork 連同整段對話一起複製、共用系統提示，靠 prompt cache 命中讓它反而比開一個乾淨的 subagent 更便宜</summary>
     <title>Claude Code Fork 完整教學 — 複製一份對話比開新分身更省錢的祕密</title>
-    <updated>2026-06-29T13:58:25.755Z</updated>
+    <updated>2026-06-29T15:25:56.811Z</updated>
   </entry>
   <entry>
     <author>
@@ -88,7 +88,7 @@
     <published>2026-06-28T15:00:00.000Z</published>
     <summary>7 月外送專法上路，Uber Eats 先漲服務費，疊單優惠恐消失。一份 180 的便當店家只拿到 120，這筆帳該怎麼算？給你一套不騎牆的三餐判準。</summary>
     <title>外送又要漲了 — 工程師三餐該外送、外食還是自煮的一套判準</title>
-    <updated>2026-06-28T12:31:10.019Z</updated>
+    <updated>2026-06-29T15:25:56.782Z</updated>
   </entry>
   <entry>
     <author>
@@ -146,7 +146,7 @@
     <published>2026-06-27T15:00:00.000Z</published>
     <summary>先別急著辦健身房會員。搞懂久坐時身體裡發生什麼，再決定怎麼動</summary>
     <title>工程師久坐不是腰痠而已 — 身體在你坐著時偷偷關掉了什麼</title>
-    <updated>2026-06-27T14:24:46.545Z</updated>
+    <updated>2026-06-29T15:25:56.803Z</updated>
   </entry>
   <entry>
     <author>
@@ -289,9 +289,9 @@
       <name>Cheng®</name>
     </author>
     <category term="AI Agent" scheme="https://mark22013333.github.io/categories/AI-Agent/"/>
+    <category term="LLM" scheme="https://mark22013333.github.io/tags/LLM/"/>
     <category term="AI Agent" scheme="https://mark22013333.github.io/tags/AI-Agent/"/>
     <category term="開源" scheme="https://mark22013333.github.io/tags/%E9%96%8B%E6%BA%90/"/>
-    <category term="LLM" scheme="https://mark22013333.github.io/tags/LLM/"/>
     <category term="自動化" scheme="https://mark22013333.github.io/tags/%E8%87%AA%E5%8B%95%E5%8C%96/"/>
     <content>
       <![CDATA[<p>先問你一個問題，答案會決定下面這篇你要不要看完：你想要的，到底是一套可以自己拼出 agent 的零件，還是一個開機就能用、而且會記住你的助理？</p><p>這兩個聽起來很像，其實差了一整個層級。大部分人卡住的點不是「哪個工具比較強」，是根本沒分清楚自己要的是哪一種，於是抱著 LangChain 的文件啃了三天，才發現自己想要的東西它本來就不打算給你。</p><p>Hermes Agent 就是站在另一邊那個答案。Nous Research 在 2025 年底開源它，口號是「The agent that grows with you」，七週內衝破 11 萬顆 GitHub 星，成長曲線比當年的 LangChain、AutoGen 都陡。但星星數不是重點，重點是它選了一條跟那些框架完全相反的路。</p><h2 id="積木和電器的差別"><a href="#積木和電器的差別" class="headerlink" title="積木和電器的差別"></a>積木和電器的差別</h2><p>你用過 LangChain 或 AutoGen 的話，會知道那是一種「嵌進你 Python 程式裡的函式庫」。你得自己寫 code 把 agent 串起來，每跑一次都從零開始，沒有記憶、不會學習，想接到 Telegram 或 Discord 還得自己刻整合層。它給你的是積木，怎麼拼、拼成什麼，全是你的事。</p><p>Hermes 填的是另一個洞。它本身就是一個完整的 runtime——你不是拿它來寫程式，你是把它跑起來直接用。</p><p>打個比方。LangChain 像一盒樂高，你買回家自己拼一台車，想要幾個輪子、裝不裝引擎，隨你；Hermes 像一台已經組好、插電就會跑的電器，而且這台電器剛好還留了螺絲讓工程師拆開改裝。前者的自由是「什麼都能拼」，後者的自由是「什麼都不用拼就能用」。這兩種自由不能比大小，只能看你今天缺哪一種。</p><p>這個分類有個名字叫 Tier 3 Runtime Agent，而 Hermes 是目前唯一一個 MIT 授權、完全開源的實作。其他同類大多收費或半開源，這點在你要把東西長期跑在自己機器上時，比功能表還重要。</p><h2 id="它真正下注的地方：記憶"><a href="#它真正下注的地方：記憶" class="headerlink" title="它真正下注的地方：記憶"></a>它真正下注的地方：記憶</h2><p>如果只是「跑起來就能用」，那不算稀奇。Hermes 真正押注的，是讓 agent 記得你。</p><p>每次對話結束，內容會存進本機的 SQLite，配上 FTS5 全文搜尋。但這還只是流水帳等級的記憶。它上面還疊了一個叫 Honcho 的使用者模型，會跨越一次又一次的 session 去追蹤你的偏好、你的工作習慣，然後自動調整自己的行為。換句話說，你不需要每次開場都重新交代一遍「我是誰、我在做什麼、我喜歡怎樣的回答」。</p><p>這件事為什麼值錢，得從反面看才清楚。市面上大多數 AI 助理的致命傷不是不夠聰明，是關掉就把你忘光。你昨天花二十分鐘調教它的脾氣，今天一開新視窗，它又變回那個對你一無所知的陌生人。記憶的價值，要等到你體會過「不用重講一遍」的順暢，才會真的有感。</p><p>對話中你還能隨時用 <code>/steer</code> 在它跑到一半時插話改方向，或用 <code>/compress</code> 把 context 壓縮掉省 token。這些小設計透露出一件事：它預設你會跟它長期相處，不是用完即丟。</p><h2 id="會自己長出技能的-agent"><a href="#會自己長出技能的-agent" class="headerlink" title="會自己長出技能的 agent"></a>會自己長出技能的 agent</h2><p>Hermes 最特別的一招，是它會把成功的經驗蒸餾成技能存下來。這背後是一篇 ICLR 2026 的 Oral 論文，機制叫 GEPA。</p><p>每當 agent 漂亮地完成一個複雜任務，它會自動把這次的解法整理成一個 Skill，丟進 <code>~/.hermes/skills/</code>。下次再碰到類似的任務，直接調出來用，不必從頭摸索。官方的數字是累積 20 個以上 Skill 之後，重複性任務的速度提升大約四成——這數字參考就好，但方向是對的：它在把「做過一次」變成「以後都會」。</p><p>而且這些 Skill 不是程式碼，是 Markdown 寫的知識文件，遵循 agentskills.io 那套開放標準。意思是你也能手寫一個 Skill 直接教它做某件事，或從社群的 Skills Hub 裝別人寫好的。一個會自己累積經驗、又能直接灌入外部知識的 agent，這是 LangChain 那種「每次都從白紙開始」的架構給不了的。</p><h2 id="什麼情況下它反而是錯的選擇"><a href="#什麼情況下它反而是錯的選擇" class="headerlink" title="什麼情況下它反而是錯的選擇"></a>什麼情況下它反而是錯的選擇</h2><p>講到這你可能已經想 <code>curl</code> 一行裝下去了。先別急，把場景倒過來想一遍更有用——它什麼時候會是個壞選擇？</p><p>如果你要的是對複雜流程的精細控制，比方說一個有十幾個節點、分支條件層層相扣的企業工作流，那 LangGraph 那種能畫出整張 graph、每一步都捏在手裡的東西，還是比 Hermes 適合。Hermes 的強項是「自己會跑、會學」，但代價就是你對它每一步的掌控力，沒有手刻 graph 那麼細。</p><p>如果你的需求是多個 agent 互相 critique、來回辯論著把程式碼生出來，那是 AutoGen 的主場。如果你只是要快速搭個角色分工明確的原型，CrewAI 上手更快。</p><p>還有些現實的坑得先知道。它不支援原生 Windows，你得用 WSL2 或鑽進 Docker 容器裡跑；瀏覽器工具吃的是 Browserbase 雲端服務，不能直連本地 Chromium；agent loop 是同步的，丟進 async 環境要靠 thread pool 橋接，會多一層 overhead；<code>max_iterations</code> 預設 90，遇到很深的任務得自己手動調高。最該記住的一條：<code>SUDO_PASSWORD</code> 是明文存在 <code>.env</code> 裡的，這東西只能放在你完全信得過的機器上，別圖方便丟到共用環境。</p><h2 id="所以，到底裝不裝"><a href="#所以，到底裝不裝" class="headerlink" title="所以，到底裝不裝"></a>所以，到底裝不裝</h2><p>把問題收回到最開頭那一句。</p><p>你要的如果是一塊能拼進現有系統、由你全權控制每一步的積木，那 Hermes 不是你的菜，老老實實去用 LangGraph。但你要的如果是一個插電就會跑、會記得你、還會把你教過的事情慢慢內化成本事的常駐助理——丟在一台月租五美元的 VPS 上、接條 Telegram 隨時喊它做事——那目前這個位子上，幾乎沒有對手跟它搶。</p><p>真正的分水嶺從來不是「哪個比較強」，而是你願不願意把控制權，換成一個會跟你一起長大的東西。想清楚這題，裝不裝自然就有答案了。</p><blockquote><p>原文來源：<a href="https://github.com/NousResearch/hermes-agent">NousResearch&#x2F;hermes-agent</a></p></blockquote>]]>
