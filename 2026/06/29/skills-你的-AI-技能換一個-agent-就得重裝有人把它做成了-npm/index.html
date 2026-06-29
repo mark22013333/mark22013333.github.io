@@ -1,0 +1,410 @@
+<!DOCTYPE html><html lang="zh-TW" data-theme="dark"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>skills — 你的 AI 技能換一個 agent 就得重裝，有人把它做成了 npm | Cheng's Tech &amp; Life</title><meta name="author" content="Cheng®"><meta name="copyright" content="Cheng®"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#0d0d0d"><meta name="description" content="Vercel Labs 出的 skills CLI，一行 npx 就能把同一個 agent skill 裝進 Claude Code、Cursor、Codex 等 72 種 agent，跨工具共用、版本一致、團隊好同步">
+<meta property="og:type" content="article">
+<meta property="og:title" content="skills — 你的 AI 技能換一個 agent 就得重裝，有人把它做成了 npm">
+<meta property="og:url" content="https://mark22013333.github.io/2026/06/29/skills-%E4%BD%A0%E7%9A%84-AI-%E6%8A%80%E8%83%BD%E6%8F%9B%E4%B8%80%E5%80%8B-agent-%E5%B0%B1%E5%BE%97%E9%87%8D%E8%A3%9D%E6%9C%89%E4%BA%BA%E6%8A%8A%E5%AE%83%E5%81%9A%E6%88%90%E4%BA%86-npm/index.html">
+<meta property="og:site_name" content="Cheng&#39;s Tech &amp; Life">
+<meta property="og:description" content="Vercel Labs 出的 skills CLI，一行 npx 就能把同一個 agent skill 裝進 Claude Code、Cursor、Codex 等 72 種 agent，跨工具共用、版本一致、團隊好同步">
+<meta property="og:locale" content="zh_TW">
+<meta property="og:image" content="https://mark22013333.github.io/img/20260629-01.webp">
+<meta property="article:published_time" content="2026-06-29T13:10:00.000Z">
+<meta property="article:modified_time" content="2026-06-29T13:54:27.594Z">
+<meta property="article:author" content="Cheng®">
+<meta property="article:tag" content="AI Agent">
+<meta property="article:tag" content="開源">
+<meta property="article:tag" content="AI 開發工具">
+<meta property="article:tag" content="Skills">
+<meta property="article:tag" content="CLI">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://mark22013333.github.io/img/20260629-01.webp"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "skills — 你的 AI 技能換一個 agent 就得重裝，有人把它做成了 npm",
+  "url": "https://mark22013333.github.io/2026/06/29/skills-%E4%BD%A0%E7%9A%84-AI-%E6%8A%80%E8%83%BD%E6%8F%9B%E4%B8%80%E5%80%8B-agent-%E5%B0%B1%E5%BE%97%E9%87%8D%E8%A3%9D%E6%9C%89%E4%BA%BA%E6%8A%8A%E5%AE%83%E5%81%9A%E6%88%90%E4%BA%86-npm/",
+  "image": "https://mark22013333.github.io/img/20260629-01.webp",
+  "datePublished": "2026-06-29T13:10:00.000Z",
+  "dateModified": "2026-06-29T13:54:27.594Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "Cheng®",
+      "url": "https://mark22013333.github.io"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://mark22013333.github.io/2026/06/29/skills-%E4%BD%A0%E7%9A%84-AI-%E6%8A%80%E8%83%BD%E6%8F%9B%E4%B8%80%E5%80%8B-agent-%E5%B0%B1%E5%BE%97%E9%87%8D%E8%A3%9D%E6%9C%89%E4%BA%BA%E6%8A%8A%E5%AE%83%E5%81%9A%E6%88%90%E4%BA%86-npm/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//www.google-analytics.com" crossorigin=""/><link rel="preconnect" href="//fonts.googleapis.com" crossorigin=""/><link rel="preconnect" href="//busuanzi.ibruce.info"/><meta name="google-site-verification" content="6ywUr8k2n_CT1PFYJzlSvI3CZ-JmJ55RYbA39VrFBDs"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!true && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          const hour = new Date().getHours()
+          const isNight = hour <= 9 || hour >= 18
+          if (theme === undefined) isNight ? activateDarkMode() : activateLightMode()
+          else theme === 'light' ? activateLightMode() : activateDarkMode()
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script async="async" src="https://www.googletagmanager.com/gtag/js?id=G-JBV14NRDH3"></script><script>window.dataLayer = window.dataLayer || []
+function gtag(){dataLayer.push(arguments)}
+gtag('js', new Date())
+gtag('config', 'G-JBV14NRDH3')
+btf.addGlobalFn('pjaxComplete', () => {
+  gtag('config', 'G-JBV14NRDH3', {'page_path': window.location.pathname})
+}, 'google_analytics')
+</script><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Titillium+Web&amp;display=swap" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"pagination":{"enable":false,"hitsPerPage":8},"languages":{"hits_empty":"找不到符合您查詢的內容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '複製成功',
+    error: '複製失敗',
+    noSupport: '瀏覽器不支援'
+  },
+  relativeDate: {
+    homepage: false,
+    post: true
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '剛剛',
+    min: '分鐘前',
+    hour: '小時前',
+    day: '天前',
+    month: '個月前'
+  },
+  copyright: {"limitCount":1,"languages":{"author":"作者: Cheng®","link":"連結: ","source":"來源: Cheng's Tech & Life","info":"著作權歸作者所有。如需商業轉載，請聯絡作者獲得授權，非商業轉載請註明出處😁。"}},
+  lightbox: 'fancybox',
+  Snackbar: {"chs_to_cht":"已切換為繁體中文","cht_to_chs":"已切換為簡體中文","day_to_night":"已切換為深色模式","night_to_day":"已切換為淺色模式","bgLight":"#49b1f5","bgDark":"#1f1f1f","position":"top-center"},
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid/dist/infinitegrid.min.js',
+    buttonText: '載入更多'
+  },
+  isPhotoFigcaption: true,
+  islazyloadPlugin: false,
+  isAnchor: true,
+  percent: {
+    toc: true,
+    rightside: true,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'skills — 你的 AI 技能換一個 agent 就得重裝，有人把它做成了 npm',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><link rel="stylesheet" href="/css/kkbox-player.css"><link rel="stylesheet" href="/css/tag-cloud-fancy.css"><link rel="stylesheet" href="/css/font-resize.css"><link rel="stylesheet" href="/css/dark-palette.css"><link rel="stylesheet" href="/css/loading-override.css"><link rel="stylesheet" href="/css/series-showcase.css"><link rel="stylesheet" href="/css/search-tags.css"><link rel="alternate" href="/atom.xml" title="Cheng's Tech & Life" type="application/atom+xml">
+</head><body><div id="loading-box"><div class="loading-glass-overlay"></div><div class="loading-indicator"><div class="loading-dot"></div><div class="loading-dot"></div><div class="loading-dot"></div></div></div><script>(()=>{
+  const $loadingBox = document.getElementById('loading-box')
+  const $body = document.body
+  const preloader = {
+    endLoading: () => {
+      if ($loadingBox.classList.contains('loaded')) return
+      $body.style.overflow = ''
+      $loadingBox.classList.add('loaded')
+    },
+    initLoading: () => {
+      $body.style.overflow = 'hidden'
+      $loadingBox.classList.remove('loaded')
+    }
+  }
+
+  preloader.initLoading()
+
+  if (document.readyState === 'complete') {
+    preloader.endLoading()
+  } else {
+    window.addEventListener('load', preloader.endLoading)
+    document.addEventListener('DOMContentLoaded', preloader.endLoading)
+    setTimeout(preloader.endLoading, 7000)
+  }
+
+  if (true) {
+    btf.addGlobalFn('pjaxSend', preloader.initLoading, 'preloader_init')
+    btf.addGlobalFn('pjaxComplete', preloader.endLoading, 'preloader_end')
+  }
+})()</script><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="https://lh3.googleusercontent.com/pw/ABLVV87_po8nBc6F_tXcoYDmtzMGWxHuhhrbguYILCjmjWKLOS8DTpubm0YoQLKgjyjRIZyV5TjYe7XVEz_YU4squfr37GTZqPZP1hlMVZ_MIgXpTxWu73M=w1200" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">363</div></a><a href="/tags/"><div class="headline">標籤</div><div class="length-num">222</div></a><a href="/categories/"><div class="headline">分類</div><div class="length-num">22</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首頁-Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 時間軸-archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 標籤-tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分類-Categories</span></a></div><div class="menus_item"><a class="site-page" href="/series/"><i class="fa-fw fas fa-layer-group"></i><span> 系列-Series</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-list"></i><span> 其他列表</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音樂-Music</span></a></li><li><a class="site-page child" href="/gallery/"><i class="fa-fw fas fa-images"></i><span> 畫館-Gallery</span></a></li></ul></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg fixed" id="page-header" style="background-image: url(/img/20260629-01.webp);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><img class="site-icon" src="https://lh3.googleusercontent.com/pw/ABLVV87_po8nBc6F_tXcoYDmtzMGWxHuhhrbguYILCjmjWKLOS8DTpubm0YoQLKgjyjRIZyV5TjYe7XVEz_YU4squfr37GTZqPZP1hlMVZ_MIgXpTxWu73M=w1200" alt="Logo"><span class="site-name">Cheng's Tech &amp; Life</span></a><a class="nav-page-title" href="/"><span class="site-name">skills — 你的 AI 技能換一個 agent 就得重裝，有人把它做成了 npm</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首頁</span></span></a></span><div id="menus"><div id="search-button" title="Ctrl+K / Cmd+K"><span class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜尋</span></span></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首頁-Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 時間軸-archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 標籤-tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分類-Categories</span></a></div><div class="menus_item"><a class="site-page" href="/series/"><i class="fa-fw fas fa-layer-group"></i><span> 系列-Series</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-list"></i><span> 其他列表</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音樂-Music</span></a></li><li><a class="site-page child" href="/gallery/"><i class="fa-fw fas fa-images"></i><span> 畫館-Gallery</span></a></li></ul></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">skills — 你的 AI 技能換一個 agent 就得重裝，有人把它做成了 npm</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">發表於</span><time class="post-meta-date-created" datetime="2026-06-29T13:10:00.000Z" title="發表於 2026-06-29 21:10:00">2026-06-29</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新於</span><time class="post-meta-date-updated" datetime="2026-06-29T13:54:27.594Z" title="更新於 2026-06-29 21:54:27">2026-06-29</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/AI-%E9%96%8B%E7%99%BC%E5%B7%A5%E5%85%B7/">AI 開發工具</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">總字數:</span><span class="word-count">1.9k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">閱讀時間:</span><span>6分鐘</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">瀏覽量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><p>你在 Claude Code 裡寫了一個 skill，把團隊的 PR 規範、commit 慣例、release notes 格式全包進去。用得很順。隔天你開 Cursor 想做同一件事，發現它不在了——skill 躺在 <code>.claude/skills/</code>，Cursor 根本不看那個目錄。</p>
+<p>於是你手動複製一份到 Cursor 的目錄。過兩天 Codex 也想用，再複製一份。然後 skill 改了一版，你得回頭把三個地方各更新一次，還很容易漏掉其中一個。再然後新同事加進來，問你「這個 skill 要怎麼裝」，你開始懷疑自己是不是該寫一份安裝說明。</p>
+<p>這整條路我走過，每一步都不難，但加起來就是一堆瑣碎到讓人不想做的搬運工。問題的形狀其實很清楚：skill 本身是可攜的，可攜的東西卻沒有一個負責搬運的工具。</p>
+<h2 id="試過的兩條死路"><a href="#試過的兩條死路" class="headerlink" title="試過的兩條死路"></a>試過的兩條死路</h2><p>第一條是手動複製。能動，但你等於把自己變成人肉同步器。三個 agent、五個專案、十個 skill，排列組合一拉開，維護成本就爆了。而且 symlink、相對路徑、版本號這些細節，手動做遲早出錯。</p>
+<p>第二條是「那我把 skill 寫進每個工具各自的設定」。聽起來乾淨，實際上更糟——你把同一份知識切成了好幾份，從此它們開始各自漂移。哪天規範變了，你根本不知道有幾份副本要改。</p>
+<p>兩條路的共同問題是：它們都在解「把檔案放對位置」這件事，但用的是人工。而「把檔案放對位置」這種有明確規則、可重複的事，本來就該交給工具。</p>
+<h2 id="skills-怎麼切進來"><a href="#skills-怎麼切進來" class="headerlink" title="skills 怎麼切進來"></a>skills 怎麼切進來</h2><p>Vercel Labs 做的 <code>skills</code> 就是那個工具。一句話講，它是 <strong>agent skills 界的 npm</strong>。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># GitHub 簡寫：owner/repo</span></span><br><span class="line">npx skills add vercel-labs/agent-skills</span><br><span class="line"></span><br><span class="line"><span class="comment"># 也吃完整 URL、直指某個 skill、GitLab、本機路徑</span></span><br><span class="line">npx skills add ./my-local-skills</span><br></pre></td></tr></table></figure>
+
+<p>跑下去，它會去 repo 把 skill 抓下來，然後依照一張內建的對照表，把它放進你電腦上各種 agent 對應的目錄。Claude Code 認 <code>.claude/skills/</code>，Cursor、Codex、Copilot 這些則共用 <code>.agents/skills/</code>，Windsurf 走 <code>.windsurf/skills/</code>——這些它都記得。寫一次，72 種以上的 agent 都能用。</p>
+<p>這裡有個分工值得先記住，因為很多人會搞混：</p>
+<blockquote>
+<p><strong>格式是 Anthropic 定的，工具是 Vercel 做的。</strong> Anthropic 定義「skill 長什麼樣」這個規範（後來開源成 <a target="_blank" rel="noopener" href="https://agentskills.io/">agentskills.io</a> 標準），Vercel Labs 的 <code>skills</code> 負責「跨平台把它裝對位置」。類比一下：Anthropic 出規格，Vercel 做 npm。</p>
+</blockquote>
+<p>而所謂 skill，說穿了就是一個資料夾，裡面至少有一個 <code>SKILL.md</code>。最小的長這樣，短到不可思議：</p>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">---</span><br><span class="line">name: skill-name</span><br><span class="line"><span class="section">description: A description of what this skill does and when to use it.</span></span><br><span class="line"><span class="section">---</span></span><br></pre></td></tr></table></figure>
+
+<p><code>name</code> 跟 <code>description</code> 是僅有的兩個必填欄位。<code>name</code> 規則很硬：最長 64 字元、只能小寫英數和連字號、而且<strong>必須跟父目錄同名</strong>。最常見的「No skills found」幾乎都是栽在這——不是 <code>name</code> 漏了，就是 YAML 寫壞了。</p>
+<h2 id="真正被解掉的那一步"><a href="#真正被解掉的那一步" class="headerlink" title="真正被解掉的那一步"></a>真正被解掉的那一步</h2><p>裝好之後最有感的是更新。預設用 symlink，各 agent 目錄都連到同一份副本，所以你 <code>skills update</code> 一次，所有工具同時到位。不支援 symlink 的環境就加 <code>--copy</code> 退回複製模式。</p>
+<p>scope 也只有兩種選擇，對應兩種真實需求：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 裝到專案（預設），跟著 repo commit，全隊共享</span></span><br><span class="line">npx skills add owner/repo</span><br><span class="line"></span><br><span class="line"><span class="comment"># 裝到 global（-g），自己所有專案都能用</span></span><br><span class="line">npx skills add owner/repo -g</span><br></pre></td></tr></table></figure>
+
+<p>回頭看開頭那條搬運鏈：跨 agent 不用複製了（它認得每個目錄）、團隊同步交給 git（project scope commit 進 repo）、版本一致交給 symlink + <code>update</code>、新同事一行 <code>npx skills add</code> 就上手。那條讓人不想做的瑣事鏈，被它從中間剪斷了。</p>
+<p>常用指令大概這幾個，記起來跟 npm 幾乎一一對應：</p>
+<table>
+<thead>
+<tr>
+<th>指令</th>
+<th>功能</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>skills add &lt;source&gt;</code></td>
+<td>從 repo 安裝</td>
+</tr>
+<tr>
+<td><code>skills list</code> &#x2F; <code>ls</code></td>
+<td>列出已裝的（像 <code>npm ls</code>）</td>
+</tr>
+<tr>
+<td><code>skills find [query]</code></td>
+<td>搜尋，後端接官方目錄站 <a target="_blank" rel="noopener" href="https://skills.sh/">skills.sh</a></td>
+</tr>
+<tr>
+<td><code>skills update</code></td>
+<td>更新到最新版</td>
+</tr>
+<tr>
+<td><code>skills remove</code> &#x2F; <code>rm</code></td>
+<td>移除</td>
+</tr>
+<tr>
+<td><code>skills init [name]</code></td>
+<td>生一份 SKILL.md 範本</td>
+</tr>
+</tbody></table>
+<p>還有一個 <code>use</code> 比較特別，它<strong>不安裝</strong>，只把 skill 轉成 prompt 印出來，可以直接 pipe 給 agent：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npx skills use vercel-labs/agent-skills@web-design-guidelines | claude</span><br></pre></td></tr></table></figure>
+
+<h2 id="為什麼它不會把-context-撐爆"><a href="#為什麼它不會把-context-撐爆" class="headerlink" title="為什麼它不會把 context 撐爆"></a>為什麼它不會把 context 撐爆</h2><p>如果你擔心「裝一堆 skill，agent 一啟動不就把它們全讀進來、context 馬上滿？」——這正是整套機制最聰明的地方，叫 progressive disclosure，分三階段按需載入。</p>
+<p>啟動時它只讀每個 skill 的 <code>name</code> 和 <code>description</code>，大概 100 tokens，僅夠 agent 判斷「這個現在用得到嗎」。等你的任務真的對上某個 skill 的 description，才把整個 <code>SKILL.md</code> 讀進去。至於 <code>scripts/</code>、<code>references/</code> 裡的細節，要等真正執行到那一步才載入。</p>
+<p>換個生活化的講法：這像你書架上的書。平常你只記得書背上的標題（discovery），需要時才抽出來翻目錄（activation），真要查某個細節才翻到那一頁（execution）。沒人會把整個書架的內容同時塞進腦袋。這也是為什麼規範建議 <code>SKILL.md</code> 控制在 500 行內、指令部分少於 5000 tokens——太肥的話 activation 那一下就會一次吞掉一大包，該拆的細節請丟到 <code>references/</code> 用相對路徑引用。</p>
+<p>官方範例 skill 裡，<code>web-design-guidelines</code> 把這招玩到極致：<code>SKILL.md</code> 本身很精簡，真正那 100 多條 a11y 與效能規則，是在執行階段才用 WebFetch 從 GitHub 抓最新版。規則更新了，你不用重裝 skill。順帶一提，範例 skill 不在 <code>vercel-labs/skills</code>（那是 CLI 本體），而在另一個 repo <code>vercel-labs/agent-skills</code>，別找錯。</p>
+<h2 id="還沒解掉的部分"><a href="#還沒解掉的部分" class="headerlink" title="還沒解掉的部分"></a>還沒解掉的部分</h2><p>它不是萬靈丹，有幾個邊界要先知道。</p>
+<p>CLI 只負責「把檔案放對位置」，真正的觸發、載入、執行是各 agent 自己照規範處理。所以進階功能是 agent-specific 的，不是每家都吃：<code>context: fork</code>（讓 skill 在獨立 context 跑）目前只有 Claude Code 支援；Hooks 只有 Claude Code、Cline、Kiro 吃；<code>allowed-tools</code> 還是實驗性的。跨 agent 共用前，先確認目標 agent 撐不撐你用到的進階 feature，不然會裝了卻沒反應。</p>
+<p>另外它要 Node.js 才能跑 <code>npx</code>、抓遠端 source 要有 git、要驗 skill 格式得另外裝官方的 <code>skills-ref</code>。它預設會收匿名 telemetry，介意的話用 <code>DISABLE_TELEMETRY</code> 或 <code>DO_NOT_TRACK</code> 關掉（CI 環境會自動關）。最後，它屬於 Vercel Labs 的實驗專案，迭代很快、社群採用度也高，授權是 MIT，但「實驗專案」這四個字還是放心上。</p>
+<p>回到開頭那個你——裝了 skill、隔天換工具發現不見的那個。現在的處理方式變成：skill 寫好放進 repo，<code>npx skills add</code> 一行裝進所有 agent，commit，收工。中間那些複製貼上、版本對不齊、教新人安裝的工，全部不見了。</p>
+<p>說到底，這工具沒有發明任何新東西。skill 早就是可攜的格式，它只是補上了那個一直缺席的搬運工。而軟體工程裡最值錢的進步，往往就是這種——不是讓你能做新的事，是把一件你本來就在做、卻做得很煩的事，降到一行指令的成本。當搬運的摩擦低到可以忽略，你才會真的開始把知識打包、共享、累積。npm 當年對 JavaScript 生態做的，就是這件事。</p>
+<blockquote>
+<p>專案連結：<a target="_blank" rel="noopener" href="https://github.com/vercel-labs/skills">github.com&#x2F;vercel-labs&#x2F;skills</a>（CLI 本體）、<a target="_blank" rel="noopener" href="https://github.com/vercel-labs/agent-skills">github.com&#x2F;vercel-labs&#x2F;agent-skills</a>（官方範例 skill 集）<br>規範與目錄：<a target="_blank" rel="noopener" href="https://agentskills.io/">agentskills.io</a>、<a target="_blank" rel="noopener" href="https://skills.sh/">skills.sh</a></p>
+</blockquote>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://mark22013333.github.io">Cheng®</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章連結: </span><span class="post-copyright-info"><a href="https://mark22013333.github.io/2026/06/29/skills-%E4%BD%A0%E7%9A%84-AI-%E6%8A%80%E8%83%BD%E6%8F%9B%E4%B8%80%E5%80%8B-agent-%E5%B0%B1%E5%BE%97%E9%87%8D%E8%A3%9D%E6%9C%89%E4%BA%BA%E6%8A%8A%E5%AE%83%E5%81%9A%E6%88%90%E4%BA%86-npm/">https://mark22013333.github.io/2026/06/29/skills-你的-AI-技能換一個-agent-就得重裝有人把它做成了-npm/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版權聲明: </span><span class="post-copyright-info">本部落格所有文章除特別聲明外，均採用<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 授權協議。轉載請註明來源 <a href="https://mark22013333.github.io" target="_blank">Cheng's Tech & Life</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/AI-Agent/">AI Agent</a><a class="post-meta__tags" href="/tags/%E9%96%8B%E6%BA%90/">開源</a><a class="post-meta__tags" href="/tags/AI-%E9%96%8B%E7%99%BC%E5%B7%A5%E5%85%B7/">AI 開發工具</a><a class="post-meta__tags" href="/tags/Skills/">Skills</a><a class="post-meta__tags" href="/tags/CLI/">CLI</a></div><div class="post-share"><div class="social-share" data-image="/img/20260629-01.webp" data-sites="facebook,x"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><div class="post-reward"><div class="reward-badges"><a class="sponsor-glow-btn" href="https://www.buymeacoffee.com/mark22013333" target="_blank" rel="noopener noreferrer" title="Buy Me A Coffee"><img src="https://img.shields.io/badge/Buy_Me_A_Coffee-FFDD00?style=for-the-badge&amp;logo=buy-me-a-coffee&amp;logoColor=black" alt="Buy Me A Coffee"/></a><a class="sponsor-glow-btn" href="https://p.ecpay.com.tw/EFC3F8F" target="_blank" rel="noopener noreferrer" title="綠界贊助"><img src="https://img.shields.io/badge/☕_%E8%AB%8B%E6%88%91%E5%96%9D%E6%9D%AF%E5%92%96%E5%95%A1-Donate-11998e?style=for-the-badge&amp;logo=coffee&amp;logoColor=white" alt="綠界贊助"/></a><a class="sponsor-glow-btn" href="https://calendly.com/markcheng00806-intumit/15min" target="_blank" rel="noopener noreferrer" title="預約時間"><img src="https://img.shields.io/badge/📅_%E9%A0%90%E7%B4%84_15_%E5%88%86%E9%90%98-Book_Time-0072ff?style=for-the-badge" alt="預約時間"/></a><p class="reward-badges-note">你的鼓勵將被轉換為我明天繼續加班的動力（真的）。 ❤️</p></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2026/06/28/%E5%A4%96%E9%80%81%E5%8F%88%E8%A6%81%E6%BC%B2%E4%BA%86-%E5%B7%A5%E7%A8%8B%E5%B8%AB%E4%B8%89%E9%A4%90%E8%A9%B2%E5%A4%96%E9%80%81%E5%A4%96%E9%A3%9F%E9%82%84%E6%98%AF%E8%87%AA%E7%85%AE%E7%9A%84%E4%B8%80%E5%A5%97%E5%88%A4%E6%BA%96/" title="外送又要漲了 — 工程師三餐該外送、外食還是自煮的一套判準"><img class="cover" src="/img/20260628-03.webp" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">外送又要漲了 — 工程師三餐該外送、外食還是自煮的一套判準</div></div><div class="info-2"><div class="info-item-1">你叫一份 180 塊的便當外送，那間店實際拿到手的，可能只剩 120。 中間那 60 塊去哪了？平台抽走了。台灣主流外送平台對店家的抽成，平均落在每單 30% 到 35%，這還沒算上架費、每月使用費、買曝光的廣告費。店家不是慈善機構，這些成本最後一定會反映在菜單價格上——所以你在外送 App 上看到的那份便當，本來就比你走進店裡點貴了一截。你以為外送費只是那筆「運費 39 元」，其實餐點本身早就被偷偷加了價。 而這筆帳，7 月之後還要更貴。 先搞懂這次到底漲什麼台灣的「外送專法」7 月正式上路。趕在新法之前，Uber Eats 先開了第一槍：7 月 21 日起調漲對商家的服務費，美食類漲 2.5 個百分點、生鮮雜貨漲 3 個百分點，設了個 35% 的上限。foodpanda 暫時按兵不動，說還在「審慎評估」——但業界普遍認為，這只是時間問題。 表面上漲的是「商家服務費」，跟你這個消費者好像沒關係。別天真。商家的成本一往上加，最後幾乎都會傳導到你點的那份餐上，差別只在多快、多明顯。 更有感的是另一件事：疊單。你可能沒注意過，平台把順路的訂單併在一起送（疊單），根據內政部統計，這個機...</div></div></div></a><a class="pagination-related" href="/2026/06/29/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260629/" title="AI 與科技新聞摘要 20260629"><img class="cover" src="/img/20260629-02.webp" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">AI 與科技新聞摘要 20260629</div></div><div class="info-2"><div class="info-item-1">這禮拜值得記下來的新聞，沒有一條是「某個模型又變聰明了」。最強的模型發了，卻被政府攔在門口只放 20 家進場；另一個模型被指控遭人偷偷蒸餾了兩千多萬次；還有一個直接開源白送，順便把成本砍半。能力這條軸線好像突然不再是重點了，所有的張力都跑到了另一個地方。 一、GPT-5.6 Sol 發表，但你大概還用不到——它得先過政府那關OpenAI 在 6&#x2F;26 發表了新一代模型家族 GPT-5.6，分成三個能力層：旗艦 Sol、平衡的 Terra、低成本的 Luna。命名規則也換了——數字代表世代，Sol／Terra／Luna 代表能力層級，各自能用不同節奏進化，等於把以前 mini、nano 那套混亂的命名收乾淨。Sol 在 Terminal-Bench 2.1 這種命令列工作流的測試上創了新高，還加了「max 推理強度」和會自己派子代理的 ultra 模式。定價 Sol 是每百萬 token 輸入 5 美元、輸出 30 美元。 聽起來是場標準的旗艦發表。真正的新聞在後半段：GPT-5.6 是限定預覽，初期只開放約 20 家公司，而且這些公司的參與資格是政府核准的。這要追到 6...</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相關推薦</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2026/06/20/gsap-skills-AI-%E5%AF%AB%E7%9A%84%E5%8B%95%E7%95%AB%E8%80%81%E6%98%AF%E5%8F%AB%E4%BD%A0%E8%B2%B7%E6%9C%83%E5%93%A1-%E5%95%8F%E9%A1%8C%E4%B8%8D%E6%98%AF%E6%A8%A1%E5%9E%8B%E5%A4%AA%E7%AC%A8/" title="gsap-skills — AI 寫的動畫老是叫你買會員，問題不是模型太笨"><img class="cover" src="/img/20260620-01.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-06-20</div><div class="info-item-2">gsap-skills — AI 寫的動畫老是叫你買會員，問題不是模型太笨</div></div><div class="info-2"><div class="info-item-1">你的 AI 寫出一段爛 GSAP 程式碼，第一直覺通常是怪它笨。其實它一點都不笨。它只是活在一個 GSAP 還要收錢的過去，而那個世界已經不存在了。 這個區別很重要，因為它決定了你該怎麼修。如果問題是「模型太笨」，那你只能等下一代更強的模型。但如果問題是「它知道的事情過時了」，那解法便宜又直接——把現在正確的事實，遞到它面前就好。GreenSock 官方這個月放出的 gsap-skills，做的就是後者。 先看 AI 到底錯在哪叫 Claude Code 或 Cursor 幫你寫個捲動動畫，你很可能會收到這幾種「自信的錯誤」：它叫你先去買 Club GSAP 會員才能用 SplitText；它生一個帶著舊 GreenSock auth token 的 .npmrc，指向一個你根本不需要的私有 registry；它直接動畫 width、top、left 這種一改就觸發 layout reflow 的屬性，動起來卡到你懷疑人生；在 React 裡它用裸 useEffect 硬包 GSAP，忘了 cleanup，記憶體就這樣慢慢洩出去；ScrollTrigger 忘記 register...</div></div></div></a><a class="pagination-related" href="/2026/06/18/Google-Skills-%E4%BD%A0%E7%9A%84-AI-%E8%80%81%E6%98%AF%E5%AF%AB%E5%87%BA%E9%81%8E%E6%9C%9F%E7%9A%84%E9%9B%B2%E7%AB%AF%E7%A8%8B%E5%BC%8F%E7%A2%BC%E9%80%99%E5%80%8B-Markdown-repo-%E6%83%B3%E6%B2%BB%E6%9C%AC/" title="Google Skills — 你的 AI 老是寫出過期的雲端程式碼，這個 Markdown repo 想治本"><img class="cover" src="/img/20260618-01.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-06-18</div><div class="info-item-2">Google Skills — 你的 AI 老是寫出過期的雲端程式碼，這個 Markdown repo 想治本</div></div><div class="info-2"><div class="info-item-1">把時間拉回到大模型剛開始會寫程式的那陣子。你叫它幫你接 Google Cloud，它寫得飛快，語法也漂亮，你複製貼上，跑——炸了。它用了一個半年前就被標 deprecated 的 google-cloud-aiplatform SDK，順手還給你掰了一個根本不存在的 model 名稱。 這個場景，從那時候到現在，幾乎沒怎麼變過。換了幾代模型，分數一代比一代高，但你叫它接雲端 API，它還是有不小機率給你一段「看起來對、跑起來錯」的程式碼。問題不在它笨。問題在一個更結構性的地方：它的記憶有個截止日，而雲端產品沒有。 一個追不上的時間差想清楚這件事，得先承認一個落差。 一個 AI 模型的知識，是在某個時間點凍結的。它訓練完那一刻，腦袋裡的 Google Cloud 就停在那個版本——那時候的 SDK、那時候的 model 名稱、那時候的最佳實踐。然後它被部署出來，開始服務你好幾個月、甚至一年。 而這段期間，Google Cloud 那邊在幹嘛？Gemini 的 model 名稱每幾個月換一輪，SDK 大改版，認證方式推陳出新，昨天的 golden path 今天就被標成不建議。雲端產...</div></div></div></a><a class="pagination-related" href="/2026/06/26/video-use-%E5%89%AA%E4%B8%80%E6%94%AF%E7%89%87%E5%BE%9E%E5%9C%A8%E6%99%82%E9%96%93%E8%BB%B8%E4%B8%8A%E6%8B%96%E4%B8%89%E5%B0%8F%E6%99%82%E9%80%80%E5%8C%96%E6%88%90%E8%AC%9B%E4%B8%80%E5%8F%A5%E8%A9%B1/" title="video-use — 剪一支片，從在時間軸上拖三小時退化成講一句話"><img class="cover" src="/img/20260626-01.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-06-26</div><div class="info-item-2">video-use — 剪一支片，從在時間軸上拖三小時退化成講一句話</div></div><div class="info-2"><div class="info-item-1">剪片這件事，工具換了一代又一代，可是你坐在電腦前要做的那個動作，二十年來幾乎沒變過：在一條時間軸上，把素材拖來拖去。 Premiere、Final Cut、DaVinci Resolve，介面一個比一個漂亮，軌道一個比一個多。但核心互動還是那一套——你用滑鼠，一刀一刀，在時間軸上對齊、裁切、疊加、調色。學會它要花多久？去問任何一個幫朋友剪過婚禮影片的人就知道，那個單位是「週」，不是「小時」。剪輯軟體真正的門檻，從來不是買不買得起，是那條時間軸本身就是一門要練的手藝。 第一次鬆動：把影片變成一篇可以刪字的稿子真正動搖這件事的，是 Descript。 它做了一件當年看起來有點怪的事：把你的影片先轉成逐字稿，然後讓你「編輯文字」。你在稿子裡刪掉一句講壞的話，對應的那段影片就跟著被剪掉了；你把兩段話的順序對調，畫面也跟著重排。剪片第一次不再是拖時間軸，而是改一篇 Word 文件。 這一步的聰明，在於它找對了影片裡「資訊密度最高」的那層東西。一段 talking head 影片，畫面其實沒什麼變化——一個人坐在那裡講話，背景、光線、構圖整段都差不多。真正承載「這支片在講什麼」的，是聲音轉出...</div></div></div></a><a class="pagination-related" href="/2026/05/21/Garden-Skills-%E7%B5%A6-AI-Agent-%E8%A3%9D%E4%B8%8A%E8%A8%AD%E8%A8%88%E5%93%81%E5%91%B3%E7%9A%84%E5%9B%9B%E5%80%8B-Skill/" title="Garden Skills — 給 AI Agent 裝上設計品味的四個 Skill"><img class="cover" src="/img/20260521-01.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-05-21</div><div class="info-item-2">Garden Skills — 給 AI Agent 裝上設計品味的四個 Skill</div></div><div class="info-2"><div class="info-item-1">大部分 AI coding agent 生出來的網頁，長得都像同一個人做的。 紫粉漸層、圓角卡片、到處都是 emoji、千篇一律的 hero section 加上一句「Welcome to the future」。你說不出哪裡錯，但就是一秒認出「這是 AI 做的」。問題不在模型不夠聰明——問題在沒有人告訴它什麼叫品味。 Garden Skills 做的事很簡單：它不改模型、不改框架，它改的是 Agent 對「好的設計」的理解。四份 Markdown 檔案，零 runtime 依賴，裝上去之後 Agent 的設計輸出品質會好到你不太敢相信它是 AI 做的。  為什麼 AI 做的網頁都長一樣你讓 Claude Code 做一個 landing page，它會給你一個「安全」的答案：漸層背景、卡片排版、icon 配文字三欄並排。不是因為它不會做別的，是因為沒有人告訴它「這些是陳腔濫調，你要避開」。 想像你找一個剛畢業的設計師。他技巧到位、Figma 用得很熟，但做出來的東西永遠是 Dribbble 上那種——好看，但沒有靈魂。你需要的不是教他更多技巧，是給他一套判斷標準：什麼該做、什麼...</div></div></div></a><a class="pagination-related" href="/2026/06/17/Ponytail-%E8%AE%93-AI-%E5%B0%91%E5%AF%AB%E7%A8%8B%E5%BC%8F%E7%A2%BC-%E4%B8%80%E9%81%93%E6%B1%BA%E7%AD%96%E9%9A%8E%E6%A2%AF%E8%A9%B2%E4%B8%8D%E8%A9%B2%E8%A3%9D%E9%80%B2%E4%BD%A0%E7%9A%84-coding-agent/" title="Ponytail — 讓 AI 少寫程式碼，一道決策階梯該不該裝進你的 coding agent"><img class="cover" src="/img/20260617-01.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-06-17</div><div class="info-item-2">Ponytail — 讓 AI 少寫程式碼，一道決策階梯該不該裝進你的 coding agent</div></div><div class="info-2"><div class="info-item-1">先別急著裝。裝 Ponytail 之前，你只需要回答一個問題：你那隻 AI coding agent，平常是寫太少，還是寫太多？ 這個問題的答案，幾乎決定了 Ponytail 對你是神器還是雜訊。如果你的 agent 老是偷懶、該補的驗證不補、邏輯寫一半就收工——那它不缺一個叫它「少做一點」的工具。但如果你常常遇到另一種情況：你只是要一個日期選擇器，它二話不說裝了 flatpickr、包了一層 wrapper component、還順手幫你寫了時區處理——那 Ponytail 正是衝著你這隻 agent 來的。 Ponytail 是 2026 年 6 月爆紅的一個 agent skill，作者是個人開發者 DietrichGebert，建立才四天就衝上 21,000+ stars。它的工作只有一件事，而且這件事可以濃縮成一句話：最好的程式碼，是你根本沒寫的那一行（The best code is the code you never wrote）。 它到底在攔什麼四天兩萬星這個數字，比工具本身更值得想一下。一個只是「叫 AI 少寫一點」的 prompt，憑什麼讓這麼多人有共鳴？ ...</div></div></div></a><a class="pagination-related" href="/2026/06/05/Superpower-vs-Crew-%E5%85%A9%E5%A5%97-Claude-Code-%E6%8A%80%E8%83%BD%E6%9E%B6%E6%A7%8B%E7%9A%84%E9%81%B8%E5%9E%8B%E5%88%86%E6%9E%90/" title="Superpower vs Crew — 兩套 Claude Code 技能架構，企業到底該選哪一套"><img class="cover" src="/img/20260605-01.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-06-05</div><div class="info-item-2">Superpower vs Crew — 兩套 Claude Code 技能架構，企業到底該選哪一套</div></div><div class="info-2"><div class="info-item-1">回頭看 Claude Code 的 skill 機制剛出來那陣子，大家其實沒人知道該拿它幹嘛。 那時候的 skill 就是一個資料夾、一個 SKILL.md，裡面寫幾句「遇到 X 你就照 Y 做」。聽起來很美好，實際上呢？多數人裝了三五個 skill，跑了兩天，發現它們各自為政，沒有一條主線把它們串起來。你叫 AI 寫功能，它有時候記得用 TDD，有時候又忘了；有時候會先 brainstorm，有時候直接動手寫一坨。skill 是有了，但「什麼時候該用哪個 skill」這件事，還是塞在工程師自己腦袋裡。 一年後的今天，這個混沌期結束了。市面上演化出兩種完全不同的解法，而且兩種都很成熟。一種是 Anthropic 自己下場做的 Superpower，一種是企業內部長出來的 Crew。它們解的是同一個痛，路線卻徹底分岔——分岔到你幾乎可以說，它們對「AI 該怎麼幫人寫程式」這件事的世界觀根本不同。 今天就把這兩條路攤開講清楚。如果你正在幫團隊評估要導入哪一套，這篇就是寫給你的。 先講最關鍵的那一刀：通用方法論 vs 領域工作流決定一套架構長什麼樣的，從來不是它有多少功能，而是它選擇不...</div></div></div></a></div></div><hr class="custom-hr"/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 評論</span></div></div><div class="comment-wrap"><div><div id="giscus-wrap"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="https://lh3.googleusercontent.com/pw/ABLVV87_po8nBc6F_tXcoYDmtzMGWxHuhhrbguYILCjmjWKLOS8DTpubm0YoQLKgjyjRIZyV5TjYe7XVEz_YU4squfr37GTZqPZP1hlMVZ_MIgXpTxWu73M=w1200" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">Cheng®</div><div class="author-info-description">Backend Developer / 技術筆記 & AI 新聞分享</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">363</div></a><a href="/tags/"><div class="headline">標籤</div><div class="length-num">222</div></a><a href="/categories/"><div class="headline">分類</div><div class="length-num">22</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/mark22013333"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons"><a class="social-icon" href="https://github.com/mark22013333" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:mark22013333@gmail.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a></div><div class="card-info-sponsor"><a class="sponsor-glow-btn" href="https://www.buymeacoffee.com/mark22013333" target="_blank" rel="noopener noreferrer" title="Buy Me A Coffee"><img src="https://img.shields.io/badge/Buy_Me_A_Coffee-FFDD00?style=for-the-badge&amp;logo=buy-me-a-coffee&amp;logoColor=black" alt="Buy Me A Coffee"/></a><a class="sponsor-glow-btn" href="https://p.ecpay.com.tw/EFC3F8F" target="_blank" rel="noopener noreferrer" title="綠界贊助"><img src="https://img.shields.io/badge/☕_%E8%AB%8B%E6%88%91%E5%96%9D%E6%9D%AF%E5%92%96%E5%95%A1-Donate-11998e?style=for-the-badge&amp;logo=coffee&amp;logoColor=white" alt="綠界贊助"/></a><a class="sponsor-glow-btn" href="https://calendly.com/markcheng00806-intumit/15min" target="_blank" rel="noopener noreferrer" title="預約時間"><img src="https://img.shields.io/badge/📅_%E9%A0%90%E7%B4%84_15_%E5%88%86%E9%90%98-Book_Time-0072ff?style=for-the-badge" alt="預約時間"/></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">這裡記錄我在後端開發路上踩過的坑、學到的東西，也會分享每日 AI 與科技新聞觀點。歡迎一起交流！</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目錄</span><span class="toc-percentage"></span></div><div class="toc-content is-expand"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%A9%A6%E9%81%8E%E7%9A%84%E5%85%A9%E6%A2%9D%E6%AD%BB%E8%B7%AF"><span class="toc-number">1.</span> <span class="toc-text">試過的兩條死路</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#skills-%E6%80%8E%E9%BA%BC%E5%88%87%E9%80%B2%E4%BE%86"><span class="toc-number">2.</span> <span class="toc-text">skills 怎麼切進來</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%9C%9F%E6%AD%A3%E8%A2%AB%E8%A7%A3%E6%8E%89%E7%9A%84%E9%82%A3%E4%B8%80%E6%AD%A5"><span class="toc-number">3.</span> <span class="toc-text">真正被解掉的那一步</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%82%BA%E4%BB%80%E9%BA%BC%E5%AE%83%E4%B8%8D%E6%9C%83%E6%8A%8A-context-%E6%92%90%E7%88%86"><span class="toc-number">4.</span> <span class="toc-text">為什麼它不會把 context 撐爆</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%82%84%E6%B2%92%E8%A7%A3%E6%8E%89%E7%9A%84%E9%83%A8%E5%88%86"><span class="toc-number">5.</span> <span class="toc-text">還沒解掉的部分</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2026/06/29/Claude-Code-Fork-%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8-%E8%A4%87%E8%A3%BD%E4%B8%80%E4%BB%BD%E5%B0%8D%E8%A9%B1%E6%AF%94%E9%96%8B%E6%96%B0%E5%88%86%E8%BA%AB%E6%9B%B4%E7%9C%81%E9%8C%A2%E7%9A%84%E7%A5%95%E5%AF%86/" title="Claude Code Fork 完整教學 — 複製一份對話比開新分身更省錢的祕密"><img src="/img/20260629-03.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Claude Code Fork 完整教學 — 複製一份對話比開新分身更省錢的祕密"/></a><div class="content"><a class="title" href="/2026/06/29/Claude-Code-Fork-%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8-%E8%A4%87%E8%A3%BD%E4%B8%80%E4%BB%BD%E5%B0%8D%E8%A9%B1%E6%AF%94%E9%96%8B%E6%96%B0%E5%88%86%E8%BA%AB%E6%9B%B4%E7%9C%81%E9%8C%A2%E7%9A%84%E7%A5%95%E5%AF%86/" title="Claude Code Fork 完整教學 — 複製一份對話比開新分身更省錢的祕密">Claude Code Fork 完整教學 — 複製一份對話比開新分身更省錢的祕密</a><time datetime="2026-06-29T13:50:00.000Z" title="發表於 2026-06-29 21:50:00">2026-06-29</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/06/29/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260629/" title="AI 與科技新聞摘要 20260629"><img src="/img/20260629-02.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="AI 與科技新聞摘要 20260629"/></a><div class="content"><a class="title" href="/2026/06/29/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260629/" title="AI 與科技新聞摘要 20260629">AI 與科技新聞摘要 20260629</a><time datetime="2026-06-29T13:30:00.000Z" title="發表於 2026-06-29 21:30:00">2026-06-29</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/06/29/skills-%E4%BD%A0%E7%9A%84-AI-%E6%8A%80%E8%83%BD%E6%8F%9B%E4%B8%80%E5%80%8B-agent-%E5%B0%B1%E5%BE%97%E9%87%8D%E8%A3%9D%E6%9C%89%E4%BA%BA%E6%8A%8A%E5%AE%83%E5%81%9A%E6%88%90%E4%BA%86-npm/" title="skills — 你的 AI 技能換一個 agent 就得重裝，有人把它做成了 npm"><img src="/img/20260629-01.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="skills — 你的 AI 技能換一個 agent 就得重裝，有人把它做成了 npm"/></a><div class="content"><a class="title" href="/2026/06/29/skills-%E4%BD%A0%E7%9A%84-AI-%E6%8A%80%E8%83%BD%E6%8F%9B%E4%B8%80%E5%80%8B-agent-%E5%B0%B1%E5%BE%97%E9%87%8D%E8%A3%9D%E6%9C%89%E4%BA%BA%E6%8A%8A%E5%AE%83%E5%81%9A%E6%88%90%E4%BA%86-npm/" title="skills — 你的 AI 技能換一個 agent 就得重裝，有人把它做成了 npm">skills — 你的 AI 技能換一個 agent 就得重裝，有人把它做成了 npm</a><time datetime="2026-06-29T13:10:00.000Z" title="發表於 2026-06-29 21:10:00">2026-06-29</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/06/28/%E5%A4%96%E9%80%81%E5%8F%88%E8%A6%81%E6%BC%B2%E4%BA%86-%E5%B7%A5%E7%A8%8B%E5%B8%AB%E4%B8%89%E9%A4%90%E8%A9%B2%E5%A4%96%E9%80%81%E5%A4%96%E9%A3%9F%E9%82%84%E6%98%AF%E8%87%AA%E7%85%AE%E7%9A%84%E4%B8%80%E5%A5%97%E5%88%A4%E6%BA%96/" title="外送又要漲了 — 工程師三餐該外送、外食還是自煮的一套判準"><img src="/img/20260628-03.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="外送又要漲了 — 工程師三餐該外送、外食還是自煮的一套判準"/></a><div class="content"><a class="title" href="/2026/06/28/%E5%A4%96%E9%80%81%E5%8F%88%E8%A6%81%E6%BC%B2%E4%BA%86-%E5%B7%A5%E7%A8%8B%E5%B8%AB%E4%B8%89%E9%A4%90%E8%A9%B2%E5%A4%96%E9%80%81%E5%A4%96%E9%A3%9F%E9%82%84%E6%98%AF%E8%87%AA%E7%85%AE%E7%9A%84%E4%B8%80%E5%A5%97%E5%88%A4%E6%BA%96/" title="外送又要漲了 — 工程師三餐該外送、外食還是自煮的一套判準">外送又要漲了 — 工程師三餐該外送、外食還是自煮的一套判準</a><time datetime="2026-06-28T15:00:00.000Z" title="發表於 2026-06-28 23:00:00">2026-06-28</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/06/28/FunASR-%E4%B8%AD%E6%96%87%E8%AA%9E%E9%9F%B3%E8%BE%A8%E8%AD%98%E4%BB%A5%E5%89%8D%E8%A6%81%E6%8B%BC%E5%9B%9B%E5%80%8B%E5%B7%A5%E5%85%B7%E7%8F%BE%E5%9C%A8%E4%B8%80%E8%A1%8C-API-%E5%85%A8%E5%8C%85/" title="FunASR — 中文語音辨識，以前要拼四個工具，現在一行 API 全包"><img src="/img/20260628-01.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="FunASR — 中文語音辨識，以前要拼四個工具，現在一行 API 全包"/></a><div class="content"><a class="title" href="/2026/06/28/FunASR-%E4%B8%AD%E6%96%87%E8%AA%9E%E9%9F%B3%E8%BE%A8%E8%AD%98%E4%BB%A5%E5%89%8D%E8%A6%81%E6%8B%BC%E5%9B%9B%E5%80%8B%E5%B7%A5%E5%85%B7%E7%8F%BE%E5%9C%A8%E4%B8%80%E8%A1%8C-API-%E5%85%A8%E5%8C%85/" title="FunASR — 中文語音辨識，以前要拼四個工具，現在一行 API 全包">FunASR — 中文語音辨識，以前要拼四個工具，現在一行 API 全包</a><time datetime="2026-06-28T14:30:00.000Z" title="發表於 2026-06-28 22:30:00">2026-06-28</time></div></div></div></div></div></div></main><footer id="footer" style="background-image: url(/img/20260629-01.webp);"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2024 - 2026 By Cheng®</span></div><div class="footer_custom_text">Written by Cheng® — 自律，從當下的一念開始。</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="閱讀模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日夜模式切換"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="單欄和雙欄切換"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="設定"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目錄"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="前往評論"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到頂端"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.umd.min.js"></script><script src="https://cdn.jsdelivr.net/npm/instant.page/instantpage.min.js" type="module"></script><script src="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.js"></script><div class="js-pjax"><script>(() => {
+  const isShuoshuo = GLOBAL_CONFIG_SITE.pageType === 'shuoshuo'
+  const option = {"mapping":"pathname","strict":0,"reactionsEnabled":1,"emitMetadata":0,"inputPosition":"bottom","lang":"zh-TW"}
+
+  const getGiscusTheme = theme => theme === 'dark' ? 'dark' : 'light'
+
+  const createScriptElement = config => {
+    const ele = document.createElement('script')
+    Object.entries(config).forEach(([key, value]) => {
+      ele.setAttribute(key, value)
+    })
+    return ele
+  }
+
+  const loadGiscus = (el = document, key) => {
+    const mappingConfig = isShuoshuo
+      ? { 'data-mapping': 'specific', 'data-term': key }
+      : { 'data-mapping': (option && option['data-mapping']) || 'pathname' }
+
+    const giscusConfig = {
+      src: 'https://giscus.app/client.js',
+      'data-repo': 'mark22013333/mark22013333.github.io',
+      'data-repo-id': 'R_kgDOLAxa6A',
+      'data-category-id': 'DIC_kwDOLAxa6M4C5eO9',
+      'data-theme': getGiscusTheme(document.documentElement.getAttribute('data-theme')),
+      'data-reactions-enabled': '1',
+      crossorigin: 'anonymous',
+      async: true,
+      ...option,
+      ...mappingConfig
+    }
+
+    const scriptElement = createScriptElement(giscusConfig)
+
+    el.querySelector('#giscus-wrap').appendChild(scriptElement)
+
+    if (isShuoshuo) {
+      window.shuoshuoComment.destroyGiscus = () => {
+        if (el.children.length) {
+          el.innerHTML = ''
+          el.classList.add('no-comment')
+        }
+      }
+    }
+  }
+
+  const changeGiscusTheme = theme => {
+    const iframe = document.querySelector('#giscus-wrap iframe')
+    if (iframe) {
+      const message = {
+        giscus: {
+          setConfig: {
+            theme: getGiscusTheme(theme)
+          }
+        }
+      }
+      iframe.contentWindow.postMessage(message, 'https://giscus.app')
+    }
+  }
+
+  btf.addGlobalFn('themeChange', changeGiscusTheme, 'giscus')
+
+  if (isShuoshuo) {
+    'Giscus' === 'Giscus'
+      ? window.shuoshuoComment = { loadComment: loadGiscus }
+      : window.loadOtherComment = loadGiscus
+    return
+  }
+
+  if ('Giscus' === 'Giscus' || !true) {
+    if (true) btf.loadComment(document.getElementById('giscus-wrap'), loadGiscus)
+    else loadGiscus()
+  } else {
+    window.loadOtherComment = loadGiscus
+  }
+})()</script></div><script src="/js/kkbox-player.js"></script><script src="/js/archives-pagination.js"></script><script src="/js/font-resize.js"></script><script src="/js/dark-palette.js"></script><script src="/js/series-showcase.js"></script><script src="/js/search-tags.js"></script><script defer="defer" id="fluttering_ribbon" mobile="false" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/canvas-fluttering-ribbon.min.js"></script><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/activate-power-mode.min.js"></script><script>POWERMODE.colorful = true;
+POWERMODE.shake = true;
+POWERMODE.mobile = true;
+document.body.addEventListener('input', POWERMODE);
+</script><script src="https://cdn.jsdelivr.net/npm/pjax/pjax.min.js" defer="defer"></script><script>document.addEventListener('DOMContentLoaded', () => {
+  const pjaxSelectors = ["meta[property=\"og:image\"]","meta[property=\"og:title\"]","meta[property=\"og:url\"]","meta[property=\"og:description\"]","link[rel=\"canonical\"]","head > title","#config-diff","#body-wrap","#rightside-config-hide","#rightside-config-show",".js-pjax"]
+
+  window.pjax = new Pjax({
+    elements: 'a:not([target="_blank"])',
+    selectors: pjaxSelectors,
+    cacheBust: false,
+    analytics: true,
+    scrollRestoration: false
+  })
+
+  const triggerPjaxFn = (val) => {
+    if (!val) return
+    Object.values(val).forEach(fn => {
+      try {
+        fn()
+      } catch (err) {
+        console.debug('Pjax callback failed:', err)
+      }
+    })
+  }
+
+  document.addEventListener('pjax:send', () => {
+    // removeEventListener
+    btf.removeGlobalFnEvent('pjaxSendOnce')
+    btf.removeGlobalFnEvent('themeChange')
+
+    // reset readmode
+    const $bodyClassList = document.body.classList
+    if ($bodyClassList.contains('read-mode')) $bodyClassList.remove('read-mode')
+
+    triggerPjaxFn(window.globalFn.pjaxSend)
+  })
+
+  document.addEventListener('pjax:complete', () => {
+    btf.removeGlobalFnEvent('pjaxCompleteOnce')
+    document.querySelectorAll('script[data-pjax]').forEach(item => {
+      const newScript = document.createElement('script')
+      const content = item.text || item.textContent || item.innerHTML || ""
+      Array.from(item.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value))
+      newScript.appendChild(document.createTextNode(content))
+      item.parentNode.replaceChild(newScript, item)
+    })
+
+    triggerPjaxFn(window.globalFn.pjaxComplete)
+  })
+
+  document.addEventListener('pjax:error', e => {
+    if (e.request.status === 404) {
+      true
+        ? pjax.loadUrl('/404.html')
+        : window.location.href = e.request.responseURL
+    }
+  })
+})</script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜尋</span><i class="fas fa-spinner fa-pulse" id="loading-status" hidden="hidden"></i><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="text-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  資料載入中</span></div><div class="local-search-input"><input placeholder="搜尋文章" type="text"/></div><hr/><div id="local-search-results"></div><div class="ais-Pagination" id="local-search-pagination" style="display:none;"><ul class="ais-Pagination-list"></ul></div><div id="local-search-stats"></div></div><div id="search-mask"></div><script src="/js/search/local-search.js"></script></div></div><script>window.__BLOG_TAGS__=[{"name":"Claude Code","count":115,"path":"tags/Claude-Code/"},{"name":"AI與科技新聞","count":96,"path":"tags/AI與科技新聞/"},{"name":"AI Agent","count":73,"path":"tags/AI-Agent/"},{"name":"資安","count":61,"path":"tags/資安/"},{"name":"Anthropic","count":60,"path":"tags/Anthropic/"},{"name":"開源","count":54,"path":"tags/開源/"},{"name":"OpenAI","count":48,"path":"tags/OpenAI/"},{"name":"教學","count":48,"path":"tags/教學/"},{"name":"自動化","count":39,"path":"tags/自動化/"},{"name":"MCP","count":36,"path":"tags/MCP/"},{"name":"Claude","count":31,"path":"tags/Claude/"},{"name":"AI 開發工具","count":26,"path":"tags/AI-開發工具/"},{"name":"開發工具","count":25,"path":"tags/開發工具/"},{"name":"AI 產業","count":23,"path":"tags/AI-產業/"},{"name":"工程師生活","count":22,"path":"tags/工程師生活/"},{"name":"CLI","count":22,"path":"tags/CLI/"},{"name":"Google","count":21,"path":"tags/Google/"},{"name":"Skills","count":19,"path":"tags/Skills/"},{"name":"Java","count":19,"path":"tags/Java/"},{"name":"Python","count":15,"path":"tags/Python/"},{"name":"LLM","count":14,"path":"tags/LLM/"},{"name":"GitHub","count":14,"path":"tags/GitHub/"},{"name":"DevOps","count":14,"path":"tags/DevOps/"},{"name":"Copilot","count":13,"path":"tags/Copilot/"},{"name":"Spring","count":12,"path":"tags/Spring/"},{"name":"健康","count":11,"path":"tags/健康/"},{"name":"理財","count":10,"path":"tags/理財/"},{"name":"Gemini","count":10,"path":"tags/Gemini/"},{"name":"Microsoft","count":10,"path":"tags/Microsoft/"},{"name":"Cursor","count":10,"path":"tags/Cursor/"},{"name":"GitHub Copilot","count":10,"path":"tags/GitHub-Copilot/"},{"name":"資料庫","count":10,"path":"tags/資料庫/"},{"name":"生活札記","count":10,"path":"tags/生活札記/"},{"name":"Apple","count":9,"path":"tags/Apple/"},{"name":"AI 模型","count":9,"path":"tags/AI-模型/"},{"name":"Azure","count":9,"path":"tags/Azure/"},{"name":"微軟課程","count":9,"path":"tags/微軟課程/"},{"name":"NVIDIA","count":8,"path":"tags/NVIDIA/"},{"name":"AI 安全","count":8,"path":"tags/AI-安全/"},{"name":"Elasticsearch","count":8,"path":"tags/Elasticsearch/"},{"name":"Rust","count":6,"path":"tags/Rust/"},{"name":"Performance","count":6,"path":"tags/Performance/"},{"name":"Prompt Engineering","count":6,"path":"tags/Prompt-Engineering/"},{"name":"AI","count":5,"path":"tags/AI/"},{"name":"AZ-305","count":5,"path":"tags/AZ-305/"},{"name":"macOS","count":5,"path":"tags/macOS/"},{"name":"Hooks","count":5,"path":"tags/Hooks/"},{"name":"Code Review","count":5,"path":"tags/Code-Review/"},{"name":"Docker","count":5,"path":"tags/Docker/"},{"name":"Collections","count":5,"path":"tags/Collections/"},{"name":"併發","count":5,"path":"tags/併發/"},{"name":"Kiro","count":4,"path":"tags/Kiro/"},{"name":"DP-300","count":4,"path":"tags/DP-300/"},{"name":"SQL Server","count":4,"path":"tags/SQL-Server/"},{"name":"JSON","count":4,"path":"tags/JSON/"},{"name":"Stream","count":4,"path":"tags/Stream/"},{"name":"168斷食","count":3,"path":"tags/168斷食/"},{"name":"生產力","count":3,"path":"tags/生產力/"},{"name":"Mistral","count":3,"path":"tags/Mistral/"},{"name":"AI 法規","count":3,"path":"tags/AI-法規/"},{"name":"Windsurf","count":3,"path":"tags/Windsurf/"},{"name":"Codex","count":3,"path":"tags/Codex/"},{"name":"TDD","count":3,"path":"tags/TDD/"},{"name":"Agent","count":3,"path":"tags/Agent/"},{"name":"SDD","count":3,"path":"tags/SDD/"},{"name":"系統監控","count":3,"path":"tags/系統監控/"},{"name":"遠端工作","count":3,"path":"tags/遠端工作/"},{"name":"旅遊","count":3,"path":"tags/旅遊/"},{"name":"專注力","count":2,"path":"tags/專注力/"},{"name":"Networking","count":2,"path":"tags/Networking/"},{"name":"Tool Use","count":2,"path":"tags/Tool-Use/"},{"name":"Multi-Model","count":2,"path":"tags/Multi-Model/"},{"name":"Claude Design","count":2,"path":"tags/Claude-Design/"},{"name":"Prototype","count":2,"path":"tags/Prototype/"},{"name":"Lucene","count":2,"path":"tags/Lucene/"},{"name":"軟體工程師","count":1,"path":"tags/軟體工程師/"},{"name":"職涯","count":1,"path":"tags/職涯/"},{"name":"2026","count":1,"path":"tags/2026/"},{"name":"Meta","count":1,"path":"tags/Meta/"},{"name":"Amazon","count":1,"path":"tags/Amazon/"},{"name":"AWS","count":1,"path":"tags/AWS/"},{"name":"資訊安全","count":1,"path":"tags/資訊安全/"},{"name":"Migration","count":1,"path":"tags/Migration/"},{"name":"Agent Skills","count":1,"path":"tags/Agent-Skills/"},{"name":"Addy Osmani","count":1,"path":"tags/Addy-Osmani/"},{"name":"工程紀律","count":1,"path":"tags/工程紀律/"},{"name":"Apify","count":1,"path":"tags/Apify/"},{"name":"爬蟲","count":1,"path":"tags/爬蟲/"},{"name":"Buddi","count":1,"path":"tags/Buddi/"},{"name":"notch","count":1,"path":"tags/notch/"},{"name":"UI 設計","count":1,"path":"tags/UI-設計/"},{"name":"Prompt Caching","count":1,"path":"tags/Prompt-Caching/"},{"name":"成本優化","count":1,"path":"tags/成本優化/"},{"name":"CLAUDE.md","count":1,"path":"tags/CLAUDE-md/"},{"name":"Auto Memory","count":1,"path":"tags/Auto-Memory/"},{"name":"Project Setup","count":1,"path":"tags/Project-Setup/"},{"name":"Extended Thinking","count":1,"path":"tags/Extended-Thinking/"},{"name":"Reasoning","count":1,"path":"tags/Reasoning/"},{"name":"Function Calling","count":1,"path":"tags/Function-Calling/"},{"name":"/goal","count":1,"path":"tags/goal/"},{"name":"VS Code","count":1,"path":"tags/VS-Code/"},{"name":"Haiku","count":1,"path":"tags/Haiku/"},{"name":"Sonnet","count":1,"path":"tags/Sonnet/"},{"name":"Opus","count":1,"path":"tags/Opus/"},{"name":"Token 成本","count":1,"path":"tags/Token-成本/"},{"name":"Monitor Tool","count":1,"path":"tags/Monitor-Tool/"},{"name":"Routines","count":1,"path":"tags/Routines/"},{"name":"Plan Mode","count":1,"path":"tags/Plan-Mode/"},{"name":"Ultraplan","count":1,"path":"tags/Ultraplan/"},{"name":"規劃","count":1,"path":"tags/規劃/"},{"name":"cloud","count":1,"path":"tags/cloud/"},{"name":"Voice Mode","count":1,"path":"tags/Voice-Mode/"},{"name":"Push-to-Talk","count":1,"path":"tags/Push-to-Talk/"},{"name":"Team","count":1,"path":"tags/Team/"},{"name":"Onboarding","count":1,"path":"tags/Onboarding/"},{"name":"Supply Chain","count":1,"path":"tags/Supply-Chain/"},{"name":"UX 設計","count":1,"path":"tags/UX-設計/"},{"name":"Cowork","count":1,"path":"tags/Cowork/"},{"name":"Plugin","count":1,"path":"tags/Plugin/"},{"name":"Subagent","count":1,"path":"tags/Subagent/"},{"name":"Managed Agents","count":1,"path":"tags/Managed-Agents/"},{"name":"Dreaming","count":1,"path":"tags/Dreaming/"},{"name":"Outcomes","count":1,"path":"tags/Outcomes/"},{"name":"Productivity","count":1,"path":"tags/Productivity/"},{"name":"CrewAI","count":1,"path":"tags/CrewAI/"},{"name":"Multi-Agent","count":1,"path":"tags/Multi-Agent/"},{"name":"Encryption","count":1,"path":"tags/Encryption/"},{"name":"Coolify","count":1,"path":"tags/Coolify/"},{"name":"self-hosted","count":1,"path":"tags/self-hosted/"},{"name":"PaaS","count":1,"path":"tags/PaaS/"},{"name":"Monitoring","count":1,"path":"tags/Monitoring/"},{"name":"ELK Stack","count":1,"path":"tags/ELK-Stack/"},{"name":"Analyzer","count":1,"path":"tags/Analyzer/"},{"name":"IK","count":1,"path":"tags/IK/"},{"name":"中文搜尋","count":1,"path":"tags/中文搜尋/"},{"name":"Architecture","count":1,"path":"tags/Architecture/"},{"name":"Production","count":1,"path":"tags/Production/"},{"name":"Operations","count":1,"path":"tags/Operations/"},{"name":"CRUD","count":1,"path":"tags/CRUD/"},{"name":"bulk","count":1,"path":"tags/bulk/"},{"name":"alias","count":1,"path":"tags/alias/"},{"name":"REST API","count":1,"path":"tags/REST-API/"},{"name":"Aggregation","count":1,"path":"tags/Aggregation/"},{"name":"Search","count":1,"path":"tags/Search/"},{"name":"Mapping","count":1,"path":"tags/Mapping/"},{"name":"Template","count":1,"path":"tags/Template/"},{"name":"Schema","count":1,"path":"tags/Schema/"},{"name":"internals","count":1,"path":"tags/internals/"},{"name":"Translog","count":1,"path":"tags/Translog/"},{"name":"Segment","count":1,"path":"tags/Segment/"},{"name":"GH-300","count":1,"path":"tags/GH-300/"},{"name":"Responsible AI","count":1,"path":"tags/Responsible-AI/"},{"name":"SpecKit","count":1,"path":"tags/SpecKit/"},{"name":"前端","count":1,"path":"tags/前端/"},{"name":"工具遷移","count":1,"path":"tags/工具遷移/"},{"name":"skill","count":1,"path":"tags/skill/"},{"name":"AI 輔助開發","count":1,"path":"tags/AI-輔助開發/"},{"name":"開源專案","count":1,"path":"tags/開源專案/"},{"name":"Jira","count":1,"path":"tags/Jira/"},{"name":"Atlassian","count":1,"path":"tags/Atlassian/"},{"name":"Lightpanda","count":1,"path":"tags/Lightpanda/"},{"name":"Headless Browser","count":1,"path":"tags/Headless-Browser/"},{"name":"Zig","count":1,"path":"tags/Zig/"},{"name":"Web Scraping","count":1,"path":"tags/Web-Scraping/"},{"name":"ETF","count":1,"path":"tags/ETF/"},{"name":"台股","count":1,"path":"tags/台股/"},{"name":"美股","count":1,"path":"tags/美股/"},{"name":"Mag-7","count":1,"path":"tags/Mag-7/"},{"name":"財報","count":1,"path":"tags/財報/"},{"name":"Multica","count":1,"path":"tags/Multica/"},{"name":"Open CoDesign","count":1,"path":"tags/Open-CoDesign/"},{"name":"AI Design","count":1,"path":"tags/AI-Design/"},{"name":"OpenCode","count":1,"path":"tags/OpenCode/"},{"name":"GPT","count":1,"path":"tags/GPT/"},{"name":"Discord","count":1,"path":"tags/Discord/"},{"name":"Skill","count":1,"path":"tags/Skill/"},{"name":"心智模型","count":1,"path":"tags/心智模型/"},{"name":"決策工具","count":1,"path":"tags/決策工具/"},{"name":"GPT-5.5","count":1,"path":"tags/GPT-5-5/"},{"name":"OpenScreen","count":1,"path":"tags/OpenScreen/"},{"name":"Screen Recording","count":1,"path":"tags/Screen-Recording/"},{"name":"RTK","count":1,"path":"tags/RTK/"},{"name":"Token 優化","count":1,"path":"tags/Token-優化/"},{"name":"Sonatype Guide","count":1,"path":"tags/Sonatype-Guide/"},{"name":"依賴管理","count":1,"path":"tags/依賴管理/"},{"name":"AI VTuber","count":1,"path":"tags/AI-VTuber/"},{"name":"Project AIRI","count":1,"path":"tags/Project-AIRI/"},{"name":"TypeScript","count":1,"path":"tags/TypeScript/"},{"name":"API","count":1,"path":"tags/API/"},{"name":"設計模式","count":1,"path":"tags/設計模式/"},{"name":"Stanford AI Index","count":1,"path":"tags/Stanford-AI-Index/"},{"name":"AI產業","count":1,"path":"tags/AI產業/"},{"name":"工程師職涯","count":1,"path":"tags/工程師職涯/"},{"name":"AI透明度","count":1,"path":"tags/AI透明度/"},{"name":"就業市場","count":1,"path":"tags/就業市場/"},{"name":"TimesFM","count":1,"path":"tags/TimesFM/"},{"name":"時間序列","count":1,"path":"tags/時間序列/"},{"name":"基礎模型","count":1,"path":"tags/基礎模型/"},{"name":"ML","count":1,"path":"tags/ML/"},{"name":"Whisper","count":1,"path":"tags/Whisper/"},{"name":"Speech-to-Text","count":1,"path":"tags/Speech-to-Text/"},{"name":"Flash Attention","count":1,"path":"tags/Flash-Attention/"},{"name":"包棟民宿","count":1,"path":"tags/包棟民宿/"},{"name":"台中","count":1,"path":"tags/台中/"},{"name":"南投","count":1,"path":"tags/南投/"},{"name":"苗栗","count":1,"path":"tags/苗栗/"},{"name":"時事評論","count":1,"path":"tags/時事評論/"},{"name":"能源","count":1,"path":"tags/能源/"},{"name":"AI 基礎建設","count":1,"path":"tags/AI-基礎建設/"},{"name":"台灣","count":1,"path":"tags/台灣/"},{"name":"Redis","count":1,"path":"tags/Redis/"},{"name":"MacBook","count":1,"path":"tags/MacBook/"},{"name":"淡江大橋","count":1,"path":"tags/淡江大橋/"},{"name":"淡水","count":1,"path":"tags/淡水/"},{"name":"建築","count":1,"path":"tags/建築/"},{"name":"週末","count":1,"path":"tags/週末/"},{"name":"Claude Skills","count":1,"path":"tags/Claude-Skills/"},{"name":"居家辦公","count":1,"path":"tags/居家辦公/"},{"name":"人體工學","count":1,"path":"tags/人體工學/"},{"name":"日本","count":1,"path":"tags/日本/"},{"name":"黃金週","count":1,"path":"tags/黃金週/"},{"name":"Golden Week","count":1,"path":"tags/Golden-Week/"}];</script></body></html>
