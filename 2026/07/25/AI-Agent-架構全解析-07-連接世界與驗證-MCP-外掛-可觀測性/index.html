@@ -1,0 +1,398 @@
+<!DOCTYPE html><html lang="zh-TW" data-theme="dark"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>MCP、外掛與可觀測性：讓 agent 接上真實世界，還看得見它在幹嘛（AI Agent 架構全解析 7/8） | Cheng's Tech &amp; Life</title><meta name="author" content="Cheng®"><meta name="copyright" content="Cheng®"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#0d0d0d"><meta name="description" content="MCP 給 agent 一個 USB-C 插座、plugins 與 channels 打通對外的門，observability 與 evaluation 兩把尺讓你看得見也量得出它有沒有把事做對——agent 從一座孤島，變成真正接上世界的系統。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="MCP、外掛與可觀測性：讓 agent 接上真實世界，還看得見它在幹嘛（AI Agent 架構全解析 7&#x2F;8）">
+<meta property="og:url" content="https://mark22013333.github.io/2026/07/25/AI-Agent-%E6%9E%B6%E6%A7%8B%E5%85%A8%E8%A7%A3%E6%9E%90-07-%E9%80%A3%E6%8E%A5%E4%B8%96%E7%95%8C%E8%88%87%E9%A9%97%E8%AD%89-MCP-%E5%A4%96%E6%8E%9B-%E5%8F%AF%E8%A7%80%E6%B8%AC%E6%80%A7/index.html">
+<meta property="og:site_name" content="Cheng&#39;s Tech &amp; Life">
+<meta property="og:description" content="MCP 給 agent 一個 USB-C 插座、plugins 與 channels 打通對外的門，observability 與 evaluation 兩把尺讓你看得見也量得出它有沒有把事做對——agent 從一座孤島，變成真正接上世界的系統。">
+<meta property="og:locale" content="zh_TW">
+<meta property="og:image" content="https://mark22013333.github.io/img/20260725-01.webp">
+<meta property="article:published_time" content="2026-07-25T00:00:00.000Z">
+<meta property="article:modified_time" content="2026-07-26T11:23:30.136Z">
+<meta property="article:author" content="Cheng®">
+<meta property="article:tag" content="AI Agent">
+<meta property="article:tag" content="Claude Code">
+<meta property="article:tag" content="教學">
+<meta property="article:tag" content="MCP">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://mark22013333.github.io/img/20260725-01.webp"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "MCP、外掛與可觀測性：讓 agent 接上真實世界，還看得見它在幹嘛（AI Agent 架構全解析 7/8）",
+  "url": "https://mark22013333.github.io/2026/07/25/AI-Agent-%E6%9E%B6%E6%A7%8B%E5%85%A8%E8%A7%A3%E6%9E%90-07-%E9%80%A3%E6%8E%A5%E4%B8%96%E7%95%8C%E8%88%87%E9%A9%97%E8%AD%89-MCP-%E5%A4%96%E6%8E%9B-%E5%8F%AF%E8%A7%80%E6%B8%AC%E6%80%A7/",
+  "image": "https://mark22013333.github.io/img/20260725-01.webp",
+  "datePublished": "2026-07-25T00:00:00.000Z",
+  "dateModified": "2026-07-26T11:23:30.136Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "Cheng®",
+      "url": "https://mark22013333.github.io"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://mark22013333.github.io/2026/07/25/AI-Agent-%E6%9E%B6%E6%A7%8B%E5%85%A8%E8%A7%A3%E6%9E%90-07-%E9%80%A3%E6%8E%A5%E4%B8%96%E7%95%8C%E8%88%87%E9%A9%97%E8%AD%89-MCP-%E5%A4%96%E6%8E%9B-%E5%8F%AF%E8%A7%80%E6%B8%AC%E6%80%A7/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//www.google-analytics.com" crossorigin=""/><link rel="preconnect" href="//fonts.googleapis.com" crossorigin=""/><link rel="preconnect" href="//busuanzi.ibruce.info"/><meta name="google-site-verification" content="6ywUr8k2n_CT1PFYJzlSvI3CZ-JmJ55RYbA39VrFBDs"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!true && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          const hour = new Date().getHours()
+          const isNight = hour <= 9 || hour >= 18
+          if (theme === undefined) isNight ? activateDarkMode() : activateLightMode()
+          else theme === 'light' ? activateLightMode() : activateDarkMode()
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script async="async" src="https://www.googletagmanager.com/gtag/js?id=G-JBV14NRDH3"></script><script>window.dataLayer = window.dataLayer || []
+function gtag(){dataLayer.push(arguments)}
+gtag('js', new Date())
+gtag('config', 'G-JBV14NRDH3')
+btf.addGlobalFn('pjaxComplete', () => {
+  gtag('config', 'G-JBV14NRDH3', {'page_path': window.location.pathname})
+}, 'google_analytics')
+</script><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Titillium+Web&amp;display=swap" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"pagination":{"enable":false,"hitsPerPage":8},"languages":{"hits_empty":"找不到符合您查詢的內容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '複製成功',
+    error: '複製失敗',
+    noSupport: '瀏覽器不支援'
+  },
+  relativeDate: {
+    homepage: false,
+    post: true
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '剛剛',
+    min: '分鐘前',
+    hour: '小時前',
+    day: '天前',
+    month: '個月前'
+  },
+  copyright: {"limitCount":1,"languages":{"author":"作者: Cheng®","link":"連結: ","source":"來源: Cheng's Tech & Life","info":"著作權歸作者所有。如需商業轉載，請聯絡作者獲得授權，非商業轉載請註明出處😁。"}},
+  lightbox: 'fancybox',
+  Snackbar: {"chs_to_cht":"已切換為繁體中文","cht_to_chs":"已切換為簡體中文","day_to_night":"已切換為深色模式","night_to_day":"已切換為淺色模式","bgLight":"#49b1f5","bgDark":"#1f1f1f","position":"top-center"},
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid/dist/infinitegrid.min.js',
+    buttonText: '載入更多'
+  },
+  isPhotoFigcaption: true,
+  islazyloadPlugin: false,
+  isAnchor: true,
+  percent: {
+    toc: true,
+    rightside: true,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'MCP、外掛與可觀測性：讓 agent 接上真實世界，還看得見它在幹嘛（AI Agent 架構全解析 7/8）',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><link rel="stylesheet" href="/css/kkbox-player.css"><link rel="stylesheet" href="/css/tag-cloud-fancy.css"><link rel="stylesheet" href="/css/font-resize.css"><link rel="stylesheet" href="/css/dark-palette.css"><link rel="stylesheet" href="/css/loading-override.css"><link rel="stylesheet" href="/css/series-showcase.css"><link rel="stylesheet" href="/css/search-tags.css"><link rel="alternate" href="/atom.xml" title="Cheng's Tech & Life" type="application/atom+xml">
+</head><body><div id="loading-box"><div class="loading-glass-overlay"></div><div class="loading-indicator"><div class="loading-dot"></div><div class="loading-dot"></div><div class="loading-dot"></div></div></div><script>(()=>{
+  const $loadingBox = document.getElementById('loading-box')
+  const $body = document.body
+  const preloader = {
+    endLoading: () => {
+      if ($loadingBox.classList.contains('loaded')) return
+      $body.style.overflow = ''
+      $loadingBox.classList.add('loaded')
+    },
+    initLoading: () => {
+      $body.style.overflow = 'hidden'
+      $loadingBox.classList.remove('loaded')
+    }
+  }
+
+  preloader.initLoading()
+
+  if (document.readyState === 'complete') {
+    preloader.endLoading()
+  } else {
+    window.addEventListener('load', preloader.endLoading)
+    document.addEventListener('DOMContentLoaded', preloader.endLoading)
+    setTimeout(preloader.endLoading, 7000)
+  }
+
+  if (true) {
+    btf.addGlobalFn('pjaxSend', preloader.initLoading, 'preloader_init')
+    btf.addGlobalFn('pjaxComplete', preloader.endLoading, 'preloader_end')
+  }
+})()</script><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="https://lh3.googleusercontent.com/pw/ABLVV87_po8nBc6F_tXcoYDmtzMGWxHuhhrbguYILCjmjWKLOS8DTpubm0YoQLKgjyjRIZyV5TjYe7XVEz_YU4squfr37GTZqPZP1hlMVZ_MIgXpTxWu73M=w1200" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">442</div></a><a href="/tags/"><div class="headline">標籤</div><div class="length-num">226</div></a><a href="/categories/"><div class="headline">分類</div><div class="length-num">23</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首頁-Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 時間軸-archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 標籤-tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分類-Categories</span></a></div><div class="menus_item"><a class="site-page" href="/series/"><i class="fa-fw fas fa-layer-group"></i><span> 系列-Series</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-list"></i><span> 其他列表</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音樂-Music</span></a></li><li><a class="site-page child" href="/gallery/"><i class="fa-fw fas fa-images"></i><span> 畫館-Gallery</span></a></li></ul></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg fixed" id="page-header" style="background-image: url(/img/20260725-01.webp);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><img class="site-icon" src="https://lh3.googleusercontent.com/pw/ABLVV87_po8nBc6F_tXcoYDmtzMGWxHuhhrbguYILCjmjWKLOS8DTpubm0YoQLKgjyjRIZyV5TjYe7XVEz_YU4squfr37GTZqPZP1hlMVZ_MIgXpTxWu73M=w1200" alt="Logo"><span class="site-name">Cheng's Tech &amp; Life</span></a><a class="nav-page-title" href="/"><span class="site-name">MCP、外掛與可觀測性：讓 agent 接上真實世界，還看得見它在幹嘛（AI Agent 架構全解析 7/8）</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首頁</span></span></a></span><div id="menus"><div id="search-button" title="Ctrl+K / Cmd+K"><span class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜尋</span></span></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首頁-Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 時間軸-archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 標籤-tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分類-Categories</span></a></div><div class="menus_item"><a class="site-page" href="/series/"><i class="fa-fw fas fa-layer-group"></i><span> 系列-Series</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-list"></i><span> 其他列表</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音樂-Music</span></a></li><li><a class="site-page child" href="/gallery/"><i class="fa-fw fas fa-images"></i><span> 畫館-Gallery</span></a></li></ul></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">MCP、外掛與可觀測性：讓 agent 接上真實世界，還看得見它在幹嘛（AI Agent 架構全解析 7/8）</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">發表於</span><time class="post-meta-date-created" datetime="2026-07-25T00:00:00.000Z" title="發表於 2026-07-25 08:00:00">2026-07-25</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新於</span><time class="post-meta-date-updated" datetime="2026-07-26T11:23:30.136Z" title="更新於 2026-07-26 19:23:30">2026-07-26</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Claude-Code/">Claude Code</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">總字數:</span><span class="word-count">3.2k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">閱讀時間:</span><span>10分鐘</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">瀏覽量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><p>前六篇，我們把一隻 agent 從單一迴圈慢慢養大：先學會<a href="/2026/07/20/AI-Agent-%E6%9E%B6%E6%A7%8B%E5%85%A8%E8%A7%A3%E6%9E%90-02-%E6%A0%B8%E5%BF%83%E8%BF%B4%E5%9C%88-agent-%E6%98%AF%E6%80%8E%E9%BA%BC%E8%B7%91%E8%B5%B7%E4%BE%86%E7%9A%84/">核心迴圈</a>，再會<a href="/2026/07/21/AI-Agent-%E6%9E%B6%E6%A7%8B%E5%85%A8%E8%A7%A3%E6%9E%90-03-%E6%89%9B%E4%BD%8F%E8%A4%87%E9%9B%9C%E4%BB%BB%E5%8B%99-%E8%A6%8F%E5%8A%83%E5%AD%90%E4%BB%A3%E7%90%86%E6%8A%80%E8%83%BD%E8%88%87%E8%84%88%E7%B5%A1/">拆解複雜任務</a>，接著有了<a href="/2026/07/22/AI-Agent-%E6%9E%B6%E6%A7%8B%E5%85%A8%E8%A7%A3%E6%9E%90-04-%E8%A8%98%E6%86%B6%E8%88%87%E9%9F%8C%E6%80%A7-%E8%AE%93-agent-%E4%B8%8D%E5%A4%B1%E6%86%B6%E4%B9%9F%E4%B8%8D%E5%B4%A9%E6%BD%B0/">記憶與崩潰重開的韌性</a>，能<a href="/2026/07/23/AI-Agent-%E6%9E%B6%E6%A7%8B%E5%85%A8%E8%A7%A3%E6%9E%90-05-%E9%95%B7%E6%99%82%E9%96%93%E5%9F%B7%E8%A1%8C%E8%88%87%E9%9D%9E%E5%90%8C%E6%AD%A5-%E5%BE%9E%E5%B0%8D%E8%A9%B1%E5%88%B0%E7%B3%BB%E7%B5%B1/">長時間非同步地跑</a>，最後還能<a href="/2026/07/24/AI-Agent-%E6%9E%B6%E6%A7%8B%E5%85%A8%E8%A7%A3%E6%9E%90-06-%E5%A4%9A%E4%BB%A3%E7%90%86%E5%8D%94%E4%BD%9C-%E5%8D%94%E8%AA%BF%E5%8D%94%E5%AE%9A%E8%88%87%E8%87%AA%E4%B8%BB/">分裂成一群代理分工協作</a>。但這隻 agent 一直有兩個沒被戳破的天花板：第一，它只能碰到自己 harness 出廠時內建、而且每一把都得工程師手寫的工具；第二，它跑了老半天，其實沒有人真的知道它做得好不好。這一篇就把這兩塊補上——agent 怎麼把手伸出 harness、接上真實世界，又怎麼裝上儀表板，讓你看得見、也量得出它到底有沒有把事情做對。</p>
+<h3 id="先講清楚問題：只會用內建工具的-agent，天花板在哪"><a href="#先講清楚問題：只會用內建工具的-agent，天花板在哪" class="headerlink" title="先講清楚問題：只會用內建工具的 agent，天花板在哪"></a>先講清楚問題：只會用內建工具的 agent，天花板在哪</h3><p>回想第 2 篇的核心迴圈：模型每輪決定要不要呼叫工具，harness 把工具跑起來、把結果餵回去。這裡藏了一個限制——那份工具清單是寫死的，每一把內建工具都是人手刻的，input schema、執行邏輯、錯誤處理一項不少。但使用者要的服務多到寫不完：Jira、部署系統、內部知識庫、監控後台，各有各的 API、認證方式、甚至語言。你不可能為每個服務都手刻一把工具，更別說每加一個就要動 harness、重發一次版本。</p>
+<p>MCP（Model Context Protocol）就是來補這道縫的開放合約：外部服務自己宣告「我有哪些工具、每把吃什麼參數」，agent 只管閉著眼睛呼叫，不需要知道是誰寫的、用什麼語言寫的。於是不必動 harness 一根寒毛，agent 就多了一整組 Jira 工具或部署工具。少了 MCP，它的能力就凍結在安裝當下那一套。</p>
+<h3 id="MCP：給-agent-的一個-USB-C-插座"><a href="#MCP：給-agent-的一個-USB-C-插座" class="headerlink" title="MCP：給 agent 的一個 USB-C 插座"></a>MCP：給 agent 的一個 USB-C 插座</h3><p>我最喜歡的比喻是 USB-C。以前每個裝置一種插頭，換裝置就換線；USB-C 統一插座後，你插什麼進去，電腦自己認出對方是誰、能幹嘛。MCP 對 agent 就是這個角色：不管對面是本地資料庫、遠端 SaaS，還是同事寫的小服務，只要它講 MCP，就能插進 agent 的工具池被模型使用。</p>
+<p>機制很乾淨。harness 連上一台 MCP server 後，先問它一句 <code>tools/list</code>：「你有哪些工具？」server 回一份規格清單，harness 把每一筆包裝成一個 runtime 的 <code>Tool</code>（就是第 2 篇那個 <code>Tool</code>），丟進跟內建工具同一個池子裡。從此模型看到 MCP 工具，跟看到內建工具長得一模一樣，迴圈的 dispatch 邏輯一個字都不用改。</p>
+<p>唯一要小心的是撞名：兩台 server 都把搜尋工具叫 <code>search</code> 怎麼辦？答案是命名空間，每把 MCP 工具都改名成 <code>mcp__&lt;server&gt;__&lt;tool&gt;</code> 的格式，永遠撞不到一起。下面就是「把探索到的工具包成一個 <code>Tool</code>」的最小骨架：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">tool_name</span>(<span class="params">server, tool</span>):</span><br><span class="line">    <span class="comment"># 加上命名空間，讓兩台 server 的同名工具永不衝突</span></span><br><span class="line">    <span class="keyword">return</span> <span class="string">f&quot;mcp__<span class="subst">&#123;normalize(server)&#125;</span>__<span class="subst">&#123;normalize(tool)&#125;</span>&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">wrap</span>(<span class="params">server, spec, call</span>):</span><br><span class="line">    ann = spec.get(<span class="string">&quot;annotations&quot;</span>, &#123;&#125;)</span><br><span class="line">    read_only = <span class="built_in">bool</span>(ann.get(<span class="string">&quot;readOnlyHint&quot;</span>))   <span class="comment"># server 自己宣告：這把工具是唯讀的嗎？</span></span><br><span class="line">    bare = spec[<span class="string">&quot;name&quot;</span>]</span><br><span class="line">    <span class="keyword">return</span> Tool(</span><br><span class="line">        name=tool_name(server, bare),</span><br><span class="line">        <span class="comment"># dispatch 這把工具時，實際上是透過 transport 對外呼叫回去</span></span><br><span class="line">        run=<span class="keyword">lambda</span> args, _t=bare: call(_t, args),</span><br><span class="line">        input_schema=spec.get(<span class="string">&quot;inputSchema&quot;</span>) <span class="keyword">or</span> <span class="built_in">dict</span>(NO_INPUT),</span><br><span class="line">        is_read_only=read_only,</span><br><span class="line">        is_concurrency_safe=read_only,          <span class="comment"># 唯讀的呼叫可以安全地批次併發</span></span><br><span class="line">    )</span><br></pre></td></tr></table></figure>
+
+<p>效果是：包裝完的 <code>Tool</code> 跟內建工具擠在同一個 registry 裡，模型完全分不出誰是誰，但它的 <code>run()</code> 一被呼叫，就會透過 transport（本地 stdio、遠端 http&#x2F;sse&#x2F;ws）打到真正的 server 上。這裡有個關鍵細節：<code>readOnlyHint</code> 這類 annotation 是 server 自己貼的標籤，會直接餵給第 3 篇的權限 gate——唯讀工具不囉嗦放行，會刪東西、會部署的則跳出來問你。權限判斷等於被下放到了 server 的自我宣告上。</p>
+<h3 id="plugins-與-channels：把外掛裝上去，再開一道對外的門"><a href="#plugins-與-channels：把外掛裝上去，再開一道對外的門" class="headerlink" title="plugins 與 channels：把外掛裝上去，再開一道對外的門"></a>plugins 與 channels：把外掛裝上去，再開一道對外的門</h3><p>plugin 就像瀏覽器外掛。Chrome 本體只做核心的事，你裝一個外掛才一次把某功能的全套東西塞進來。agent 的 plugin 一樣，它把一台 MCP server、幾個 hook、幾個 skill 打包成一包，裝上去就一次補齊某個場景要的所有配件。多個 plugin 若都想定義同一台 server，就靠一套優先序疊加決定誰說了算：大致是 <code>plugin &lt; user &lt; project &lt; local</code>，越靠近你手邊的設定，覆蓋力越強。</p>
+<p>channel 則是反方向的東西。前面都是 agent 主動去呼叫 server，channel 反過來讓外面的訊息主動推進來，你可以把它想成給 agent 接上 Slack、LINE、Discord 或簡訊的入口：有人在 Slack 丟一句話，harness 把這段文字包上一個 <code>&lt;channel&gt;</code> 標籤，接在 agent 下一輪輸入的前面，模型就讀到了；連語音都走同一條路，先轉文字再包進來。</p>
+<p>但這裡有個很實際的資安問題：channel 進來的訊息誰都能發，那句話不一定出自你本人，可能是垃圾訊息，甚至是想操縱 agent 的惡意指令。所以每一則訊息在變成一個真正的 turn 之前，都得先過一道 gate 安檢——它可以直接 drop（丟掉垃圾與不明來源），也可以 rewrite（把訊息裡的機密遮掉再放行）。丟掉的訊息模型根本不會讀到，這對垃圾輸入是最省成本的結局。</p>
+<blockquote>
+<p><strong>MCP 最常見的兩個坑。</strong> 第一，工具清單膨脹：每連一台 server 就往清單裡塞一批工具，連個五、六台，模型面對的清單又長又雜，不只吃 token，還會干擾它挑工具的判斷（呼應第 2 篇——工具太多，選擇品質反而下降）。緩解方式是截斷工具描述、延後載入用不到的 server。第二，被過度信任的 annotation：權限 gate 讀的是 server 自己貼的 <code>readOnlyHint</code>，萬一有台 server 把會刪資料的工具謊報成唯讀，就能繞過詢問直接執行。對來路不明的 server 別全盤採信，該用完整工具名設一條規則照樣把它 gate 住。</p>
+</blockquote>
+<h3 id="換個角度：agent-是一個會花錢、有副作用的黑盒子"><a href="#換個角度：agent-是一個會花錢、有副作用的黑盒子" class="headerlink" title="換個角度：agent 是一個會花錢、有副作用的黑盒子"></a>換個角度：agent 是一個會花錢、有副作用的黑盒子</h3><p>工具接上去、對外的門也開了，agent 能做的事大到有點嚇人：它常常無人看管地跑，每一步都可能改檔案、發部署、寄信，每次模型呼叫又都在燒你的錢。而一次模型呼叫本質上是個黑盒子——沒有儀表，你連它做了什麼、某個工具失敗幾次、這個 session 花了多少錢、上禮拜改的 prompt 讓品質變好還變差，通通答不出來。</p>
+<p>補這個洞要靠兩件分開的工作。observability 監看正式環境：每一步發一個 event、追蹤花費、留下能重建的紀錄。evaluation 回答另一個問題：這次改動讓品質變好還是變差。兩者都不做，退步就無聲上線、成本暴衝變驚喜、每份 bug 回報都無法重現。</p>
+<h3 id="observability：像-APM-一樣，把每一步都攤在陽光下"><a href="#observability：像-APM-一樣，把每一步都攤在陽光下" class="headerlink" title="observability：像 APM 一樣，把每一步都攤在陽光下"></a>observability：像 APM 一樣，把每一步都攤在陽光下</h3><p>做過後端的你對這套其實很熟——它就是 agent 版的 APM 與分散式追蹤：在每個關鍵環節埋一個探針，把「發生了什麼、花了多久、花了多少」串成一條能回放的軌跡。</p>
+<p>關鍵在於它怎麼埋才不會拖垮主流程。做法是「發射即忘」（fire-and-forget）：迴圈每走一步就丟一個 event 給 logger，這個 <code>emit</code> 永遠不會阻塞、永遠不會拋例外。它先把 event 排進佇列，等某個 sink（Datadog、logger 之類的後端）接上再一次排空，接著採樣、洗過敏感資料，才扇出去。就算 telemetry 還沒就緒、或某個後端整個掛掉，主迴圈照樣一步都不會卡——觀測是旁觀者，不是迴圈裡多出來的一步。</p>
+<p>兩個細節值得記住。一是 scrub：扇出前只保留白名單裡的欄位，所以程式碼、檔案路徑、prompt 這些不確定安不安全的東西，永遠不會流到後端去。二是成本追蹤：每次模型呼叫的 input&#x2F;output token 數，按各模型單價累加成一個滾動的 USD 總額，即時顯示、退出時再印一次。這個數字就是你抓「成本漂移」的哨兵——哪天有人把便宜模型換成貴的、或迴圈失控狂燒 token，你當場就看得到。</p>
+<h3 id="evaluation：agent-為什麼特別難評，工程上怎麼補"><a href="#evaluation：agent-為什麼特別難評，工程上怎麼補" class="headerlink" title="evaluation：agent 為什麼特別難評，工程上怎麼補"></a>evaluation：agent 為什麼特別難評，工程上怎麼補</h3><p>observability 能告訴你「發生了什麼」，卻答不出最要命的那題：這答案到底好不好。</p>
+<p>傳統程式好測，因為輸出確定：同樣的 input 該得同樣的 output，<code>assert equals</code> 一比就知道對錯。agent 不是這樣。它的輸出是自然語言、是一連串工具呼叫的軌跡，同一個問題跑兩次可能走不同的路、給不同的措辭，兩種都可能對，你沒辦法用一行 <code>==</code> 判生死。更陰險的是退步無聲：你改了一句 prompt，某類任務的成功率從 90% 掉到 75%，程式不報錯、telemetry 也不亮紅燈，它就這麼默默上線，直到使用者踩到。</p>
+<p>工程上的解法是把它當成回歸測試加驗收。你維護一組固定、有代表性的 task 集，每個 task 配一個自己的評分準則（grader，可能是規則比對，也可能是拿另一個模型當裁判）。每出一個候選 build，就把整組 task 重播、逐一評分，算出一個 pass rate。骨架簡單到你會懷疑是不是漏了什麼：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">run_eval</span>(<span class="params">build, tasks</span>):</span><br><span class="line">    <span class="comment"># 把每個 task 的 input 餵給候選 build，再用該 task 自己的 grade 判定過或不過</span></span><br><span class="line">    verdicts = [<span class="built_in">bool</span>(grade(build(inp))) <span class="keyword">for</span> inp, grade <span class="keyword">in</span> tasks]</span><br><span class="line">    passed = <span class="built_in">sum</span>(verdicts)</span><br><span class="line">    <span class="keyword">return</span> &#123;</span><br><span class="line">        <span class="string">&quot;passed&quot;</span>: passed,</span><br><span class="line">        <span class="string">&quot;total&quot;</span>: <span class="built_in">len</span>(tasks),</span><br><span class="line">        <span class="string">&quot;rate&quot;</span>: passed / <span class="built_in">len</span>(tasks),   <span class="comment"># pass rate 就是你發佈與否的訊號</span></span><br><span class="line">        <span class="string">&quot;verdicts&quot;</span>: verdicts,</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p>效果是：一個退步的 build 分數會掉下來，這就是你的發佈閘門。它跑在熱路徑之外、離線執行，所以一次悄悄的品質下滑，會在使用者遇到之前先被這組 task 集攔下來。沒有它，你每次改 prompt 都是在對正式環境賭運氣。下面這張表把兩件事的分工擺在一起：</p>
+<table>
+<thead>
+<tr>
+<th><strong>面向</strong></th>
+<th><strong>observability（可觀測）</strong></th>
+<th><strong>evaluation（評估）</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>回答的問題</strong></td>
+<td>它做了什麼、花了多少、哪裡爆了</td>
+<td>這次改動讓答案品質變好還是變差</td>
+</tr>
+<tr>
+<td><strong>執行位置</strong></td>
+<td>內聯在正式環境，每步即時發 event</td>
+<td>離線在熱路徑之外，對固定 task 集重播</td>
+</tr>
+<tr>
+<td><strong>抓得到</strong></td>
+<td>當機、工具失敗、成本暴衝</td>
+<td>無聲的品質 regression</td>
+</tr>
+<tr>
+<td><strong>抓不到</strong></td>
+<td>答案到底對不對、好不好</td>
+<td>正式環境的即時故障與花費</td>
+</tr>
+</tbody></table>
+<blockquote>
+<p><strong>沒 eval 的 agent，等於沒有品質底線。</strong> 你可以一直改 prompt、換模型、加工具，但只要沒有一組會評分的 task 集當閘門，就永遠不知道這次改動是進步還是退步。另外兩個常被忽略的坑：其一，log 不含 trace——每個 event 各自為政、沒有共同的 trace id 把它們串起來，你就無法把一次完整任務的來龍去脈拼回來，出事時只能瞎猜。其二，eval 與正式環境脫節——離線 task 集若漏掉真實用法，就會「測試全過、使用者照樣失敗」；務實做法是從 scrub 過的正式 trace 反過來播種 task，讓兩邊共用同一個資料分布。</p>
+</blockquote>
+<h3 id="下一篇：把所有零件組成一台會自己轉的機器"><a href="#下一篇：把所有零件組成一台會自己轉的機器" class="headerlink" title="下一篇：把所有零件組成一台會自己轉的機器"></a>下一篇：把所有零件組成一台會自己轉的機器</h3><p>到這裡，這隻 agent 該有的都有了：核心迴圈、任務規劃、記憶與韌性、長時間非同步、多代理協作，加上這一篇的對外整合與可觀測。零件全到齊，但現在還是一盒散裝的樂高。</p>
+<p>第 8 篇是整個系列的收束——迴圈工程。我們會退一步，看這些零件怎麼被組裝成一台能自我運轉的系統：迴圈怎麼收斂、什麼時候該停、各層之間如何咬合成一個整體，而不只是七層各跑各的。這也是全系列核心命題的最後一塊拼圖：模型負責推理與決策，harness 提供工具、狀態與限制；當這兩者真正咬合，你手上就不再是一個會回話的模型，而是能自己把事情做完的系統。下一篇見。</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://mark22013333.github.io">Cheng®</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章連結: </span><span class="post-copyright-info"><a href="https://mark22013333.github.io/2026/07/25/AI-Agent-%E6%9E%B6%E6%A7%8B%E5%85%A8%E8%A7%A3%E6%9E%90-07-%E9%80%A3%E6%8E%A5%E4%B8%96%E7%95%8C%E8%88%87%E9%A9%97%E8%AD%89-MCP-%E5%A4%96%E6%8E%9B-%E5%8F%AF%E8%A7%80%E6%B8%AC%E6%80%A7/">https://mark22013333.github.io/2026/07/25/AI-Agent-架構全解析-07-連接世界與驗證-MCP-外掛-可觀測性/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版權聲明: </span><span class="post-copyright-info">本部落格所有文章除特別聲明外，均採用<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 授權協議。轉載請註明來源 <a href="https://mark22013333.github.io" target="_blank">Cheng's Tech & Life</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/AI-Agent/">AI Agent</a><a class="post-meta__tags" href="/tags/Claude-Code/">Claude Code</a><a class="post-meta__tags" href="/tags/%E6%95%99%E5%AD%B8/">教學</a><a class="post-meta__tags" href="/tags/MCP/">MCP</a></div><div class="post-share"><div class="social-share" data-image="/img/20260725-01.webp" data-sites="facebook,x"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><div class="post-reward"><div class="reward-badges"><a class="sponsor-glow-btn" href="https://www.buymeacoffee.com/mark22013333" target="_blank" rel="noopener noreferrer" title="Buy Me A Coffee"><img src="https://img.shields.io/badge/Buy_Me_A_Coffee-FFDD00?style=for-the-badge&amp;logo=buy-me-a-coffee&amp;logoColor=black" alt="Buy Me A Coffee"/></a><a class="sponsor-glow-btn" href="https://p.ecpay.com.tw/EFC3F8F" target="_blank" rel="noopener noreferrer" title="綠界贊助"><img src="https://img.shields.io/badge/☕_%E8%AB%8B%E6%88%91%E5%96%9D%E6%9D%AF%E5%92%96%E5%95%A1-Donate-11998e?style=for-the-badge&amp;logo=coffee&amp;logoColor=white" alt="綠界贊助"/></a><a class="sponsor-glow-btn" href="https://calendly.com/markcheng00806-intumit/15min" target="_blank" rel="noopener noreferrer" title="預約時間"><img src="https://img.shields.io/badge/📅_%E9%A0%90%E7%B4%84_15_%E5%88%86%E9%90%98-Book_Time-0072ff?style=for-the-badge" alt="預約時間"/></a><p class="reward-badges-note">你的鼓勵將被轉換為我明天繼續加班的動力（真的）。 ❤️</p></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2026/07/24/%E5%88%A5%E5%9D%90%E8%91%97%E7%AD%89%E5%AE%83%E8%B7%91%E5%AE%8C-Claude-Code-%E8%A8%8A%E6%81%AF%E4%BD%87%E5%88%97%E8%AE%93%E4%BD%A0%E9%82%8A%E8%B7%91%E9%82%8A%E6%8E%92%E4%B8%8B%E4%B8%80%E6%AD%A5/" title="別坐著等它跑完：Claude Code 訊息佇列讓你邊跑邊排下一步"><img class="cover" src="/img/20260724-03.webp" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">別坐著等它跑完：Claude Code 訊息佇列讓你邊跑邊排下一步</div></div><div class="info-2"><div class="info-item-1">先講一個你八成也遇過的場景。你丟給 Claude Code 一個大重構，它開始一個檔一個檔地改，進度條在跑。你坐在螢幕前，腦子裡已經冒出下一步了——「等它改完，順便幫我更新一下 README」。但你不敢打字，因為你怕一按 Enter 就把它正在做的事打斷，前面十分鐘的工白費。於是你就這樣坐著等，盯著它跑，什麼也不做。 我第一次用的時候試過兩條路，兩條都不對。第一條是乾脆等——它跑五分鐘，我就發呆五分鐘，效率低到有點荒謬。第二條更慘：我忍不住打了字按下 Enter，結果它真的停手了，我以為我把它弄壞了。後來才發現，這兩種反應都是因為我搞錯了一件事——Claude 在忙的時候，那個輸入框根本沒有鎖住，它只是在等你決定：你是要「打斷它」，還是要「排隊」。這兩個是完全不同的動作，而我一直把它們當成同一個。 輸入框沒關，只是你不知道按下去會發生什麼Claude 在處理任務的時候，底下的輸入框是活的。你可以照常打字，打完按 Enter——這時候它不會插隊、不會打斷當前的工作，而是把你這句話排進佇列。畫面上會看到它安靜地待在輸入框上方，像在排隊等叫號。等 Claude 把手上這一輪做完，它就會...</div></div></div></a><a class="pagination-related" href="/2026/07/25/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260725/" title="AI 開始自己動手、自己碰錢，於是這週大家在搶同一顆關機鍵（AI 與科技新聞摘要 2026/07/25）"><img class="cover" src="/img/20260725-02.webp" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">AI 開始自己動手、自己碰錢，於是這週大家在搶同一顆關機鍵（AI 與科技新聞摘要 2026/07/25）</div></div><div class="info-2"><div class="info-item-1">把這週的新聞攤開來看，會發現 AI 悄悄跨過了一條線。它不再只是「回答你的問題」，而是開始替你定價、替你花錢、替你跟陌生人交涉，甚至代表一家公司做出動真格的處置。而每當一項技術從「說」跨到「做」，最稀缺、也最值錢的東西就會換人——從「誰做得最好」，變成「誰能喊停、誰握著入口」。 這週有五件事，剛好從不同角度描出這條線的形狀。 一、Meta 推出賣家專用 App，讓 AI 替你定價、替你回訊息Meta 發表了一支獨立的「Seller」App，專門給 Facebook Marketplace 的賣家用。你只要上傳照片，Meta AI 就自動幫你生出標題、描述、定價和分類，還能自動回覆買家的訊息；另外搭配一套自拍驗證的「Facebook Verified」機制。聽起來很方便——貼張照片，剩下交給 AI。 但方便的另一面是：定價和溝通，是二手交易裡最需要人判斷的兩件事，現在整包交給了一個會「一本正經地估錯價」的模型。當 AI 幫你把一台老相機標出離譜的價格、或用你的口氣回了一句你根本不會講的話，出錯的下行由誰承擔？是那些沒有議價能力、也沒細看 AI 到底寫了什麼的散戶買賣雙方。把判斷外包...</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相關推薦</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2026/05/25/Claude-Managed-Agents-%E8%87%AA%E6%9E%B6%E6%B2%99%E7%AE%B1%E8%88%87-MCP-Tunnels-%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8/" title="Claude Managed Agents 自架沙箱與 MCP Tunnels 完整教學 — 讓 AI Agent 在你自己的基礎設施上跑"><img class="cover" src="/img/20260525-03.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-05-25</div><div class="info-item-2">Claude Managed Agents 自架沙箱與 MCP Tunnels 完整教學 — 讓 AI Agent 在你自己的基礎設施上跑</div></div><div class="info-2"><div class="info-item-1">你要跑一個 Claude agent 自動處理 Jira ticket。 問題是這個 Jira 在公司 VPN 後面、沒有 public endpoint，外面打不進來。傳統做法你會做什麼？開個反向代理、租個跳板機、塞個 OAuth proxy 在 DMZ、然後跟資安部門吵兩個月。最後上線時候那個架構複雜到沒人敢動。 Anthropic 5 月 19 日為 Claude Managed Agents 加了兩個東西，讓上面那段話可以縮成「裝個 daemon、跑一個指令、收工」：Self-hosted sandboxes（自架沙箱）和 MCP Tunnels（私有通道）。前者把 tool 執行搬回你自己的機房，後者讓 Anthropic 那邊的 agent 不開外網就能連你內網的 MCP server。 要看懂這兩個功能設計上的精巧之處，要先把「Claude agent 到底由幾塊組成」這件事拆開來。  一個 AI Agent 拆成兩塊：思考 vs 動手把 agent 想成餐廳： 主廚坐在中央廚房想菜單、看訂單、決定接下來該炒哪盤——這是 agent loop，負責 orchestr...</div></div></div></a><a class="pagination-related" href="/2026/04/28/MCP-Server-%E9%96%8B%E7%99%BC%E5%85%A5%E9%96%80%E6%95%99%E5%AD%B8-%E7%94%A8-Python-%E5%BE%9E%E9%9B%B6%E6%89%93%E9%80%A0-AI-%E5%B7%A5%E5%85%B7%E9%80%A3%E6%8E%A5%E5%99%A8/" title="MCP Server 開發入門教學 — 用 Python 從零打造 AI 工具連接器"><img class="cover" src="/img/20260428-03.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-04-28</div><div class="info-item-2">MCP Server 開發入門教學 — 用 Python 從零打造 AI 工具連接器</div></div><div class="info-2"><div class="info-item-1">你家一定有 USB 轉接頭。Type-C 轉 HDMI、Lightning 轉 3.5mm、各種奇奇怪怪的接頭。轉接頭本身不做任何事，它只是讓兩個本來講不同語言的東西能接上。螢幕不需要知道你的筆電是什麼牌子，筆電也不需要知道螢幕的解析度怎麼設定 — 轉接頭搞定一切。 MCP（Model Context Protocol）就是 AI 世界的 USB 轉接頭。 Anthropic 開發了這個開放協定，現在已經捐給 Linux Foundation AAIF。它讓 AI model 連接外部工具和資料來源，不管是資料庫、API、檔案系統，接上就能用。目前生態系已經長到 164M 月下載量、超過 2,400 個 server，Microsoft、GitHub、Cloudflare、Stripe 都在用。Claude Code、Cursor、Kiro 這些 AI coding 工具也全部支援。 這不是什麼還在實驗階段的新玩意。這已經是事實標準了。 MCP 的三個核心原語在寫 code 之前，先搞懂 MCP 的三個核心概念。我用遙控器來比喻： Tools（工具） — 遙控器上的按鈕。按下「計...</div></div></div></a><a class="pagination-related" href="/2026/05/28/Claude-Code-usage-%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8-%E7%9C%8B%E4%BD%A0%E7%9A%84-token-%E8%8A%B1%E5%9C%A8%E5%93%AA%E5%80%8B-skill-subagent-MCP-server/" title="Claude Code &#x2F;usage 完整教學 — 看你的額度花在哪個 Skill、Subagent、Plugin、MCP server"><img class="cover" src="/img/20260528-03.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-05-28</div><div class="info-item-2">Claude Code &#x2F;usage 完整教學 — 看你的額度花在哪個 Skill、Subagent、Plugin、MCP server</div></div><div class="info-2"><div class="info-item-1">打開 Claude Code 還沒輸入任何指令，光是 boot 起來這層 context window 就已經吃掉了——多少？ 預設安裝一個 CLAUDE.md、五個 MCP server、幾個 skills，根據 Claude Code 官方文件的估算，起跳就要五萬個 token。其中光 GitHub MCP 一個就佔了一半以上。 這還是「什麼都還沒做」的數字。 5 月的 /usage 升級之後，這層消耗變得可見了——指令會把 skills、subagents、plugins、每個 MCP server 各自吃掉多少額度列成一張表。本來這層是黑盒子，現在打開了。 這篇拆解三件事：/usage 報表怎麼看、看到之後該怎麼動手減重、為什麼這個指令的設計值得抄到自己的工作流。  /usage 跟 /cost 跟 /stats 不是同一件事先把容易混淆的三個指令分開：    指令 看什麼 適用對象    /usage Pro &#x2F; Max 訂閱的額度還剩多少、各 category 吃掉多少 訂閱戶   /cost 這個 session 跑下來花了多少美金 用 API key 的...</div></div></div></a><a class="pagination-related" href="/2026/06/15/Claude-Code-%E5%B7%A2%E7%8B%80%E5%AD%90%E4%BB%A3%E7%90%86%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8-%E8%AE%93%E5%AD%90%E4%BB%A3%E7%90%86%E8%87%AA%E5%B7%B1%E5%86%8D%E9%96%8B%E5%AD%90%E4%BB%A3%E7%90%86%E4%BB%BB%E5%8B%99%E6%8B%86%E5%88%B0%E4%BA%94%E5%B1%A4%E6%B7%B1/" title="Claude Code 巢狀子代理完整教學 — 讓子代理自己再開子代理，任務拆到五層深"><img class="cover" src="/img/20260615-03.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-06-15</div><div class="info-item-2">Claude Code 巢狀子代理完整教學 — 讓子代理自己再開子代理，任務拆到五層深</div></div><div class="info-2"><div class="info-item-1">你派了一個子代理（sub-agent）去做一件大事：把整個專案的舊版 API 呼叫，全部換成新的 SDK。聽起來很適合丟給它——你不想讓這堆瑣碎的搜尋跟改寫塞滿你自己的對話視窗。 然後它做到一半就卡住了。 不是它不會做，是這件事對「一個」子代理來說太大了。它得讀十幾個模組、追每一處呼叫、改完還要驗證，這些東西全擠進它那一個有限的 context 視窗，到後面它開始忘記前面查過什麼，輸出越來越飄。它面對的，正是你一開始想躲掉的那個問題——只是換它來承受。 問題的根，是它沒辦法像你一樣「再往下派人」。 先試過的那兩條路，為什麼都不夠順第一個直覺，是回到你自己身上，把大任務切成十幾個小任務，一個一個派子代理。可行，但你又變回那個微觀管理的中間人——每個子任務的邊界、每個回報的串接，全得你親手喬。你只是把子代理沒法分層的痛，搬回自己頭上扛。 第二條路是開 Agent Teams，拉一組平級的代理同時上工。這個在「很多份量差不多、彼此獨立的活」上很強，我之前在 Agent Teams 那篇寫過。但它的形狀是「攤平」的——一排人並肩做事。而你現在這個任務的形狀是「有層次」的：一件大事底下分幾...</div></div></div></a><a class="pagination-related" href="/2026/07/23/AI-Agent-%E6%9E%B6%E6%A7%8B%E5%85%A8%E8%A7%A3%E6%9E%90-05-%E9%95%B7%E6%99%82%E9%96%93%E5%9F%B7%E8%A1%8C%E8%88%87%E9%9D%9E%E5%90%8C%E6%AD%A5-%E5%BE%9E%E5%B0%8D%E8%A9%B1%E5%88%B0%E7%B3%BB%E7%B5%B1/" title="你睡覺時它還在幫你幹活：agent 從一次對話變成一套系統（AI Agent 架構全解析 5&#x2F;8）"><img class="cover" src="/img/20260723-01.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-07-23</div><div class="info-item-2">你睡覺時它還在幫你幹活：agent 從一次對話變成一套系統（AI Agent 架構全解析 5&#x2F;8）</div></div><div class="info-2"><div class="info-item-1">到上一篇為止，我們手上的 agent 已經算是個能幹的助手：有核心迴圈能一輪一輪推進、能拆解複雜任務、有記憶跟韌性撐著不會一出錯就崩掉。但它骨子裡還是「你問一句、它做一輪」的東西——你在螢幕前敲鍵盤它才動；你關掉對話，它腦中那份計畫也跟著蒸發。這對聊天夠用，對一個要真的幫你做事的系統遠遠不夠。 真正在幹活的工程師不是這樣工作的：你手上同時有好幾件事在跑，一個建置在背景轉、一份報告排在明早自動出、兩個分支各改各的互不干擾。這一篇要談的，就是怎麼把 agent 從「一次對話」升級成「一套持續運行的系統」。它用到四塊：讓工作狀態活得比單一 turn 久的 task system、把耗時工作丟出主迴圈的 background execution、讓 agent 被時鐘自動叫醒的 scheduling，以及讓平行任務各用一塊隔離工作區的 worktree isolation。這四塊分別對應到 Claude Code 你可能用過、卻沒細想過原理的功能。一塊一塊拆。 一、task system：讓計畫活得比一次對話久先講一個你一定踩過的坑。你讓 agent 做多步驟的事，它在腦中（那個 con...</div></div></div></a><a class="pagination-related" href="/2026/06/01/Claude-Code-MCP-Tool-Search-%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8-%E5%B7%A5%E5%85%B7%E5%A4%AA%E5%A4%9A%E5%A1%9E%E7%88%86-context-%E6%80%8E%E9%BA%BC%E8%BE%A6/" title="Claude Code MCP Tool Search 完整教學 — 工具太多塞爆 context 怎麼辦"><img class="cover" src="/img/20260601-03.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-06-01</div><div class="info-item-2">Claude Code MCP Tool Search 完整教學 — 工具太多塞爆 context 怎麼辦</div></div><div class="info-2"><div class="info-item-1">你接了五個 MCP server——GitHub、Slack、Sentry、Grafana、Splunk——打開 Claude Code，一個字都還沒輸入，context 已經被吃掉三分之一。 先別急著問怎麼修。先搞清楚一件更基本的事：那三分之一，到底是被什麼東西佔走的？把這個搞懂，後面的解法你會覺得理所當然，甚至能自己想到。 那些 token 是被「說明書」吃掉的當你給 Claude 接上一個工具，Claude 並不是「知道有這個工具存在」就好。它必須拿到那個工具的完整使用說明書，才能正確呼叫它。這份說明書包含三樣東西：工具的名字、一段描述它能幹嘛的文字、還有最佔空間的——完整的參數結構（JSON schema），每個參數叫什麼、是什麼型別、必填還是選填、有什麼限制，全部都要寫清楚。 一個工具的說明書，可能就是幾百到上千個 token。而一個典型的多 server 設定，大概 58 個工具，全部說明書加起來大約 55,000 token。有人實測接到一定數量後，光是這些定義就吃掉 66,000 token。對一個 200K context 的模型來說，你還沒開始工作，工作記憶就...</div></div></div></a></div></div><hr class="custom-hr"/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 評論</span></div></div><div class="comment-wrap"><div><div id="giscus-wrap"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="https://lh3.googleusercontent.com/pw/ABLVV87_po8nBc6F_tXcoYDmtzMGWxHuhhrbguYILCjmjWKLOS8DTpubm0YoQLKgjyjRIZyV5TjYe7XVEz_YU4squfr37GTZqPZP1hlMVZ_MIgXpTxWu73M=w1200" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">Cheng®</div><div class="author-info-description">Backend Developer / 技術筆記 & AI 新聞分享</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">442</div></a><a href="/tags/"><div class="headline">標籤</div><div class="length-num">226</div></a><a href="/categories/"><div class="headline">分類</div><div class="length-num">23</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/mark22013333"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons"><a class="social-icon" href="https://github.com/mark22013333" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:mark22013333@gmail.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a></div><div class="card-info-sponsor"><a class="sponsor-glow-btn" href="https://www.buymeacoffee.com/mark22013333" target="_blank" rel="noopener noreferrer" title="Buy Me A Coffee"><img src="https://img.shields.io/badge/Buy_Me_A_Coffee-FFDD00?style=for-the-badge&amp;logo=buy-me-a-coffee&amp;logoColor=black" alt="Buy Me A Coffee"/></a><a class="sponsor-glow-btn" href="https://p.ecpay.com.tw/EFC3F8F" target="_blank" rel="noopener noreferrer" title="綠界贊助"><img src="https://img.shields.io/badge/☕_%E8%AB%8B%E6%88%91%E5%96%9D%E6%9D%AF%E5%92%96%E5%95%A1-Donate-11998e?style=for-the-badge&amp;logo=coffee&amp;logoColor=white" alt="綠界贊助"/></a><a class="sponsor-glow-btn" href="https://calendly.com/markcheng00806-intumit/15min" target="_blank" rel="noopener noreferrer" title="預約時間"><img src="https://img.shields.io/badge/📅_%E9%A0%90%E7%B4%84_15_%E5%88%86%E9%90%98-Book_Time-0072ff?style=for-the-badge" alt="預約時間"/></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">這裡記錄我在後端開發路上踩過的坑、學到的東西，也會分享每日 AI 與科技新聞觀點。歡迎一起交流！</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目錄</span><span class="toc-percentage"></span></div><div class="toc-content is-expand"><ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%88%E8%AC%9B%E6%B8%85%E6%A5%9A%E5%95%8F%E9%A1%8C%EF%BC%9A%E5%8F%AA%E6%9C%83%E7%94%A8%E5%85%A7%E5%BB%BA%E5%B7%A5%E5%85%B7%E7%9A%84-agent%EF%BC%8C%E5%A4%A9%E8%8A%B1%E6%9D%BF%E5%9C%A8%E5%93%AA"><span class="toc-number">1.</span> <span class="toc-text">先講清楚問題：只會用內建工具的 agent，天花板在哪</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#MCP%EF%BC%9A%E7%B5%A6-agent-%E7%9A%84%E4%B8%80%E5%80%8B-USB-C-%E6%8F%92%E5%BA%A7"><span class="toc-number">2.</span> <span class="toc-text">MCP：給 agent 的一個 USB-C 插座</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#plugins-%E8%88%87-channels%EF%BC%9A%E6%8A%8A%E5%A4%96%E6%8E%9B%E8%A3%9D%E4%B8%8A%E5%8E%BB%EF%BC%8C%E5%86%8D%E9%96%8B%E4%B8%80%E9%81%93%E5%B0%8D%E5%A4%96%E7%9A%84%E9%96%80"><span class="toc-number">3.</span> <span class="toc-text">plugins 與 channels：把外掛裝上去，再開一道對外的門</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8F%9B%E5%80%8B%E8%A7%92%E5%BA%A6%EF%BC%9Aagent-%E6%98%AF%E4%B8%80%E5%80%8B%E6%9C%83%E8%8A%B1%E9%8C%A2%E3%80%81%E6%9C%89%E5%89%AF%E4%BD%9C%E7%94%A8%E7%9A%84%E9%BB%91%E7%9B%92%E5%AD%90"><span class="toc-number">4.</span> <span class="toc-text">換個角度：agent 是一個會花錢、有副作用的黑盒子</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#observability%EF%BC%9A%E5%83%8F-APM-%E4%B8%80%E6%A8%A3%EF%BC%8C%E6%8A%8A%E6%AF%8F%E4%B8%80%E6%AD%A5%E9%83%BD%E6%94%A4%E5%9C%A8%E9%99%BD%E5%85%89%E4%B8%8B"><span class="toc-number">5.</span> <span class="toc-text">observability：像 APM 一樣，把每一步都攤在陽光下</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#evaluation%EF%BC%9Aagent-%E7%82%BA%E4%BB%80%E9%BA%BC%E7%89%B9%E5%88%A5%E9%9B%A3%E8%A9%95%EF%BC%8C%E5%B7%A5%E7%A8%8B%E4%B8%8A%E6%80%8E%E9%BA%BC%E8%A3%9C"><span class="toc-number">6.</span> <span class="toc-text">evaluation：agent 為什麼特別難評，工程上怎麼補</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%8B%E4%B8%80%E7%AF%87%EF%BC%9A%E6%8A%8A%E6%89%80%E6%9C%89%E9%9B%B6%E4%BB%B6%E7%B5%84%E6%88%90%E4%B8%80%E5%8F%B0%E6%9C%83%E8%87%AA%E5%B7%B1%E8%BD%89%E7%9A%84%E6%A9%9F%E5%99%A8"><span class="toc-number">7.</span> <span class="toc-text">下一篇：把所有零件組成一台會自己轉的機器</span></a></li></ol></div></div><div class="card-widget card-post-series"><div class="item-headline"><i class="fa-solid fa-layer-group"></i><span>agent-architecture</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2026/07/19/AI-Agent-%E6%9E%B6%E6%A7%8B%E5%85%A8%E8%A7%A3%E6%9E%90-01-%E6%8B%86%E8%A7%A3-harness-%E8%83%BD%E5%8B%95%E6%80%A7%E5%BE%9E%E5%93%AA%E4%BE%86/" title="拆解 harness：AI Agent 的能動性到底從哪來（AI Agent 架構全解析 1/8）"><img src="/img/20260719-04.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="拆解 harness：AI Agent 的能動性到底從哪來（AI Agent 架構全解析 1/8）"></a><div class="content"><a class="title" href="/2026/07/19/AI-Agent-%E6%9E%B6%E6%A7%8B%E5%85%A8%E8%A7%A3%E6%9E%90-01-%E6%8B%86%E8%A7%A3-harness-%E8%83%BD%E5%8B%95%E6%80%A7%E5%BE%9E%E5%93%AA%E4%BE%86/" title="拆解 harness：AI Agent 的能動性到底從哪來（AI Agent 架構全解析 1/8）">拆解 harness：AI Agent 的能動性到底從哪來（AI Agent 架構全解析 1/8）</a><time datetime="2026-07-19T00:00:00.000Z" title="發表於 2026-07-19 08:00:00">2026-07-19</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/07/20/AI-Agent-%E6%9E%B6%E6%A7%8B%E5%85%A8%E8%A7%A3%E6%9E%90-02-%E6%A0%B8%E5%BF%83%E8%BF%B4%E5%9C%88-agent-%E6%98%AF%E6%80%8E%E9%BA%BC%E8%B7%91%E8%B5%B7%E4%BE%86%E7%9A%84/" title="agent 是怎麼跑起來的：核心迴圈的四塊拼圖（AI Agent 架構全解析 2/8）"><img src="/img/20260720-01.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="agent 是怎麼跑起來的：核心迴圈的四塊拼圖（AI Agent 架構全解析 2/8）"></a><div class="content"><a class="title" href="/2026/07/20/AI-Agent-%E6%9E%B6%E6%A7%8B%E5%85%A8%E8%A7%A3%E6%9E%90-02-%E6%A0%B8%E5%BF%83%E8%BF%B4%E5%9C%88-agent-%E6%98%AF%E6%80%8E%E9%BA%BC%E8%B7%91%E8%B5%B7%E4%BE%86%E7%9A%84/" title="agent 是怎麼跑起來的：核心迴圈的四塊拼圖（AI Agent 架構全解析 2/8）">agent 是怎麼跑起來的：核心迴圈的四塊拼圖（AI Agent 架構全解析 2/8）</a><time datetime="2026-07-20T00:00:00.000Z" title="發表於 2026-07-20 08:00:00">2026-07-20</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/07/21/AI-Agent-%E6%9E%B6%E6%A7%8B%E5%85%A8%E8%A7%A3%E6%9E%90-03-%E6%89%9B%E4%BD%8F%E8%A4%87%E9%9B%9C%E4%BB%BB%E5%8B%99-%E8%A6%8F%E5%8A%83%E5%AD%90%E4%BB%A3%E7%90%86%E6%8A%80%E8%83%BD%E8%88%87%E8%84%88%E7%B5%A1/" title="大任務為什麼會壓垮 agent：讓它撐住的四招（AI Agent 架構全解析 3/8）"><img src="/img/20260721-01.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="大任務為什麼會壓垮 agent：讓它撐住的四招（AI Agent 架構全解析 3/8）"></a><div class="content"><a class="title" href="/2026/07/21/AI-Agent-%E6%9E%B6%E6%A7%8B%E5%85%A8%E8%A7%A3%E6%9E%90-03-%E6%89%9B%E4%BD%8F%E8%A4%87%E9%9B%9C%E4%BB%BB%E5%8B%99-%E8%A6%8F%E5%8A%83%E5%AD%90%E4%BB%A3%E7%90%86%E6%8A%80%E8%83%BD%E8%88%87%E8%84%88%E7%B5%A1/" title="大任務為什麼會壓垮 agent：讓它撐住的四招（AI Agent 架構全解析 3/8）">大任務為什麼會壓垮 agent：讓它撐住的四招（AI Agent 架構全解析 3/8）</a><time datetime="2026-07-21T00:00:00.000Z" title="發表於 2026-07-21 08:00:00">2026-07-21</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/07/22/AI-Agent-%E6%9E%B6%E6%A7%8B%E5%85%A8%E8%A7%A3%E6%9E%90-04-%E8%A8%98%E6%86%B6%E8%88%87%E9%9F%8C%E6%80%A7-%E8%AE%93-agent-%E4%B8%8D%E5%A4%B1%E6%86%B6%E4%B9%9F%E4%B8%8D%E5%B4%A9%E6%BD%B0/" title="關掉重開就失憶、跑到一半就崩潰：agent 的記憶與韌性（AI Agent 架構全解析 4/8）"><img src="/img/20260722-01.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="關掉重開就失憶、跑到一半就崩潰：agent 的記憶與韌性（AI Agent 架構全解析 4/8）"></a><div class="content"><a class="title" href="/2026/07/22/AI-Agent-%E6%9E%B6%E6%A7%8B%E5%85%A8%E8%A7%A3%E6%9E%90-04-%E8%A8%98%E6%86%B6%E8%88%87%E9%9F%8C%E6%80%A7-%E8%AE%93-agent-%E4%B8%8D%E5%A4%B1%E6%86%B6%E4%B9%9F%E4%B8%8D%E5%B4%A9%E6%BD%B0/" title="關掉重開就失憶、跑到一半就崩潰：agent 的記憶與韌性（AI Agent 架構全解析 4/8）">關掉重開就失憶、跑到一半就崩潰：agent 的記憶與韌性（AI Agent 架構全解析 4/8）</a><time datetime="2026-07-22T00:00:00.000Z" title="發表於 2026-07-22 08:00:00">2026-07-22</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/07/23/AI-Agent-%E6%9E%B6%E6%A7%8B%E5%85%A8%E8%A7%A3%E6%9E%90-05-%E9%95%B7%E6%99%82%E9%96%93%E5%9F%B7%E8%A1%8C%E8%88%87%E9%9D%9E%E5%90%8C%E6%AD%A5-%E5%BE%9E%E5%B0%8D%E8%A9%B1%E5%88%B0%E7%B3%BB%E7%B5%B1/" title="你睡覺時它還在幫你幹活：agent 從一次對話變成一套系統（AI Agent 架構全解析 5/8）"><img src="/img/20260723-01.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="你睡覺時它還在幫你幹活：agent 從一次對話變成一套系統（AI Agent 架構全解析 5/8）"></a><div class="content"><a class="title" href="/2026/07/23/AI-Agent-%E6%9E%B6%E6%A7%8B%E5%85%A8%E8%A7%A3%E6%9E%90-05-%E9%95%B7%E6%99%82%E9%96%93%E5%9F%B7%E8%A1%8C%E8%88%87%E9%9D%9E%E5%90%8C%E6%AD%A5-%E5%BE%9E%E5%B0%8D%E8%A9%B1%E5%88%B0%E7%B3%BB%E7%B5%B1/" title="你睡覺時它還在幫你幹活：agent 從一次對話變成一套系統（AI Agent 架構全解析 5/8）">你睡覺時它還在幫你幹活：agent 從一次對話變成一套系統（AI Agent 架構全解析 5/8）</a><time datetime="2026-07-23T00:00:00.000Z" title="發表於 2026-07-23 08:00:00">2026-07-23</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/07/24/AI-Agent-%E6%9E%B6%E6%A7%8B%E5%85%A8%E8%A7%A3%E6%9E%90-06-%E5%A4%9A%E4%BB%A3%E7%90%86%E5%8D%94%E4%BD%9C-%E5%8D%94%E8%AA%BF%E5%8D%94%E5%AE%9A%E8%88%87%E8%87%AA%E4%B8%BB/" title="一個 agent 忙不過來，就讓一群一起上：多代理怎麼分工又不打架（AI Agent 架構全解析 6/8）"><img src="/img/20260724-01.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="一個 agent 忙不過來，就讓一群一起上：多代理怎麼分工又不打架（AI Agent 架構全解析 6/8）"></a><div class="content"><a class="title" href="/2026/07/24/AI-Agent-%E6%9E%B6%E6%A7%8B%E5%85%A8%E8%A7%A3%E6%9E%90-06-%E5%A4%9A%E4%BB%A3%E7%90%86%E5%8D%94%E4%BD%9C-%E5%8D%94%E8%AA%BF%E5%8D%94%E5%AE%9A%E8%88%87%E8%87%AA%E4%B8%BB/" title="一個 agent 忙不過來，就讓一群一起上：多代理怎麼分工又不打架（AI Agent 架構全解析 6/8）">一個 agent 忙不過來，就讓一群一起上：多代理怎麼分工又不打架（AI Agent 架構全解析 6/8）</a><time datetime="2026-07-24T00:00:00.000Z" title="發表於 2026-07-24 08:00:00">2026-07-24</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/07/25/AI-Agent-%E6%9E%B6%E6%A7%8B%E5%85%A8%E8%A7%A3%E6%9E%90-07-%E9%80%A3%E6%8E%A5%E4%B8%96%E7%95%8C%E8%88%87%E9%A9%97%E8%AD%89-MCP-%E5%A4%96%E6%8E%9B-%E5%8F%AF%E8%A7%80%E6%B8%AC%E6%80%A7/" title="MCP、外掛與可觀測性：讓 agent 接上真實世界，還看得見它在幹嘛（AI Agent 架構全解析 7/8）"><img src="/img/20260725-01.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="MCP、外掛與可觀測性：讓 agent 接上真實世界，還看得見它在幹嘛（AI Agent 架構全解析 7/8）"></a><div class="content"><a class="title" href="/2026/07/25/AI-Agent-%E6%9E%B6%E6%A7%8B%E5%85%A8%E8%A7%A3%E6%9E%90-07-%E9%80%A3%E6%8E%A5%E4%B8%96%E7%95%8C%E8%88%87%E9%A9%97%E8%AD%89-MCP-%E5%A4%96%E6%8E%9B-%E5%8F%AF%E8%A7%80%E6%B8%AC%E6%80%A7/" title="MCP、外掛與可觀測性：讓 agent 接上真實世界，還看得見它在幹嘛（AI Agent 架構全解析 7/8）">MCP、外掛與可觀測性：讓 agent 接上真實世界，還看得見它在幹嘛（AI Agent 架構全解析 7/8）</a><time datetime="2026-07-25T00:00:00.000Z" title="發表於 2026-07-25 08:00:00">2026-07-25</time></div></div></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2026/07/25/%E4%B8%80%E7%9B%A4%E5%9C%B0%E7%93%9C%E8%91%89%E8%B3%A3-320-%E5%85%83-%E4%BD%A0%E4%BB%A5%E7%82%BA%E6%98%AF%E5%BA%97%E5%AE%B6%E8%B2%AA%E5%BF%83%E5%85%B6%E5%AF%A6%E6%98%AF%E6%B0%A3%E5%80%99%E6%8A%8A%E5%B8%B3%E5%96%AE%E5%AF%84%E5%88%B0%E4%BD%A0%E6%A1%8C%E4%B8%8A/" title="一盤地瓜葉賣 320 元：你以為是店家貪心，其實是氣候把帳單寄到你桌上"><img src="/img/20260725-03.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="一盤地瓜葉賣 320 元：你以為是店家貪心，其實是氣候把帳單寄到你桌上"/></a><div class="content"><a class="title" href="/2026/07/25/%E4%B8%80%E7%9B%A4%E5%9C%B0%E7%93%9C%E8%91%89%E8%B3%A3-320-%E5%85%83-%E4%BD%A0%E4%BB%A5%E7%82%BA%E6%98%AF%E5%BA%97%E5%AE%B6%E8%B2%AA%E5%BF%83%E5%85%B6%E5%AF%A6%E6%98%AF%E6%B0%A3%E5%80%99%E6%8A%8A%E5%B8%B3%E5%96%AE%E5%AF%84%E5%88%B0%E4%BD%A0%E6%A1%8C%E4%B8%8A/" title="一盤地瓜葉賣 320 元：你以為是店家貪心，其實是氣候把帳單寄到你桌上">一盤地瓜葉賣 320 元：你以為是店家貪心，其實是氣候把帳單寄到你桌上</a><time datetime="2026-07-25T12:00:00.000Z" title="發表於 2026-07-25 20:00:00">2026-07-25</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/07/25/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260725/" title="AI 開始自己動手、自己碰錢，於是這週大家在搶同一顆關機鍵（AI 與科技新聞摘要 2026/07/25）"><img src="/img/20260725-02.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="AI 開始自己動手、自己碰錢，於是這週大家在搶同一顆關機鍵（AI 與科技新聞摘要 2026/07/25）"/></a><div class="content"><a class="title" href="/2026/07/25/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260725/" title="AI 開始自己動手、自己碰錢，於是這週大家在搶同一顆關機鍵（AI 與科技新聞摘要 2026/07/25）">AI 開始自己動手、自己碰錢，於是這週大家在搶同一顆關機鍵（AI 與科技新聞摘要 2026/07/25）</a><time datetime="2026-07-25T04:00:00.000Z" title="發表於 2026-07-25 12:00:00">2026-07-25</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/07/25/AI-Agent-%E6%9E%B6%E6%A7%8B%E5%85%A8%E8%A7%A3%E6%9E%90-07-%E9%80%A3%E6%8E%A5%E4%B8%96%E7%95%8C%E8%88%87%E9%A9%97%E8%AD%89-MCP-%E5%A4%96%E6%8E%9B-%E5%8F%AF%E8%A7%80%E6%B8%AC%E6%80%A7/" title="MCP、外掛與可觀測性：讓 agent 接上真實世界，還看得見它在幹嘛（AI Agent 架構全解析 7/8）"><img src="/img/20260725-01.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="MCP、外掛與可觀測性：讓 agent 接上真實世界，還看得見它在幹嘛（AI Agent 架構全解析 7/8）"/></a><div class="content"><a class="title" href="/2026/07/25/AI-Agent-%E6%9E%B6%E6%A7%8B%E5%85%A8%E8%A7%A3%E6%9E%90-07-%E9%80%A3%E6%8E%A5%E4%B8%96%E7%95%8C%E8%88%87%E9%A9%97%E8%AD%89-MCP-%E5%A4%96%E6%8E%9B-%E5%8F%AF%E8%A7%80%E6%B8%AC%E6%80%A7/" title="MCP、外掛與可觀測性：讓 agent 接上真實世界，還看得見它在幹嘛（AI Agent 架構全解析 7/8）">MCP、外掛與可觀測性：讓 agent 接上真實世界，還看得見它在幹嘛（AI Agent 架構全解析 7/8）</a><time datetime="2026-07-25T00:00:00.000Z" title="發表於 2026-07-25 08:00:00">2026-07-25</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/07/24/%E5%88%A5%E5%9D%90%E8%91%97%E7%AD%89%E5%AE%83%E8%B7%91%E5%AE%8C-Claude-Code-%E8%A8%8A%E6%81%AF%E4%BD%87%E5%88%97%E8%AE%93%E4%BD%A0%E9%82%8A%E8%B7%91%E9%82%8A%E6%8E%92%E4%B8%8B%E4%B8%80%E6%AD%A5/" title="別坐著等它跑完：Claude Code 訊息佇列讓你邊跑邊排下一步"><img src="/img/20260724-03.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="別坐著等它跑完：Claude Code 訊息佇列讓你邊跑邊排下一步"/></a><div class="content"><a class="title" href="/2026/07/24/%E5%88%A5%E5%9D%90%E8%91%97%E7%AD%89%E5%AE%83%E8%B7%91%E5%AE%8C-Claude-Code-%E8%A8%8A%E6%81%AF%E4%BD%87%E5%88%97%E8%AE%93%E4%BD%A0%E9%82%8A%E8%B7%91%E9%82%8A%E6%8E%92%E4%B8%8B%E4%B8%80%E6%AD%A5/" title="別坐著等它跑完：Claude Code 訊息佇列讓你邊跑邊排下一步">別坐著等它跑完：Claude Code 訊息佇列讓你邊跑邊排下一步</a><time datetime="2026-07-24T12:00:00.000Z" title="發表於 2026-07-24 20:00:00">2026-07-24</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/07/24/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260724/" title="AI 的下行帳單開始分批寄出，只是收件人各不相同（AI 與科技新聞摘要 2026/07/24）"><img src="/img/20260724-02.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="AI 的下行帳單開始分批寄出，只是收件人各不相同（AI 與科技新聞摘要 2026/07/24）"/></a><div class="content"><a class="title" href="/2026/07/24/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260724/" title="AI 的下行帳單開始分批寄出，只是收件人各不相同（AI 與科技新聞摘要 2026/07/24）">AI 的下行帳單開始分批寄出，只是收件人各不相同（AI 與科技新聞摘要 2026/07/24）</a><time datetime="2026-07-24T04:00:00.000Z" title="發表於 2026-07-24 12:00:00">2026-07-24</time></div></div></div></div></div></div></main><footer id="footer" style="background-image: url(/img/20260725-01.webp);"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2024 - 2026 By Cheng®</span></div><div class="footer_custom_text">Written by Cheng® — 自律，從當下的一念開始。</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="閱讀模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日夜模式切換"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="單欄和雙欄切換"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="設定"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目錄"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="前往評論"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到頂端"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.umd.min.js"></script><script src="https://cdn.jsdelivr.net/npm/instant.page/instantpage.min.js" type="module"></script><script src="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.js"></script><div class="js-pjax"><script>(() => {
+  const isShuoshuo = GLOBAL_CONFIG_SITE.pageType === 'shuoshuo'
+  const option = {"mapping":"pathname","strict":0,"reactionsEnabled":1,"emitMetadata":0,"inputPosition":"bottom","lang":"zh-TW"}
+
+  const getGiscusTheme = theme => theme === 'dark' ? 'dark' : 'light'
+
+  const createScriptElement = config => {
+    const ele = document.createElement('script')
+    Object.entries(config).forEach(([key, value]) => {
+      ele.setAttribute(key, value)
+    })
+    return ele
+  }
+
+  const loadGiscus = (el = document, key) => {
+    const mappingConfig = isShuoshuo
+      ? { 'data-mapping': 'specific', 'data-term': key }
+      : { 'data-mapping': (option && option['data-mapping']) || 'pathname' }
+
+    const giscusConfig = {
+      src: 'https://giscus.app/client.js',
+      'data-repo': 'mark22013333/mark22013333.github.io',
+      'data-repo-id': 'R_kgDOLAxa6A',
+      'data-category-id': 'DIC_kwDOLAxa6M4C5eO9',
+      'data-theme': getGiscusTheme(document.documentElement.getAttribute('data-theme')),
+      'data-reactions-enabled': '1',
+      crossorigin: 'anonymous',
+      async: true,
+      ...option,
+      ...mappingConfig
+    }
+
+    const scriptElement = createScriptElement(giscusConfig)
+
+    el.querySelector('#giscus-wrap').appendChild(scriptElement)
+
+    if (isShuoshuo) {
+      window.shuoshuoComment.destroyGiscus = () => {
+        if (el.children.length) {
+          el.innerHTML = ''
+          el.classList.add('no-comment')
+        }
+      }
+    }
+  }
+
+  const changeGiscusTheme = theme => {
+    const iframe = document.querySelector('#giscus-wrap iframe')
+    if (iframe) {
+      const message = {
+        giscus: {
+          setConfig: {
+            theme: getGiscusTheme(theme)
+          }
+        }
+      }
+      iframe.contentWindow.postMessage(message, 'https://giscus.app')
+    }
+  }
+
+  btf.addGlobalFn('themeChange', changeGiscusTheme, 'giscus')
+
+  if (isShuoshuo) {
+    'Giscus' === 'Giscus'
+      ? window.shuoshuoComment = { loadComment: loadGiscus }
+      : window.loadOtherComment = loadGiscus
+    return
+  }
+
+  if ('Giscus' === 'Giscus' || !true) {
+    if (true) btf.loadComment(document.getElementById('giscus-wrap'), loadGiscus)
+    else loadGiscus()
+  } else {
+    window.loadOtherComment = loadGiscus
+  }
+})()</script></div><script src="/js/kkbox-player.js"></script><script src="/js/archives-pagination.js"></script><script src="/js/font-resize.js"></script><script src="/js/dark-palette.js"></script><script src="/js/series-showcase.js"></script><script src="/js/search-tags.js"></script><script defer="defer" id="fluttering_ribbon" mobile="false" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/canvas-fluttering-ribbon.min.js"></script><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/activate-power-mode.min.js"></script><script>POWERMODE.colorful = true;
+POWERMODE.shake = true;
+POWERMODE.mobile = true;
+document.body.addEventListener('input', POWERMODE);
+</script><script src="https://cdn.jsdelivr.net/npm/pjax/pjax.min.js" defer="defer"></script><script>document.addEventListener('DOMContentLoaded', () => {
+  const pjaxSelectors = ["meta[property=\"og:image\"]","meta[property=\"og:title\"]","meta[property=\"og:url\"]","meta[property=\"og:description\"]","link[rel=\"canonical\"]","head > title","#config-diff","#body-wrap","#rightside-config-hide","#rightside-config-show",".js-pjax"]
+
+  window.pjax = new Pjax({
+    elements: 'a:not([target="_blank"])',
+    selectors: pjaxSelectors,
+    cacheBust: false,
+    analytics: true,
+    scrollRestoration: false
+  })
+
+  const triggerPjaxFn = (val) => {
+    if (!val) return
+    Object.values(val).forEach(fn => {
+      try {
+        fn()
+      } catch (err) {
+        console.debug('Pjax callback failed:', err)
+      }
+    })
+  }
+
+  document.addEventListener('pjax:send', () => {
+    // removeEventListener
+    btf.removeGlobalFnEvent('pjaxSendOnce')
+    btf.removeGlobalFnEvent('themeChange')
+
+    // reset readmode
+    const $bodyClassList = document.body.classList
+    if ($bodyClassList.contains('read-mode')) $bodyClassList.remove('read-mode')
+
+    triggerPjaxFn(window.globalFn.pjaxSend)
+  })
+
+  document.addEventListener('pjax:complete', () => {
+    btf.removeGlobalFnEvent('pjaxCompleteOnce')
+    document.querySelectorAll('script[data-pjax]').forEach(item => {
+      const newScript = document.createElement('script')
+      const content = item.text || item.textContent || item.innerHTML || ""
+      Array.from(item.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value))
+      newScript.appendChild(document.createTextNode(content))
+      item.parentNode.replaceChild(newScript, item)
+    })
+
+    triggerPjaxFn(window.globalFn.pjaxComplete)
+  })
+
+  document.addEventListener('pjax:error', e => {
+    if (e.request.status === 404) {
+      true
+        ? pjax.loadUrl('/404.html')
+        : window.location.href = e.request.responseURL
+    }
+  })
+})</script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜尋</span><i class="fas fa-spinner fa-pulse" id="loading-status" hidden="hidden"></i><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="text-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  資料載入中</span></div><div class="local-search-input"><input placeholder="搜尋文章" type="text"/></div><hr/><div id="local-search-results"></div><div class="ais-Pagination" id="local-search-pagination" style="display:none;"><ul class="ais-Pagination-list"></ul></div><div id="local-search-stats"></div></div><div id="search-mask"></div><script src="/js/search/local-search.js"></script></div></div><script>window.__BLOG_TAGS__=[{"name":"Claude Code","count":149,"path":"tags/Claude-Code/"},{"name":"AI與科技新聞","count":120,"path":"tags/AI與科技新聞/"},{"name":"AI Agent","count":91,"path":"tags/AI-Agent/"},{"name":"Anthropic","count":78,"path":"tags/Anthropic/"},{"name":"教學","count":73,"path":"tags/教學/"},{"name":"資安","count":70,"path":"tags/資安/"},{"name":"開源","count":65,"path":"tags/開源/"},{"name":"OpenAI","count":57,"path":"tags/OpenAI/"},{"name":"自動化","count":52,"path":"tags/自動化/"},{"name":"MCP","count":43,"path":"tags/MCP/"},{"name":"AI 產業","count":42,"path":"tags/AI-產業/"},{"name":"AI 開發工具","count":40,"path":"tags/AI-開發工具/"},{"name":"Claude","count":36,"path":"tags/Claude/"},{"name":"CLI","count":34,"path":"tags/CLI/"},{"name":"開發工具","count":30,"path":"tags/開發工具/"},{"name":"Java","count":28,"path":"tags/Java/"},{"name":"工程師生活","count":26,"path":"tags/工程師生活/"},{"name":"Skills","count":26,"path":"tags/Skills/"},{"name":"Google","count":24,"path":"tags/Google/"},{"name":"LLM","count":21,"path":"tags/LLM/"},{"name":"NVIDIA","count":18,"path":"tags/NVIDIA/"},{"name":"Python","count":17,"path":"tags/Python/"},{"name":"Spring","count":17,"path":"tags/Spring/"},{"name":"生活札記","count":16,"path":"tags/生活札記/"},{"name":"GitHub","count":15,"path":"tags/GitHub/"},{"name":"DevOps","count":14,"path":"tags/DevOps/"},{"name":"健康","count":13,"path":"tags/健康/"},{"name":"理財","count":13,"path":"tags/理財/"},{"name":"Apple","count":13,"path":"tags/Apple/"},{"name":"Copilot","count":13,"path":"tags/Copilot/"},{"name":"AI 法規","count":13,"path":"tags/AI-法規/"},{"name":"Microsoft","count":12,"path":"tags/Microsoft/"},{"name":"AI 安全","count":12,"path":"tags/AI-安全/"},{"name":"AI 模型","count":12,"path":"tags/AI-模型/"},{"name":"Gemini","count":11,"path":"tags/Gemini/"},{"name":"Performance","count":11,"path":"tags/Performance/"},{"name":"資料庫","count":11,"path":"tags/資料庫/"},{"name":"Cursor","count":10,"path":"tags/Cursor/"},{"name":"GitHub Copilot","count":10,"path":"tags/GitHub-Copilot/"},{"name":"Azure","count":9,"path":"tags/Azure/"},{"name":"微軟課程","count":9,"path":"tags/微軟課程/"},{"name":"Prompt Engineering","count":9,"path":"tags/Prompt-Engineering/"},{"name":"Elasticsearch","count":8,"path":"tags/Elasticsearch/"},{"name":"併發","count":8,"path":"tags/併發/"},{"name":"Hooks","count":6,"path":"tags/Hooks/"},{"name":"Rust","count":6,"path":"tags/Rust/"},{"name":"macOS","count":6,"path":"tags/macOS/"},{"name":"Docker","count":6,"path":"tags/Docker/"},{"name":"AI","count":5,"path":"tags/AI/"},{"name":"AZ-305","count":5,"path":"tags/AZ-305/"},{"name":"Code Review","count":5,"path":"tags/Code-Review/"},{"name":"TDD","count":5,"path":"tags/TDD/"},{"name":"系統監控","count":5,"path":"tags/系統監控/"},{"name":"Collections","count":5,"path":"tags/Collections/"},{"name":"設計模式","count":5,"path":"tags/設計模式/"},{"name":"生產力","count":4,"path":"tags/生產力/"},{"name":"Kiro","count":4,"path":"tags/Kiro/"},{"name":"Meta","count":4,"path":"tags/Meta/"},{"name":"DP-300","count":4,"path":"tags/DP-300/"},{"name":"SQL Server","count":4,"path":"tags/SQL-Server/"},{"name":"JSON","count":4,"path":"tags/JSON/"},{"name":"Stream","count":4,"path":"tags/Stream/"},{"name":"旅遊","count":4,"path":"tags/旅遊/"},{"name":"168斷食","count":3,"path":"tags/168斷食/"},{"name":"Mistral","count":3,"path":"tags/Mistral/"},{"name":"Windsurf","count":3,"path":"tags/Windsurf/"},{"name":"Codex","count":3,"path":"tags/Codex/"},{"name":"Agent","count":3,"path":"tags/Agent/"},{"name":"SDD","count":3,"path":"tags/SDD/"},{"name":"遠端工作","count":3,"path":"tags/遠端工作/"},{"name":"專注力","count":2,"path":"tags/專注力/"},{"name":"Amazon","count":2,"path":"tags/Amazon/"},{"name":"Networking","count":2,"path":"tags/Networking/"},{"name":"Tool Use","count":2,"path":"tags/Tool-Use/"},{"name":"Multi-Model","count":2,"path":"tags/Multi-Model/"},{"name":"Claude Design","count":2,"path":"tags/Claude-Design/"},{"name":"Prototype","count":2,"path":"tags/Prototype/"},{"name":"Lucene","count":2,"path":"tags/Lucene/"},{"name":"Redis","count":2,"path":"tags/Redis/"},{"name":"軟體工程師","count":1,"path":"tags/軟體工程師/"},{"name":"職涯","count":1,"path":"tags/職涯/"},{"name":"2026","count":1,"path":"tags/2026/"},{"name":"AWS","count":1,"path":"tags/AWS/"},{"name":"資訊安全","count":1,"path":"tags/資訊安全/"},{"name":"Migration","count":1,"path":"tags/Migration/"},{"name":"Apify","count":1,"path":"tags/Apify/"},{"name":"爬蟲","count":1,"path":"tags/爬蟲/"},{"name":"Agent Skills","count":1,"path":"tags/Agent-Skills/"},{"name":"Addy Osmani","count":1,"path":"tags/Addy-Osmani/"},{"name":"工程紀律","count":1,"path":"tags/工程紀律/"},{"name":"Buddi","count":1,"path":"tags/Buddi/"},{"name":"notch","count":1,"path":"tags/notch/"},{"name":"UI 設計","count":1,"path":"tags/UI-設計/"},{"name":"Prompt Caching","count":1,"path":"tags/Prompt-Caching/"},{"name":"成本優化","count":1,"path":"tags/成本優化/"},{"name":"Function Calling","count":1,"path":"tags/Function-Calling/"},{"name":"CLAUDE.md","count":1,"path":"tags/CLAUDE-md/"},{"name":"Auto Memory","count":1,"path":"tags/Auto-Memory/"},{"name":"Project Setup","count":1,"path":"tags/Project-Setup/"},{"name":"Extended Thinking","count":1,"path":"tags/Extended-Thinking/"},{"name":"Reasoning","count":1,"path":"tags/Reasoning/"},{"name":"/goal","count":1,"path":"tags/goal/"},{"name":"VS Code","count":1,"path":"tags/VS-Code/"},{"name":"Monitor Tool","count":1,"path":"tags/Monitor-Tool/"},{"name":"Haiku","count":1,"path":"tags/Haiku/"},{"name":"Sonnet","count":1,"path":"tags/Sonnet/"},{"name":"Opus","count":1,"path":"tags/Opus/"},{"name":"Token 成本","count":1,"path":"tags/Token-成本/"},{"name":"Plan Mode","count":1,"path":"tags/Plan-Mode/"},{"name":"Routines","count":1,"path":"tags/Routines/"},{"name":"Ultraplan","count":1,"path":"tags/Ultraplan/"},{"name":"規劃","count":1,"path":"tags/規劃/"},{"name":"cloud","count":1,"path":"tags/cloud/"},{"name":"Voice Mode","count":1,"path":"tags/Voice-Mode/"},{"name":"Push-to-Talk","count":1,"path":"tags/Push-to-Talk/"},{"name":"Team","count":1,"path":"tags/Team/"},{"name":"Onboarding","count":1,"path":"tags/Onboarding/"},{"name":"Supply Chain","count":1,"path":"tags/Supply-Chain/"},{"name":"Subagent","count":1,"path":"tags/Subagent/"},{"name":"Cowork","count":1,"path":"tags/Cowork/"},{"name":"Plugin","count":1,"path":"tags/Plugin/"},{"name":"UX 設計","count":1,"path":"tags/UX-設計/"},{"name":"Managed Agents","count":1,"path":"tags/Managed-Agents/"},{"name":"Dreaming","count":1,"path":"tags/Dreaming/"},{"name":"Outcomes","count":1,"path":"tags/Outcomes/"},{"name":"Coolify","count":1,"path":"tags/Coolify/"},{"name":"self-hosted","count":1,"path":"tags/self-hosted/"},{"name":"PaaS","count":1,"path":"tags/PaaS/"},{"name":"Productivity","count":1,"path":"tags/Productivity/"},{"name":"CrewAI","count":1,"path":"tags/CrewAI/"},{"name":"Multi-Agent","count":1,"path":"tags/Multi-Agent/"},{"name":"Encryption","count":1,"path":"tags/Encryption/"},{"name":"Monitoring","count":1,"path":"tags/Monitoring/"},{"name":"ELK Stack","count":1,"path":"tags/ELK-Stack/"},{"name":"Analyzer","count":1,"path":"tags/Analyzer/"},{"name":"IK","count":1,"path":"tags/IK/"},{"name":"中文搜尋","count":1,"path":"tags/中文搜尋/"},{"name":"Architecture","count":1,"path":"tags/Architecture/"},{"name":"Production","count":1,"path":"tags/Production/"},{"name":"Operations","count":1,"path":"tags/Operations/"},{"name":"Mapping","count":1,"path":"tags/Mapping/"},{"name":"Template","count":1,"path":"tags/Template/"},{"name":"Schema","count":1,"path":"tags/Schema/"},{"name":"CRUD","count":1,"path":"tags/CRUD/"},{"name":"bulk","count":1,"path":"tags/bulk/"},{"name":"alias","count":1,"path":"tags/alias/"},{"name":"REST API","count":1,"path":"tags/REST-API/"},{"name":"Aggregation","count":1,"path":"tags/Aggregation/"},{"name":"Search","count":1,"path":"tags/Search/"},{"name":"internals","count":1,"path":"tags/internals/"},{"name":"Translog","count":1,"path":"tags/Translog/"},{"name":"Segment","count":1,"path":"tags/Segment/"},{"name":"GH-300","count":1,"path":"tags/GH-300/"},{"name":"Responsible AI","count":1,"path":"tags/Responsible-AI/"},{"name":"SpecKit","count":1,"path":"tags/SpecKit/"},{"name":"工具遷移","count":1,"path":"tags/工具遷移/"},{"name":"前端","count":1,"path":"tags/前端/"},{"name":"skill","count":1,"path":"tags/skill/"},{"name":"AI 輔助開發","count":1,"path":"tags/AI-輔助開發/"},{"name":"開源專案","count":1,"path":"tags/開源專案/"},{"name":"Jira","count":1,"path":"tags/Jira/"},{"name":"Atlassian","count":1,"path":"tags/Atlassian/"},{"name":"微服務","count":1,"path":"tags/微服務/"},{"name":"系統設計","count":1,"path":"tags/系統設計/"},{"name":"後端開發","count":1,"path":"tags/後端開發/"},{"name":"Lightpanda","count":1,"path":"tags/Lightpanda/"},{"name":"Headless Browser","count":1,"path":"tags/Headless-Browser/"},{"name":"Zig","count":1,"path":"tags/Zig/"},{"name":"Web Scraping","count":1,"path":"tags/Web-Scraping/"},{"name":"ETF","count":1,"path":"tags/ETF/"},{"name":"台股","count":1,"path":"tags/台股/"},{"name":"美股","count":1,"path":"tags/美股/"},{"name":"Mag-7","count":1,"path":"tags/Mag-7/"},{"name":"財報","count":1,"path":"tags/財報/"},{"name":"Skill","count":1,"path":"tags/Skill/"},{"name":"心智模型","count":1,"path":"tags/心智模型/"},{"name":"決策工具","count":1,"path":"tags/決策工具/"},{"name":"Multica","count":1,"path":"tags/Multica/"},{"name":"OpenCode","count":1,"path":"tags/OpenCode/"},{"name":"GPT","count":1,"path":"tags/GPT/"},{"name":"Open CoDesign","count":1,"path":"tags/Open-CoDesign/"},{"name":"AI Design","count":1,"path":"tags/AI-Design/"},{"name":"Discord","count":1,"path":"tags/Discord/"},{"name":"GPT-5.5","count":1,"path":"tags/GPT-5-5/"},{"name":"OpenScreen","count":1,"path":"tags/OpenScreen/"},{"name":"Screen Recording","count":1,"path":"tags/Screen-Recording/"},{"name":"AI VTuber","count":1,"path":"tags/AI-VTuber/"},{"name":"Project AIRI","count":1,"path":"tags/Project-AIRI/"},{"name":"TypeScript","count":1,"path":"tags/TypeScript/"},{"name":"RTK","count":1,"path":"tags/RTK/"},{"name":"Token 優化","count":1,"path":"tags/Token-優化/"},{"name":"Sonatype Guide","count":1,"path":"tags/Sonatype-Guide/"},{"name":"依賴管理","count":1,"path":"tags/依賴管理/"},{"name":"Stanford AI Index","count":1,"path":"tags/Stanford-AI-Index/"},{"name":"AI產業","count":1,"path":"tags/AI產業/"},{"name":"工程師職涯","count":1,"path":"tags/工程師職涯/"},{"name":"AI透明度","count":1,"path":"tags/AI透明度/"},{"name":"就業市場","count":1,"path":"tags/就業市場/"},{"name":"API","count":1,"path":"tags/API/"},{"name":"TimesFM","count":1,"path":"tags/TimesFM/"},{"name":"時間序列","count":1,"path":"tags/時間序列/"},{"name":"基礎模型","count":1,"path":"tags/基礎模型/"},{"name":"ML","count":1,"path":"tags/ML/"},{"name":"Whisper","count":1,"path":"tags/Whisper/"},{"name":"Speech-to-Text","count":1,"path":"tags/Speech-to-Text/"},{"name":"Flash Attention","count":1,"path":"tags/Flash-Attention/"},{"name":"團隊合作","count":1,"path":"tags/團隊合作/"},{"name":"包棟民宿","count":1,"path":"tags/包棟民宿/"},{"name":"台中","count":1,"path":"tags/台中/"},{"name":"南投","count":1,"path":"tags/南投/"},{"name":"苗栗","count":1,"path":"tags/苗栗/"},{"name":"時事評論","count":1,"path":"tags/時事評論/"},{"name":"能源","count":1,"path":"tags/能源/"},{"name":"AI 基礎建設","count":1,"path":"tags/AI-基礎建設/"},{"name":"台灣","count":1,"path":"tags/台灣/"},{"name":"MacBook","count":1,"path":"tags/MacBook/"},{"name":"淡江大橋","count":1,"path":"tags/淡江大橋/"},{"name":"淡水","count":1,"path":"tags/淡水/"},{"name":"建築","count":1,"path":"tags/建築/"},{"name":"週末","count":1,"path":"tags/週末/"},{"name":"Claude Skills","count":1,"path":"tags/Claude-Skills/"},{"name":"居家辦公","count":1,"path":"tags/居家辦公/"},{"name":"人體工學","count":1,"path":"tags/人體工學/"},{"name":"日本","count":1,"path":"tags/日本/"},{"name":"黃金週","count":1,"path":"tags/黃金週/"},{"name":"Golden Week","count":1,"path":"tags/Golden-Week/"}];</script></body></html>
