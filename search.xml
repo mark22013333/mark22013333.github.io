@@ -4,6 +4,101 @@
   
     
     <entry>
+      <title>明天下午 2:30，中部七縣市手機集體降速：台灣第一次對全民跑混沌工程</title>
+      <link href="/2026/08/09/%E6%98%8E%E5%A4%A9%E4%B8%8B%E5%8D%882%E9%BB%9E30%E5%88%86%E4%B8%AD%E9%83%A8%E4%B8%83%E7%B8%A3%E5%B8%82%E6%89%8B%E6%A9%9F%E9%9B%86%E9%AB%94%E9%99%8D%E9%80%9F-%E5%8F%B0%E7%81%A3%E7%AC%AC%E4%B8%80%E6%AC%A1%E5%B0%8D%E5%85%A8%E6%B0%91%E8%B7%91%E6%B7%B7%E6%B2%8C%E5%B7%A5%E7%A8%8B/"/>
+      <url>/2026/08/09/%E6%98%8E%E5%A4%A9%E4%B8%8B%E5%8D%882%E9%BB%9E30%E5%88%86%E4%B8%AD%E9%83%A8%E4%B8%83%E7%B8%A3%E5%B8%82%E6%89%8B%E6%A9%9F%E9%9B%86%E9%AB%94%E9%99%8D%E9%80%9F-%E5%8F%B0%E7%81%A3%E7%AC%AC%E4%B8%80%E6%AC%A1%E5%B0%8D%E5%85%A8%E6%B0%91%E8%B7%91%E6%B7%B7%E6%B2%8C%E5%B7%A5%E7%A8%8B/</url>
+      
+        <content type="html"><![CDATA[<p>防空演習過去幾十年的標準流程，大概所有台灣人都背得出來。警報響，人走進騎樓或地下室，車靠邊停熄火，站著等三十分鐘，警報解除，回去做剛才在做的事。</p><p>今年多了一件事，而這件事是第一次做。</p><h2 id="舊版本測的是身體，新版本測的是你的服務"><a href="#舊版本測的是身體，新版本測的是你的服務" class="headerlink" title="舊版本測的是身體，新版本測的是你的服務"></a>舊版本測的是身體，新版本測的是你的服務</h2><p>2026 城鎮韌性（防空）演習排在 8 月 7 日到 8 月 13 日，採有預警、分區異時的方式輪流實施，每區約三十分鐘。這部分跟以前差不多。</p><p>不一樣的是行政院院會資料裡的這一句：</p><blockquote><p>本次行動網路降速演練規劃在中部及北部共 14 個縣市實施，時間為中部：8 月 10 日（星期一）下午 2 時 30 分至 3 時，北部：8 月 13 日（星期四）下午 2 時 30 分至 3 時。</p></blockquote><p>也就是明天下午兩點半，中部七個縣市的行動網路會被刻意調慢半小時。依 NCC 公告的範圍，中部包含苗栗縣、台中市、南投縣、彰化縣、雲林縣、嘉義市、嘉義縣；北部那一輪則涵蓋宜蘭縣、基隆市、台北市、新北市、桃園市、新竹市、新竹縣。NCC 估計影響人口約 1,700 萬、涵蓋率約七成三。</p><p>舊版演習測的是「人聽到警報會不會躲」。這一版測的是另一件事：當一千七百萬支手機同時變慢，靠這些手機運轉的東西會發生什麼。</p><h2 id="降速不是斷網，這個差別是整件事的關鍵"><a href="#降速不是斷網，這個差別是整件事的關鍵" class="headerlink" title="降速不是斷網，這個差別是整件事的關鍵"></a>降速不是斷網，這個差別是整件事的關鍵</h2><p>行政院長卓榮泰在院會裡特別強調過，這次不是斷網，是降速。院會資料的原文寫得很清楚：</p><blockquote><p>基本運作包括語音通話、簡訊與文字傳輸等均可正常使用</p></blockquote><blockquote><p>降速部分，會影響較高流量服務，例如影音串流、視訊通話、行動支付、雲端同步等</p></blockquote><p>NCC 另外說明，語音通話（包含 110 與 119）、簡訊，以及災防告警細胞廣播的接收，都可以正常使用。國防部長顧立雄則說明，這次是針對 14 縣市進行行動網路降載，固定網路不受影響。</p><p>想像自來水管。斷網是關總閥，一滴都不出來；降速是把閥門轉小，水還在流，只是流量剩下一小截。用水量小的動作照樣完成——洗個手、裝一杯水，你幾乎感覺不到差別。要拿它灌滿浴缸就會很難受。</p><p>語音跟簡訊就是那杯水。一通電話一分鐘的資料量，跟一支 1080p 影片一分鐘的資料量，中間差了好幾個數量級。管子轉小之後，前者還是塞得過去，後者就開始卡。</p><p>（官方公布的是「哪些服務會受影響」，沒有公布技術上怎麼實作的降載。上面這個水管比喻是幫助理解用的，不是官方的技術說明。）</p><h2 id="這半小時真正的價值，是幫你列出一份自己的清單"><a href="#這半小時真正的價值，是幫你列出一份自己的清單" class="headerlink" title="這半小時真正的價值，是幫你列出一份自己的清單"></a>這半小時真正的價值，是幫你列出一份自己的清單</h2><p>工程界有個做法叫混沌工程：在正式環境刻意注入故障，看系統會不會垮、垮在哪裡。核心邏輯是，你對系統韌性的信心如果來自「它一直沒出事」，那份信心其實沒有證據。</p><p>明天下午兩點半，就是全民版的同一件事。</p><p>平常你不會知道自己有多少東西是掛在行動網路上的，因為它從來沒斷過。半小時之後你會知道得非常具體：搭捷運刷不出 QR code、買咖啡開不了行動支付、地圖轉不出來、要開的線上會議進不去、雲端相簿的照片變成灰色方塊。</p><p>NCC 給的準備建議也是照這個邏輯來的：演習期間減少非必要上網，有重要事情提前或延後辦；重要資料先下載好；搭車消費備妥實體票券或現金；股匯市與金融交易事先切到固網，或改用人工、電話語音下單。它還多提了一項，把住家附近的避難處所資訊先截圖存在手機裡，斷網的時候才翻得到。</p><p>這一項最有意思。查避難所這個動作，恰好只有在你不需要它的時候才做得到。</p><h2 id="順帶一提，不配合是有罰則的"><a href="#順帶一提，不配合是有罰則的" class="headerlink" title="順帶一提，不配合是有罰則的"></a>順帶一提，不配合是有罰則的</h2><p>國防部說明，未依規定配合防空演習命令的管制及演練者，各地方政府得依民防法第 25 條裁處新臺幣 3 萬元以上、15 萬元以下罰鍰。</p><p>這條講的是人員疏散避難與現場交通管制那部分，不是講你的手機。降速是電信端統一做的，你不需要做任何事，也沒有辦法退出。</p><h2 id="演習結束之後，值得留下來的東西"><a href="#演習結束之後，值得留下來的東西" class="headerlink" title="演習結束之後，值得留下來的東西"></a>演習結束之後，值得留下來的東西</h2><p>半小時很快就過去了。值錢的是它結束之後，你手上多出來的那份清單。</p><p>哪幾件事在那三十分鐘裡卡住了，那幾件事就是你生活裡的單點依賴。單點依賴不會因為你知道它存在就消失，但它會從「意外」變成「選擇」——你可以決定留著它，也可以決定花點成本補一條備援。皮夾裡放幾張現金、悠遊卡留一點餘額、家裡的網路跟手機不要用同一家、重要文件在本機留一份離線的副本。每一項都很小，小到平常想不起來要做。</p><p>備援這種東西的特性是，它在你不需要的時候看起來永遠是浪費。而它值多少錢，只有在需要的那一天才會結算，通常還是一次結清。</p><p>明天下午兩點半，你會拿到一次免費的預演。記得看一下卡住的是什麼。</p><hr><p><strong>參考來源</strong></p><ul><li><a href="https://www.ey.gov.tw/Page/448DE008087A1971/096fb808-f775-47cd-bca9-9f3916680f54">行政院｜2026 城鎮韌性（防空）演習：行動網路降速演練（院會議案）</a>（降速縣市數、日期時間、可正常使用與受影響服務、演習目的原文）</li><li><a href="https://technews.tw/2026/07/22/ncc-urges-preparation-offline-scenarios-resilience-drills-mobile-network-throttling/">TechNews｜韌性演習行動網路降速，NCC 籲預先為離線情境做準備</a></li><li><a href="https://news.ltn.com.tw/news/politics/breakingnews/5515052">自由時報｜網路降速演習 8 月登場 NCC 建議：備妥實體支付、股票下單切固網</a></li><li><a href="https://www.gvm.com.tw/article/131663">遠見雜誌｜城鎮韌性 8 月演習斷網？行動網路降速演練 10 日登場</a>（分區縣市清單）</li><li><a href="https://news.tvbs.com.tw/life/4002048">TVBS｜2026 城鎮韌性演習懶人包</a>（民防法第 25 條罰則）</li></ul>]]></content>
+      
+      
+      <categories>
+          
+          <category> 生活札記 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> 工程師生活 </tag>
+            
+            <tag> 生活札記 </tag>
+            
+            <tag> 系統監控 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>AI 與科技新聞摘要 - 2026/08/09</title>
+      <link href="/2026/08/09/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260809/"/>
+      <url>/2026/08/09/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260809/</url>
+      
+        <content type="html"><![CDATA[<p>這幾天最值得看的幾則，有個共同點：真正在動的東西都不寫在公告裡。有的是刻意不公開，有的是公開了但大家看錯重點，還有一則是我照著別人的摘要走，差點把假的寫進來。</p><h2 id="一、Apple-告-OpenAI-的案子升級成禁制令，OpenAI-選擇公開開打"><a href="#一、Apple-告-OpenAI-的案子升級成禁制令，OpenAI-選擇公開開打" class="headerlink" title="一、Apple 告 OpenAI 的案子升級成禁制令，OpenAI 選擇公開開打"></a>一、Apple 告 OpenAI 的案子升級成禁制令，OpenAI 選擇公開開打</h2><p>Apple 在 7 月 10 日對 OpenAI、兩名前員工，以及 io Products 提告，主張違約與竊取營業秘密。這個月初，Apple 進一步向法院聲請初步禁制令，要求禁止對造「存取、取得、使用或揭露」相關機密資訊，同時聲請加速證據開示，包括對幾名個人與雙方公司代表進行 deposition。Apple 在聲請書裡的說法是：沒有禁制令，Apple 將受到無法回復的損害。</p><p>不尋常的是 OpenAI 的回應方式。8 月 4 日，OpenAI 貼出一篇公開反駁，標題大意是「Apple 這件事搞錯了」，並附上經遮蔽的往來信件與訊息，稱這是一場「粗率、有攻擊性、而且有點針對個人」的訴訟，並強調「我們沒有、也不想要他們任何營業秘密」。禁制令的聽證排在 10 月 1 日。</p><p>法律程序本身還很早，但這裡有個被低估的訊號：兩家公司都選擇把爭議搬到法庭外的輿論場，而且是在事實還沒被檢驗之前。這通常代表雙方都認為，賠償金只是附帶結果。真正在爭的是接下來幾年，誰能做出不靠 App、也不靠傳統作業系統的那種裝置。營業秘密官司拖三年是常態，而硬體產品線的窗口沒有三年。</p><p>不對稱在這裡：Apple 就算全勝，拿回來的是禁令與賠償；OpenAI 就算全敗，產品該做還是會做，只是換一批人做。這種下行有限、上行不對等的局，通常會打很久。</p><blockquote><p>來源：<a href="https://www.jurist.org/news/2026/08/apple-files-motion-for-preliminary-injunction-against-openai-in-trade-secrets-case/">JURIST</a>、<a href="https://9to5mac.com/2026/08/04/apple-preliminary-injunction-openai/">9to5Mac</a>、<a href="https://www.macrumors.com/2026/08/04/openai-posts-public-rebuttal-to-apple/">MacRumors</a></p></blockquote><h2 id="二、白宮的前沿模型框架準時交件，然後沒有人看得到它"><a href="#二、白宮的前沿模型框架準時交件，然後沒有人看得到它" class="headerlink" title="二、白宮的前沿模型框架準時交件，然後沒有人看得到它"></a>二、白宮的前沿模型框架準時交件，然後沒有人看得到它</h2><p>川普在 6 月 2 日簽署第 14409 號行政命令，名稱是「Promoting Advanced Artificial Intelligence Innovation and Security」，裡面給了 60 天期限，8 月 1 日到期。內容包含一套自願性框架，讓開發者可以主動找聯邦政府判斷自家模型是否構成「covered frontier model」，並在保密、資安、內部風險與智財保護的前提下，提供政府最長 30 天的模型存取期。同一份命令的第 3 節另外要求建立一套機密的評測程序，評估模型的進階網路攻擊能力。</p><p>框架照期限完成了。8 月 3 日，白宮把幾家主要實驗室找去做閉門簡報，Anthropic、OpenAI、Google 都在受邀之列。然後就沒有然後了：內容沒有公開，誰審過沒有公開，企業什麼時候開始適用也沒有公開。</p><p>值得注意的是行政命令裡刻意寫了一句免責：第 3 節的任何內容都不構成強制性的政府授權、預先許可或許可制。這句話寫得越明確，越說明有人擔心它實際上會變成那樣。當觸發審查的能力門檻本身是機密，開發者就無法自己判斷有沒有踩線，只能主動去問。紙上寫自願，實務上就是必須。</p><p>這種設計有個結構性的後果：合規成本會落在有法遵團隊的大公司身上，而它們反而是最有能力承擔的一方。有分析指出，這套 30 天自願早期存取只適用於閉源前沿模型，開放權重模型不在裡面。</p><blockquote><p>來源：<a href="https://www.whitehouse.gov/presidential-actions/2026/06/promoting-advanced-artificial-intelligence-innovation-and-security/">白宮行政命令原文</a>、<a href="https://www.cnbc.com/2026/08/03/white-house-ai-companies-voluntary-framework-meeting.html">CNBC</a>、<a href="https://www.nortonrosefulbright.com/en-us/knowledge/publications/900af3cf/executive-order-establishes-voluntary-early-access-framework-to-frontier-ai-models">Norton Rose Fulbright 法律解析</a></p></blockquote><h2 id="三、管制的重點從「晶片運到哪」變成「算力租在哪」"><a href="#三、管制的重點從「晶片運到哪」變成「算力租在哪」" class="headerlink" title="三、管制的重點從「晶片運到哪」變成「算力租在哪」"></a>三、管制的重點從「晶片運到哪」變成「算力租在哪」</h2><p>Bloomberg 在 8 月 7 日報導，美國商務部產業安全局（BIS）正在檢視中國 AI 公司如何在海外取得與使用 NVIDIA 晶片，特別是透過「承租位於其他國家的運算資源」這條路。觸發點是這些公司近期在技術上的進展，讓人發現現行限制並沒有真的擋住它們用到最先進的硬體。</p><p>這條線的前情提要是這樣：5 月 31 日，商務部出手補一個自己一年前留下的漏洞，該漏洞可能讓最先進的晶片出口到位於中國境外的中國企業實體。BIS 當時的澄清是，出口許可規則適用於總部設在中國的公司，不管它在哪裡營運。7 月 28 日，黃仁勳與商務部長 Lutnick 見了面。</p><p>從管制設計的角度看，這是一次典型的邊界後退。第一版管制看目的地國家，於是貨物繞路；第二版管制看公司歸屬，於是改成不搬貨、只租算力。實體晶片一顆都沒出境，運算能力照樣拿到手。每補一個洞，剩下的路徑就更難用單一規則描述，管制文本越寫越長、越寫越依賴個案認定。</p><p>這對台廠的意義不在單季訂單，而在合約條款。當「誰最終控制這家收貨的公司」變成審查重點，供應鏈上每一層都會被要求做更深的客戶盡職調查，而這件事沒辦法自動化。</p><blockquote><p>來源：<a href="https://www.bloomberg.com/news/articles/2026-08-07/us-reviews-china-s-offshore-access-to-nvidia-chips-after-ai-breakthroughs">Bloomberg</a>、<a href="https://www.cnbc.com/2026/05/31/us-takes-step-to-halt-nvidia-ai-chip-shipments-to-chinese-firms-outside-china.html">CNBC（5&#x2F;31 補漏洞）</a>、<a href="https://www.axios.com/2026/07/28/nvidia-jensen-huang-lutnick-meeting-china-ai">Axios（7&#x2F;28 會面）</a></p></blockquote><h2 id="四、群聯-7-月營收年增-377-，而執行長講的是需求結構被換掉了"><a href="#四、群聯-7-月營收年增-377-，而執行長講的是需求結構被換掉了" class="headerlink" title="四、群聯 7 月營收年增 377%，而執行長講的是需求結構被換掉了"></a>四、群聯 7 月營收年增 377%，而執行長講的是需求結構被換掉了</h2><p>群聯 8 月 7 日公布 7 月營運結果：合併營收 271.62 億元，月增約 9%、年增超過 377%，刷新單月歷史新高。累計前 7 月 1,360.17 億元，年增超過 263%，同期新高。產品面有一個數字特別扎眼，PCIe SSD Boot Drive 出貨量年增達 4,500%。</p><p>比營收更值得抄下來的是執行長潘健成對需求結構的說法。他的論點是：過去二十多年 NAND 的需求動能來自 PC 與手機，這兩者的年出貨量與平均容量都有相當高的可預測性，所以整體需求可以照歷史週期推估。AI 時代把這個前提換掉了，AI 工廠產出的模型、知識庫、推論結果與各式資料都要存下來，需求會隨應用普及呈指數成長。</p><p>這段話真正的重量在於「可預測性」三個字。舊模型能預測，是因為分母（裝置出貨量）有天花板。新模型不好預測，是因為分母換成了「推論次數」，而推論次數沒有明顯的物理上限。</p><p>對投資人來說這是好消息也是壞消息。需求沒有上限的另一面，是它也沒有下限保證——PC 出貨量會衰退但不會歸零，推論量卻是由別人的資本支出決定的，而那個決定可以在一季之內改變。年增 377% 這種數字，本身就是一個提醒：能這樣上去的東西，通常也能這樣下來。</p><blockquote><p>來源：<a href="https://news.cnyes.com/news/id/6564174">鉅亨網</a>、<a href="https://finance.ettoday.net/news/3215239">ETtoday 財經雲</a>、<a href="https://udn.com/news/story/7252/9677313">經濟日報</a></p></blockquote><h2 id="五、聯電-7-月營收衝上-45-個月新高，這次撐盤的是成熟製程"><a href="#五、聯電-7-月營收衝上-45-個月新高，這次撐盤的是成熟製程" class="headerlink" title="五、聯電 7 月營收衝上 45 個月新高，這次撐盤的是成熟製程"></a>五、聯電 7 月營收衝上 45 個月新高，這次撐盤的是成熟製程</h2><p>聯電 8 月 6 日公布 7 月合併營收 238.44 億元，月增 3.11%、年增 18.98%，是近 45 個月來的新高，也是歷年同期次高。前 7 月累計 1,536.14 億元，年增 12.41%。這是連續第五個月月成長。</p><p>7 月 29 日法說會給的第三季展望是：晶圓出貨量季增高個位數百分比，以美元計價的平均銷售單價維持穩定，毛利率落在 35% 左右，產能利用率有機會超過九成。受惠 PMIC、感測器與 MCU 需求，8 吋產線明顯回溫。聯電同時把 2026 年資本支出上修到 20 億美元，並喊出未來三年 AI 相關業務營收衝 10 億美元的目標。</p><p>這則的看點跟前面幾則相反。市場的注意力全在先進製程與 AI 資本支出上，而這個月推著聯電往上走的是 PMIC、感測器、MCU 這些沒有人會寫成頭條的東西。電腦、通訊、消費性電子的庫存回補，是一個跟 AI 敘事幾乎無關的循環。</p><p>在一個所有人都用同一套故事解釋所有數字的時候，找到一個「不需要那套故事也能成立」的收入來源，本身就是風險管理。</p><blockquote><p>來源：<a href="https://www.ctee.com.tw/news/20260807700086-439901">工商時報</a>、<a href="https://www.chinatimes.com/realtimenews/20260806003287-260410">時報資訊</a>、<a href="https://finance.technews.tw/2026/08/06/umc-2303-202607-financial-report">TechNews</a></p></blockquote><h2 id="六、開源-CLI-agent-的版圖，我自己去打-API-數了一遍"><a href="#六、開源-CLI-agent-的版圖，我自己去打-API-數了一遍" class="headerlink" title="六、開源 CLI agent 的版圖，我自己去打 API 數了一遍"></a>六、開源 CLI agent 的版圖，我自己去打 API 數了一遍</h2><p>這則沒有新聞稿，因為我原本想寫的那則是假的。</p><p>查資料的時候，搜尋摘要非常肯定地告訴我：Gemini CLI 已經在 2026 年 5 月退役、被別的產品接手、而且從 Apache 2.0 轉成閉源。三件事都寫得像真的。我打了一次 GitHub API 去看，四個 repo 一起數（2026-08-09 15:27 UTC）：</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">anomalyco/opencode      | 195,338 stars | MIT          | 未封存</span><br><span class="line">anthropics/claude-code  | 140,802 stars | NOASSERTION  | 未封存</span><br><span class="line">google-gemini/gemini-cli| 106,430 stars | Apache-2.0   | 未封存</span><br><span class="line">openai/codex            | 104,919 stars | Apache-2.0   | 未封存</span><br></pre></td></tr></table></figure><p>Gemini CLI 沒封存、授權還是 Apache-2.0、當天凌晨還有 push，最新 release 是 8 月 7 日的 v0.54.4。摘要講的三件事，一件都對不上。</p><p>數完之後有兩件事值得記著。第一，星數榜首由 MIT 授權的 opencode 拿下，領先幅度還不小，三家模型公司的官方工具全排在它後面。第二，授權欄位那格值得看一眼——三個是標準開源授權，一個是 <code>NOASSERTION</code>，意思是 GitHub 認不出那份授權檔屬於哪一種標準授權。工具好不好用跟授權怎麼寫是兩件事，但你如果打算把它包進公司的內部流程，那格比星數重要得多。</p><blockquote><p>來源：以 <code>gh api repos/&lt;owner&gt;/&lt;repo&gt;</code> 於 2026-08-09 15:27 UTC 實際查詢，數字為當下快照</p></blockquote><h2 id="那今天該拿走什麼"><a href="#那今天該拿走什麼" class="headerlink" title="那今天該拿走什麼"></a>那今天該拿走什麼</h2><p>如果只能記一件事：這六則裡有四則，關鍵資訊都是「沒有寫出來的那部分」。框架的門檻是機密、管制的下一步還沒公布、營收年增 377% 沒告訴你分母是誰的資本支出、搜尋摘要沒告訴你它哪裡是猜的。</p><p>所以判準很簡單，而且可以今天就用：任何你打算拿去做決定的數字或說法，先問它的原始出處是不是你能直接打開的東西。能打開就打開，打不開就標成「未查證」再往下走。</p><p>這聽起來像廢話，直到你發現第六則裡那三個錯誤，是我在按下發布前四十分鐘才抓到的。抓到的方法不是更聰明的判斷，是打了一行 API。</p>]]></content>
+      
+      
+      <categories>
+          
+          <category> AI與科技新聞 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> AI與科技新聞 </tag>
+            
+            <tag> OpenAI </tag>
+            
+            <tag> NVIDIA </tag>
+            
+            <tag> Apple </tag>
+            
+            <tag> AI 產業 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>82 份 SKILL.md 加起來 310 萬字元：Gemini CLI 開機全載，Claude Code 用到才載</title>
+      <link href="/2026/08/09/82%E4%BB%BDSKILL-md%E5%8A%A0%E8%B5%B7%E4%BE%86310%E8%90%AC%E5%AD%97%E5%85%83-Gemini-CLI%E9%96%8B%E6%A9%9F%E5%85%A8%E8%BC%89-Claude-Code%E7%94%A8%E5%88%B0%E6%89%8D%E8%BC%89/"/>
+      <url>/2026/08/09/82%E4%BB%BDSKILL-md%E5%8A%A0%E8%B5%B7%E4%BE%86310%E8%90%AC%E5%AD%97%E5%85%83-Gemini-CLI%E9%96%8B%E6%A9%9F%E5%85%A8%E8%BC%89-Claude-Code%E7%94%A8%E5%88%B0%E6%89%8D%E8%BC%89/</url>
+      
+        <content type="html"><![CDATA[<p>決定你能裝幾個擴充的，是啟動那一秒讀進去多少東西。</p><p>裝一個 extension、裝一個 skill，直覺上就是把檔案丟進某個資料夾，之後多一個能力。硬碟這麼便宜，裝一百個也沒差。這個直覺對了一半：檔案確實沒差，幾百 KB 而已。有差的是它什麼時候被讀進模型的 context，因為那才是會用完的東西。</p><p>Gemini CLI 和 Claude Code 在這一題上給了相反的答案。有趣的地方在於，它們的擴充在「裝了什麼」上面幾乎長一樣。</p><h2 id="兩邊裝的東西，清單重疊得驚人"><a href="#兩邊裝的東西，清單重疊得驚人" class="headerlink" title="兩邊裝的東西，清單重疊得驚人"></a>兩邊裝的東西，清單重疊得驚人</h2><p>Gemini CLI 的 extension 由一份 <code>gemini-extension.json</code> 定義。官方 reference 列出的欄位有 <code>name</code>、<code>version</code>、<code>description</code>、<code>mcpServers</code>、<code>contextFileName</code>、<code>excludeTools</code>、<code>migratedTo</code>、<code>plan</code>。文件對它的定位寫得很直白：</p><blockquote><p>package prompts, MCP servers, custom commands, themes, hooks, sub-agents, and agent skills into a familiar and user-friendly format.</p></blockquote><p>Claude Code 這邊，一個 skill 是一個目錄加一份 <code>SKILL.md</code>，frontmatter 放 name 跟 description，正文放做法，旁邊可以帶腳本跟參考檔。官方文件另外註明，過去 <code>.claude/commands/</code> 的自訂指令已經併進 skill，兩種寫法都會產生同一個斜線指令。</p><p>MCP server、自訂指令、給模型看的說明文字。這三樣兩邊都有。光看功能清單，你很難講出它們哪裡不同。</p><h2 id="差別在動詞"><a href="#差別在動詞" class="headerlink" title="差別在動詞"></a>差別在動詞</h2><p>Gemini CLI 的 reference 在「Extension format」那節收尾，寫了這麼一句：</p><blockquote><p>When Gemini CLI starts, it loads all the extensions and merges their configurations.</p></blockquote><p>啟動、全部、合併。這三個詞把後面的事都決定了。extension 目錄裡的 <code>GEMINI.md</code>（或 <code>contextFileName</code> 指定的那份檔）會被讀進來當 context，<code>mcpServers</code> 裡定義的服務會在啟動時跟著起來，跟寫在 <code>settings.json</code> 的 MCP server 是同一個層級。</p><p>Claude Code 的文件則是這樣講的：</p><blockquote><p>Unlike CLAUDE.md content, a skill’s body loads only when it’s used, so long reference material costs almost nothing until you need it.</p></blockquote><p>同一件事，兩個動詞。一個開機時全部攤開，一個等你用到才翻。</p><h2 id="這個差別在我機器上是多大"><a href="#這個差別在我機器上是多大" class="headerlink" title="這個差別在我機器上是多大"></a>這個差別在我機器上是多大</h2><p>我的 <code>~/.claude/skills/</code> 底下有 100 個目錄，其中 82 個帶 <code>SKILL.md</code>。把這 82 份全文串起來丟給 <code>wc -c</code>，數字是 3,105,318 個字元。</p><p>中英混排大概三個字元換一個 token，那就是一百萬 token 上下的量級。這只是 skill 正文，還沒算旁邊那堆 reference 檔跟腳本。</p><p>換句話說，如果這 310 萬字元在開機時全部進 context，session 還沒開始就已經結束了。實際上不會，因為正文是用到才讀，開場真正付的錢是每個 skill 的 name 跟 description，一份幾十個字。</p><p>這個算式是粗估，字元換 token 的比例會因語言而異，我沒有逐份實測。但量級的結論不會因為誤差而翻盤：正文全載跟只載描述，中間差了兩個數量級。</p><h2 id="反過來說，全載入買到的是確定性"><a href="#反過來說，全載入買到的是確定性" class="headerlink" title="反過來說，全載入買到的是確定性"></a>反過來說，全載入買到的是確定性</h2><p>按需載入不是免費的午餐。它把「這份說明現在該不該進來」這個判斷交給了模型，而判斷會失手。</p><p>我自己的全域規則檔裡就有一條寫著：使用者明確打了 <code>/名字</code> 就一定要執行，其餘情況只在描述明確涵蓋當前任務型態時才用。這條規則會存在，正是因為自動觸發不夠穩。描述寫得太像，模型會在不該用的時候把它拉進來；描述寫得含蓄，該用的時候它視而不見。</p><p>extension 全載入沒有這個煩惱。裝了就是在，不用祈禱模型今天判斷得準。代價是你得自己管好裝了幾個，而 Gemini CLI 給了對應的閥門：<code>gemini extensions disable &lt;name&gt; --scope user|workspace</code>，可以整包關掉，也可以只在某個工作區關掉。</p><p>還有一件事順著這個設計長出來。extension 的 manifest 可以寫 <code>excludeTools</code>，把工具從模型手上拿走，官方的例子甚至細到單一指令：</p><blockquote><p><code>&quot;excludeTools&quot;: [&quot;run_shell_command(rm -rf)&quot;]</code></p></blockquote><p>擴充自己聲明「我在的時候，這串指令不准跑」。權限收斂被放進了擴充包本身。Claude Code 這邊限制工具的閘門在 settings 的 permissions，是使用者那一端的事。同樣是說不，兩邊對「誰有資格說」的答案不一樣。</p><h2 id="誠實邊界，以及一個現場抓到的錯誤"><a href="#誠實邊界，以及一個現場抓到的錯誤" class="headerlink" title="誠實邊界，以及一個現場抓到的錯誤"></a>誠實邊界，以及一個現場抓到的錯誤</h2><p>Gemini CLI 我沒有實際跑過。上面每一句關於它的描述都來自官方 repo 的 <code>docs/extensions/reference.md</code>，不是使用經驗。</p><p>還有一段插曲值得寫下來。動筆前我用搜尋引擎查 Gemini CLI 的現況，摘要非常肯定地告訴我：它已經在 2026 年 5 月退役、被另一個產品接手、而且從 Apache 2.0 轉成閉源專有。三件事都很具體，讀起來完全不像編的。</p><p>我去打了一次 GitHub API：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">gh api repos/google-gemini/gemini-cli \</span><br><span class="line">  --jq <span class="string">&#x27;[.full_name,(.stargazers_count|tostring),.license.spdx_id,(.archived|tostring),.pushed_at]|join(&quot; | &quot;)&#x27;</span></span><br><span class="line"><span class="comment"># google-gemini/gemini-cli | 106430 | Apache-2.0 | false | 2026-08-09T01:15:28Z</span></span><br></pre></td></tr></table></figure><p>沒有封存，授權還是 Apache-2.0，最後一次 push 就在今天凌晨。最新 release 是 v0.54.4，8 月 7 日發的。那三件事，一件都對不上。</p><p>這一段跟本文主題其實是同一件事的兩面。摘要幫你把文件讀完了，代價是你不知道它讀的時候漏掉什麼、腦補了什麼。省下來的那幾分鐘，會在你把它寫進文章、寫進設定檔、寫進給同事的建議之後，用另一種形式跟你收費。</p><h2 id="所以該怎麼想這件事"><a href="#所以該怎麼想這件事" class="headerlink" title="所以該怎麼想這件事"></a>所以該怎麼想這件事</h2><p>把兩邊擺在一起，真正在較勁的不是功能清單，是同一個提問：這段文字什麼時候該進 context。</p><p>開機就進，你買到確定性，付的是每個 session 的固定成本，而且這個成本隨你裝的數量往上疊。用到才進，你買到幾乎沒有上限的擴充空間，付的是一次判斷，而判斷有機率出錯。</p><p>下次猶豫要不要再裝一個的時候，先問的不該是「這個有沒有用」。該問的是「它什麼時候會被讀」。同樣有用，一個每次開機都要付錢，一個只在你需要時才付錢，這是兩種完全不同的資產。</p><hr><p><strong>參考來源</strong></p><ul><li><a href="https://github.com/google-gemini/gemini-cli/blob/main/docs/extensions/reference.md">Gemini CLI — Extension reference</a>（<code>gemini-extension.json</code> 欄位、啟動載入行為、<code>excludeTools</code> 範例）</li><li><a href="https://github.com/google-gemini/gemini-cli/blob/main/docs/extensions/index.md">Gemini CLI — Extensions index</a>（extension 定位）</li><li><a href="https://code.claude.com/docs/en/skills">Claude Code — Extend Claude with skills</a>（skill 正文按需載入、自訂指令併入 skill）</li><li>repo 狀態與 star 數為 2026-08-09 15:27 UTC 以 GitHub API 實際查詢所得</li></ul>]]></content>
+      
+      
+      <categories>
+          
+          <category> Claude Code </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> Claude Code </tag>
+            
+            <tag> Gemini </tag>
+            
+            <tag> AI 開發工具 </tag>
+            
+            <tag> Skills </tag>
+            
+            <tag> CLI </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>7 月房市創 19 個月新高，待售新案也堆到歷史新高：青安 3.0 上路後該換掉的三個判準</title>
       <link href="/2026/08/08/7%E6%9C%88%E6%88%BF%E5%B8%82%E5%89%B519%E5%80%8B%E6%9C%88%E6%96%B0%E9%AB%98%E9%A4%98%E5%B1%8B%E4%B9%9F%E5%A0%86%E5%88%B0%E6%AD%B7%E5%8F%B2%E6%96%B0%E9%AB%98-%E9%9D%92%E5%AE%893-0%E4%B8%8A%E8%B7%AF%E5%BE%8C%E8%A9%B2%E6%8F%9B%E6%8E%89%E7%9A%84%E4%B8%89%E5%80%8B%E5%88%A4%E6%BA%96/"/>
       <url>/2026/08/08/7%E6%9C%88%E6%88%BF%E5%B8%82%E5%89%B519%E5%80%8B%E6%9C%88%E6%96%B0%E9%AB%98%E9%A4%98%E5%B1%8B%E4%B9%9F%E5%A0%86%E5%88%B0%E6%AD%B7%E5%8F%B2%E6%96%B0%E9%AB%98-%E9%9D%92%E5%AE%893-0%E4%B8%8A%E8%B7%AF%E5%BE%8C%E8%A9%B2%E6%8F%9B%E6%8E%89%E7%9A%84%E4%B8%89%E5%80%8B%E5%88%A4%E6%BA%96/</url>
@@ -49,9 +144,9 @@
       
         <tags>
             
-            <tag> AI Agent </tag>
-            
             <tag> Claude Code </tag>
+            
+            <tag> AI Agent </tag>
             
             <tag> 教學 </tag>
             
@@ -115,9 +210,9 @@
       
         <tags>
             
-            <tag> AI Agent </tag>
-            
             <tag> Claude Code </tag>
+            
+            <tag> AI Agent </tag>
             
             <tag> 教學 </tag>
             
@@ -150,11 +245,11 @@
             
             <tag> Claude Code </tag>
             
+            <tag> AI 開發工具 </tag>
+            
             <tag> 教學 </tag>
             
             <tag> LLM </tag>
-            
-            <tag> AI 開發工具 </tag>
             
             <tag> Claude </tag>
             
@@ -214,13 +309,13 @@
       
         <tags>
             
-            <tag> AI Agent </tag>
-            
             <tag> Claude Code </tag>
             
-            <tag> 自動化 </tag>
+            <tag> AI Agent </tag>
             
             <tag> 開源 </tag>
+            
+            <tag> 自動化 </tag>
             
             <tag> 開發工具 </tag>
             
@@ -247,9 +342,9 @@
       
         <tags>
             
-            <tag> AI Agent </tag>
-            
             <tag> Claude Code </tag>
+            
+            <tag> AI Agent </tag>
             
             <tag> 教學 </tag>
             
@@ -280,9 +375,9 @@
       
         <tags>
             
-            <tag> AI Agent </tag>
-            
             <tag> Claude Code </tag>
+            
+            <tag> AI Agent </tag>
             
             <tag> AI與科技新聞 </tag>
             
@@ -313,13 +408,13 @@
       
         <tags>
             
-            <tag> AI Agent </tag>
-            
             <tag> Claude Code </tag>
             
-            <tag> 開源 </tag>
-            
             <tag> Skills </tag>
+            
+            <tag> AI Agent </tag>
+            
+            <tag> 開源 </tag>
             
             <tag> 開發工具 </tag>
             
@@ -348,11 +443,11 @@
             
             <tag> Claude Code </tag>
             
-            <tag> 教學 </tag>
-            
             <tag> Skills </tag>
             
             <tag> CLI </tag>
+            
+            <tag> 教學 </tag>
             
         </tags>
       
@@ -472,9 +567,9 @@
       
         <tags>
             
-            <tag> AI Agent </tag>
-            
             <tag> Claude Code </tag>
+            
+            <tag> AI Agent </tag>
             
             <tag> 教學 </tag>
             
@@ -505,15 +600,15 @@
       
         <tags>
             
-            <tag> AI Agent </tag>
-            
             <tag> Claude Code </tag>
+            
+            <tag> CLI </tag>
+            
+            <tag> AI Agent </tag>
             
             <tag> 開源 </tag>
             
             <tag> 資安 </tag>
-            
-            <tag> CLI </tag>
             
         </tags>
       
@@ -540,9 +635,9 @@
             
             <tag> Claude Code </tag>
             
-            <tag> 教學 </tag>
-            
             <tag> CLI </tag>
+            
+            <tag> 教學 </tag>
             
         </tags>
       
@@ -716,9 +811,9 @@
       
         <tags>
             
-            <tag> AI Agent </tag>
-            
             <tag> Claude Code </tag>
+            
+            <tag> AI Agent </tag>
             
             <tag> 教學 </tag>
             
@@ -811,9 +906,9 @@
       
         <tags>
             
-            <tag> 教學 </tag>
-            
             <tag> CLI </tag>
+            
+            <tag> 教學 </tag>
             
             <tag> DevOps </tag>
             
@@ -844,11 +939,11 @@
             
             <tag> Claude Code </tag>
             
+            <tag> CLI </tag>
+            
             <tag> 教學 </tag>
             
             <tag> 自動化 </tag>
-            
-            <tag> CLI </tag>
             
         </tags>
       
@@ -937,9 +1032,9 @@
             
             <tag> Claude Code </tag>
             
-            <tag> 教學 </tag>
-            
             <tag> Skills </tag>
+            
+            <tag> 教學 </tag>
             
             <tag> 開發工具 </tag>
             
@@ -1032,11 +1127,11 @@
             
             <tag> Claude Code </tag>
             
+            <tag> CLI </tag>
+            
             <tag> 教學 </tag>
             
             <tag> 開發工具 </tag>
-            
-            <tag> CLI </tag>
             
         </tags>
       
@@ -1280,13 +1375,13 @@
       
         <tags>
             
-            <tag> AI Agent </tag>
-            
             <tag> Claude Code </tag>
             
-            <tag> 開源 </tag>
-            
             <tag> Skills </tag>
+            
+            <tag> AI Agent </tag>
+            
+            <tag> 開源 </tag>
             
         </tags>
       
@@ -1371,9 +1466,9 @@
       
         <tags>
             
-            <tag> AI Agent </tag>
-            
             <tag> Claude Code </tag>
+            
+            <tag> AI Agent </tag>
             
             <tag> 教學 </tag>
             
@@ -1460,9 +1555,9 @@
       
         <tags>
             
-            <tag> AI Agent </tag>
-            
             <tag> Claude Code </tag>
+            
+            <tag> AI Agent </tag>
             
             <tag> 教學 </tag>
             
@@ -1493,11 +1588,11 @@
             
             <tag> Claude Code </tag>
             
+            <tag> CLI </tag>
+            
             <tag> 教學 </tag>
             
             <tag> 自動化 </tag>
-            
-            <tag> CLI </tag>
             
         </tags>
       
@@ -1553,9 +1648,9 @@
       
         <tags>
             
-            <tag> AI Agent </tag>
-            
             <tag> Claude Code </tag>
+            
+            <tag> AI Agent </tag>
             
             <tag> 教學 </tag>
             
@@ -1619,9 +1714,9 @@
             
             <tag> AI與科技新聞 </tag>
             
-            <tag> 資安 </tag>
-            
             <tag> OpenAI </tag>
+            
+            <tag> 資安 </tag>
             
             <tag> AI 法規 </tag>
             
@@ -1648,9 +1743,9 @@
       
         <tags>
             
-            <tag> AI Agent </tag>
-            
             <tag> Claude Code </tag>
+            
+            <tag> AI Agent </tag>
             
             <tag> 教學 </tag>
             
@@ -1679,13 +1774,13 @@
       
         <tags>
             
-            <tag> AI Agent </tag>
-            
             <tag> Claude Code </tag>
             
-            <tag> 教學 </tag>
-            
             <tag> Skills </tag>
+            
+            <tag> AI Agent </tag>
+            
+            <tag> 教學 </tag>
             
         </tags>
       
@@ -1743,9 +1838,9 @@
       
         <tags>
             
-            <tag> AI Agent </tag>
-            
             <tag> Claude Code </tag>
+            
+            <tag> AI Agent </tag>
             
             <tag> 教學 </tag>
             
@@ -1776,9 +1871,9 @@
             
             <tag> Claude Code </tag>
             
-            <tag> 教學 </tag>
-            
             <tag> AI 開發工具 </tag>
+            
+            <tag> 教學 </tag>
             
             <tag> Claude </tag>
             
@@ -1840,15 +1935,15 @@
       
         <tags>
             
-            <tag> AI Agent </tag>
-            
             <tag> Claude Code </tag>
+            
+            <tag> Skills </tag>
+            
+            <tag> AI Agent </tag>
             
             <tag> 教學 </tag>
             
             <tag> LLM </tag>
-            
-            <tag> Skills </tag>
             
         </tags>
       
@@ -1873,15 +1968,15 @@
       
         <tags>
             
-            <tag> AI Agent </tag>
-            
             <tag> Claude Code </tag>
+            
+            <tag> CLI </tag>
+            
+            <tag> AI Agent </tag>
             
             <tag> 教學 </tag>
             
             <tag> 自動化 </tag>
-            
-            <tag> CLI </tag>
             
         </tags>
       
@@ -1939,9 +2034,9 @@
       
         <tags>
             
-            <tag> AI Agent </tag>
-            
             <tag> Claude Code </tag>
+            
+            <tag> AI Agent </tag>
             
             <tag> 教學 </tag>
             
@@ -2067,9 +2162,9 @@
       
         <tags>
             
-            <tag> AI Agent </tag>
-            
             <tag> Claude Code </tag>
+            
+            <tag> AI Agent </tag>
             
             <tag> 教學 </tag>
             
@@ -2100,9 +2195,9 @@
       
         <tags>
             
-            <tag> AI Agent </tag>
-            
             <tag> Claude Code </tag>
+            
+            <tag> AI Agent </tag>
             
             <tag> 自動化 </tag>
             
@@ -2137,9 +2232,9 @@
             
             <tag> OpenAI </tag>
             
-            <tag> Apple </tag>
-            
             <tag> Google </tag>
+            
+            <tag> Apple </tag>
             
             <tag> AI 產業 </tag>
             
@@ -2168,13 +2263,13 @@
             
             <tag> Claude Code </tag>
             
-            <tag> 自動化 </tag>
-            
-            <tag> 開源 </tag>
+            <tag> AI 開發工具 </tag>
             
             <tag> Skills </tag>
             
-            <tag> AI 開發工具 </tag>
+            <tag> 開源 </tag>
+            
+            <tag> 自動化 </tag>
             
         </tags>
       
@@ -2201,11 +2296,11 @@
             
             <tag> Claude Code </tag>
             
-            <tag> 自動化 </tag>
-            
             <tag> AI 開發工具 </tag>
             
             <tag> CLI </tag>
+            
+            <tag> 自動化 </tag>
             
         </tags>
       
@@ -2234,9 +2329,9 @@
             
             <tag> AI與科技新聞 </tag>
             
-            <tag> Apple </tag>
-            
             <tag> NVIDIA </tag>
+            
+            <tag> Apple </tag>
             
             <tag> AI 產業 </tag>
             
@@ -2263,13 +2358,13 @@
       
         <tags>
             
-            <tag> AI Agent </tag>
-            
             <tag> Claude Code </tag>
             
-            <tag> 自動化 </tag>
-            
             <tag> Skills </tag>
+            
+            <tag> AI Agent </tag>
+            
+            <tag> 自動化 </tag>
             
         </tags>
       
@@ -2296,11 +2391,11 @@
             
             <tag> Claude Code </tag>
             
+            <tag> CLI </tag>
+            
             <tag> 教學 </tag>
             
             <tag> 自動化 </tag>
-            
-            <tag> CLI </tag>
             
         </tags>
       
@@ -2391,11 +2486,11 @@
             
             <tag> Claude Code </tag>
             
+            <tag> CLI </tag>
+            
             <tag> 教學 </tag>
             
             <tag> 開發工具 </tag>
-            
-            <tag> CLI </tag>
             
         </tags>
       
@@ -2486,11 +2581,11 @@
             
             <tag> Claude Code </tag>
             
+            <tag> Gemini </tag>
+            
             <tag> OpenAI </tag>
             
             <tag> Apple </tag>
-            
-            <tag> Gemini </tag>
             
             <tag> AI 產業 </tag>
             
@@ -2550,11 +2645,11 @@
             
             <tag> Claude Code </tag>
             
-            <tag> 開源 </tag>
+            <tag> AI 開發工具 </tag>
             
             <tag> Skills </tag>
             
-            <tag> AI 開發工具 </tag>
+            <tag> 開源 </tag>
             
             <tag> TDD </tag>
             
@@ -2583,9 +2678,9 @@
             
             <tag> Claude Code </tag>
             
-            <tag> LLM </tag>
-            
             <tag> AI 開發工具 </tag>
+            
+            <tag> LLM </tag>
             
         </tags>
       
@@ -2610,11 +2705,11 @@
       
         <tags>
             
+            <tag> AI 開發工具 </tag>
+            
             <tag> LLM </tag>
             
             <tag> Anthropic </tag>
-            
-            <tag> AI 開發工具 </tag>
             
             <tag> AI 安全 </tag>
             
@@ -2860,13 +2955,13 @@
             
             <tag> Claude Code </tag>
             
-            <tag> 教學 </tag>
-            
-            <tag> MCP </tag>
-            
             <tag> AI 開發工具 </tag>
             
             <tag> CLI </tag>
+            
+            <tag> 教學 </tag>
+            
+            <tag> MCP </tag>
             
         </tags>
       
@@ -2897,9 +2992,9 @@
             
             <tag> 資安 </tag>
             
-            <tag> AI 產業 </tag>
-            
             <tag> Meta </tag>
+            
+            <tag> AI 產業 </tag>
             
         </tags>
       
@@ -2924,13 +3019,13 @@
       
         <tags>
             
-            <tag> AI Agent </tag>
-            
             <tag> Claude Code </tag>
             
-            <tag> 開源 </tag>
-            
             <tag> AI 開發工具 </tag>
+            
+            <tag> AI Agent </tag>
+            
+            <tag> 開源 </tag>
             
             <tag> TDD </tag>
             
@@ -2992,9 +3087,9 @@
             
             <tag> OpenAI </tag>
             
-            <tag> Apple </tag>
-            
             <tag> NVIDIA </tag>
+            
+            <tag> Apple </tag>
             
             <tag> AI 產業 </tag>
             
@@ -3021,9 +3116,9 @@
       
         <tags>
             
-            <tag> LLM </tag>
-            
             <tag> AI 開發工具 </tag>
+            
+            <tag> LLM </tag>
             
             <tag> Microsoft </tag>
             
@@ -3054,11 +3149,11 @@
             
             <tag> Claude Code </tag>
             
-            <tag> 教學 </tag>
-            
             <tag> AI 開發工具 </tag>
             
             <tag> CLI </tag>
+            
+            <tag> 教學 </tag>
             
         </tags>
       
@@ -3238,13 +3333,13 @@
             
             <tag> Claude Code </tag>
             
-            <tag> 教學 </tag>
-            
-            <tag> MCP </tag>
-            
             <tag> AI 開發工具 </tag>
             
             <tag> CLI </tag>
+            
+            <tag> 教學 </tag>
+            
+            <tag> MCP </tag>
             
         </tags>
       
@@ -3302,11 +3397,11 @@
       
         <tags>
             
+            <tag> AI 開發工具 </tag>
+            
             <tag> AI Agent </tag>
             
             <tag> 開源 </tag>
-            
-            <tag> AI 開發工具 </tag>
             
             <tag> Python </tag>
             
@@ -3492,9 +3587,9 @@
             
             <tag> 生產力 </tag>
             
-            <tag> AI Agent </tag>
-            
             <tag> Claude Code </tag>
+            
+            <tag> AI Agent </tag>
             
             <tag> 開發工具 </tag>
             
@@ -3525,11 +3620,11 @@
             
             <tag> Claude Code </tag>
             
+            <tag> CLI </tag>
+            
             <tag> 教學 </tag>
             
             <tag> 自動化 </tag>
-            
-            <tag> CLI </tag>
             
         </tags>
       
@@ -3587,15 +3682,15 @@
       
         <tags>
             
+            <tag> AI 開發工具 </tag>
+            
             <tag> LLM </tag>
             
             <tag> 開源 </tag>
             
-            <tag> AI 開發工具 </tag>
+            <tag> Python </tag>
             
             <tag> macOS </tag>
-            
-            <tag> Python </tag>
             
         </tags>
       
@@ -3684,11 +3779,11 @@
             
             <tag> Claude Code </tag>
             
-            <tag> 教學 </tag>
-            
             <tag> Skills </tag>
             
             <tag> CLI </tag>
+            
+            <tag> 教學 </tag>
             
         </tags>
       
@@ -3715,9 +3810,9 @@
             
             <tag> Claude Code </tag>
             
-            <tag> 開發工具 </tag>
-            
             <tag> CLI </tag>
+            
+            <tag> 開發工具 </tag>
             
         </tags>
       
@@ -3777,9 +3872,9 @@
             
             <tag> Claude Code </tag>
             
-            <tag> 自動化 </tag>
-            
             <tag> Skills </tag>
+            
+            <tag> 自動化 </tag>
             
             <tag> MCP </tag>
             
@@ -3806,13 +3901,13 @@
       
         <tags>
             
-            <tag> AI Agent </tag>
-            
             <tag> Claude Code </tag>
             
-            <tag> 教學 </tag>
-            
             <tag> CLI </tag>
+            
+            <tag> AI Agent </tag>
+            
+            <tag> 教學 </tag>
             
         </tags>
       
@@ -3841,9 +3936,9 @@
             
             <tag> AI與科技新聞 </tag>
             
-            <tag> AI 模型 </tag>
-            
             <tag> Meta </tag>
+            
+            <tag> AI 模型 </tag>
             
         </tags>
       
@@ -3899,13 +3994,13 @@
       
         <tags>
             
-            <tag> AI Agent </tag>
-            
             <tag> Claude Code </tag>
             
-            <tag> 教學 </tag>
-            
             <tag> CLI </tag>
+            
+            <tag> AI Agent </tag>
+            
+            <tag> 教學 </tag>
             
         </tags>
       
@@ -3936,9 +4031,9 @@
             
             <tag> AI與科技新聞 </tag>
             
-            <tag> 資安 </tag>
-            
             <tag> OpenAI </tag>
+            
+            <tag> 資安 </tag>
             
         </tags>
       
@@ -3963,15 +4058,15 @@
       
         <tags>
             
-            <tag> AI Agent </tag>
-            
-            <tag> 開源 </tag>
+            <tag> AI 開發工具 </tag>
             
             <tag> Skills </tag>
             
-            <tag> AI 開發工具 </tag>
-            
             <tag> CLI </tag>
+            
+            <tag> AI Agent </tag>
+            
+            <tag> 開源 </tag>
             
         </tags>
       
@@ -4025,9 +4120,9 @@
       
         <tags>
             
-            <tag> 開源 </tag>
-            
             <tag> AI 開發工具 </tag>
+            
+            <tag> 開源 </tag>
             
             <tag> AI 模型 </tag>
             
@@ -4091,11 +4186,11 @@
             
             <tag> 健康 </tag>
             
-            <tag> 工程師生活 </tag>
-            
             <tag> 生產力 </tag>
             
             <tag> 專注力 </tag>
+            
+            <tag> 工程師生活 </tag>
             
         </tags>
       
@@ -4124,9 +4219,9 @@
             
             <tag> AI與科技新聞 </tag>
             
-            <tag> 資安 </tag>
-            
             <tag> OpenAI </tag>
+            
+            <tag> 資安 </tag>
             
         </tags>
       
@@ -4186,9 +4281,9 @@
             
             <tag> AI 開發工具 </tag>
             
-            <tag> 資安 </tag>
-            
             <tag> CLI </tag>
+            
+            <tag> 資安 </tag>
             
         </tags>
       
@@ -4246,13 +4341,13 @@
       
         <tags>
             
-            <tag> AI Agent </tag>
+            <tag> AI 開發工具 </tag>
             
-            <tag> 自動化 </tag>
+            <tag> AI Agent </tag>
             
             <tag> 開源 </tag>
             
-            <tag> AI 開發工具 </tag>
+            <tag> 自動化 </tag>
             
         </tags>
       
@@ -4277,11 +4372,11 @@
       
         <tags>
             
+            <tag> AI 開發工具 </tag>
+            
             <tag> 教學 </tag>
             
             <tag> Anthropic </tag>
-            
-            <tag> AI 開發工具 </tag>
             
             <tag> Claude </tag>
             
@@ -4314,9 +4409,9 @@
             
             <tag> AI與科技新聞 </tag>
             
-            <tag> 資安 </tag>
-            
             <tag> Claude </tag>
+            
+            <tag> 資安 </tag>
             
             <tag> AI 產業 </tag>
             
@@ -4347,9 +4442,9 @@
             
             <tag> LLM </tag>
             
-            <tag> 自動化 </tag>
-            
             <tag> 開源 </tag>
+            
+            <tag> 自動化 </tag>
             
         </tags>
       
@@ -4436,11 +4531,11 @@
       
         <tags>
             
-            <tag> AI Agent </tag>
-            
             <tag> Claude Code </tag>
             
             <tag> AI 開發工具 </tag>
+            
+            <tag> AI Agent </tag>
             
             <tag> Prompt Engineering </tag>
             
@@ -4467,15 +4562,15 @@
       
         <tags>
             
-            <tag> AI Agent </tag>
-            
             <tag> Claude Code </tag>
+            
+            <tag> Skills </tag>
+            
+            <tag> AI Agent </tag>
             
             <tag> 教學 </tag>
             
             <tag> Hooks </tag>
-            
-            <tag> Skills </tag>
             
         </tags>
       
@@ -4568,11 +4663,11 @@
             
             <tag> Claude Code </tag>
             
+            <tag> AI 開發工具 </tag>
+            
             <tag> 教學 </tag>
             
             <tag> Anthropic </tag>
-            
-            <tag> AI 開發工具 </tag>
             
         </tags>
       
@@ -4599,9 +4694,9 @@
             
             <tag> AI與科技新聞 </tag>
             
-            <tag> 資安 </tag>
-            
             <tag> OpenAI </tag>
+            
+            <tag> 資安 </tag>
             
             <tag> AI 產業 </tag>
             
@@ -4628,11 +4723,11 @@
       
         <tags>
             
-            <tag> 自動化 </tag>
+            <tag> AI 開發工具 </tag>
             
             <tag> 開源 </tag>
             
-            <tag> AI 開發工具 </tag>
+            <tag> 自動化 </tag>
             
             <tag> Python </tag>
             
@@ -4721,9 +4816,9 @@
       
         <tags>
             
-            <tag> 開源 </tag>
-            
             <tag> AI 開發工具 </tag>
+            
+            <tag> 開源 </tag>
             
             <tag> AI 模型 </tag>
             
@@ -4812,13 +4907,13 @@
       
         <tags>
             
-            <tag> AI Agent </tag>
-            
-            <tag> 開源 </tag>
+            <tag> AI 開發工具 </tag>
             
             <tag> Skills </tag>
             
-            <tag> AI 開發工具 </tag>
+            <tag> AI Agent </tag>
+            
+            <tag> 開源 </tag>
             
         </tags>
       
@@ -4845,11 +4940,11 @@
             
             <tag> Claude Code </tag>
             
+            <tag> CLI </tag>
+            
             <tag> 自動化 </tag>
             
             <tag> AI 安全 </tag>
-            
-            <tag> CLI </tag>
             
         </tags>
       
@@ -4874,13 +4969,13 @@
       
         <tags>
             
+            <tag> Gemini </tag>
+            
             <tag> Anthropic </tag>
             
             <tag> AI與科技新聞 </tag>
             
             <tag> OpenAI </tag>
-            
-            <tag> Gemini </tag>
             
             <tag> AI 產業 </tag>
             
@@ -4907,9 +5002,9 @@
       
         <tags>
             
-            <tag> AI Agent </tag>
-            
             <tag> Claude Code </tag>
+            
+            <tag> AI Agent </tag>
             
             <tag> 開源 </tag>
             
@@ -4940,11 +5035,11 @@
             
             <tag> Claude Code </tag>
             
-            <tag> 教學 </tag>
-            
             <tag> AI 開發工具 </tag>
             
             <tag> CLI </tag>
+            
+            <tag> 教學 </tag>
             
         </tags>
       
@@ -4973,9 +5068,9 @@
             
             <tag> AI與科技新聞 </tag>
             
-            <tag> 資安 </tag>
-            
             <tag> OpenAI </tag>
+            
+            <tag> 資安 </tag>
             
             <tag> AI 產業 </tag>
             
@@ -5002,13 +5097,13 @@
       
         <tags>
             
-            <tag> AI Agent </tag>
-            
-            <tag> 開源 </tag>
+            <tag> AI 開發工具 </tag>
             
             <tag> Skills </tag>
             
-            <tag> AI 開發工具 </tag>
+            <tag> AI Agent </tag>
+            
+            <tag> 開源 </tag>
             
             <tag> Google </tag>
             
@@ -5037,11 +5132,11 @@
             
             <tag> Claude Code </tag>
             
-            <tag> 教學 </tag>
-            
             <tag> AI 開發工具 </tag>
             
             <tag> CLI </tag>
+            
+            <tag> 教學 </tag>
             
         </tags>
       
@@ -5099,13 +5194,13 @@
       
         <tags>
             
-            <tag> AI Agent </tag>
-            
             <tag> Claude Code </tag>
             
-            <tag> 開源 </tag>
-            
             <tag> AI 開發工具 </tag>
+            
+            <tag> AI Agent </tag>
+            
+            <tag> 開源 </tag>
             
         </tags>
       
@@ -5132,11 +5227,11 @@
             
             <tag> Claude Code </tag>
             
+            <tag> CLI </tag>
+            
             <tag> 教學 </tag>
             
             <tag> GitHub </tag>
-            
-            <tag> CLI </tag>
             
         </tags>
       
@@ -5223,9 +5318,9 @@
       
         <tags>
             
-            <tag> AI Agent </tag>
-            
             <tag> Claude Code </tag>
+            
+            <tag> AI Agent </tag>
             
             <tag> 教學 </tag>
             
@@ -5256,9 +5351,9 @@
             
             <tag> AI與科技新聞 </tag>
             
-            <tag> 資安 </tag>
-            
             <tag> OpenAI </tag>
+            
+            <tag> 資安 </tag>
             
             <tag> Google </tag>
             
@@ -5287,9 +5382,9 @@
       
         <tags>
             
-            <tag> 開源 </tag>
-            
             <tag> AI 開發工具 </tag>
+            
+            <tag> 開源 </tag>
             
             <tag> OpenAI </tag>
             
@@ -5380,9 +5475,9 @@
             
             <tag> Claude Code </tag>
             
-            <tag> Skills </tag>
-            
             <tag> AI 開發工具 </tag>
+            
+            <tag> Skills </tag>
             
             <tag> Spring </tag>
             
@@ -5409,9 +5504,9 @@
       
         <tags>
             
-            <tag> AI Agent </tag>
-            
             <tag> Claude Code </tag>
+            
+            <tag> AI Agent </tag>
             
             <tag> 教學 </tag>
             
@@ -5471,11 +5566,11 @@
       
         <tags>
             
-            <tag> 理財 </tag>
-            
             <tag> AI Agent </tag>
             
             <tag> LLM </tag>
+            
+            <tag> 理財 </tag>
             
             <tag> 開源 </tag>
             
@@ -5504,9 +5599,9 @@
             
             <tag> Claude Code </tag>
             
-            <tag> 教學 </tag>
-            
             <tag> CLI </tag>
+            
+            <tag> 教學 </tag>
             
             <tag> Performance </tag>
             
@@ -5535,9 +5630,9 @@
             
             <tag> AI與科技新聞 </tag>
             
-            <tag> 資安 </tag>
-            
             <tag> OpenAI </tag>
+            
+            <tag> 資安 </tag>
             
             <tag> AI 產業 </tag>
             
@@ -5597,11 +5692,11 @@
             
             <tag> Claude Code </tag>
             
+            <tag> CLI </tag>
+            
             <tag> 教學 </tag>
             
             <tag> 自動化 </tag>
-            
-            <tag> CLI </tag>
             
         </tags>
       
@@ -5659,9 +5754,9 @@
             
             <tag> AI Agent </tag>
             
-            <tag> 自動化 </tag>
-            
             <tag> 開源 </tag>
+            
+            <tag> 自動化 </tag>
             
             <tag> Python </tag>
             
@@ -5690,11 +5785,11 @@
             
             <tag> Claude Code </tag>
             
+            <tag> CLI </tag>
+            
             <tag> 教學 </tag>
             
             <tag> AI 模型 </tag>
-            
-            <tag> CLI </tag>
             
         </tags>
       
@@ -5750,13 +5845,13 @@
       
         <tags>
             
+            <tag> AI 開發工具 </tag>
+            
             <tag> AI Agent </tag>
             
             <tag> 開源 </tag>
             
             <tag> MCP </tag>
-            
-            <tag> AI 開發工具 </tag>
             
         </tags>
       
@@ -5783,11 +5878,11 @@
             
             <tag> Claude Code </tag>
             
+            <tag> CLI </tag>
+            
             <tag> 自動化 </tag>
             
             <tag> 開發工具 </tag>
-            
-            <tag> CLI </tag>
             
         </tags>
       
@@ -5843,13 +5938,13 @@
       
         <tags>
             
-            <tag> AI Agent </tag>
-            
             <tag> Claude Code </tag>
             
-            <tag> 開發工具 </tag>
-            
             <tag> CLI </tag>
+            
+            <tag> AI Agent </tag>
+            
+            <tag> 開發工具 </tag>
             
         </tags>
       
@@ -5996,9 +6091,9 @@
             
             <tag> AI與科技新聞 </tag>
             
-            <tag> 資安 </tag>
-            
             <tag> OpenAI </tag>
+            
+            <tag> 資安 </tag>
             
             <tag> NVIDIA </tag>
             
@@ -6058,13 +6153,13 @@
             
             <tag> Claude Code </tag>
             
-            <tag> 教學 </tag>
-            
             <tag> AI 開發工具 </tag>
             
-            <tag> Claude </tag>
-            
             <tag> CLI </tag>
+            
+            <tag> 教學 </tag>
+            
+            <tag> Claude </tag>
             
         </tags>
       
@@ -6124,13 +6219,13 @@
             
             <tag> Claude Code </tag>
             
-            <tag> 自動化 </tag>
-            
-            <tag> 開源 </tag>
+            <tag> AI 開發工具 </tag>
             
             <tag> Skills </tag>
             
-            <tag> AI 開發工具 </tag>
+            <tag> 開源 </tag>
+            
+            <tag> 自動化 </tag>
             
         </tags>
       
@@ -6186,9 +6281,9 @@
       
         <tags>
             
-            <tag> AI Agent </tag>
-            
             <tag> Claude Code </tag>
+            
+            <tag> AI Agent </tag>
             
             <tag> 教學 </tag>
             
@@ -6221,9 +6316,9 @@
             
             <tag> LLM </tag>
             
-            <tag> 自動化 </tag>
-            
             <tag> 開源 </tag>
+            
+            <tag> 自動化 </tag>
             
             <tag> MCP </tag>
             
@@ -6252,11 +6347,11 @@
             
             <tag> Claude Code </tag>
             
+            <tag> CLI </tag>
+            
             <tag> 教學 </tag>
             
             <tag> 自動化 </tag>
-            
-            <tag> CLI </tag>
             
         </tags>
       
@@ -6312,9 +6407,9 @@
       
         <tags>
             
-            <tag> 自動化 </tag>
-            
             <tag> 開源 </tag>
+            
+            <tag> 自動化 </tag>
             
             <tag> 開發工具 </tag>
             
@@ -6341,15 +6436,15 @@
       
         <tags>
             
-            <tag> AI Agent </tag>
-            
             <tag> Claude Code </tag>
+            
+            <tag> CLI </tag>
+            
+            <tag> AI Agent </tag>
             
             <tag> 教學 </tag>
             
             <tag> 開發工具 </tag>
-            
-            <tag> CLI </tag>
             
         </tags>
       
@@ -6378,9 +6473,9 @@
             
             <tag> AI與科技新聞 </tag>
             
-            <tag> 資安 </tag>
-            
             <tag> OpenAI </tag>
+            
+            <tag> 資安 </tag>
             
             <tag> AI 產業 </tag>
             
@@ -6407,13 +6502,13 @@
       
         <tags>
             
-            <tag> AI Agent </tag>
-            
             <tag> Claude Code </tag>
             
-            <tag> 開源 </tag>
-            
             <tag> Skills </tag>
+            
+            <tag> AI Agent </tag>
+            
+            <tag> 開源 </tag>
             
             <tag> 開發工具 </tag>
             
@@ -6440,15 +6535,15 @@
       
         <tags>
             
-            <tag> AI Agent </tag>
-            
             <tag> Claude Code </tag>
+            
+            <tag> CLI </tag>
+            
+            <tag> AI Agent </tag>
             
             <tag> 自動化 </tag>
             
             <tag> MCP </tag>
-            
-            <tag> CLI </tag>
             
         </tags>
       
@@ -6479,9 +6574,9 @@
             
             <tag> AI與科技新聞 </tag>
             
-            <tag> 資安 </tag>
-            
             <tag> OpenAI </tag>
+            
+            <tag> 資安 </tag>
             
         </tags>
       
@@ -6512,9 +6607,9 @@
             
             <tag> MCP </tag>
             
-            <tag> macOS </tag>
-            
             <tag> Python </tag>
+            
+            <tag> macOS </tag>
             
         </tags>
       
@@ -6568,13 +6663,13 @@
       
         <tags>
             
+            <tag> Gemini </tag>
+            
             <tag> 開源 </tag>
             
             <tag> Anthropic </tag>
             
             <tag> AI與科技新聞 </tag>
-            
-            <tag> Gemini </tag>
             
             <tag> AI 模型 </tag>
             
@@ -6601,9 +6696,9 @@
       
         <tags>
             
-            <tag> 自動化 </tag>
-            
             <tag> 開源 </tag>
+            
+            <tag> 自動化 </tag>
             
             <tag> 開發工具 </tag>
             
@@ -6694,9 +6789,9 @@
       
         <tags>
             
-            <tag> AI Agent </tag>
-            
             <tag> Claude Code </tag>
+            
+            <tag> AI Agent </tag>
             
             <tag> 開源 </tag>
             
@@ -6725,9 +6820,9 @@
       
         <tags>
             
-            <tag> AI Agent </tag>
-            
             <tag> Claude Code </tag>
+            
+            <tag> AI Agent </tag>
             
             <tag> 教學 </tag>
             
@@ -6762,9 +6857,9 @@
             
             <tag> AI與科技新聞 </tag>
             
-            <tag> 資安 </tag>
-            
             <tag> OpenAI </tag>
+            
+            <tag> 資安 </tag>
             
         </tags>
       
@@ -6789,11 +6884,11 @@
       
         <tags>
             
+            <tag> AI 開發工具 </tag>
+            
             <tag> LLM </tag>
             
             <tag> 開源 </tag>
-            
-            <tag> AI 開發工具 </tag>
             
             <tag> Python </tag>
             
@@ -6822,9 +6917,9 @@
             
             <tag> Claude Code </tag>
             
-            <tag> 教學 </tag>
-            
             <tag> Skills </tag>
+            
+            <tag> 教學 </tag>
             
             <tag> MCP </tag>
             
@@ -6857,9 +6952,9 @@
             
             <tag> AI與科技新聞 </tag>
             
-            <tag> 資安 </tag>
-            
             <tag> OpenAI </tag>
+            
+            <tag> 資安 </tag>
             
             <tag> Mistral </tag>
             
@@ -6888,9 +6983,9 @@
       
         <tags>
             
-            <tag> AI Agent </tag>
-            
             <tag> Claude Code </tag>
+            
+            <tag> AI Agent </tag>
             
             <tag> 開源 </tag>
             
@@ -6921,9 +7016,9 @@
       
         <tags>
             
-            <tag> AI Agent </tag>
-            
             <tag> Claude Code </tag>
+            
+            <tag> AI Agent </tag>
             
             <tag> 教學 </tag>
             
@@ -6991,13 +7086,13 @@
             
             <tag> 工程師生活 </tag>
             
-            <tag> 自動化 </tag>
+            <tag> CLI </tag>
             
             <tag> 開源 </tag>
             
-            <tag> 開發工具 </tag>
+            <tag> 自動化 </tag>
             
-            <tag> CLI </tag>
+            <tag> 開發工具 </tag>
             
         </tags>
       
@@ -7024,9 +7119,9 @@
             
             <tag> Claude Code </tag>
             
-            <tag> 教學 </tag>
-            
             <tag> AI 開發工具 </tag>
+            
+            <tag> 教學 </tag>
             
             <tag> GitHub </tag>
             
@@ -7090,15 +7185,15 @@
       
         <tags>
             
-            <tag> AI Agent </tag>
-            
             <tag> Claude Code </tag>
+            
+            <tag> AI Agent </tag>
             
             <tag> 教學 </tag>
             
-            <tag> 自動化 </tag>
-            
             <tag> 開源 </tag>
+            
+            <tag> 自動化 </tag>
             
         </tags>
       
@@ -7123,9 +7218,9 @@
       
         <tags>
             
-            <tag> AI Agent </tag>
-            
             <tag> Claude Code </tag>
+            
+            <tag> AI Agent </tag>
             
             <tag> 教學 </tag>
             
@@ -7162,9 +7257,9 @@
             
             <tag> AI與科技新聞 </tag>
             
-            <tag> 資安 </tag>
-            
             <tag> OpenAI </tag>
+            
+            <tag> 資安 </tag>
             
             <tag> AI 產業 </tag>
             
@@ -7193,9 +7288,9 @@
             
             <tag> AI Agent </tag>
             
-            <tag> 自動化 </tag>
-            
             <tag> 開源 </tag>
+            
+            <tag> 自動化 </tag>
             
             <tag> Google </tag>
             
@@ -7226,9 +7321,9 @@
             
             <tag> 健康 </tag>
             
-            <tag> 工程師生活 </tag>
-            
             <tag> 生產力 </tag>
+            
+            <tag> 工程師生活 </tag>
             
             <tag> 遠端工作 </tag>
             
@@ -7290,9 +7385,9 @@
       
         <tags>
             
-            <tag> AI Agent </tag>
-            
             <tag> Claude Code </tag>
+            
+            <tag> AI Agent </tag>
             
             <tag> MCP </tag>
             
@@ -7356,9 +7451,9 @@
             
             <tag> AI與科技新聞 </tag>
             
-            <tag> 資安 </tag>
-            
             <tag> OpenAI </tag>
+            
+            <tag> 資安 </tag>
             
             <tag> Google </tag>
             
@@ -7511,11 +7606,11 @@
             
             <tag> Claude Code </tag>
             
+            <tag> CLI </tag>
+            
             <tag> 教學 </tag>
             
             <tag> 自動化 </tag>
-            
-            <tag> CLI </tag>
             
         </tags>
       
@@ -7544,9 +7639,9 @@
             
             <tag> AI與科技新聞 </tag>
             
-            <tag> 資安 </tag>
-            
             <tag> OpenAI </tag>
+            
+            <tag> 資安 </tag>
             
         </tags>
       
@@ -7571,13 +7666,13 @@
       
         <tags>
             
-            <tag> AI Agent </tag>
-            
             <tag> Claude Code </tag>
             
-            <tag> 開源 </tag>
-            
             <tag> Skills </tag>
+            
+            <tag> AI Agent </tag>
+            
+            <tag> 開源 </tag>
             
         </tags>
       
@@ -7602,9 +7697,9 @@
       
         <tags>
             
-            <tag> AI Agent </tag>
-            
             <tag> Claude Code </tag>
+            
+            <tag> AI Agent </tag>
             
             <tag> Claude </tag>
             
@@ -7662,9 +7757,9 @@
       
         <tags>
             
-            <tag> AI Agent </tag>
-            
             <tag> Claude Code </tag>
+            
+            <tag> AI Agent </tag>
             
             <tag> 開源 </tag>
             
@@ -7691,13 +7786,13 @@
       
         <tags>
             
-            <tag> AI Agent </tag>
-            
             <tag> Claude Code </tag>
             
-            <tag> 教學 </tag>
-            
             <tag> CLI </tag>
+            
+            <tag> AI Agent </tag>
+            
+            <tag> 教學 </tag>
             
         </tags>
       
@@ -7724,9 +7819,9 @@
             
             <tag> AI與科技新聞 </tag>
             
-            <tag> 資安 </tag>
-            
             <tag> OpenAI </tag>
+            
+            <tag> 資安 </tag>
             
             <tag> Google </tag>
             
@@ -7757,9 +7852,9 @@
             
             <tag> AI 模型 </tag>
             
-            <tag> Python </tag>
-            
             <tag> Rust </tag>
+            
+            <tag> Python </tag>
             
         </tags>
       
@@ -7846,9 +7941,9 @@
             
             <tag> AI Agent </tag>
             
-            <tag> 自動化 </tag>
-            
             <tag> 開源 </tag>
+            
+            <tag> 自動化 </tag>
             
         </tags>
       
@@ -7873,9 +7968,9 @@
       
         <tags>
             
-            <tag> 健康 </tag>
-            
             <tag> 168斷食 </tag>
+            
+            <tag> 健康 </tag>
             
             <tag> 工程師生活 </tag>
             
@@ -7906,9 +8001,9 @@
             
             <tag> AI與科技新聞 </tag>
             
-            <tag> 資安 </tag>
-            
             <tag> OpenAI </tag>
+            
+            <tag> 資安 </tag>
             
             <tag> Google </tag>
             
@@ -7935,11 +8030,11 @@
       
         <tags>
             
+            <tag> CLI </tag>
+            
             <tag> 開源 </tag>
             
             <tag> 資安 </tag>
-            
-            <tag> CLI </tag>
             
         </tags>
       
@@ -7997,9 +8092,9 @@
             
             <tag> AI與科技新聞 </tag>
             
-            <tag> 資安 </tag>
-            
             <tag> OpenAI </tag>
+            
+            <tag> 資安 </tag>
             
             <tag> Google </tag>
             
@@ -8026,11 +8121,11 @@
       
         <tags>
             
+            <tag> AI 開發工具 </tag>
+            
             <tag> LLM </tag>
             
             <tag> 開源 </tag>
-            
-            <tag> AI 開發工具 </tag>
             
             <tag> macOS </tag>
             
@@ -8057,9 +8152,9 @@
       
         <tags>
             
-            <tag> AI Agent </tag>
-            
             <tag> Claude Code </tag>
+            
+            <tag> AI Agent </tag>
             
             <tag> 教學 </tag>
             
@@ -8150,9 +8245,9 @@
             
             <tag> Claude Code </tag>
             
-            <tag> 教學 </tag>
-            
             <tag> AI 開發工具 </tag>
+            
+            <tag> 教學 </tag>
             
             <tag> Claude </tag>
             
@@ -8212,11 +8307,11 @@
       
         <tags>
             
+            <tag> AI 開發工具 </tag>
+            
             <tag> AI Agent </tag>
             
             <tag> 開源 </tag>
-            
-            <tag> AI 開發工具 </tag>
             
             <tag> Python </tag>
             
@@ -8260,35 +8355,6 @@
     
     
     <entry>
-      <title>Claude Code Plan Mode 完整教學 — 讓 AI 先想清楚再動手的正確姿勢</title>
-      <link href="/2026/05/13/Claude-Code-Plan-Mode-%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8-%E8%AE%93-AI-%E5%85%88%E6%83%B3%E6%B8%85%E6%A5%9A%E5%86%8D%E5%8B%95%E6%89%8B%E7%9A%84%E6%AD%A3%E7%A2%BA%E5%A7%BF%E5%8B%A2/"/>
-      <url>/2026/05/13/Claude-Code-Plan-Mode-%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8-%E8%AE%93-AI-%E5%85%88%E6%83%B3%E6%B8%85%E6%A5%9A%E5%86%8D%E5%8B%95%E6%89%8B%E7%9A%84%E6%AD%A3%E7%A2%BA%E5%A7%BF%E5%8B%A2/</url>
-      
-        <content type="html"><![CDATA[<p>蓋房子的師傅不會拿到一塊地就開始砌牆。他先畫圖。樑柱位置、管線走向、承重計算——圖紙確認了，才叫水泥車進場。</p><p>你讓 AI 改程式碼的時候呢？直接下指令，它立刻開始動檔案。改了三個、砍了兩個、建了一個——你還沒搞清楚它的邏輯，事情已經做完了。運氣好，結果是對的。運氣不好，你在 <code>git diff</code> 裡面撈殘骸。</p><p>Plan Mode 就是那張圖紙。Claude 進入唯讀狀態——可以讀檔案、搜程式碼、分析依賴，但不能改任何東西。它把整個計畫攤開給你看，你確認了，它才動手。</p><hr><h2 id="為什麼「先規劃」反而更快"><a href="#為什麼「先規劃」反而更快" class="headerlink" title="為什麼「先規劃」反而更快"></a>為什麼「先規劃」反而更快</h2><p>這裡有個違反直覺的現象。</p><p>你可能覺得多一個規劃步驟會拖慢速度——原本直接做就好，現在還要先寫計畫、review 計畫、確認計畫，不是多繞了一圈？</p><p>實際操作完全相反。Anthropic 觀察到最有效率的 AI 輔助開發者遵循一個 80&#x2F;20 比例——80% 的時間花在規劃（理解需求、對應依賴、辨識邊界條件），只有 20% 的時間在監督程式碼執行。（<a href="https://docs.anthropic.com/en/docs/claude-code/best-practices">來源：Anthropic Claude Code Best Practices</a>）</p><p>不是因為他們動作慢。是因為計畫做好了，執行階段幾乎不需要回頭修。</p><p>反過來，不做計畫直接衝的人，表面上動作很快——Claude 噼里啪啦改了二十個檔案——但有三個改壞了，兩個漏了邊界條件，一個引入了 circular dependency。修這些問題花的時間，比一開始規劃的時間長三倍。</p><p>蓋房子也是。砌牆很快，拆牆重砌很慢。</p><hr><h2 id="三種方式進入-Plan-Mode"><a href="#三種方式進入-Plan-Mode" class="headerlink" title="三種方式進入 Plan Mode"></a>三種方式進入 Plan Mode</h2><p>看你的使用情境選一個。</p><h3 id="Shift-Tab-按兩次"><a href="#Shift-Tab-按兩次" class="headerlink" title="Shift+Tab 按兩次"></a>Shift+Tab 按兩次</h3><p>在任何 prompt 輸入框裡，按兩次 <code>Shift+Tab</code>，底部狀態列會切換到 plan mode。再按兩次切回正常模式。</p><p>這是最常用的方式。你正在跟 Claude 來回工作，突然遇到一個需要先想清楚的任務——按兩下，進 plan mode，描述需求，看完計畫，再按兩下切回去讓它執行。</p><h3 id="plan-指令"><a href="#plan-指令" class="headerlink" title="&#x2F;plan 指令"></a>&#x2F;plan 指令</h3><p>在 prompt 裡輸入 <code>/plan</code>，Claude 只會在這一輪回覆使用 plan mode。下一輪自動回到正常模式。</p><p>適合「偶爾想看一下計畫」的場景。你不想切換整個 session 的狀態，只是這一題想讓它先規劃。</p><h3 id="啟動時指定"><a href="#啟動時指定" class="headerlink" title="啟動時指定"></a>啟動時指定</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">claude --permission-mode plan</span><br></pre></td></tr></table></figure><p>整個 session 預設都在 plan mode。Claude 全程唯讀，只分析不動手。</p><p>什麼時候用？你拿到一個不熟悉的 codebase，想讓 Claude 幫你摸清楚結構、畫出模組關係、標記技術債——但你完全不想讓它改任何東西。</p><hr><h2 id="計畫出來了，然後呢"><a href="#計畫出來了，然後呢" class="headerlink" title="計畫出來了，然後呢"></a>計畫出來了，然後呢</h2><p>Claude 產出計畫之後，你不是只能說「好」或「不好」。</p><p>按 <code>Ctrl+G</code>，計畫檔案會在你的預設文字編輯器裡打開。你可以：</p><ul><li><strong>在步驟旁邊加行內備註</strong>——「這一步要注意 backward compatibility」</li><li><strong>刪掉你不同意的步驟</strong>——直接整段砍掉</li><li><strong>重新排列順序</strong>——你覺得應該先處理 migration 再改 API，把它拖上去</li><li><strong>補充遺漏的步驟</strong>——加一行「記得更新 README」</li></ul><p>存檔關閉，Claude 會讀取你的所有修改，更新後的計畫就是它接下來的執行藍圖。</p><p>這是 Plan Mode 跟「叫 Claude 先想一下」的根本差別。不是 Claude 想完你看一眼就算了——你可以動手改計畫，而且它會照著改過的版本做。</p><hr><p>停一下。</p><p>你可能會問：「我直接在 prompt 裡跟 Claude 說『先列出步驟再做』，效果不是一樣嗎？」</p><p>不一樣。差在權限。</p><p>用自然語言要求 Claude「先規劃」，它可能一邊規劃一邊就開始改檔案了——它覺得自己「已經想清楚了」。Plan Mode 是強制鎖定：Claude 在唯讀狀態下沒有修改檔案的權限，物理上做不到「邊想邊動手」。</p><p>就像你跟包商說「先畫圖再施工」，他可能畫到一半就開始敲牆了。但如果你把工具鎖在倉庫裡，他拿不到鐵鎚，就只能老老實實畫完。</p><hr><h2 id="什麼時候該用、什麼時候不用"><a href="#什麼時候該用、什麼時候不用" class="headerlink" title="什麼時候該用、什麼時候不用"></a>什麼時候該用、什麼時候不用</h2><p>不是每個任務都需要 Plan Mode。用在對的地方是省時間，用在錯的地方是浪費時間。</p><h3 id="該用的場景"><a href="#該用的場景" class="headerlink" title="該用的場景"></a>該用的場景</h3><p><strong>涉及三個以上檔案的改動。</strong> 一個檔案的改動，看完 diff 就知道對不對。三個以上的檔案，改動之間有依賴關係、有順序問題、有可能互相衝突——先看計畫再動手，可以預先抓到這些問題。</p><p><strong>Schema 變更。</strong> 資料庫 schema 一改，連帶影響 model、repository、service、controller、migration、test。這種牽一髮動全身的改動，不看計畫就執行是在賭運氣。</p><p><strong>安全敏感的程式碼。</strong> Authentication、authorization、encryption——這些地方改錯一個地方可能就是資安事件。Plan Mode 讓你在任何程式碼被修改之前就能審查整個策略。</p><p><strong>大型重構。</strong> 把一個 module 拆成三個、把 REST 換成 GraphQL、把 monolith 拆 microservice。這種量級的改動，沒有計畫等於沒有方向。</p><p><strong>不熟悉的 codebase。</strong> 接手一個新專案，讓 Claude 在 plan mode 下跑一遍——它會讀目錄結構、主要檔案、import 關係，幫你畫出一張地圖。比你自己一個一個檔案點開來看快十倍。</p><h3 id="不需要的場景"><a href="#不需要的場景" class="headerlink" title="不需要的場景"></a>不需要的場景</h3><p><strong>單一檔案的小改動。</strong> 改一個 typo、調一個 CSS 數值、加一行 log。直接做就好，規劃反而多此一舉。</p><p><strong>純讀取的問題。</strong> 「這個 function 回傳什麼型別？」「package.json 裡 express 是哪個版本？」——Claude 本來就只需要讀，不需要特別鎖唯讀。</p><hr><h2 id="跟其他功能怎麼搭"><a href="#跟其他功能怎麼搭" class="headerlink" title="跟其他功能怎麼搭"></a>跟其他功能怎麼搭</h2><p>Plan Mode 單獨用已經有價值，但跟其他功能組合起來效果更強。</p><p><strong>Plan Mode + Extended Thinking。</strong> Thinking 是 Claude 內部的推理深度，Plan Mode 是外部的權限控制。兩個同時開：Claude 用 thinking 做深度分析，用 plan mode 確保分析結果先給你看，不會直接變成程式碼。適合架構決策、技術方案比較這類需要深度思考的規劃任務。</p><p><strong>Plan Mode + Sub-agents。</strong> 先在 plan mode 下產出完整計畫，確認後退出 plan mode，讓 Claude 把計畫拆分成多個子任務，分派給 sub-agents 平行執行。規劃是一個人想清楚，執行是一群人同時做。</p><p><strong>Plan Mode + Git Worktrees。</strong> 用 plan mode 規劃一個實驗性的改動，確認計畫後在 worktree 裡執行——主分支完全不受影響。計畫不滿意？整個 worktree 砍掉重來，零成本。</p><hr><h2 id="一個完整的工作流範例"><a href="#一個完整的工作流範例" class="headerlink" title="一個完整的工作流範例"></a>一個完整的工作流範例</h2><p>用一個實際場景走一遍。</p><p>假設你要在一個 Spring Boot 專案裡加上 OAuth2 登入功能。這涉及 security config、filter chain、user entity、repository、controller、前端 callback handling——至少六七個檔案。</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">1. Shift+Tab x2 → 進入 Plan Mode</span><br><span class="line">2. 輸入：「加上 Google OAuth2 登入，要支援既有的 JWT token 機制」</span><br><span class="line">3. Claude 開始分析——讀 SecurityConfig、現有的 filter chain、User entity 結構</span><br><span class="line">4. 產出計畫：列出要修改的檔案、每個檔案改什麼、改動的順序、需要新增的依賴</span><br><span class="line">5. Ctrl+G → 在編輯器裡打開計畫</span><br><span class="line">6. 你看到它打算用 spring-security-oauth2-client，但你的專案已經有自訂的 token 處理邏輯</span><br><span class="line">7. 在對應步驟旁邊加備註：「保留現有 JwtTokenProvider，OAuth2 登入成功後走同一套 token 簽發流程」</span><br><span class="line">8. 存檔</span><br><span class="line">9. Claude 讀取你的修改，調整計畫</span><br><span class="line">10. 確認沒問題 → Shift+Tab x2 → 退出 Plan Mode</span><br><span class="line">11. Claude 照著計畫開始執行</span><br></pre></td></tr></table></figure><p>整個過程你全程掌握方向。不是 Claude 決定怎麼做，是你決定怎麼做，Claude 負責執行。</p><hr><h2 id="你帶走的那張圖"><a href="#你帶走的那張圖" class="headerlink" title="你帶走的那張圖"></a>你帶走的那張圖</h2><p>回到一開始的蓋房子。</p><p>圖紙的價值不是讓施工變慢。是讓你在第一根樑柱立起來之前，就能看到整棟房子的樣子——哪裡承重不夠、哪裡管線打架、哪裡動線不合理。</p><p>Plan Mode 就是這張圖紙。Claude 在唯讀狀態下畫出完整的施工計畫，你審查、標註、修改，確認了才讓它動工。</p><p>有個更深層的 insight：大部分人用 AI 寫程式的方式是「描述需求 → 等結果 → 看對不對」。這是把 AI 當成黑盒。Plan Mode 把這個流程改成「描述需求 → 看計畫 → 調整計畫 → 執行計畫」——你介入的不是結果，是過程。</p><p>能介入過程的人，控制的是方向。只能看結果的人，控制的是運氣。</p><p>試一次就知道差別。下次遇到一個涉及三個以上檔案的改動，按兩下 <code>Shift+Tab</code>，讓 Claude 先畫圖再動工。</p><p>不過有一個我還在摸索的問題——當計畫很長（超過 50 個步驟），<code>Ctrl+G</code> 打開的編輯器體驗其實不太好，scroll 來 scroll 去很容易迷路。如果你有更好的 review 大型計畫的方式，歡迎跟我說。</p>]]></content>
-      
-      
-      <categories>
-          
-          <category> Claude Code </category>
-          
-      </categories>
-      
-      
-        <tags>
-            
-            <tag> Claude Code </tag>
-            
-            <tag> AI 開發工具 </tag>
-            
-            <tag> Plan Mode </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    
-    
-    <entry>
       <title>Awesome — GitHub 上 Star 最多的開源資源策展清單</title>
       <link href="/2026/05/13/Awesome-GitHub-%E4%B8%8A-Star-%E6%9C%80%E5%A4%9A%E7%9A%84%E9%96%8B%E6%BA%90%E8%B3%87%E6%BA%90%E7%AD%96%E5%B1%95%E6%B8%85%E5%96%AE/"/>
       <url>/2026/05/13/Awesome-GitHub-%E4%B8%8A-Star-%E6%9C%80%E5%A4%9A%E7%9A%84%E9%96%8B%E6%BA%90%E8%B3%87%E6%BA%90%E7%AD%96%E5%B1%95%E6%B8%85%E5%96%AE/</url>
@@ -8318,6 +8384,35 @@
     
     
     <entry>
+      <title>Claude Code Plan Mode 完整教學 — 讓 AI 先想清楚再動手的正確姿勢</title>
+      <link href="/2026/05/13/Claude-Code-Plan-Mode-%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8-%E8%AE%93-AI-%E5%85%88%E6%83%B3%E6%B8%85%E6%A5%9A%E5%86%8D%E5%8B%95%E6%89%8B%E7%9A%84%E6%AD%A3%E7%A2%BA%E5%A7%BF%E5%8B%A2/"/>
+      <url>/2026/05/13/Claude-Code-Plan-Mode-%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8-%E8%AE%93-AI-%E5%85%88%E6%83%B3%E6%B8%85%E6%A5%9A%E5%86%8D%E5%8B%95%E6%89%8B%E7%9A%84%E6%AD%A3%E7%A2%BA%E5%A7%BF%E5%8B%A2/</url>
+      
+        <content type="html"><![CDATA[<p>蓋房子的師傅不會拿到一塊地就開始砌牆。他先畫圖。樑柱位置、管線走向、承重計算——圖紙確認了，才叫水泥車進場。</p><p>你讓 AI 改程式碼的時候呢？直接下指令，它立刻開始動檔案。改了三個、砍了兩個、建了一個——你還沒搞清楚它的邏輯，事情已經做完了。運氣好，結果是對的。運氣不好，你在 <code>git diff</code> 裡面撈殘骸。</p><p>Plan Mode 就是那張圖紙。Claude 進入唯讀狀態——可以讀檔案、搜程式碼、分析依賴，但不能改任何東西。它把整個計畫攤開給你看，你確認了，它才動手。</p><hr><h2 id="為什麼「先規劃」反而更快"><a href="#為什麼「先規劃」反而更快" class="headerlink" title="為什麼「先規劃」反而更快"></a>為什麼「先規劃」反而更快</h2><p>這裡有個違反直覺的現象。</p><p>你可能覺得多一個規劃步驟會拖慢速度——原本直接做就好，現在還要先寫計畫、review 計畫、確認計畫，不是多繞了一圈？</p><p>實際操作完全相反。Anthropic 觀察到最有效率的 AI 輔助開發者遵循一個 80&#x2F;20 比例——80% 的時間花在規劃（理解需求、對應依賴、辨識邊界條件），只有 20% 的時間在監督程式碼執行。（<a href="https://docs.anthropic.com/en/docs/claude-code/best-practices">來源：Anthropic Claude Code Best Practices</a>）</p><p>不是因為他們動作慢。是因為計畫做好了，執行階段幾乎不需要回頭修。</p><p>反過來，不做計畫直接衝的人，表面上動作很快——Claude 噼里啪啦改了二十個檔案——但有三個改壞了，兩個漏了邊界條件，一個引入了 circular dependency。修這些問題花的時間，比一開始規劃的時間長三倍。</p><p>蓋房子也是。砌牆很快，拆牆重砌很慢。</p><hr><h2 id="三種方式進入-Plan-Mode"><a href="#三種方式進入-Plan-Mode" class="headerlink" title="三種方式進入 Plan Mode"></a>三種方式進入 Plan Mode</h2><p>看你的使用情境選一個。</p><h3 id="Shift-Tab-按兩次"><a href="#Shift-Tab-按兩次" class="headerlink" title="Shift+Tab 按兩次"></a>Shift+Tab 按兩次</h3><p>在任何 prompt 輸入框裡，按兩次 <code>Shift+Tab</code>，底部狀態列會切換到 plan mode。再按兩次切回正常模式。</p><p>這是最常用的方式。你正在跟 Claude 來回工作，突然遇到一個需要先想清楚的任務——按兩下，進 plan mode，描述需求，看完計畫，再按兩下切回去讓它執行。</p><h3 id="plan-指令"><a href="#plan-指令" class="headerlink" title="&#x2F;plan 指令"></a>&#x2F;plan 指令</h3><p>在 prompt 裡輸入 <code>/plan</code>，Claude 只會在這一輪回覆使用 plan mode。下一輪自動回到正常模式。</p><p>適合「偶爾想看一下計畫」的場景。你不想切換整個 session 的狀態，只是這一題想讓它先規劃。</p><h3 id="啟動時指定"><a href="#啟動時指定" class="headerlink" title="啟動時指定"></a>啟動時指定</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">claude --permission-mode plan</span><br></pre></td></tr></table></figure><p>整個 session 預設都在 plan mode。Claude 全程唯讀，只分析不動手。</p><p>什麼時候用？你拿到一個不熟悉的 codebase，想讓 Claude 幫你摸清楚結構、畫出模組關係、標記技術債——但你完全不想讓它改任何東西。</p><hr><h2 id="計畫出來了，然後呢"><a href="#計畫出來了，然後呢" class="headerlink" title="計畫出來了，然後呢"></a>計畫出來了，然後呢</h2><p>Claude 產出計畫之後，你不是只能說「好」或「不好」。</p><p>按 <code>Ctrl+G</code>，計畫檔案會在你的預設文字編輯器裡打開。你可以：</p><ul><li><strong>在步驟旁邊加行內備註</strong>——「這一步要注意 backward compatibility」</li><li><strong>刪掉你不同意的步驟</strong>——直接整段砍掉</li><li><strong>重新排列順序</strong>——你覺得應該先處理 migration 再改 API，把它拖上去</li><li><strong>補充遺漏的步驟</strong>——加一行「記得更新 README」</li></ul><p>存檔關閉，Claude 會讀取你的所有修改，更新後的計畫就是它接下來的執行藍圖。</p><p>這是 Plan Mode 跟「叫 Claude 先想一下」的根本差別。不是 Claude 想完你看一眼就算了——你可以動手改計畫，而且它會照著改過的版本做。</p><hr><p>停一下。</p><p>你可能會問：「我直接在 prompt 裡跟 Claude 說『先列出步驟再做』，效果不是一樣嗎？」</p><p>不一樣。差在權限。</p><p>用自然語言要求 Claude「先規劃」，它可能一邊規劃一邊就開始改檔案了——它覺得自己「已經想清楚了」。Plan Mode 是強制鎖定：Claude 在唯讀狀態下沒有修改檔案的權限，物理上做不到「邊想邊動手」。</p><p>就像你跟包商說「先畫圖再施工」，他可能畫到一半就開始敲牆了。但如果你把工具鎖在倉庫裡，他拿不到鐵鎚，就只能老老實實畫完。</p><hr><h2 id="什麼時候該用、什麼時候不用"><a href="#什麼時候該用、什麼時候不用" class="headerlink" title="什麼時候該用、什麼時候不用"></a>什麼時候該用、什麼時候不用</h2><p>不是每個任務都需要 Plan Mode。用在對的地方是省時間，用在錯的地方是浪費時間。</p><h3 id="該用的場景"><a href="#該用的場景" class="headerlink" title="該用的場景"></a>該用的場景</h3><p><strong>涉及三個以上檔案的改動。</strong> 一個檔案的改動，看完 diff 就知道對不對。三個以上的檔案，改動之間有依賴關係、有順序問題、有可能互相衝突——先看計畫再動手，可以預先抓到這些問題。</p><p><strong>Schema 變更。</strong> 資料庫 schema 一改，連帶影響 model、repository、service、controller、migration、test。這種牽一髮動全身的改動，不看計畫就執行是在賭運氣。</p><p><strong>安全敏感的程式碼。</strong> Authentication、authorization、encryption——這些地方改錯一個地方可能就是資安事件。Plan Mode 讓你在任何程式碼被修改之前就能審查整個策略。</p><p><strong>大型重構。</strong> 把一個 module 拆成三個、把 REST 換成 GraphQL、把 monolith 拆 microservice。這種量級的改動，沒有計畫等於沒有方向。</p><p><strong>不熟悉的 codebase。</strong> 接手一個新專案，讓 Claude 在 plan mode 下跑一遍——它會讀目錄結構、主要檔案、import 關係，幫你畫出一張地圖。比你自己一個一個檔案點開來看快十倍。</p><h3 id="不需要的場景"><a href="#不需要的場景" class="headerlink" title="不需要的場景"></a>不需要的場景</h3><p><strong>單一檔案的小改動。</strong> 改一個 typo、調一個 CSS 數值、加一行 log。直接做就好，規劃反而多此一舉。</p><p><strong>純讀取的問題。</strong> 「這個 function 回傳什麼型別？」「package.json 裡 express 是哪個版本？」——Claude 本來就只需要讀，不需要特別鎖唯讀。</p><hr><h2 id="跟其他功能怎麼搭"><a href="#跟其他功能怎麼搭" class="headerlink" title="跟其他功能怎麼搭"></a>跟其他功能怎麼搭</h2><p>Plan Mode 單獨用已經有價值，但跟其他功能組合起來效果更強。</p><p><strong>Plan Mode + Extended Thinking。</strong> Thinking 是 Claude 內部的推理深度，Plan Mode 是外部的權限控制。兩個同時開：Claude 用 thinking 做深度分析，用 plan mode 確保分析結果先給你看，不會直接變成程式碼。適合架構決策、技術方案比較這類需要深度思考的規劃任務。</p><p><strong>Plan Mode + Sub-agents。</strong> 先在 plan mode 下產出完整計畫，確認後退出 plan mode，讓 Claude 把計畫拆分成多個子任務，分派給 sub-agents 平行執行。規劃是一個人想清楚，執行是一群人同時做。</p><p><strong>Plan Mode + Git Worktrees。</strong> 用 plan mode 規劃一個實驗性的改動，確認計畫後在 worktree 裡執行——主分支完全不受影響。計畫不滿意？整個 worktree 砍掉重來，零成本。</p><hr><h2 id="一個完整的工作流範例"><a href="#一個完整的工作流範例" class="headerlink" title="一個完整的工作流範例"></a>一個完整的工作流範例</h2><p>用一個實際場景走一遍。</p><p>假設你要在一個 Spring Boot 專案裡加上 OAuth2 登入功能。這涉及 security config、filter chain、user entity、repository、controller、前端 callback handling——至少六七個檔案。</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">1. Shift+Tab x2 → 進入 Plan Mode</span><br><span class="line">2. 輸入：「加上 Google OAuth2 登入，要支援既有的 JWT token 機制」</span><br><span class="line">3. Claude 開始分析——讀 SecurityConfig、現有的 filter chain、User entity 結構</span><br><span class="line">4. 產出計畫：列出要修改的檔案、每個檔案改什麼、改動的順序、需要新增的依賴</span><br><span class="line">5. Ctrl+G → 在編輯器裡打開計畫</span><br><span class="line">6. 你看到它打算用 spring-security-oauth2-client，但你的專案已經有自訂的 token 處理邏輯</span><br><span class="line">7. 在對應步驟旁邊加備註：「保留現有 JwtTokenProvider，OAuth2 登入成功後走同一套 token 簽發流程」</span><br><span class="line">8. 存檔</span><br><span class="line">9. Claude 讀取你的修改，調整計畫</span><br><span class="line">10. 確認沒問題 → Shift+Tab x2 → 退出 Plan Mode</span><br><span class="line">11. Claude 照著計畫開始執行</span><br></pre></td></tr></table></figure><p>整個過程你全程掌握方向。不是 Claude 決定怎麼做，是你決定怎麼做，Claude 負責執行。</p><hr><h2 id="你帶走的那張圖"><a href="#你帶走的那張圖" class="headerlink" title="你帶走的那張圖"></a>你帶走的那張圖</h2><p>回到一開始的蓋房子。</p><p>圖紙的價值不是讓施工變慢。是讓你在第一根樑柱立起來之前，就能看到整棟房子的樣子——哪裡承重不夠、哪裡管線打架、哪裡動線不合理。</p><p>Plan Mode 就是這張圖紙。Claude 在唯讀狀態下畫出完整的施工計畫，你審查、標註、修改，確認了才讓它動工。</p><p>有個更深層的 insight：大部分人用 AI 寫程式的方式是「描述需求 → 等結果 → 看對不對」。這是把 AI 當成黑盒。Plan Mode 把這個流程改成「描述需求 → 看計畫 → 調整計畫 → 執行計畫」——你介入的不是結果，是過程。</p><p>能介入過程的人，控制的是方向。只能看結果的人，控制的是運氣。</p><p>試一次就知道差別。下次遇到一個涉及三個以上檔案的改動，按兩下 <code>Shift+Tab</code>，讓 Claude 先畫圖再動工。</p><p>不過有一個我還在摸索的問題——當計畫很長（超過 50 個步驟），<code>Ctrl+G</code> 打開的編輯器體驗其實不太好，scroll 來 scroll 去很容易迷路。如果你有更好的 review 大型計畫的方式，歡迎跟我說。</p>]]></content>
+      
+      
+      <categories>
+          
+          <category> Claude Code </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> Claude Code </tag>
+            
+            <tag> AI 開發工具 </tag>
+            
+            <tag> Plan Mode </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>Claude Code /goal 命令完整教學 — 設定完成條件讓 AI 自己跑到結束</title>
       <link href="/2026/05/12/Claude-Code-Goal-%E5%91%BD%E4%BB%A4%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8-%E8%A8%AD%E5%AE%9A%E5%AE%8C%E6%88%90%E6%A2%9D%E4%BB%B6%E8%AE%93-AI-%E8%87%AA%E5%B7%B1%E8%B7%91%E5%88%B0%E7%B5%90%E6%9D%9F/"/>
       <url>/2026/05/12/Claude-Code-Goal-%E5%91%BD%E4%BB%A4%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8-%E8%A8%AD%E5%AE%9A%E5%AE%8C%E6%88%90%E6%A2%9D%E4%BB%B6%E8%AE%93-AI-%E8%87%AA%E5%B7%B1%E8%B7%91%E5%88%B0%E7%B5%90%E6%9D%9F/</url>
@@ -8334,9 +8429,9 @@
       
         <tags>
             
-            <tag> AI Agent </tag>
-            
             <tag> Claude Code </tag>
+            
+            <tag> AI Agent </tag>
             
             <tag> 自動化 </tag>
             
@@ -8462,9 +8557,9 @@
             
             <tag> AI與科技新聞 </tag>
             
-            <tag> 資安 </tag>
-            
             <tag> OpenAI </tag>
+            
+            <tag> 資安 </tag>
             
         </tags>
       
@@ -8489,9 +8584,9 @@
       
         <tags>
             
-            <tag> AI Agent </tag>
-            
             <tag> Claude Code </tag>
+            
+            <tag> AI Agent </tag>
             
             <tag> GitHub </tag>
             
@@ -8700,9 +8795,9 @@
       
         <tags>
             
-            <tag> AI與科技新聞 </tag>
-            
             <tag> Gemini </tag>
+            
+            <tag> AI與科技新聞 </tag>
             
         </tags>
       
@@ -9178,13 +9273,13 @@
       
         <tags>
             
+            <tag> Gemini </tag>
+            
             <tag> AI與科技新聞 </tag>
             
             <tag> OpenAI </tag>
             
             <tag> NVIDIA </tag>
-            
-            <tag> Gemini </tag>
             
             <tag> Mistral </tag>
             
@@ -9674,9 +9769,9 @@
       
         <tags>
             
-            <tag> AI Agent </tag>
-            
             <tag> Claude Code </tag>
+            
+            <tag> AI Agent </tag>
             
             <tag> 教學 </tag>
             
@@ -9740,9 +9835,9 @@
       
         <tags>
             
-            <tag> 健康 </tag>
-            
             <tag> 168斷食 </tag>
+            
+            <tag> 健康 </tag>
             
             <tag> 生產力 </tag>
             
@@ -10035,9 +10130,9 @@
       
         <tags>
             
-            <tag> 健康 </tag>
-            
             <tag> 168斷食 </tag>
+            
+            <tag> 健康 </tag>
             
             <tag> 工程師生活 </tag>
             
@@ -10165,9 +10260,9 @@
             
             <tag> AI與科技新聞 </tag>
             
-            <tag> 資安 </tag>
-            
             <tag> OpenAI </tag>
+            
+            <tag> 資安 </tag>
             
             <tag> AI 安全 </tag>
             
@@ -10289,9 +10384,9 @@
       
         <tags>
             
-            <tag> AI Agent </tag>
-            
             <tag> Claude Code </tag>
+            
+            <tag> AI Agent </tag>
             
             <tag> Agent Skills </tag>
             
@@ -10322,9 +10417,9 @@
       
         <tags>
             
-            <tag> AI Agent </tag>
-            
             <tag> Claude Code </tag>
+            
+            <tag> AI Agent </tag>
             
             <tag> 教學 </tag>
             
@@ -10388,9 +10483,9 @@
       
         <tags>
             
-            <tag> AI Agent </tag>
-            
             <tag> Claude Code </tag>
+            
+            <tag> AI Agent </tag>
             
             <tag> 開源 </tag>
             
@@ -10710,9 +10805,9 @@
             
             <tag> AI與科技新聞 </tag>
             
-            <tag> 資安 </tag>
-            
             <tag> OpenAI </tag>
+            
+            <tag> 資安 </tag>
             
             <tag> Cursor </tag>
             
@@ -10741,11 +10836,11 @@
       
         <tags>
             
-            <tag> AI Agent </tag>
-            
             <tag> Claude Code </tag>
             
             <tag> Skills </tag>
+            
+            <tag> AI Agent </tag>
             
             <tag> UI 設計 </tag>
             
@@ -10836,15 +10931,15 @@
       
         <tags>
             
-            <tag> AI與科技新聞 </tag>
+            <tag> Gemini </tag>
             
-            <tag> 資安 </tag>
+            <tag> AI與科技新聞 </tag>
             
             <tag> OpenAI </tag>
             
-            <tag> Google </tag>
+            <tag> 資安 </tag>
             
-            <tag> Gemini </tag>
+            <tag> Google </tag>
             
         </tags>
       
@@ -10964,13 +11059,13 @@
       
         <tags>
             
-            <tag> AI Agent </tag>
-            
             <tag> Claude Code </tag>
             
-            <tag> DevOps </tag>
+            <tag> AI Agent </tag>
             
             <tag> Rust </tag>
+            
+            <tag> DevOps </tag>
             
             <tag> Discord </tag>
             
@@ -11257,13 +11352,13 @@
       
         <tags>
             
+            <tag> Gemini </tag>
+            
             <tag> Anthropic </tag>
             
             <tag> AI與科技新聞 </tag>
             
             <tag> Claude </tag>
-            
-            <tag> Gemini </tag>
             
             <tag> Kiro </tag>
             
@@ -11666,9 +11761,9 @@
             
             <tag> Claude Code </tag>
             
-            <tag> 教學 </tag>
-            
             <tag> Skills </tag>
+            
+            <tag> 教學 </tag>
             
             <tag> MCP </tag>
             
@@ -11788,11 +11883,11 @@
       
         <tags>
             
-            <tag> 理財 </tag>
-            
             <tag> AI Agent </tag>
             
             <tag> LLM </tag>
+            
+            <tag> 理財 </tag>
             
             <tag> 開源 </tag>
             
@@ -11819,11 +11914,11 @@
       
         <tags>
             
+            <tag> Gemini </tag>
+            
             <tag> AI與科技新聞 </tag>
             
             <tag> 資安 </tag>
-            
-            <tag> Gemini </tag>
             
             <tag> Cursor </tag>
             
@@ -12057,13 +12152,13 @@
       
         <tags>
             
-            <tag> 理財 </tag>
-            
             <tag> Claude Code </tag>
             
-            <tag> AI與科技新聞 </tag>
-            
             <tag> Gemini </tag>
+            
+            <tag> 理財 </tag>
+            
+            <tag> AI與科技新聞 </tag>
             
         </tags>
       
@@ -12117,9 +12212,9 @@
       
         <tags>
             
-            <tag> AI Agent </tag>
-            
             <tag> Claude Code </tag>
+            
+            <tag> AI Agent </tag>
             
             <tag> MCP </tag>
             
@@ -12177,9 +12272,9 @@
             
             <tag> AI與科技新聞 </tag>
             
-            <tag> 資安 </tag>
-            
             <tag> Claude </tag>
+            
+            <tag> 資安 </tag>
             
             <tag> Copilot </tag>
             
@@ -12324,9 +12419,9 @@
       
         <tags>
             
-            <tag> AI Agent </tag>
-            
             <tag> Claude Code </tag>
+            
+            <tag> AI Agent </tag>
             
             <tag> Code Review </tag>
             
@@ -12355,9 +12450,9 @@
             
             <tag> AI與科技新聞 </tag>
             
-            <tag> 資安 </tag>
-            
             <tag> OpenAI </tag>
+            
+            <tag> 資安 </tag>
             
             <tag> NVIDIA </tag>
             
@@ -12411,9 +12506,9 @@
       
         <tags>
             
-            <tag> AI Agent </tag>
-            
             <tag> Claude Code </tag>
+            
+            <tag> AI Agent </tag>
             
             <tag> LLM </tag>
             
@@ -12498,11 +12593,11 @@
       
         <tags>
             
+            <tag> Skills </tag>
+            
             <tag> 教學 </tag>
             
             <tag> 開源 </tag>
-            
-            <tag> Skills </tag>
             
             <tag> 開發工具 </tag>
             
@@ -12529,13 +12624,13 @@
       
         <tags>
             
+            <tag> Gemini </tag>
+            
             <tag> Anthropic </tag>
             
             <tag> AI與科技新聞 </tag>
             
             <tag> 資安 </tag>
-            
-            <tag> Gemini </tag>
             
         </tags>
       
@@ -12560,9 +12655,9 @@
       
         <tags>
             
-            <tag> AI Agent </tag>
-            
             <tag> Claude Code </tag>
+            
+            <tag> AI Agent </tag>
             
             <tag> MCP </tag>
             
@@ -12622,9 +12717,9 @@
             
             <tag> AI與科技新聞 </tag>
             
-            <tag> 資安 </tag>
-            
             <tag> OpenAI </tag>
+            
+            <tag> 資安 </tag>
             
         </tags>
       
@@ -12707,13 +12802,13 @@
       
         <tags>
             
+            <tag> Gemini </tag>
+            
             <tag> 理財 </tag>
             
             <tag> AI與科技新聞 </tag>
             
             <tag> 資安 </tag>
-            
-            <tag> Gemini </tag>
             
         </tags>
       
@@ -13069,9 +13164,9 @@
             
             <tag> Claude Code </tag>
             
-            <tag> 教學 </tag>
-            
             <tag> Skills </tag>
+            
+            <tag> 教學 </tag>
             
         </tags>
       
@@ -13154,11 +13249,11 @@
       
         <tags>
             
+            <tag> Rust </tag>
+            
             <tag> DevOps </tag>
             
             <tag> 系統監控 </tag>
-            
-            <tag> Rust </tag>
             
         </tags>
       
@@ -13247,9 +13342,9 @@
             
             <tag> Claude Code </tag>
             
-            <tag> 自動化 </tag>
-            
             <tag> Skills </tag>
+            
+            <tag> 自動化 </tag>
             
         </tags>
       
@@ -13334,11 +13429,11 @@
       
         <tags>
             
-            <tag> AI Agent </tag>
-            
             <tag> Claude Code </tag>
             
             <tag> Skills </tag>
+            
+            <tag> AI Agent </tag>
             
         </tags>
       
@@ -13392,9 +13487,9 @@
             
             <tag> AI與科技新聞 </tag>
             
-            <tag> 資安 </tag>
-            
             <tag> OpenAI </tag>
+            
+            <tag> 資安 </tag>
             
         </tags>
       
@@ -13446,9 +13541,9 @@
       
         <tags>
             
-            <tag> AI Agent </tag>
-            
             <tag> Claude Code </tag>
+            
+            <tag> AI Agent </tag>
             
             <tag> 自動化 </tag>
             
@@ -13568,11 +13663,11 @@
             
             <tag> AI與科技新聞 </tag>
             
-            <tag> 資安 </tag>
-            
             <tag> Claude </tag>
             
             <tag> OpenAI </tag>
+            
+            <tag> 資安 </tag>
             
         </tags>
       
