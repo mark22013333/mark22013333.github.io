@@ -1,0 +1,419 @@
+<!DOCTYPE html><html lang="zh-TW" data-theme="dark"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>Codex CLI 還是 Claude Code：這題先看你已經在付誰的錢 | Cheng's Tech &amp; Life</title><meta name="author" content="Cheng®"><meta name="copyright" content="Cheng®"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#0d0d0d"><meta name="description" content="第一個判準是帳單：Codex CLI 附在 ChatGPT 訂閱裡，Claude Code 要另外付。但帳單只決定先裝哪個，決定「哪些工作不該交給它」的是另外五件事：共用的用量額度、原生 Windows 有沒有沙箱、沒人看著時的預設值往哪倒、自動化旗標的設計取向，以及模型從哪一朵雲出來。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Codex CLI 還是 Claude Code：這題先看你已經在付誰的錢">
+<meta property="og:url" content="https://mark22013333.github.io/2026/09/04/Codex-CLI-%E9%82%84%E6%98%AF-Claude-Code-%E9%80%99%E9%A1%8C%E5%85%88%E7%9C%8B%E4%BD%A0%E5%B7%B2%E7%B6%93%E5%9C%A8%E4%BB%98%E8%AA%B0%E7%9A%84%E9%8C%A2/index.html">
+<meta property="og:site_name" content="Cheng&#39;s Tech &amp; Life">
+<meta property="og:description" content="第一個判準是帳單：Codex CLI 附在 ChatGPT 訂閱裡，Claude Code 要另外付。但帳單只決定先裝哪個，決定「哪些工作不該交給它」的是另外五件事：共用的用量額度、原生 Windows 有沒有沙箱、沒人看著時的預設值往哪倒、自動化旗標的設計取向，以及模型從哪一朵雲出來。">
+<meta property="og:locale" content="zh_TW">
+<meta property="og:image" content="https://mark22013333.github.io/img/20260904-01.webp">
+<meta property="article:published_time" content="2026-09-04T01:00:00.000Z">
+<meta property="article:modified_time" content="2026-09-04T15:22:09.159Z">
+<meta property="article:author" content="Cheng®">
+<meta property="article:tag" content="Claude Code">
+<meta property="article:tag" content="CLI">
+<meta property="article:tag" content="OpenAI">
+<meta property="article:tag" content="Codex">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://mark22013333.github.io/img/20260904-01.webp"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Codex CLI 還是 Claude Code：這題先看你已經在付誰的錢",
+  "url": "https://mark22013333.github.io/2026/09/04/Codex-CLI-%E9%82%84%E6%98%AF-Claude-Code-%E9%80%99%E9%A1%8C%E5%85%88%E7%9C%8B%E4%BD%A0%E5%B7%B2%E7%B6%93%E5%9C%A8%E4%BB%98%E8%AA%B0%E7%9A%84%E9%8C%A2/",
+  "image": "https://mark22013333.github.io/img/20260904-01.webp",
+  "datePublished": "2026-09-04T01:00:00.000Z",
+  "dateModified": "2026-09-04T15:22:09.159Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "Cheng®",
+      "url": "https://mark22013333.github.io"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://mark22013333.github.io/2026/09/04/Codex-CLI-%E9%82%84%E6%98%AF-Claude-Code-%E9%80%99%E9%A1%8C%E5%85%88%E7%9C%8B%E4%BD%A0%E5%B7%B2%E7%B6%93%E5%9C%A8%E4%BB%98%E8%AA%B0%E7%9A%84%E9%8C%A2/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//www.google-analytics.com" crossorigin=""/><link rel="preconnect" href="//fonts.googleapis.com" crossorigin=""/><link rel="preconnect" href="//busuanzi.ibruce.info"/><meta name="google-site-verification" content="6ywUr8k2n_CT1PFYJzlSvI3CZ-JmJ55RYbA39VrFBDs"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!true && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          const hour = new Date().getHours()
+          const isNight = hour <= 9 || hour >= 18
+          if (theme === undefined) isNight ? activateDarkMode() : activateLightMode()
+          else theme === 'light' ? activateLightMode() : activateDarkMode()
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script async="async" src="https://www.googletagmanager.com/gtag/js?id=G-JBV14NRDH3"></script><script>window.dataLayer = window.dataLayer || []
+function gtag(){dataLayer.push(arguments)}
+gtag('js', new Date())
+gtag('config', 'G-JBV14NRDH3')
+btf.addGlobalFn('pjaxComplete', () => {
+  gtag('config', 'G-JBV14NRDH3', {'page_path': window.location.pathname})
+}, 'google_analytics')
+</script><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Titillium+Web&amp;display=swap" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"pagination":{"enable":false,"hitsPerPage":8},"languages":{"hits_empty":"找不到符合您查詢的內容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '複製成功',
+    error: '複製失敗',
+    noSupport: '瀏覽器不支援'
+  },
+  relativeDate: {
+    homepage: false,
+    post: true
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '剛剛',
+    min: '分鐘前',
+    hour: '小時前',
+    day: '天前',
+    month: '個月前'
+  },
+  copyright: {"limitCount":1,"languages":{"author":"作者: Cheng®","link":"連結: ","source":"來源: Cheng's Tech & Life","info":"著作權歸作者所有。如需商業轉載，請聯絡作者獲得授權，非商業轉載請註明出處😁。"}},
+  lightbox: 'fancybox',
+  Snackbar: {"chs_to_cht":"已切換為繁體中文","cht_to_chs":"已切換為簡體中文","day_to_night":"已切換為深色模式","night_to_day":"已切換為淺色模式","bgLight":"#49b1f5","bgDark":"#1f1f1f","position":"top-center"},
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid/dist/infinitegrid.min.js',
+    buttonText: '載入更多'
+  },
+  isPhotoFigcaption: true,
+  islazyloadPlugin: false,
+  isAnchor: true,
+  percent: {
+    toc: true,
+    rightside: true,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Codex CLI 還是 Claude Code：這題先看你已經在付誰的錢',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><link rel="stylesheet" href="/css/kkbox-player.css"><link rel="stylesheet" href="/css/tag-cloud-fancy.css"><link rel="stylesheet" href="/css/font-resize.css"><link rel="stylesheet" href="/css/dark-palette.css"><link rel="stylesheet" href="/css/loading-override.css"><link rel="stylesheet" href="/css/series-showcase.css"><link rel="stylesheet" href="/css/search-tags.css"><link rel="alternate" href="/atom.xml" title="Cheng's Tech & Life" type="application/atom+xml">
+</head><body><div id="loading-box"><div class="loading-glass-overlay"></div><div class="loading-indicator"><div class="loading-dot"></div><div class="loading-dot"></div><div class="loading-dot"></div></div></div><script>(()=>{
+  const $loadingBox = document.getElementById('loading-box')
+  const $body = document.body
+  const preloader = {
+    endLoading: () => {
+      if ($loadingBox.classList.contains('loaded')) return
+      $body.style.overflow = ''
+      $loadingBox.classList.add('loaded')
+    },
+    initLoading: () => {
+      $body.style.overflow = 'hidden'
+      $loadingBox.classList.remove('loaded')
+    }
+  }
+
+  preloader.initLoading()
+
+  if (document.readyState === 'complete') {
+    preloader.endLoading()
+  } else {
+    window.addEventListener('load', preloader.endLoading)
+    document.addEventListener('DOMContentLoaded', preloader.endLoading)
+    setTimeout(preloader.endLoading, 7000)
+  }
+
+  if (true) {
+    btf.addGlobalFn('pjaxSend', preloader.initLoading, 'preloader_init')
+    btf.addGlobalFn('pjaxComplete', preloader.endLoading, 'preloader_end')
+  }
+})()</script><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="https://lh3.googleusercontent.com/pw/ABLVV87_po8nBc6F_tXcoYDmtzMGWxHuhhrbguYILCjmjWKLOS8DTpubm0YoQLKgjyjRIZyV5TjYe7XVEz_YU4squfr37GTZqPZP1hlMVZ_MIgXpTxWu73M=w1200" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">567</div></a><a href="/tags/"><div class="headline">標籤</div><div class="length-num">226</div></a><a href="/categories/"><div class="headline">分類</div><div class="length-num">23</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首頁-Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 時間軸-archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 標籤-tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分類-Categories</span></a></div><div class="menus_item"><a class="site-page" href="/series/"><i class="fa-fw fas fa-layer-group"></i><span> 系列-Series</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-list"></i><span> 其他列表</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音樂-Music</span></a></li><li><a class="site-page child" href="/gallery/"><i class="fa-fw fas fa-images"></i><span> 畫館-Gallery</span></a></li></ul></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg fixed" id="page-header" style="background-image: url(/img/20260904-01.webp);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><img class="site-icon" src="https://lh3.googleusercontent.com/pw/ABLVV87_po8nBc6F_tXcoYDmtzMGWxHuhhrbguYILCjmjWKLOS8DTpubm0YoQLKgjyjRIZyV5TjYe7XVEz_YU4squfr37GTZqPZP1hlMVZ_MIgXpTxWu73M=w1200" alt="Logo"><span class="site-name">Cheng's Tech &amp; Life</span></a><a class="nav-page-title" href="/"><span class="site-name">Codex CLI 還是 Claude Code：這題先看你已經在付誰的錢</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首頁</span></span></a></span><div id="menus"><div id="search-button" title="Ctrl+K / Cmd+K"><span class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜尋</span></span></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首頁-Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 時間軸-archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 標籤-tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分類-Categories</span></a></div><div class="menus_item"><a class="site-page" href="/series/"><i class="fa-fw fas fa-layer-group"></i><span> 系列-Series</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-list"></i><span> 其他列表</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音樂-Music</span></a></li><li><a class="site-page child" href="/gallery/"><i class="fa-fw fas fa-images"></i><span> 畫館-Gallery</span></a></li></ul></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">Codex CLI 還是 Claude Code：這題先看你已經在付誰的錢</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">發表於</span><time class="post-meta-date-created" datetime="2026-09-04T01:00:00.000Z" title="發表於 2026-09-04 09:00:00">2026-09-04</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新於</span><time class="post-meta-date-updated" datetime="2026-09-04T15:22:09.159Z" title="更新於 2026-09-04 23:22:09">2026-09-04</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/AI-%E9%96%8B%E7%99%BC%E5%B7%A5%E5%85%B7/">AI 開發工具</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">總字數:</span><span class="word-count">3.5k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">閱讀時間:</span><span>12分鐘</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">瀏覽量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><p>大部分「Codex CLI vs Claude Code」的比較文都在問錯的問題。它們問誰寫 code 比較準、誰的 context 管理比較聰明，然後給你一張兩欄的表，最後結論是「各有優缺點，看你的需求」。</p>
+<p>看你的需求——這四個字等於什麼都沒說。</p>
+<p>真正該問的是這個：你公司已經買了 ChatGPT 的 seat 嗎？如果買了，Codex CLI 對你的邊際成本是零。<code>codex</code> 這個 CLI 本身是 Apache-2.0 的開源軟體（<code>gh api repos/openai/codex</code> 查到的 <code>license.spdx_id</code> 就是 <code>Apache-2.0</code>，<code>archived</code> 是 <code>false</code>，最後一次 push 就在查詢當天 2026-09-04），付費方案買的是用量上限，不是產品本身。官方的說法是 Codex 包含在 ChatGPT Free、Go、Plus、Pro、Business、Enterprise 裡面，沒有獨立的 Codex 訂閱這種東西。</p>
+<p>Claude Code 那邊的門檻不一樣。官方文件寫得很直白：「Most surfaces require a Claude subscription or Anthropic Console account.」桌面 App 那段更直接：「A paid subscription is required.」</p>
+<p>所以帳單這一關，答案是不對稱的：如果你已經在付 ChatGPT，Codex CLI 你今天就該裝起來，因為它不多收你一毛錢。反過來如果你已經在付 Claude，那你早就有 Claude Code 了。兩邊都沒付？那你要先決定的是訂閱，不是 CLI。</p>
+<h2 id="「附贈」的那份帳，是跟你的聊天視窗一起算的"><a href="#「附贈」的那份帳，是跟你的聊天視窗一起算的" class="headerlink" title="「附贈」的那份帳，是跟你的聊天視窗一起算的"></a>「附贈」的那份帳，是跟你的聊天視窗一起算的</h2><p>免費附贈通常有代價，這次的代價寫在同一頁文件上，只是很少人往下捲。</p>
+<p>官方的原文是這樣寫的：「Local messages and cloud chats share your plan’s usage allowance.」你在終端機裡跑的東西，跟你在雲端開的任務，吃的是同一個額度。而額度的結算單位是滾動五小時：「The estimates below show local messages per five-hour period.」</p>
+<p>這句話對日常工作的意思，比它讀起來嚴重。你早上在 ChatGPT 網頁上跟它來回幾十輪討論架構，下午打開終端機要它跑一個比較重的重構，這兩件事在計費上是同一件事。額度是一個油箱，五個出口。</p>
+<p>Claude Code 那邊的模型不一樣，它的訂閱綁的是 Claude 帳號，額度規則跟你用不用 Codex 完全無關。你可以同時是 ChatGPT Plus 跟 Claude 的訂戶，兩個油箱各燒各的，互不相干——這件事聽起來像廢話，但它正是「兩邊都裝」在成本上說得通的原因。</p>
+<p>還有一個岔路口在這裡：Codex 也可以改用 API key 登入。官方列的差別很具體，遠不只是換個計費方式。用 API key 之後，Codex 只剩 CLI、SDK 跟 IDE extension，雲端那一整塊（GitHub code review、Slack 那些）直接沒了，模型能用哪些看你那把 key 的權限，錢照 API 定價算。</p>
+<p>換句話說，你付的訂閱決定的不只是額度，是你買到幾個表面。</p>
+<h2 id="你在-Windows-上開發嗎？這條判準會直接把答案定死"><a href="#你在-Windows-上開發嗎？這條判準會直接把答案定死" class="headerlink" title="你在 Windows 上開發嗎？這條判準會直接把答案定死"></a>你在 Windows 上開發嗎？這條判準會直接把答案定死</h2><p>Claude Code 的 Bash sandbox 白紙黑字寫著：「The sandbox is built into Claude Code and runs on macOS, Linux, and WSL2. Native Windows is not supported. On Windows, run Claude Code inside a WSL2 distribution.」CLI 本身在原生 Windows 跑得起來（PowerShell、CMD、WinGet 的安裝指令官方都有給），但那層檔案系統與網路的隔離，在原生 Windows 上是不存在的。</p>
+<p>Codex 那邊的沙箱文件則說，Windows 上用的是原生的 Windows sandbox（在 PowerShell 裡），WSL2 底下才走 Linux 那套實作。</p>
+<p>如果你的團隊是 Windows 為主、又不打算全員搬進 WSL2，這條判準的分量會壓過前面所有討論。倒過來說，如果你跟大部分台灣的後端團隊一樣人手一台 MacBook，這條可以直接跳過，因為兩邊在 macOS 上都是用系統內建的 Seatbelt。</p>
+<h2 id="沒人看著的時候，兩邊的預設值往不同方向倒"><a href="#沒人看著的時候，兩邊的預設值往不同方向倒" class="headerlink" title="沒人看著的時候，兩邊的預設值往不同方向倒"></a>沒人看著的時候，兩邊的預設值往不同方向倒</h2><p>Codex 的非互動模式文件寫得很硬：「By default, <code>codex exec</code> runs in a read-only sandbox.」你什麼都不設定，它就是唯讀。要它能改檔，你得自己把 <code>--sandbox workspace-write</code> 打上去。預設值是關的，鑰匙在你手上。</p>
+<p>Claude Code 的 Bash sandbox 是另一種思路。它是內建的，但要你自己啟用（<code>/sandbox</code> 面板，或在 <code>~/.claude/settings.json</code> 設 <code>sandbox.enabled</code>）。而真正該注意的是這句：</p>
+<blockquote>
+<p>By default, if the sandbox cannot start because dependencies are missing or the platform is unsupported, Claude Code shows a warning and runs commands without sandboxing. To make this a hard failure instead, set <code>sandbox.failIfUnavailable</code> to <code>true</code>.</p>
+</blockquote>
+<p>沙箱起不來的時候，預設行為是印個警告然後照跑。要讓它變成硬失敗，得自己把 <code>sandbox.failIfUnavailable</code> 設成 <code>true</code>。</p>
+<p>這個設計在你人坐在螢幕前的時候完全合理，警告你看得到，你可以當場決定要不要停。問題在無人值守的場景：cron、CI、排定的任務。Linux 少裝了 <code>bubblewrap</code> 或 <code>socat</code>，或是換了一台環境不同的 runner，那行警告會被沖進 log 裡，然後你的 agent 在沒有隔離的狀態下把整個任務跑完。它不會失敗，這才是麻煩的地方。</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>沙箱起不來的時候</th>
+<th>什麼都不設定的時候</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>codex exec</code></td>
+<td>有明確的 <code>--sandbox</code> 值可指定</td>
+<td>唯讀</td>
+</tr>
+<tr>
+<td>Claude Code</td>
+<td>預設警告後照跑（可設 <code>failIfUnavailable</code>）</td>
+<td>沙箱未啟用，走一般權限流程</td>
+</tr>
+</tbody></table>
+<p>這張表不是在說誰做錯了。兩邊的預設值都對應到各自假設的主要使用場景，Claude Code 假設你在場，Codex 的非互動模式假設你不在。你要做的判斷只有一句：<strong>你打算讓它在你睡覺的時候跑嗎？</strong> 會的話，第二欄那格值多少錢，你自己算。</p>
+<h2 id="那個-repo-自帶的設定檔，會不會被載進來"><a href="#那個-repo-自帶的設定檔，會不會被載進來" class="headerlink" title="那個 repo 自帶的設定檔，會不會被載進來"></a>那個 repo 自帶的設定檔，會不會被載進來</h2><p>Codex 的設定參考頁裡有一句，跟前面幾條判準都不在同一個維度上：「Untrusted projects skip project-scoped <code>.codex/</code> layers, including project-local config, hooks, and rules.」你把一個不信任的專案 clone 下來，它自帶的設定、hooks 跟 rules 會被整包跳過，而不是「載入之後再看看」。</p>
+<p>前面談的都是你自己那台機器要怎麼設。這一條談的是相反的方向：別人的 repo 有沒有辦法反過來設定你。你在陌生的 repo 裡開 agent 之前，該先知道的是那份跟著程式碼一起被 clone 下來的設定檔到底會不會生效。benchmark 分數這時候排不上號。</p>
+<h2 id="自動化的形狀，兩邊想的根本是兩件事"><a href="#自動化的形狀，兩邊想的根本是兩件事" class="headerlink" title="自動化的形狀，兩邊想的根本是兩件事"></a>自動化的形狀，兩邊想的根本是兩件事</h2><p>兩邊給自動化準備的旗標，指向的方向完全不一樣。</p>
+<p><code>codex exec</code> 那組旗標，你把它們排在一起看就懂了。<code>--ignore-user-config</code> 讓這次執行不去讀 <code>$CODEX_HOME/config.toml</code>；<code>--ignore-rules</code> 跳過使用者與專案的 execpolicy <code>.rules</code>；<code>--ephemeral</code> 不把 session rollout 檔寫到磁碟；<code>--json</code> 把 stdout 換成 JSONL 事件流讓你拿 jq 去解。而且它還加了一道你可能會覺得多管閒事的檢查：「Codex requires commands to run inside a Git repository to prevent destructive changes.」不在 git repo 裡就不讓你跑，要跑得自己加 <code>--skip-git-repo-check</code>。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Codex 的自動化長這個形狀：把本機狀態全部關在門外</span></span><br><span class="line">codex <span class="built_in">exec</span> --json --ephemeral --ignore-user-config \</span><br><span class="line">  --sandbox workspace-write <span class="string">&quot;把 CHANGELOG 補到最新的 tag&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>這一整組加起來是同一件事：<strong>讓這次執行盡量不沾到這台機器的狀態</strong>。官方在認證那段也是同一個口徑，說 automation 應該用 API key，理由是「API keys are the right default for automation because they are simpler to provision and rotate」。</p>
+<p>Claude Code 官方文件示範自動化的方式，語氣完全不同。它在講 Unix 哲學，示範的是把東西餵給它然後接走結果：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">tail</span> -200 app.log | claude -p <span class="string">&quot;Slack me if you see any anomalies&quot;</span></span><br><span class="line">git diff main --name-only | claude -p <span class="string">&quot;review these changed files for security issues&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>一個在做密封執行，一個在做管線裡的過濾器。哪個對？看你要的是可重現的 CI 步驟，還是把 agent 接進你已經有的那套 shell 工作流。前者選 Codex，後者選 Claude Code。只是要講清楚，這是我從兩邊的旗標清單與官方示範反推出來的設計取向，不是我把兩套都接進同一條 CI 跑過之後的結論——真的要押在上面之前，自己先用一個最小的任務試一次。</p>
+<h2 id="模型從哪裡來，以及誰有權決定這件事"><a href="#模型從哪裡來，以及誰有權決定這件事" class="headerlink" title="模型從哪裡來，以及誰有權決定這件事"></a>模型從哪裡來，以及誰有權決定這件事</h2><p>Claude Code 這邊在企業部署那頁列了幾條路：Amazon Bedrock、Claude Platform on AWS、Google Cloud’s Agent Platform（就是以前的 Vertex AI）、Microsoft Foundry，還有 Anthropic Console 跟 Claude for Teams&#x2F;Enterprise。想跑在自家雲的帳單與 IAM 底下，這幾條就是官方認可的入口，還可以拿 <code>ANTHROPIC_DEFAULT_OPUS_MODEL</code> 那組環境變數把模型版本釘死，不讓別名自己漂。</p>
+<p>Codex 這邊的設定參考頁把這件事鎖得更死。專案層的 <code>.codex/config.toml</code> 有一批鍵直接不准設，官方列的是 <code>openai_base_url</code>、<code>chatgpt_base_url</code>、<code>apps_mcp_product_sku</code>、<code>model_provider</code>、<code>model_providers</code>、<code>notify</code>、<code>profile</code>、<code>profiles</code>、<code>experimental_realtime_ws_base_url</code> 跟 <code>otel</code>。翻成白話：模型從哪裡來、認證打去哪裡、遙測送去哪裡，這些只能在使用者層決定，一個 repo 沒辦法靠自帶一份設定檔把你的流量導去別的地方。</p>
+<div class="note warning flat"><p>但「Codex 有沒有等價於 Bedrock／Vertex 那種官方雲端市集部署路徑」這件事，我在官方文件裡沒有查到對應的清單頁，這部分我標<strong>未查證</strong>，不要拿我這句去跟採購交代。</p>
+</div>
+
+<p>如果你的公司有資料落地或雲端採購的硬性限制，這條判準的優先序會直接跳到第一位，前面五條全部靠邊站。</p>
+<h2 id="反過來問：什麼情況下它反而是壞選擇"><a href="#反過來問：什麼情況下它反而是壞選擇" class="headerlink" title="反過來問：什麼情況下它反而是壞選擇"></a>反過來問：什麼情況下它反而是壞選擇</h2><p><strong>Codex CLI 什麼時候是壞選擇？</strong> 當你的團隊已經很重度在用 ChatGPT 網頁的時候。「Local messages and cloud chats share your plan’s usage allowance」這句話，在一個十人團隊身上會長成很難溝通的樣子：有人下午跑不動重構，原因是同事早上在網頁上聊了三小時。這種資源競爭沒有錯誤訊息，只有「今天好像比較慢」。</p>
+<p>還有一個更隱蔽的：如果你想用 API key 登入來繞開訂閱，官方明列的代價是雲端那一整塊都沒了，只剩 CLI、SDK 跟 IDE extension，模型能用哪些看你那把 key。你以為在省錢，實際上是買到了半個產品。</p>
+<p><strong>Claude Code 什麼時候是壞選擇？</strong> 原生 Windows，以及任何沒有人在場的執行環境。前者是文件白紙黑字寫的不支援，後者是那個 fail-open 的預設。這兩件事都不是「不好用」，是「你要為它多做一步設定，而那步設定沒做的時候不會有人提醒你」。</p>
+<p><strong>兩個都裝的話，磁碟空間不是問題。</strong> 真正的稅金是你腦子裡得同時維護兩套權限模型，而權限設錯的失敗形態是安靜的。Codex 那邊你要記得 <code>sandbox_mode</code> 跟 <code>approval_policy</code> 是兩個可以自由組合的維度；Claude Code 那邊你要記得沙箱跟權限模式是兩層獨立的東西，而且沙箱要先開。哪天你在錯的那台機器上跑了 <code>danger-full-access</code>，或是以為沙箱開著其實它啟動失敗，這兩種錯誤都不會當場炸給你看。</p>
+<h2 id="我的答案"><a href="#我的答案" class="headerlink" title="我的答案"></a>我的答案</h2><p>不騎牆的話，我會這樣切：</p>
+<p><strong>會在沒有人盯著的時候執行的那個 agent，用 Codex CLI。</strong> 理由只有一個，<code>codex exec</code> 的預設值站在保守那一邊，而且它給你一整組把本機狀態關在門外的旗標。無人值守的場景裡，「什麼都不設定會發生什麼」比「設定齊全時能力上限多高」重要一百倍。</p>
+<p><strong>你坐在前面一起工作的那個，用你已經在付錢的那一個。</strong> 交互式使用的差距，遠遠小於你為了換工具要重寫的那些流程檔。這種時候換工具是在付遷移成本買一個你感覺不太出來的差異。</p>
+<p><strong>兩邊都還沒付錢的，從 ChatGPT 那一邊開始。</strong> 開篇我說這種人要先決定的是訂閱，那就把話講完：這跟哪一邊比較強沒有關係，看的是試錯成本能壓到多低。官方把 Codex 放進包含 Free 在內的每個 ChatGPT 方案，你不必先掏錢就摸得到；Claude Code 那邊官方寫的是多數表面需要訂閱或 Console 帳號，等於你得先付了才知道合不合用。這只是進場順序，不是終點：真的用起來之後記得回頭看第二節那件事，網頁跟終端機吃的是同一個油箱。</p>
+<p>然後把省下來的那個下午拿去做一件事：把你主力工具的沙箱真的打開，並且驗證它有起來，不要只看設定檔裡有那一行。設定檔裡有一行跟那行生效中，是兩件事。</p>
+<div class="note warning flat"><p>這篇的邊界講清楚：<strong>我沒有實際跑過 Codex CLI</strong>。上面所有關於 Codex 的行為、旗標與預設值，全部來自官方文件與 <code>gh api repos/openai/codex</code> 的 repo 元資料，查詢日 2026-09-04。Claude Code 那側的引文來自 code.claude.com 的官方文件。兩邊的版本號我沒有對齊，文件更新的速度也不一樣，所以真的要照著設之前，請自己開一次官方頁面確認。</p>
+</div>
+
+<h2 id="來源"><a href="#來源" class="headerlink" title="來源"></a>來源</h2><ul>
+<li>Codex CLI 總覽與指令：<a target="_blank" rel="noopener" href="https://learn.chatgpt.com/docs/codex/cli">learn.chatgpt.com&#x2F;docs&#x2F;codex&#x2F;cli</a></li>
+<li>Codex 沙箱與審批模型：<a target="_blank" rel="noopener" href="https://learn.chatgpt.com/docs/sandboxing">learn.chatgpt.com&#x2F;docs&#x2F;sandboxing</a></li>
+<li>Codex 非互動模式（<code>codex exec</code>）：<a target="_blank" rel="noopener" href="https://learn.chatgpt.com/docs/non-interactive-mode">learn.chatgpt.com&#x2F;docs&#x2F;non-interactive-mode</a></li>
+<li>Codex 方案與用量：<a target="_blank" rel="noopener" href="https://learn.chatgpt.com/docs/pricing">learn.chatgpt.com&#x2F;docs&#x2F;pricing</a></li>
+<li>Codex 設定參考（專案層禁設的鍵、untrusted 專案）：<a target="_blank" rel="noopener" href="https://learn.chatgpt.com/docs/config-file/config-reference">learn.chatgpt.com&#x2F;docs&#x2F;config-file&#x2F;config-reference</a></li>
+<li><code>openai/codex</code> repo 元資料（Apache-2.0、未封存）：<code>gh api repos/openai/codex</code></li>
+<li>Claude Code 總覽與各表面：<a target="_blank" rel="noopener" href="https://code.claude.com/docs/en/overview">code.claude.com&#x2F;docs&#x2F;en&#x2F;overview</a></li>
+<li>Claude Code 沙箱化 Bash 工具：<a target="_blank" rel="noopener" href="https://code.claude.com/docs/en/sandboxing">code.claude.com&#x2F;docs&#x2F;en&#x2F;sandboxing</a></li>
+<li>Claude Code 企業部署與第三方平台：<a target="_blank" rel="noopener" href="https://code.claude.com/docs/en/third-party-integrations">code.claude.com&#x2F;docs&#x2F;en&#x2F;third-party-integrations</a></li>
+</ul>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://mark22013333.github.io">Cheng®</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章連結: </span><span class="post-copyright-info"><a href="https://mark22013333.github.io/2026/09/04/Codex-CLI-%E9%82%84%E6%98%AF-Claude-Code-%E9%80%99%E9%A1%8C%E5%85%88%E7%9C%8B%E4%BD%A0%E5%B7%B2%E7%B6%93%E5%9C%A8%E4%BB%98%E8%AA%B0%E7%9A%84%E9%8C%A2/">https://mark22013333.github.io/2026/09/04/Codex-CLI-還是-Claude-Code-這題先看你已經在付誰的錢/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版權聲明: </span><span class="post-copyright-info">本部落格所有文章除特別聲明外，均採用<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 授權協議。轉載請註明來源 <a href="https://mark22013333.github.io" target="_blank">Cheng's Tech & Life</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Claude-Code/">Claude Code</a><a class="post-meta__tags" href="/tags/CLI/">CLI</a><a class="post-meta__tags" href="/tags/OpenAI/">OpenAI</a><a class="post-meta__tags" href="/tags/Codex/">Codex</a></div><div class="post-share"><div class="social-share" data-image="/img/20260904-01.webp" data-sites="facebook,x"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><div class="post-reward"><div class="reward-badges"><a class="sponsor-glow-btn" href="https://www.buymeacoffee.com/mark22013333" target="_blank" rel="noopener noreferrer" title="Buy Me A Coffee"><img src="https://img.shields.io/badge/Buy_Me_A_Coffee-FFDD00?style=for-the-badge&amp;logo=buy-me-a-coffee&amp;logoColor=black" alt="Buy Me A Coffee"/></a><a class="sponsor-glow-btn" href="https://p.ecpay.com.tw/EFC3F8F" target="_blank" rel="noopener noreferrer" title="綠界贊助"><img src="https://img.shields.io/badge/☕_%E8%AB%8B%E6%88%91%E5%96%9D%E6%9D%AF%E5%92%96%E5%95%A1-Donate-11998e?style=for-the-badge&amp;logo=coffee&amp;logoColor=white" alt="綠界贊助"/></a><a class="sponsor-glow-btn" href="https://calendly.com/markcheng00806-intumit/15min" target="_blank" rel="noopener noreferrer" title="預約時間"><img src="https://img.shields.io/badge/📅_%E9%A0%90%E7%B4%84_15_%E5%88%86%E9%90%98-Book_Time-0072ff?style=for-the-badge" alt="預約時間"/></a><p class="reward-badges-note">你的鼓勵將被轉換為我明天繼續加班的動力（真的）。 ❤️</p></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2026/09/03/%E9%82%A3%E5%8F%A5%E5%BC%95%E6%96%87%E6%98%AF%E8%AA%B0%E6%8A%84%E5%87%BA%E4%BE%86%E7%9A%84-%E6%8B%86%E9%96%8B-Claude-Citations-%E7%9A%84%E5%88%87%E5%A1%8A%E8%88%87%E7%B4%A2%E5%BC%95/" title="那句引文是誰抄出來的：拆開 Claude Citations 的切塊與索引"><img class="cover" src="/img/20260903-03.webp" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">那句引文是誰抄出來的：拆開 Claude Citations 的切塊與索引</div></div><div class="info-2"><div class="info-item-1">補寫於 2026 年 9 月 4 日，日期掛回文章原本該發的那天。文中的版本號與「目前」指的是撰寫當日的官方文件狀態。 模型回答的最後一行寫著「來源：使用手冊第 12 頁」。你翻到第 12 頁，那句話不在上面。這個 12 是怎麼算出來的？ 答案通常很掃興：它沒算。那個頁碼跟正文是同一批 token，一起被生成出來的，所以它跟旁邊那句話一樣，是根據上下文挑一個看起來最合理的數字填進去。prompt 寫得再嚴格也改不掉這件事，「請務必附上原文出處與頁碼」只會讓它挑得更認真，挑出來的仍然是猜的。引用在這個做法裡只是一種文字風格，沒有任何機制保證它指得到東西。 Claude 的 Messages API 有個開關會把這條產生路徑整個換掉。開關本身只有一行 citations: &#123;&quot;enabled&quot;: true&#125;，但它背後動了三層東西：引文由誰產生、文件在哪一層被切開、座標由誰計算。這三層決定了你拿到的東西有多可靠，也決定了你的前端要重寫多少。所以這篇從底下往上拆，拆完再回頭講怎麼開。 第一層：那段引文是誰產生的開了 citations 之後，回應裡...</div></div></div></a><a class="pagination-related" href="/2026/09/04/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260904/" title="AI 與科技新聞摘要 - 2026/09/04"><img class="cover" src="/img/20260904-02.webp" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">AI 與科技新聞摘要 - 2026/09/04</div></div><div class="info-2"><div class="info-item-1">一支公發的 iPhone，放在中東某個基地裡某個人的口袋。手機不知道主人叫什麼名字，但它身上帶著一串廣告識別碼，在每個 app 裡都是同一串。那串碼沒有名字，只有一個特性：穩定。穩定到可以被買下來、被拼起來、被畫成一條每天重複的路線。 然後真的有人去買了。 一、美軍關掉公發裝置的廣告追蹤 ID，起因是有人在商業市場上買到了美軍的位置美國國防部關閉了軍職人員裝置上的廣告識別碼。範圍涵蓋陸軍、空軍、海軍、陸戰隊與特種作戰司令部，對象是聯邦軍用企業網路上的公發 iPhone、Android 裝置與 Windows 電腦。 時程要照抄，因為原文自己就沒有寫齊。多數軍種只說是「今年稍早」實施，唯一給了明確月份的是空軍，TechCrunch 的原句是「The Air Force told Wyden it implemented its changes more recently in July.」其他軍種到底哪一天完成，外界不知道，我也不替它們補一個日期。 起因來自參議院。Ron Wyden（Senate Intelligence Committee 的資深民主黨籍參議員）在今年稍早提出這...</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相關推薦</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2026/07/06/Claude-Code-%E7%9A%84-MCP-%E4%BD%A0%E5%A4%A7%E6%A6%82%E5%8F%AA%E7%94%A8%E4%BA%86%E4%B8%89%E5%88%86%E4%B9%8B%E4%B8%80-%E6%8A%8A%E8%A2%AB%E5%86%B7%E8%90%BD%E7%9A%84-Prompts-%E5%92%8C-Resources-%E6%92%BF%E5%9B%9E%E4%BE%86/" title="Claude Code 的 MCP，你大概只用了三分之一：把被冷落的 Prompts 和 Resources 撿回來"><img class="cover" src="/img/20260706-03.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-07-06</div><div class="info-item-2">Claude Code 的 MCP，你大概只用了三分之一：把被冷落的 Prompts 和 Resources 撿回來</div></div><div class="info-2"><div class="info-item-1">先別管 MCP 能接多少工具、能串多少服務。先問一件更基本的事：當你接上一個 MCP server 的那一刻，Claude Code 到底從它那裡拿到了幾種東西？ 大部分人的答案是「一種」——工具。你接了 GitHub server，就叫它開 PR；接了資料庫 server，就叫它查資料。工具（Tools）確實是 MCP 最常被用到的部分。但如果你只用到工具，那你手上這台機器，其實只發動了三分之一。 把 MCP 拆開，裡面有三個抽屜MCP 這個協定，設計上暴露給你的不是一種介面，是三種。官方把它們叫做三個 primitives：Tools、Resources、Prompts。它們最關鍵的差別不在「能做什麼」，而在一個你大概沒想過的問題上——這東西是誰決定要用的？ 工具（Tools），是模型決定要不要用的。你說「幫我開個 PR」，Claude 自己判斷「這需要呼叫 GitHub 的 create_pr 工具」，然後就去按了。決定權在 AI 手上。 資源（Resources），是你或應用程式決定要不要用的。它是一份唯讀的資料——一個檔案、一張資料表的 schema、一則 issue ...</div></div></div></a><a class="pagination-related" href="/2026/08/24/%E6%88%91%E7%9A%84iTerm%E4%B8%8D%E7%9F%A5%E9%81%93%E6%88%91%E5%9C%A8%E8%B7%91Claude-Code-Warp%E7%9F%A5%E9%81%93/" title="我的 iTerm 不知道我在跑 Claude Code，Warp 知道"><img class="cover" src="/img/20260824-01.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-08-24</div><div class="info-item-2">我的 iTerm 不知道我在跑 Claude Code，Warp 知道</div></div><div class="info-2"><div class="info-item-1"> 寫於 2026 年 8 月 24 日，9 月才上線（部落格的發佈額度在 8 月中用完了，稿子積壓了三週）。文中對 Warp 的描述以 8 月 24 日的官方文件與定價頁為準，你讀到時可能已經改版。  我的 iTerm 不知道我在跑 Claude Code。 它知道有個子程序開著、正在往畫面丟字元，其中一部分是 ANSI 顏色碼。它畫得很快也很漂亮，但它畫的是一條文字流。哪一段是 agent 在想事情、哪一段是它跑出來的測試結果、哪一條指令是我自己手打的，對 iTerm 來說沒有差別，都是字。所以 Warp 我只關心一件事：那個資訊落差。終端機本身知道有 agent 在，跟完全不知道，差在哪一步？差得夠不夠讓你把用了好幾年的終端機換掉？它的 agent 強不強我不打算比，市面上每一家都在同一批模型上打，強弱是這個月的事。 我沒有裝過 Warp，這篇全部是 8 月 24 日官方文件上寫的行為，不是我跑出來的結果。 差別不在功能表，在誰看得到你剛剛打的那行Warp 自己在文件的機器可讀索引裡把自己叫 the agentic development environment。它列自家差異...</div></div></div></a><a class="pagination-related" href="/2026/06/23/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260623/" title="AI 與科技新聞摘要 20260623"><img class="cover" src="/img/20260623-02.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-06-23</div><div class="info-item-2">AI 與科技新聞摘要 20260623</div></div><div class="info-2"><div class="info-item-1">你有沒有想過，當一個工具強到可以「自己跑下去不用你盯」的時候，出事的責任算誰的？ 這禮拜的幾條新聞排開來，主角不是哪個模型又刷新了哪個分數。能力線一如往常往上爬，真正在動的，是「讓 AI 自己動手、自己跑久一點、自己決定下一步」這件事——而且是各家一起往這個方向推。問題在於，油門踩得越深，那個「萬一它跑歪了誰來踩煞車」的位子，反而越來越空。 一、OpenAI 讓 Codex 自己跑到目標達成才停6 月 22 日，OpenAI 一口氣給 Codex 加了幾個讓它「更會自己跑」的功能。Goal mode 全面開放——你給它一個結果跟成功條件，它就一輪一輪做下去，不用你每一步都下指令，直到它自己判斷達標。同時上的還有 macOS 的 Appshots：一個快捷鍵就能把某個 app 視窗連同截圖跟可讀文字塞進 Codex 的對話，讓它直接「看到」你在看什麼，省掉一長串描述。再加上專為長時間任務優化的 Codex-Maxxing，整套更新的方向只有一個——把人從迴圈裡拿掉得越多越好。 這跟 Claude Code 早就在做的事是同一條路。值得記下來的不是「誰抄誰」，而是這個產業已經悄悄達成...</div></div></div></a><a class="pagination-related" href="/2026/06/09/Claude-Code-Fallback-Models-%E5%AE%8C%E6%95%B4%E6%95%99%E5%AD%B8-%E4%B8%BB%E6%A8%A1%E5%9E%8B%E9%81%8E%E8%BC%89%E6%99%82%E8%87%AA%E5%8B%95%E6%8F%9B%E4%B8%80%E5%8F%B0%E7%B9%BC%E7%BA%8C%E8%B7%91/" title="Claude Code Fallback Models 完整教學 — 主模型過載時自動換一台繼續跑"><img class="cover" src="/img/20260609-03.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-06-09</div><div class="info-item-2">Claude Code Fallback Models 完整教學 — 主模型過載時自動換一台繼續跑</div></div><div class="info-2"><div class="info-item-1">先別急著問這功能能幹嘛。先看一個瞬間。 你掛了一個 background agent 在跑重構，自己跑去倒咖啡。就在你離開的那 30 秒，Anthropic 的 Opus 流量尖峰來了，你的請求撞上一個 529 overloaded 錯誤——伺服器在說「我現在忙不過來，等等」。過去，這一撞，你那個背景任務就直接死了，回來只看到一行紅字躺在那。 fallbackModel 這個 v2.1.166 加進來的設定，要處理的就是這 30 秒裡發生的事。但要真的搞懂它，最好的方式不是先聽它的功能清單，而是把那一瞬間慢動作拆開來看：當 529 回來的時候，Claude Code 心裡到底在跑什麼判斷。 把過載的那一刻拆成慢動作想像你打電話叫披薩，最常去那家店線路忙線。你有兩種人。一種會掛掉、坐在那生氣、等十分鐘再重撥同一個號碼。另一種手邊貼了一張紙條，上面照順序寫了三家店的電話——第一家忙線，立刻撥第二家。 沒設 fallback 的 Claude Code 是第一種人。請求撞上 529，它就停在那，要嘛報錯收場，要嘛傻等。設了 fallbackModel 之後，它變成第二種人：主模型回傳過...</div></div></div></a><a class="pagination-related" href="/2026/08/13/%E5%A3%93%E7%B8%AE%E5%AE%8C%E9%82%A3%E6%A2%9D%E8%A6%8F%E5%89%87%E7%82%BA%E4%BB%80%E9%BA%BC%E6%B2%92%E5%9B%9E%E4%BE%86-autoCompactWindow%E9%96%80%E6%AA%BB%E8%88%87PreCompact-PostCompact%E5%85%A9%E5%80%8B%E9%89%A4%E5%AD%90/" title="壓縮完那條規則為什麼沒回來：autoCompactWindow 門檻與 PreCompact&#x2F;PostCompact 兩個鉤子"><img class="cover" src="/img/20260813-03.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-08-13</div><div class="info-item-2">壓縮完那條規則為什麼沒回來：autoCompactWindow 門檻與 PreCompact&#x2F;PostCompact 兩個鉤子</div></div><div class="info-2"><div class="info-item-1"> 寫於 2026 年 8 月 16 日（補 8 月 13 日的排程），9 月才上線（部落格的發佈額度 8 月 10 日就用完了，這批稿子要等到九月才發得出去）。文中的版本號與「目前」都指 8 月 16 日查到的狀態，Claude Code 更新很快，你讀到時可能已經又改過了。  compacting conversation… 跑完，畫面回來，Claude 接著就把剛剛講好不要動的那支檔案改掉了。 舊做法只有一招：把那條規則再貼一次。貼完它乖了，再撐兩小時，又壓一次，又貼一次。整個 session 就在「壓縮 → 失憶 → 補講」之間來回。 同一個動作，現在有第二種做法。官方文件把壓縮這件事拆成三塊可以伸手碰的東西：什麼時候壓、壓完誰會自己回來、以及壓縮前後你能插什麼進去。三塊都有對應的設定鍵或 hook 事件，設定完就不用再靠人肉補講。 什麼時候壓：以前只有開跟關過去能碰的只有一個開關。autoCompactEnabled 預設是 true，官方對它的描述是「context 接近上限時自動壓縮對話」，在 /config 裡顯示成 Auto-compact；想從環境變數關掉就在 ...</div></div></div></a><a class="pagination-related" href="/2026/08/25/Claude-Code-%E8%A8%AD%E5%AE%9A%E6%B2%92%E7%94%9F%E6%95%88%E6%80%8E%E9%BA%BC%E6%9F%A5-%E5%85%88%E5%88%86%E6%B8%85%E6%A5%9A%E5%AE%83%E6%98%AF%E6%B2%92%E6%94%B6%E5%88%B0%E9%82%84%E6%98%AF%E6%94%B6%E5%88%B0%E4%BA%86%E4%B8%8D%E7%85%A7%E5%81%9A/" title="Claude Code 設定沒生效怎麼查：先分清楚它是沒收到，還是收到了不照做"><img class="cover" src="/img/20260825-03.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-08-25</div><div class="info-item-2">Claude Code 設定沒生效怎麼查：先分清楚它是沒收到，還是收到了不照做</div></div><div class="info-2"><div class="info-item-1"> 寫於 2026 年 8 月 25 日，9 月才上線（部落格的發佈額度在 8 月中用完了，稿子積壓了三週）。文中的版本號與「目前」都指 8 月 25 日的狀態，Claude Code 更新很快，你讀到時可能已經又改過了。  CLAUDE.md 的第一行寫得很清楚：所有回覆用繁體中文。 它回你英文。 你把那行改成粗體，重送一次。還是英文。你在句尾補上「這是硬性規定，不可違反」，它跟你道歉，道歉完下一段繼續用英文。 到這裡通常會做兩件事。第一件是把規則寫得更兇：加驚嘆號、改成全大寫的 MUST、把同一句話在檔案裡重複三次。第二件是關掉整個 session 重開，想說它可能是累了。 兩件都沒用。沒用的原因是同一個：你在調整一份可能從來沒被讀到的檔案。 家裡的燈不亮，你換了三顆燈泡。第四顆換上去之前，先確認一件事會比較快：電到底有沒有到那個燈座。燈泡是好是壞，是電到了之後才需要問的問題。順序反了，你可以換一整晚。 第一個指令永遠是 &#x2F;contextClaude Code 有個指令專門回答「電有沒有到」：/context。 照官方文件的說法，它會列出目前這個 session 的 ...</div></div></div></a></div></div><hr class="custom-hr"/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 評論</span></div></div><div class="comment-wrap"><div><div id="giscus-wrap"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="https://lh3.googleusercontent.com/pw/ABLVV87_po8nBc6F_tXcoYDmtzMGWxHuhhrbguYILCjmjWKLOS8DTpubm0YoQLKgjyjRIZyV5TjYe7XVEz_YU4squfr37GTZqPZP1hlMVZ_MIgXpTxWu73M=w1200" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">Cheng®</div><div class="author-info-description">Backend Developer / 技術筆記 & AI 新聞分享</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">567</div></a><a href="/tags/"><div class="headline">標籤</div><div class="length-num">226</div></a><a href="/categories/"><div class="headline">分類</div><div class="length-num">23</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/mark22013333"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons"><a class="social-icon" href="https://github.com/mark22013333" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:mark22013333@gmail.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a></div><div class="card-info-sponsor"><a class="sponsor-glow-btn" href="https://www.buymeacoffee.com/mark22013333" target="_blank" rel="noopener noreferrer" title="Buy Me A Coffee"><img src="https://img.shields.io/badge/Buy_Me_A_Coffee-FFDD00?style=for-the-badge&amp;logo=buy-me-a-coffee&amp;logoColor=black" alt="Buy Me A Coffee"/></a><a class="sponsor-glow-btn" href="https://p.ecpay.com.tw/EFC3F8F" target="_blank" rel="noopener noreferrer" title="綠界贊助"><img src="https://img.shields.io/badge/☕_%E8%AB%8B%E6%88%91%E5%96%9D%E6%9D%AF%E5%92%96%E5%95%A1-Donate-11998e?style=for-the-badge&amp;logo=coffee&amp;logoColor=white" alt="綠界贊助"/></a><a class="sponsor-glow-btn" href="https://calendly.com/markcheng00806-intumit/15min" target="_blank" rel="noopener noreferrer" title="預約時間"><img src="https://img.shields.io/badge/📅_%E9%A0%90%E7%B4%84_15_%E5%88%86%E9%90%98-Book_Time-0072ff?style=for-the-badge" alt="預約時間"/></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">這裡記錄我在後端開發路上踩過的坑、學到的東西，也會分享每日 AI 與科技新聞觀點。歡迎一起交流！</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目錄</span><span class="toc-percentage"></span></div><div class="toc-content is-expand"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E3%80%8C%E9%99%84%E8%B4%88%E3%80%8D%E7%9A%84%E9%82%A3%E4%BB%BD%E5%B8%B3%EF%BC%8C%E6%98%AF%E8%B7%9F%E4%BD%A0%E7%9A%84%E8%81%8A%E5%A4%A9%E8%A6%96%E7%AA%97%E4%B8%80%E8%B5%B7%E7%AE%97%E7%9A%84"><span class="toc-number">1.</span> <span class="toc-text">「附贈」的那份帳，是跟你的聊天視窗一起算的</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BD%A0%E5%9C%A8-Windows-%E4%B8%8A%E9%96%8B%E7%99%BC%E5%97%8E%EF%BC%9F%E9%80%99%E6%A2%9D%E5%88%A4%E6%BA%96%E6%9C%83%E7%9B%B4%E6%8E%A5%E6%8A%8A%E7%AD%94%E6%A1%88%E5%AE%9A%E6%AD%BB"><span class="toc-number">2.</span> <span class="toc-text">你在 Windows 上開發嗎？這條判準會直接把答案定死</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%B2%92%E4%BA%BA%E7%9C%8B%E8%91%97%E7%9A%84%E6%99%82%E5%80%99%EF%BC%8C%E5%85%A9%E9%82%8A%E7%9A%84%E9%A0%90%E8%A8%AD%E5%80%BC%E5%BE%80%E4%B8%8D%E5%90%8C%E6%96%B9%E5%90%91%E5%80%92"><span class="toc-number">3.</span> <span class="toc-text">沒人看著的時候，兩邊的預設值往不同方向倒</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%82%A3%E5%80%8B-repo-%E8%87%AA%E5%B8%B6%E7%9A%84%E8%A8%AD%E5%AE%9A%E6%AA%94%EF%BC%8C%E6%9C%83%E4%B8%8D%E6%9C%83%E8%A2%AB%E8%BC%89%E9%80%B2%E4%BE%86"><span class="toc-number">4.</span> <span class="toc-text">那個 repo 自帶的設定檔，會不會被載進來</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%87%AA%E5%8B%95%E5%8C%96%E7%9A%84%E5%BD%A2%E7%8B%80%EF%BC%8C%E5%85%A9%E9%82%8A%E6%83%B3%E7%9A%84%E6%A0%B9%E6%9C%AC%E6%98%AF%E5%85%A9%E4%BB%B6%E4%BA%8B"><span class="toc-number">5.</span> <span class="toc-text">自動化的形狀，兩邊想的根本是兩件事</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%A8%A1%E5%9E%8B%E5%BE%9E%E5%93%AA%E8%A3%A1%E4%BE%86%EF%BC%8C%E4%BB%A5%E5%8F%8A%E8%AA%B0%E6%9C%89%E6%AC%8A%E6%B1%BA%E5%AE%9A%E9%80%99%E4%BB%B6%E4%BA%8B"><span class="toc-number">6.</span> <span class="toc-text">模型從哪裡來，以及誰有權決定這件事</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%8D%E9%81%8E%E4%BE%86%E5%95%8F%EF%BC%9A%E4%BB%80%E9%BA%BC%E6%83%85%E6%B3%81%E4%B8%8B%E5%AE%83%E5%8F%8D%E8%80%8C%E6%98%AF%E5%A3%9E%E9%81%B8%E6%93%87"><span class="toc-number">7.</span> <span class="toc-text">反過來問：什麼情況下它反而是壞選擇</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%88%91%E7%9A%84%E7%AD%94%E6%A1%88"><span class="toc-number">8.</span> <span class="toc-text">我的答案</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BE%86%E6%BA%90"><span class="toc-number">9.</span> <span class="toc-text">來源</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2026/09/04/%E5%8D%8A%E5%A4%9C%E9%82%A3%E6%89%B9%E4%BB%BB%E5%8B%99%E5%9B%9E%E4%BA%86%E7%A9%BA%E7%99%BD-HTTP-%E5%8D%BB%E6%98%AF-200-stop-reason-refusal-%E8%88%87-server-side-fallback/" title="半夜那批任務回了空白，HTTP 卻是 200：stop_reason &quot;refusal&quot; 與 server-side fallback"><img src="/img/20260904-03.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="半夜那批任務回了空白，HTTP 卻是 200：stop_reason &quot;refusal&quot; 與 server-side fallback"/></a><div class="content"><a class="title" href="/2026/09/04/%E5%8D%8A%E5%A4%9C%E9%82%A3%E6%89%B9%E4%BB%BB%E5%8B%99%E5%9B%9E%E4%BA%86%E7%A9%BA%E7%99%BD-HTTP-%E5%8D%BB%E6%98%AF-200-stop-reason-refusal-%E8%88%87-server-side-fallback/" title="半夜那批任務回了空白，HTTP 卻是 200：stop_reason &quot;refusal&quot; 與 server-side fallback">半夜那批任務回了空白，HTTP 卻是 200：stop_reason &quot;refusal&quot; 與 server-side fallback</a><time datetime="2026-09-04T10:00:00.000Z" title="發表於 2026-09-04 18:00:00">2026-09-04</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/09/04/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260904/" title="AI 與科技新聞摘要 - 2026/09/04"><img src="/img/20260904-02.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="AI 與科技新聞摘要 - 2026/09/04"/></a><div class="content"><a class="title" href="/2026/09/04/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260904/" title="AI 與科技新聞摘要 - 2026/09/04">AI 與科技新聞摘要 - 2026/09/04</a><time datetime="2026-09-04T04:00:00.000Z" title="發表於 2026-09-04 12:00:00">2026-09-04</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/09/04/Codex-CLI-%E9%82%84%E6%98%AF-Claude-Code-%E9%80%99%E9%A1%8C%E5%85%88%E7%9C%8B%E4%BD%A0%E5%B7%B2%E7%B6%93%E5%9C%A8%E4%BB%98%E8%AA%B0%E7%9A%84%E9%8C%A2/" title="Codex CLI 還是 Claude Code：這題先看你已經在付誰的錢"><img src="/img/20260904-01.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Codex CLI 還是 Claude Code：這題先看你已經在付誰的錢"/></a><div class="content"><a class="title" href="/2026/09/04/Codex-CLI-%E9%82%84%E6%98%AF-Claude-Code-%E9%80%99%E9%A1%8C%E5%85%88%E7%9C%8B%E4%BD%A0%E5%B7%B2%E7%B6%93%E5%9C%A8%E4%BB%98%E8%AA%B0%E7%9A%84%E9%8C%A2/" title="Codex CLI 還是 Claude Code：這題先看你已經在付誰的錢">Codex CLI 還是 Claude Code：這題先看你已經在付誰的錢</a><time datetime="2026-09-04T01:00:00.000Z" title="發表於 2026-09-04 09:00:00">2026-09-04</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/09/03/%E9%82%A3%E5%8F%A5%E5%BC%95%E6%96%87%E6%98%AF%E8%AA%B0%E6%8A%84%E5%87%BA%E4%BE%86%E7%9A%84-%E6%8B%86%E9%96%8B-Claude-Citations-%E7%9A%84%E5%88%87%E5%A1%8A%E8%88%87%E7%B4%A2%E5%BC%95/" title="那句引文是誰抄出來的：拆開 Claude Citations 的切塊與索引"><img src="/img/20260903-03.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="那句引文是誰抄出來的：拆開 Claude Citations 的切塊與索引"/></a><div class="content"><a class="title" href="/2026/09/03/%E9%82%A3%E5%8F%A5%E5%BC%95%E6%96%87%E6%98%AF%E8%AA%B0%E6%8A%84%E5%87%BA%E4%BE%86%E7%9A%84-%E6%8B%86%E9%96%8B-Claude-Citations-%E7%9A%84%E5%88%87%E5%A1%8A%E8%88%87%E7%B4%A2%E5%BC%95/" title="那句引文是誰抄出來的：拆開 Claude Citations 的切塊與索引">那句引文是誰抄出來的：拆開 Claude Citations 的切塊與索引</a><time datetime="2026-09-03T10:00:00.000Z" title="發表於 2026-09-03 18:00:00">2026-09-03</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/09/03/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260903/" title="AI 與科技新聞摘要 - 2026/09/03"><img src="/img/20260903-02.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="AI 與科技新聞摘要 - 2026/09/03"/></a><div class="content"><a class="title" href="/2026/09/03/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260903/" title="AI 與科技新聞摘要 - 2026/09/03">AI 與科技新聞摘要 - 2026/09/03</a><time datetime="2026-09-03T04:00:00.000Z" title="發表於 2026-09-03 12:00:00">2026-09-03</time></div></div></div></div></div></div></main><footer id="footer" style="background-image: url(/img/20260904-01.webp);"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2024 - 2026 By Cheng®</span></div><div class="footer_custom_text">Written by Cheng® — 自律，從當下的一念開始。</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="閱讀模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日夜模式切換"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="單欄和雙欄切換"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="設定"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目錄"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="前往評論"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到頂端"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.umd.min.js"></script><script src="https://cdn.jsdelivr.net/npm/instant.page/instantpage.min.js" type="module"></script><script src="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.js"></script><div class="js-pjax"><script>(() => {
+  const isShuoshuo = GLOBAL_CONFIG_SITE.pageType === 'shuoshuo'
+  const option = {"mapping":"pathname","strict":0,"reactionsEnabled":1,"emitMetadata":0,"inputPosition":"bottom","lang":"zh-TW"}
+
+  const getGiscusTheme = theme => theme === 'dark' ? 'dark' : 'light'
+
+  const createScriptElement = config => {
+    const ele = document.createElement('script')
+    Object.entries(config).forEach(([key, value]) => {
+      ele.setAttribute(key, value)
+    })
+    return ele
+  }
+
+  const loadGiscus = (el = document, key) => {
+    const mappingConfig = isShuoshuo
+      ? { 'data-mapping': 'specific', 'data-term': key }
+      : { 'data-mapping': (option && option['data-mapping']) || 'pathname' }
+
+    const giscusConfig = {
+      src: 'https://giscus.app/client.js',
+      'data-repo': 'mark22013333/mark22013333.github.io',
+      'data-repo-id': 'R_kgDOLAxa6A',
+      'data-category-id': 'DIC_kwDOLAxa6M4C5eO9',
+      'data-theme': getGiscusTheme(document.documentElement.getAttribute('data-theme')),
+      'data-reactions-enabled': '1',
+      crossorigin: 'anonymous',
+      async: true,
+      ...option,
+      ...mappingConfig
+    }
+
+    const scriptElement = createScriptElement(giscusConfig)
+
+    el.querySelector('#giscus-wrap').appendChild(scriptElement)
+
+    if (isShuoshuo) {
+      window.shuoshuoComment.destroyGiscus = () => {
+        if (el.children.length) {
+          el.innerHTML = ''
+          el.classList.add('no-comment')
+        }
+      }
+    }
+  }
+
+  const changeGiscusTheme = theme => {
+    const iframe = document.querySelector('#giscus-wrap iframe')
+    if (iframe) {
+      const message = {
+        giscus: {
+          setConfig: {
+            theme: getGiscusTheme(theme)
+          }
+        }
+      }
+      iframe.contentWindow.postMessage(message, 'https://giscus.app')
+    }
+  }
+
+  btf.addGlobalFn('themeChange', changeGiscusTheme, 'giscus')
+
+  if (isShuoshuo) {
+    'Giscus' === 'Giscus'
+      ? window.shuoshuoComment = { loadComment: loadGiscus }
+      : window.loadOtherComment = loadGiscus
+    return
+  }
+
+  if ('Giscus' === 'Giscus' || !true) {
+    if (true) btf.loadComment(document.getElementById('giscus-wrap'), loadGiscus)
+    else loadGiscus()
+  } else {
+    window.loadOtherComment = loadGiscus
+  }
+})()</script></div><script src="/js/kkbox-player.js"></script><script src="/js/archives-pagination.js"></script><script src="/js/font-resize.js"></script><script src="/js/dark-palette.js"></script><script src="/js/series-showcase.js"></script><script src="/js/search-tags.js"></script><script defer="defer" id="fluttering_ribbon" mobile="false" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/canvas-fluttering-ribbon.min.js"></script><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/activate-power-mode.min.js"></script><script>POWERMODE.colorful = true;
+POWERMODE.shake = true;
+POWERMODE.mobile = true;
+document.body.addEventListener('input', POWERMODE);
+</script><script src="https://cdn.jsdelivr.net/npm/pjax/pjax.min.js" defer="defer"></script><script>document.addEventListener('DOMContentLoaded', () => {
+  const pjaxSelectors = ["meta[property=\"og:image\"]","meta[property=\"og:title\"]","meta[property=\"og:url\"]","meta[property=\"og:description\"]","link[rel=\"canonical\"]","head > title","#config-diff","#body-wrap","#rightside-config-hide","#rightside-config-show",".js-pjax"]
+
+  window.pjax = new Pjax({
+    elements: 'a:not([target="_blank"])',
+    selectors: pjaxSelectors,
+    cacheBust: false,
+    analytics: true,
+    scrollRestoration: false
+  })
+
+  const triggerPjaxFn = (val) => {
+    if (!val) return
+    Object.values(val).forEach(fn => {
+      try {
+        fn()
+      } catch (err) {
+        console.debug('Pjax callback failed:', err)
+      }
+    })
+  }
+
+  document.addEventListener('pjax:send', () => {
+    // removeEventListener
+    btf.removeGlobalFnEvent('pjaxSendOnce')
+    btf.removeGlobalFnEvent('themeChange')
+
+    // reset readmode
+    const $bodyClassList = document.body.classList
+    if ($bodyClassList.contains('read-mode')) $bodyClassList.remove('read-mode')
+
+    triggerPjaxFn(window.globalFn.pjaxSend)
+  })
+
+  document.addEventListener('pjax:complete', () => {
+    btf.removeGlobalFnEvent('pjaxCompleteOnce')
+    document.querySelectorAll('script[data-pjax]').forEach(item => {
+      const newScript = document.createElement('script')
+      const content = item.text || item.textContent || item.innerHTML || ""
+      Array.from(item.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value))
+      newScript.appendChild(document.createTextNode(content))
+      item.parentNode.replaceChild(newScript, item)
+    })
+
+    triggerPjaxFn(window.globalFn.pjaxComplete)
+  })
+
+  document.addEventListener('pjax:error', e => {
+    if (e.request.status === 404) {
+      true
+        ? pjax.loadUrl('/404.html')
+        : window.location.href = e.request.responseURL
+    }
+  })
+})</script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜尋</span><i class="fas fa-spinner fa-pulse" id="loading-status" hidden="hidden"></i><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="text-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  資料載入中</span></div><div class="local-search-input"><input placeholder="搜尋文章" type="text"/></div><hr/><div id="local-search-results"></div><div class="ais-Pagination" id="local-search-pagination" style="display:none;"><ul class="ais-Pagination-list"></ul></div><div id="local-search-stats"></div></div><div id="search-mask"></div><script src="/js/search/local-search.js"></script></div></div><script>window.__BLOG_TAGS__=[{"name":"Claude Code","count":211,"path":"tags/Claude-Code/"},{"name":"AI與科技新聞","count":160,"path":"tags/AI與科技新聞/"},{"name":"AI Agent","count":125,"path":"tags/AI-Agent/"},{"name":"教學","count":115,"path":"tags/教學/"},{"name":"Anthropic","count":100,"path":"tags/Anthropic/"},{"name":"資安","count":97,"path":"tags/資安/"},{"name":"開源","count":88,"path":"tags/開源/"},{"name":"AI 產業","count":81,"path":"tags/AI-產業/"},{"name":"OpenAI","count":67,"path":"tags/OpenAI/"},{"name":"自動化","count":60,"path":"tags/自動化/"},{"name":"AI 開發工具","count":57,"path":"tags/AI-開發工具/"},{"name":"CLI","count":56,"path":"tags/CLI/"},{"name":"MCP","count":52,"path":"tags/MCP/"},{"name":"開發工具","count":45,"path":"tags/開發工具/"},{"name":"Claude","count":45,"path":"tags/Claude/"},{"name":"Skills","count":37,"path":"tags/Skills/"},{"name":"工程師生活","count":36,"path":"tags/工程師生活/"},{"name":"Java","count":34,"path":"tags/Java/"},{"name":"Google","count":30,"path":"tags/Google/"},{"name":"AI 安全","count":30,"path":"tags/AI-安全/"},{"name":"LLM","count":29,"path":"tags/LLM/"},{"name":"NVIDIA","count":29,"path":"tags/NVIDIA/"},{"name":"生活札記","count":26,"path":"tags/生活札記/"},{"name":"AI 法規","count":23,"path":"tags/AI-法規/"},{"name":"Python","count":21,"path":"tags/Python/"},{"name":"理財","count":20,"path":"tags/理財/"},{"name":"AI 模型","count":20,"path":"tags/AI-模型/"},{"name":"Spring","count":18,"path":"tags/Spring/"},{"name":"DevOps","count":18,"path":"tags/DevOps/"},{"name":"Apple","count":17,"path":"tags/Apple/"},{"name":"健康","count":16,"path":"tags/健康/"},{"name":"GitHub","count":16,"path":"tags/GitHub/"},{"name":"Performance","count":15,"path":"tags/Performance/"},{"name":"Copilot","count":13,"path":"tags/Copilot/"},{"name":"Gemini","count":12,"path":"tags/Gemini/"},{"name":"Prompt Engineering","count":12,"path":"tags/Prompt-Engineering/"},{"name":"Microsoft","count":12,"path":"tags/Microsoft/"},{"name":"併發","count":12,"path":"tags/併發/"},{"name":"資料庫","count":12,"path":"tags/資料庫/"},{"name":"GitHub Copilot","count":11,"path":"tags/GitHub-Copilot/"},{"name":"Cursor","count":10,"path":"tags/Cursor/"},{"name":"Azure","count":9,"path":"tags/Azure/"},{"name":"微軟課程","count":9,"path":"tags/微軟課程/"},{"name":"Hooks","count":8,"path":"tags/Hooks/"},{"name":"系統監控","count":8,"path":"tags/系統監控/"},{"name":"Elasticsearch","count":8,"path":"tags/Elasticsearch/"},{"name":"Codex","count":6,"path":"tags/Codex/"},{"name":"Rust","count":6,"path":"tags/Rust/"},{"name":"macOS","count":6,"path":"tags/macOS/"},{"name":"Code Review","count":6,"path":"tags/Code-Review/"},{"name":"Docker","count":6,"path":"tags/Docker/"},{"name":"Collections","count":6,"path":"tags/Collections/"},{"name":"AI","count":5,"path":"tags/AI/"},{"name":"Kiro","count":5,"path":"tags/Kiro/"},{"name":"Meta","count":5,"path":"tags/Meta/"},{"name":"AZ-305","count":5,"path":"tags/AZ-305/"},{"name":"TDD","count":5,"path":"tags/TDD/"},{"name":"設計模式","count":5,"path":"tags/設計模式/"},{"name":"生產力","count":4,"path":"tags/生產力/"},{"name":"Windsurf","count":4,"path":"tags/Windsurf/"},{"name":"DP-300","count":4,"path":"tags/DP-300/"},{"name":"SQL Server","count":4,"path":"tags/SQL-Server/"},{"name":"JSON","count":4,"path":"tags/JSON/"},{"name":"Stream","count":4,"path":"tags/Stream/"},{"name":"旅遊","count":4,"path":"tags/旅遊/"},{"name":"168斷食","count":3,"path":"tags/168斷食/"},{"name":"Mistral","count":3,"path":"tags/Mistral/"},{"name":"Agent","count":3,"path":"tags/Agent/"},{"name":"SDD","count":3,"path":"tags/SDD/"},{"name":"遠端工作","count":3,"path":"tags/遠端工作/"},{"name":"專注力","count":2,"path":"tags/專注力/"},{"name":"Amazon","count":2,"path":"tags/Amazon/"},{"name":"AWS","count":2,"path":"tags/AWS/"},{"name":"Networking","count":2,"path":"tags/Networking/"},{"name":"Tool Use","count":2,"path":"tags/Tool-Use/"},{"name":"TypeScript","count":2,"path":"tags/TypeScript/"},{"name":"Multi-Model","count":2,"path":"tags/Multi-Model/"},{"name":"VS Code","count":2,"path":"tags/VS-Code/"},{"name":"Claude Design","count":2,"path":"tags/Claude-Design/"},{"name":"Prototype","count":2,"path":"tags/Prototype/"},{"name":"Lucene","count":2,"path":"tags/Lucene/"},{"name":"Redis","count":2,"path":"tags/Redis/"},{"name":"軟體工程師","count":1,"path":"tags/軟體工程師/"},{"name":"職涯","count":1,"path":"tags/職涯/"},{"name":"2026","count":1,"path":"tags/2026/"},{"name":"資訊安全","count":1,"path":"tags/資訊安全/"},{"name":"Agent Skills","count":1,"path":"tags/Agent-Skills/"},{"name":"Addy Osmani","count":1,"path":"tags/Addy-Osmani/"},{"name":"工程紀律","count":1,"path":"tags/工程紀律/"},{"name":"Apify","count":1,"path":"tags/Apify/"},{"name":"爬蟲","count":1,"path":"tags/爬蟲/"},{"name":"Buddi","count":1,"path":"tags/Buddi/"},{"name":"notch","count":1,"path":"tags/notch/"},{"name":"UI 設計","count":1,"path":"tags/UI-設計/"},{"name":"Function Calling","count":1,"path":"tags/Function-Calling/"},{"name":"Migration","count":1,"path":"tags/Migration/"},{"name":"Prompt Caching","count":1,"path":"tags/Prompt-Caching/"},{"name":"成本優化","count":1,"path":"tags/成本優化/"},{"name":"CLAUDE.md","count":1,"path":"tags/CLAUDE-md/"},{"name":"Auto Memory","count":1,"path":"tags/Auto-Memory/"},{"name":"Project Setup","count":1,"path":"tags/Project-Setup/"},{"name":"Extended Thinking","count":1,"path":"tags/Extended-Thinking/"},{"name":"Reasoning","count":1,"path":"tags/Reasoning/"},{"name":"/goal","count":1,"path":"tags/goal/"},{"name":"Haiku","count":1,"path":"tags/Haiku/"},{"name":"Sonnet","count":1,"path":"tags/Sonnet/"},{"name":"Opus","count":1,"path":"tags/Opus/"},{"name":"Token 成本","count":1,"path":"tags/Token-成本/"},{"name":"Monitor Tool","count":1,"path":"tags/Monitor-Tool/"},{"name":"Routines","count":1,"path":"tags/Routines/"},{"name":"Plan Mode","count":1,"path":"tags/Plan-Mode/"},{"name":"Ultraplan","count":1,"path":"tags/Ultraplan/"},{"name":"規劃","count":1,"path":"tags/規劃/"},{"name":"cloud","count":1,"path":"tags/cloud/"},{"name":"Voice Mode","count":1,"path":"tags/Voice-Mode/"},{"name":"Push-to-Talk","count":1,"path":"tags/Push-to-Talk/"},{"name":"Team","count":1,"path":"tags/Team/"},{"name":"Onboarding","count":1,"path":"tags/Onboarding/"},{"name":"Supply Chain","count":1,"path":"tags/Supply-Chain/"},{"name":"Subagent","count":1,"path":"tags/Subagent/"},{"name":"Cowork","count":1,"path":"tags/Cowork/"},{"name":"Plugin","count":1,"path":"tags/Plugin/"},{"name":"UX 設計","count":1,"path":"tags/UX-設計/"},{"name":"Managed Agents","count":1,"path":"tags/Managed-Agents/"},{"name":"Dreaming","count":1,"path":"tags/Dreaming/"},{"name":"Outcomes","count":1,"path":"tags/Outcomes/"},{"name":"Coolify","count":1,"path":"tags/Coolify/"},{"name":"self-hosted","count":1,"path":"tags/self-hosted/"},{"name":"PaaS","count":1,"path":"tags/PaaS/"},{"name":"Productivity","count":1,"path":"tags/Productivity/"},{"name":"CrewAI","count":1,"path":"tags/CrewAI/"},{"name":"Multi-Agent","count":1,"path":"tags/Multi-Agent/"},{"name":"Encryption","count":1,"path":"tags/Encryption/"},{"name":"Mapping","count":1,"path":"tags/Mapping/"},{"name":"Template","count":1,"path":"tags/Template/"},{"name":"Schema","count":1,"path":"tags/Schema/"},{"name":"Production","count":1,"path":"tags/Production/"},{"name":"Operations","count":1,"path":"tags/Operations/"},{"name":"Analyzer","count":1,"path":"tags/Analyzer/"},{"name":"IK","count":1,"path":"tags/IK/"},{"name":"中文搜尋","count":1,"path":"tags/中文搜尋/"},{"name":"ELK Stack","count":1,"path":"tags/ELK-Stack/"},{"name":"Architecture","count":1,"path":"tags/Architecture/"},{"name":"Aggregation","count":1,"path":"tags/Aggregation/"},{"name":"Search","count":1,"path":"tags/Search/"},{"name":"internals","count":1,"path":"tags/internals/"},{"name":"Translog","count":1,"path":"tags/Translog/"},{"name":"Segment","count":1,"path":"tags/Segment/"},{"name":"Monitoring","count":1,"path":"tags/Monitoring/"},{"name":"CRUD","count":1,"path":"tags/CRUD/"},{"name":"bulk","count":1,"path":"tags/bulk/"},{"name":"alias","count":1,"path":"tags/alias/"},{"name":"REST API","count":1,"path":"tags/REST-API/"},{"name":"SpecKit","count":1,"path":"tags/SpecKit/"},{"name":"GH-300","count":1,"path":"tags/GH-300/"},{"name":"Responsible AI","count":1,"path":"tags/Responsible-AI/"},{"name":"工具遷移","count":1,"path":"tags/工具遷移/"},{"name":"前端","count":1,"path":"tags/前端/"},{"name":"skill","count":1,"path":"tags/skill/"},{"name":"AI 輔助開發","count":1,"path":"tags/AI-輔助開發/"},{"name":"開源專案","count":1,"path":"tags/開源專案/"},{"name":"Jira","count":1,"path":"tags/Jira/"},{"name":"Atlassian","count":1,"path":"tags/Atlassian/"},{"name":"微服務","count":1,"path":"tags/微服務/"},{"name":"系統設計","count":1,"path":"tags/系統設計/"},{"name":"後端開發","count":1,"path":"tags/後端開發/"},{"name":"Lightpanda","count":1,"path":"tags/Lightpanda/"},{"name":"Headless Browser","count":1,"path":"tags/Headless-Browser/"},{"name":"Zig","count":1,"path":"tags/Zig/"},{"name":"Web Scraping","count":1,"path":"tags/Web-Scraping/"},{"name":"ETF","count":1,"path":"tags/ETF/"},{"name":"台股","count":1,"path":"tags/台股/"},{"name":"美股","count":1,"path":"tags/美股/"},{"name":"Mag-7","count":1,"path":"tags/Mag-7/"},{"name":"財報","count":1,"path":"tags/財報/"},{"name":"Skill","count":1,"path":"tags/Skill/"},{"name":"心智模型","count":1,"path":"tags/心智模型/"},{"name":"決策工具","count":1,"path":"tags/決策工具/"},{"name":"Multica","count":1,"path":"tags/Multica/"},{"name":"Open CoDesign","count":1,"path":"tags/Open-CoDesign/"},{"name":"AI Design","count":1,"path":"tags/AI-Design/"},{"name":"Discord","count":1,"path":"tags/Discord/"},{"name":"GPT-5.5","count":1,"path":"tags/GPT-5-5/"},{"name":"OpenScreen","count":1,"path":"tags/OpenScreen/"},{"name":"Screen Recording","count":1,"path":"tags/Screen-Recording/"},{"name":"AI VTuber","count":1,"path":"tags/AI-VTuber/"},{"name":"Project AIRI","count":1,"path":"tags/Project-AIRI/"},{"name":"OpenCode","count":1,"path":"tags/OpenCode/"},{"name":"GPT","count":1,"path":"tags/GPT/"},{"name":"RTK","count":1,"path":"tags/RTK/"},{"name":"Token 優化","count":1,"path":"tags/Token-優化/"},{"name":"Sonatype Guide","count":1,"path":"tags/Sonatype-Guide/"},{"name":"依賴管理","count":1,"path":"tags/依賴管理/"},{"name":"Stanford AI Index","count":1,"path":"tags/Stanford-AI-Index/"},{"name":"AI產業","count":1,"path":"tags/AI產業/"},{"name":"工程師職涯","count":1,"path":"tags/工程師職涯/"},{"name":"AI透明度","count":1,"path":"tags/AI透明度/"},{"name":"就業市場","count":1,"path":"tags/就業市場/"},{"name":"API","count":1,"path":"tags/API/"},{"name":"TimesFM","count":1,"path":"tags/TimesFM/"},{"name":"時間序列","count":1,"path":"tags/時間序列/"},{"name":"基礎模型","count":1,"path":"tags/基礎模型/"},{"name":"ML","count":1,"path":"tags/ML/"},{"name":"Whisper","count":1,"path":"tags/Whisper/"},{"name":"Speech-to-Text","count":1,"path":"tags/Speech-to-Text/"},{"name":"Flash Attention","count":1,"path":"tags/Flash-Attention/"},{"name":"團隊合作","count":1,"path":"tags/團隊合作/"},{"name":"包棟民宿","count":1,"path":"tags/包棟民宿/"},{"name":"台中","count":1,"path":"tags/台中/"},{"name":"南投","count":1,"path":"tags/南投/"},{"name":"苗栗","count":1,"path":"tags/苗栗/"},{"name":"時事評論","count":1,"path":"tags/時事評論/"},{"name":"能源","count":1,"path":"tags/能源/"},{"name":"AI 基礎建設","count":1,"path":"tags/AI-基礎建設/"},{"name":"台灣","count":1,"path":"tags/台灣/"},{"name":"MacBook","count":1,"path":"tags/MacBook/"},{"name":"淡江大橋","count":1,"path":"tags/淡江大橋/"},{"name":"淡水","count":1,"path":"tags/淡水/"},{"name":"建築","count":1,"path":"tags/建築/"},{"name":"週末","count":1,"path":"tags/週末/"},{"name":"Claude Skills","count":1,"path":"tags/Claude-Skills/"},{"name":"居家辦公","count":1,"path":"tags/居家辦公/"},{"name":"人體工學","count":1,"path":"tags/人體工學/"},{"name":"日本","count":1,"path":"tags/日本/"},{"name":"黃金週","count":1,"path":"tags/黃金週/"},{"name":"Golden Week","count":1,"path":"tags/Golden-Week/"}];</script></body></html>
