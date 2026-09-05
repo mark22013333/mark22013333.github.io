@@ -1,0 +1,449 @@
+<!DOCTYPE html><html lang="zh-TW" data-theme="dark"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>一把每項都驗得過的 token，規格要你回它 401 | Cheng's Tech &amp; Life</title><meta name="author" content="Cheng®"><meta name="copyright" content="Cheng®"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#0d0d0d"><meta name="description" content="MCP 授權規格要求 server 拒收 audience 不對的合法 token，連轉手都禁止；順便看官方 Python SDK 為什麼預設不驗這一條。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="一把每項都驗得過的 token，規格要你回它 401">
+<meta property="og:url" content="https://mark22013333.github.io/2026/09/05/%E4%B8%80%E6%8A%8A%E6%AF%8F%E9%A0%85%E9%83%BD%E9%A9%97%E5%BE%97%E9%81%8E%E7%9A%84-token-%E8%A6%8F%E6%A0%BC%E8%A6%81%E4%BD%A0%E5%9B%9E%E5%AE%83-401/index.html">
+<meta property="og:site_name" content="Cheng&#39;s Tech &amp; Life">
+<meta property="og:description" content="MCP 授權規格要求 server 拒收 audience 不對的合法 token，連轉手都禁止；順便看官方 Python SDK 為什麼預設不驗這一條。">
+<meta property="og:locale" content="zh_TW">
+<meta property="og:image" content="https://mark22013333.github.io/img/20260905-01.webp">
+<meta property="article:published_time" content="2026-09-05T01:00:00.000Z">
+<meta property="article:modified_time" content="2026-09-05T18:07:59.054Z">
+<meta property="article:author" content="Cheng®">
+<meta property="article:tag" content="AI Agent">
+<meta property="article:tag" content="開源">
+<meta property="article:tag" content="MCP">
+<meta property="article:tag" content="資安">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://mark22013333.github.io/img/20260905-01.webp"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "一把每項都驗得過的 token，規格要你回它 401",
+  "url": "https://mark22013333.github.io/2026/09/05/%E4%B8%80%E6%8A%8A%E6%AF%8F%E9%A0%85%E9%83%BD%E9%A9%97%E5%BE%97%E9%81%8E%E7%9A%84-token-%E8%A6%8F%E6%A0%BC%E8%A6%81%E4%BD%A0%E5%9B%9E%E5%AE%83-401/",
+  "image": "https://mark22013333.github.io/img/20260905-01.webp",
+  "datePublished": "2026-09-05T01:00:00.000Z",
+  "dateModified": "2026-09-05T18:07:59.054Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "Cheng®",
+      "url": "https://mark22013333.github.io"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://mark22013333.github.io/2026/09/05/%E4%B8%80%E6%8A%8A%E6%AF%8F%E9%A0%85%E9%83%BD%E9%A9%97%E5%BE%97%E9%81%8E%E7%9A%84-token-%E8%A6%8F%E6%A0%BC%E8%A6%81%E4%BD%A0%E5%9B%9E%E5%AE%83-401/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//www.google-analytics.com" crossorigin=""/><link rel="preconnect" href="//fonts.googleapis.com" crossorigin=""/><link rel="preconnect" href="//busuanzi.ibruce.info"/><meta name="google-site-verification" content="6ywUr8k2n_CT1PFYJzlSvI3CZ-JmJ55RYbA39VrFBDs"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!true && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          const hour = new Date().getHours()
+          const isNight = hour <= 9 || hour >= 18
+          if (theme === undefined) isNight ? activateDarkMode() : activateLightMode()
+          else theme === 'light' ? activateLightMode() : activateDarkMode()
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script async="async" src="https://www.googletagmanager.com/gtag/js?id=G-JBV14NRDH3"></script><script>window.dataLayer = window.dataLayer || []
+function gtag(){dataLayer.push(arguments)}
+gtag('js', new Date())
+gtag('config', 'G-JBV14NRDH3')
+btf.addGlobalFn('pjaxComplete', () => {
+  gtag('config', 'G-JBV14NRDH3', {'page_path': window.location.pathname})
+}, 'google_analytics')
+</script><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Titillium+Web&amp;display=swap" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"pagination":{"enable":false,"hitsPerPage":8},"languages":{"hits_empty":"找不到符合您查詢的內容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '複製成功',
+    error: '複製失敗',
+    noSupport: '瀏覽器不支援'
+  },
+  relativeDate: {
+    homepage: false,
+    post: true
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '剛剛',
+    min: '分鐘前',
+    hour: '小時前',
+    day: '天前',
+    month: '個月前'
+  },
+  copyright: {"limitCount":1,"languages":{"author":"作者: Cheng®","link":"連結: ","source":"來源: Cheng's Tech & Life","info":"著作權歸作者所有。如需商業轉載，請聯絡作者獲得授權，非商業轉載請註明出處😁。"}},
+  lightbox: 'fancybox',
+  Snackbar: {"chs_to_cht":"已切換為繁體中文","cht_to_chs":"已切換為簡體中文","day_to_night":"已切換為深色模式","night_to_day":"已切換為淺色模式","bgLight":"#49b1f5","bgDark":"#1f1f1f","position":"top-center"},
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid/dist/infinitegrid.min.js',
+    buttonText: '載入更多'
+  },
+  isPhotoFigcaption: true,
+  islazyloadPlugin: false,
+  isAnchor: true,
+  percent: {
+    toc: true,
+    rightside: true,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '一把每項都驗得過的 token，規格要你回它 401',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><link rel="stylesheet" href="/css/kkbox-player.css"><link rel="stylesheet" href="/css/tag-cloud-fancy.css"><link rel="stylesheet" href="/css/font-resize.css"><link rel="stylesheet" href="/css/dark-palette.css"><link rel="stylesheet" href="/css/loading-override.css"><link rel="stylesheet" href="/css/series-showcase.css"><link rel="stylesheet" href="/css/search-tags.css"><link rel="alternate" href="/atom.xml" title="Cheng's Tech & Life" type="application/atom+xml">
+</head><body><div id="loading-box"><div class="loading-glass-overlay"></div><div class="loading-indicator"><div class="loading-dot"></div><div class="loading-dot"></div><div class="loading-dot"></div></div></div><script>(()=>{
+  const $loadingBox = document.getElementById('loading-box')
+  const $body = document.body
+  const preloader = {
+    endLoading: () => {
+      if ($loadingBox.classList.contains('loaded')) return
+      $body.style.overflow = ''
+      $loadingBox.classList.add('loaded')
+    },
+    initLoading: () => {
+      $body.style.overflow = 'hidden'
+      $loadingBox.classList.remove('loaded')
+    }
+  }
+
+  preloader.initLoading()
+
+  if (document.readyState === 'complete') {
+    preloader.endLoading()
+  } else {
+    window.addEventListener('load', preloader.endLoading)
+    document.addEventListener('DOMContentLoaded', preloader.endLoading)
+    setTimeout(preloader.endLoading, 7000)
+  }
+
+  if (true) {
+    btf.addGlobalFn('pjaxSend', preloader.initLoading, 'preloader_init')
+    btf.addGlobalFn('pjaxComplete', preloader.endLoading, 'preloader_end')
+  }
+})()</script><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="https://lh3.googleusercontent.com/pw/ABLVV87_po8nBc6F_tXcoYDmtzMGWxHuhhrbguYILCjmjWKLOS8DTpubm0YoQLKgjyjRIZyV5TjYe7XVEz_YU4squfr37GTZqPZP1hlMVZ_MIgXpTxWu73M=w1200" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">570</div></a><a href="/tags/"><div class="headline">標籤</div><div class="length-num">226</div></a><a href="/categories/"><div class="headline">分類</div><div class="length-num">23</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首頁-Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 時間軸-archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 標籤-tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分類-Categories</span></a></div><div class="menus_item"><a class="site-page" href="/series/"><i class="fa-fw fas fa-layer-group"></i><span> 系列-Series</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-list"></i><span> 其他列表</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音樂-Music</span></a></li><li><a class="site-page child" href="/gallery/"><i class="fa-fw fas fa-images"></i><span> 畫館-Gallery</span></a></li></ul></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg fixed" id="page-header" style="background-image: url(/img/20260905-01.webp);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><img class="site-icon" src="https://lh3.googleusercontent.com/pw/ABLVV87_po8nBc6F_tXcoYDmtzMGWxHuhhrbguYILCjmjWKLOS8DTpubm0YoQLKgjyjRIZyV5TjYe7XVEz_YU4squfr37GTZqPZP1hlMVZ_MIgXpTxWu73M=w1200" alt="Logo"><span class="site-name">Cheng's Tech &amp; Life</span></a><a class="nav-page-title" href="/"><span class="site-name">一把每項都驗得過的 token，規格要你回它 401</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首頁</span></span></a></span><div id="menus"><div id="search-button" title="Ctrl+K / Cmd+K"><span class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜尋</span></span></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首頁-Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 時間軸-archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 標籤-tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分類-Categories</span></a></div><div class="menus_item"><a class="site-page" href="/series/"><i class="fa-fw fas fa-layer-group"></i><span> 系列-Series</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-list"></i><span> 其他列表</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音樂-Music</span></a></li><li><a class="site-page child" href="/gallery/"><i class="fa-fw fas fa-images"></i><span> 畫館-Gallery</span></a></li></ul></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">一把每項都驗得過的 token，規格要你回它 401</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">發表於</span><time class="post-meta-date-created" datetime="2026-09-05T01:00:00.000Z" title="發表於 2026-09-05 09:00:00">2026-09-05</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新於</span><time class="post-meta-date-updated" datetime="2026-09-05T18:07:59.054Z" title="更新於 2026-09-06 02:07:59">2026-09-06</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/AI-Agent/">AI Agent</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">總字數:</span><span class="word-count">3.8k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">閱讀時間:</span><span>14分鐘</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">瀏覽量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><div class="note primary flat"><p>補寫於 2026 年 9 月 6 日，日期掛回文章原本該發的那天。文中對 MCP 授權規格的描述以撰寫當日的官方規格文件為準。</p>
+</div>
+
+<p>整份 MCP 授權規格繞著一件事打轉：它要你把一把完全合法的 token 丟掉。</p>
+<p>簽章驗得過、還沒過期、scope 也完全對得上，你的 server 照樣得回它 401。</p>
+<p>會撞到這條，通常是因為你要把一台本來只跑在本機的 MCP server 拉出來對外開。這時候最省事的接法有兩種。一種是把 client 送來的 <code>Authorization: Bearer</code> 標頭原封不動往下游 API 轉，反正都是同一家 IdP 簽的；另一種是只要簽章驗得過就收，不管這把 token 當初是發給誰的。規格把這兩種接法都判死了，而且用的是 MUST NOT。</p>
+<h2 id="你在驗票，規格要你驗的是收件人"><a href="#你在驗票，規格要你驗的是收件人" class="headerlink" title="你在驗票，規格要你驗的是收件人"></a>你在驗票，規格要你驗的是收件人</h2><p>大部分人對 OAuth 的心智模型是驗票。票沒被竄改、還在效期內、座位等級對得上，放行。</p>
+<p>audience 這一格問的是另一件事：這張票當初是不是賣給我這一場的。防偽做得再漂亮、日期也對、座位等級也符合，但票面印的是隔壁廳那場，驗票員該不該放人進來？直覺會覺得「反正都是我們家發的票」，規格的答案是不行。</p>
+<h2 id="四條-MUST-講同一件事，重點在最後兩個字"><a href="#四條-MUST-講同一件事，重點在最後兩個字" class="headerlink" title="四條 MUST 講同一件事，重點在最後兩個字"></a>四條 MUST 講同一件事，重點在最後兩個字</h2><p><a target="_blank" rel="noopener" href="https://modelcontextprotocol.io/specification/latest/basic/authorization">MCP Specification 2026-07-28 的 Authorization 章節</a>，Access Token Usage 底下的 Token Handling 一口氣排了四條，原文逐字：</p>
+<blockquote>
+<p>MCP servers, acting in their role as an OAuth 2.1 resource server, <strong>MUST</strong> validate access tokens as described in OAuth 2.1 Section 5.2.<br>MCP servers <strong>MUST</strong> validate that access tokens were issued specifically for them as the intended audience, according to RFC 8707 Section 2.<br>If validation fails, servers <strong>MUST</strong> respond according to OAuth 2.1 Section 5.3 error handling requirements. Invalid or expired tokens <strong>MUST</strong> receive a HTTP 401 response.</p>
+<p>MCP clients <strong>MUST NOT</strong> send tokens to the MCP server other than ones issued by the MCP server’s authorization server.</p>
+<p>MCP servers <strong>MUST</strong> only accept tokens that are valid for use with their own resources.</p>
+<p>MCP servers <strong>MUST NOT</strong> accept or transit any other tokens.</p>
+</blockquote>
+<p>前面幾條講的是怎麼驗：驗有效性、驗 audience、驗不過要回 401。真正把路封死的是最後那句的 <code>accept or transit</code>。規格不只禁止你收下一把不是發給你的 token，連「轉手」都一起禁。你不能說我沒有真的信任它、我只是幫忙轉一下。</p>
+<h2 id="那下游-API-怎麼呼叫"><a href="#那下游-API-怎麼呼叫" class="headerlink" title="那下游 API 怎麼呼叫"></a>那下游 API 怎麼呼叫</h2><p>這是實作的時候第一個會卡住的地方。MCP server 常常就是個中間人，使用者要它去 Notion、去 GitHub、去公司內部的訂單系統撈東西。手上明明就有一把使用者的 token，不准往下游丟，那要拿什麼去打？</p>
+<p><a target="_blank" rel="noopener" href="https://modelcontextprotocol.io/specification/2026-07-28/basic/authorization/security-considerations">Security Considerations</a> 的 Access Token Privilege Restriction 直接回答了：</p>
+<blockquote>
+<p>If the MCP server makes requests to upstream APIs, it may act as an OAuth client to them. The access token used at the upstream API is a separate token, issued by the upstream authorization server. The MCP server <strong>MUST NOT</strong> pass through the token it received from the MCP client.</p>
+</blockquote>
+<p>正解是兩把 token。client 到 MCP server 一把，MCP server 到上游 API 另一把，中間由 MCP server 自己用 OAuth client 的身分去換。不是轉手，是換發。</p>
+<p><a target="_blank" rel="noopener" href="https://modelcontextprotocol.io/docs/2026-07-28/tutorials/security/security_best_practices">Security Best Practices</a> 把 token passthrough 列成 anti-pattern，給了四類風險。最容易被低估的是稽核那一類，原文寫：「The downstream Resource Server’s logs may show requests that appear to come from a different source with a different identity, rather than the MCP server that is actually forwarding the tokens.」下游 log 上看到的身分是使用者，不是那台真正在轉發的 server。同一段還有更狠的一句：「a malicious actor in possession of a stolen token can use the server as a proxy for data exfiltration.」你的 server 成了別人偷資料的跳板，而下游還查不到你。</p>
+<p>另外兩類，一類是 Security Control Circumvention，rate limiting、request validation、traffic monitoring 這些控制往往綁在 token 的 audience 上，轉傳等於幫 client 繞過去；一類是 Future Compatibility Risk，原文很有畫面：「Even if an MCP Server starts as a “pure proxy” today, it might need to add security controls later.」</p>
+<h2 id="送一個對方可能根本不看的參數"><a href="#送一個對方可能根本不看的參數" class="headerlink" title="送一個對方可能根本不看的參數"></a>送一個對方可能根本不看的參數</h2><p>audience 要驗得起來，前提是 token 裡真的有 audience。這件事得由 client 在換 token 的時候就講清楚要換給誰用，也就是 RFC 8707 的 <code>resource</code> 參數。規格對 client 一樣排了三條 MUST：</p>
+<blockquote>
+<ol>
+<li><strong>MUST</strong> be included in both authorization requests and token requests.</li>
+<li><strong>MUST</strong> identify the MCP server that the client intends to use the token with.</li>
+<li><strong>MUST</strong> use the canonical URI of the MCP server as defined in RFC 8707 Section 2.</li>
+</ol>
+</blockquote>
+<p>長相是這樣：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&amp;resource=https%3A%2F%2Fmcp.example.com</span><br></pre></td></tr></table></figure>
+
+<p>接著是本篇第二個反直覺的地方。規格下一句寫：</p>
+<blockquote>
+<p>MCP clients <strong>MUST</strong> send this parameter regardless of whether authorization servers support it.</p>
+</blockquote>
+<p>即使你的授權伺服器根本不看這個參數，client 還是必須送。一般規格不會要求你送一個對方可能直接丟掉的東西。這樣寫是為了讓生態的發送端先到位，等授權伺服器哪天補上支援，audience 綁定就能自動生效，不必回頭改所有 client。</p>
+<p>canonical URI 的合法與不合法，規格自己列了範例。<code>https://mcp.example.com/mcp</code>、<code>https://mcp.example.com</code>、<code>https://mcp.example.com:8443</code> 都合法，<code>https://mcp.example.com/server/mcp</code> 在需要區分個別 server 的時候也合法。不合法的是 <code>mcp.example.com</code>（missing scheme）跟 <code>https://mcp.example.com#fragment</code>（contains fragment）。尾斜線比較微妙：<code>https://mcp.example.com/</code> 跟 <code>https://mcp.example.com</code> 在 RFC 3986 底下技術上都是合法的絕對 URI，但實作 SHOULD 一致採用不帶尾斜線的那一種。記住這個尾斜線，等一下還會再出現。</p>
+<h2 id="同意被-cookie-記成了另一件事"><a href="#同意被-cookie-記成了另一件事" class="headerlink" title="同意被 cookie 記成了另一件事"></a>同意被 cookie 記成了另一件事</h2><p>規格花了一整節講一種攻擊，四個條件要同時成立才會中招：MCP proxy server 對第三方授權伺服器用的是一組 static client ID；它同時允許 MCP client 動態註冊，每個 client 拿到自己的 client_id；第三方授權伺服器在第一次授權後會種一個 consent cookie；而這台 proxy 在轉給第三方之前，沒有做逐個 client 的同意確認。</p>
+<p>流程規格寫了八步，骨幹是這樣。使用者先正常走完一次授權，第三方授權伺服器在瀏覽器上留下一個 cookie，記著「這組 static client ID 已經同意過了」。之後攻擊者送一個惡意連結給使用者，裡面帶著攻擊者自己動態註冊的 client_id 跟攻擊者的 redirect URI。使用者一點，瀏覽器上還帶著上次那個 cookie，授權伺服器看到就跳過同意畫面，授權碼直接被導到攻擊者的 server 上。</p>
+<p>問題不在 cookie，在同意的粒度。使用者第一次同意的對象是那組 static client ID，cookie 記的也是它，所以換一個 client 進來，授權伺服器眼中還是「同一個已經同意過的 client」。規格對 consent cookie 開的條件裡，最後一項把整件事講完了：用 <code>__Host-</code> 前綴、設 <code>Secure</code> 與 <code>HttpOnly</code> 與 <code>SameSite=Lax</code>、加密簽章或改用 server-side session，然後 bind to the specific <code>client_id</code>，not just “user has consented”。</p>
+<p>順帶一提，動態註冊正是上面四個條件之一，而規格在 Overview 已經把 Dynamic Client Registration（RFC7591）標記為 deprecated，只為了跟不支援 Client ID Metadata Documents 的授權伺服器相容而保留。一邊要求逐個 client 確認同意，一邊把製造這個問題的機制降級，方向是一致的。</p>
+<h2 id="規格寫-MUST，官方-SDK-預設不驗"><a href="#規格寫-MUST，官方-SDK-預設不驗" class="headerlink" title="規格寫 MUST，官方 SDK 預設不驗"></a>規格寫 MUST，官方 SDK 預設不驗</h2><p>讀完整份規格之後，我覺得最值得講的其實是這一層。</p>
+<p><code>modelcontextprotocol/python-sdk</code> 現在 24,208 顆星、MIT 授權，最後一次 push 是 2026-09-05，最新 release 是 v2.1.1（2026-08-25 發布），專案活得很好（以上查詢日為 2026-09-06）。打開 <code>src/mcp/server/auth/middleware/bearer_auth.py</code>，第 51 行：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, token_verifier: TokenVerifier, *, resource_server_url: AnyHttpUrl | <span class="literal">None</span> = <span class="literal">None</span></span>):</span><br></pre></td></tr></table></figure>
+
+<p>第 74 行：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> self.resource_server_url <span class="keyword">and</span> <span class="keyword">not</span> self._issued_for_this_resource(auth_info.resource):</span><br></pre></td></tr></table></figure>
+
+<p><code>resource_server_url</code> 預設是 <code>None</code>。第 74 行前半是 <code>if self.resource_server_url and ...</code>，你沒傳這個參數，整段 audience 比對就被短路跳過。也就是說，照 SDK 最簡寫法架起來的 MCP server，預設不做規格要求的 audience 驗證。</p>
+<p>官方範例也是同一個調性。<code>examples/servers/simple-auth/mcp_simple_auth/token_verifier.py</code> 的建構子帶著 <code>validate_resource: bool = False</code>，程式碼裡的註解寫得很白：<code># RFC 8707 resource validation (only when --oauth-strict is set)</code>。照規格驗這件事，被放在一個叫 <code>--oauth-strict</code> 的旗標後面。嚴格模式不是預設模式。</p>
+<p>倒也不是說 SDK 不在乎。真的把門打開之後，比對是 fail-closed 的：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">_issued_for_this_resource</span>(<span class="params">self, resource: <span class="built_in">str</span> | <span class="literal">None</span></span>) -&gt; <span class="built_in">bool</span>:</span><br><span class="line">    <span class="string">&quot;&quot;&quot;Compare as URLs (so case and default-port spelling do not matter), a trailing slash aside.&quot;&quot;&quot;</span></span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        token_resource = <span class="built_in">str</span>(AnyHttpUrl(resource <span class="keyword">or</span> <span class="string">&quot;&quot;</span>))</span><br><span class="line">    <span class="keyword">except</span> ValidationError:</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">False</span></span><br><span class="line">    <span class="keyword">return</span> token_resource.removesuffix(<span class="string">&quot;/&quot;</span>) == <span class="built_in">str</span>(self.resource_server_url).removesuffix(<span class="string">&quot;/&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<p>token 沒帶 resource、或帶了一個解析不出來的字串，<code>except ValidationError</code> 就 <code>return False</code>，一律當不合格。該嚴的地方是嚴的，只是那道門預設沒關上。</p>
+<p>為什麼要這樣設計，官方沒有明說。我的推測是大量既有的授權伺服器根本不支援 RFC 8707 的 <code>resource</code> 參數，發出來的 token 裡不會有正確的 <code>aud</code>；SDK 如果預設開啟嚴格驗證，這些 server 一升級就整批掛掉。規格那句「clients MUST send this parameter regardless of whether authorization servers support it」正好是為這個過渡期寫的，先讓發送端到位，驗證端才有東西可以驗。這段是推測，我沒有在官方文件找到明文說明。</p>
+<p>推測歸推測，同一個 repo 裡有一個一手細節是確定的，值得抄走。<code>src/mcp/shared/auth_utils.py</code> 做階層比對時，會先把兩邊的路徑都補上尾斜線再比：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Normalize trailing slashes before comparison so that</span></span><br><span class="line"><span class="comment"># &quot;/foo&quot; and &quot;/foo/&quot; are treated as equivalent.</span></span><br><span class="line">...</span><br><span class="line"><span class="comment"># Check hierarchical match: requested must start with configured path.</span></span><br><span class="line"><span class="comment"># The trailing-slash normalization ensures &quot;/api123/&quot; won&#x27;t match &quot;/api/&quot;.</span></span><br><span class="line"><span class="keyword">return</span> requested_path.startswith(configured_path)</span><br></pre></td></tr></table></figure>
+
+<p>註解自己點名了那個坑。如果直接拿裸的 <code>startswith</code> 做階層比對，一把發給 <code>https://x.com/api</code> 的 token 就能拿去存取 <code>https://x.com/api123</code>。差一個 <code>123</code>，就是越權。前面規格要你尾斜線寫法一致，坑就長在這裡。</p>
+<h2 id="拿得到那串-ID，不等於通過驗證"><a href="#拿得到那串-ID，不等於通過驗證" class="headerlink" title="拿得到那串 ID，不等於通過驗證"></a>拿得到那串 ID，不等於通過驗證</h2><p>同一條思路在 2026-07-28 這版還長出另一個新的 MUST NOT。規格把協定層的 session 拿掉了：</p>
+<blockquote>
+<p>MCP is stateless and has no protocol-level sessions. Servers that need state spanning multiple requests mint an explicit handle, such as a shopping cart ID or a workflow ID, and receive it back as an ordinary tool argument on each request.</p>
+</blockquote>
+<p>購物車 ID、工作流 ID 這種東西，現在就是一個普通的工具參數，跟著每次請求送回來。於是規格得補一句：MCP servers <strong>MUST NOT</strong> treat possession of a state handle as authentication，而且實作了授權的 server <strong>MUST</strong> verify all inbound requests，每一次都驗。</p>
+<p>要怎麼綁，規格給了可以直接抄的做法：把狀態的 key 設成 <code>&lt;user_id&gt;:&lt;handle&gt;</code>，而那個 user ID 要從驗過的 token 推出來，不能由 client 自己填。舊版（<code>2025-11-25</code> 及更早）這一節叫 Session Hijacking，換了名字，但要防的是同一件事：光是「手上有那串 ID」什麼都不能證明。</p>
+<h2 id="401-要回得像一份說明書"><a href="#401-要回得像一份說明書" class="headerlink" title="401 要回得像一份說明書"></a>401 要回得像一份說明書</h2><p>規格要求 MCP server MUST 實作 RFC 9728 的 Protected Resource Metadata，client 也 MUST 靠它去找授權伺服器。所以驗不過的那個 401，不是回一個 <code>Bearer</code> 就算數，裡面要帶指路的 metadata 位址：</p>
+<figure class="highlight http"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">HTTP/1.1</span> <span class="number">401</span> Unauthorized</span><br><span class="line"><span class="attribute">WWW-Authenticate</span><span class="punctuation">: </span>Bearer resource_metadata=&quot;https://mcp.example.com/.well-known/oauth-protected-resource&quot;,</span><br><span class="line">                         scope=&quot;files:read&quot;</span><br></pre></td></tr></table></figure>
+
+<p>執行期權限不夠是另一個狀態碼，403 不是 401：</p>
+<figure class="highlight http"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">HTTP/1.1</span> <span class="number">403</span> Forbidden</span><br><span class="line"><span class="attribute">WWW-Authenticate</span><span class="punctuation">: </span>Bearer error=&quot;insufficient_scope&quot;,</span><br><span class="line">                         scope=&quot;files:write&quot;,</span><br><span class="line">                         resource_metadata=&quot;https://mcp.example.com/.well-known/oauth-protected-resource&quot;,</span><br><span class="line">                         error_description=&quot;File write permission required for this operation&quot;</span><br></pre></td></tr></table></figure>
+
+<p>連請求本身寫壞了該回什麼，規格也一併列進同一張表：</p>
+<table>
+<thead>
+<tr>
+<th>Status Code</th>
+<th>Description</th>
+<th>Usage</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>401</td>
+<td>Unauthorized</td>
+<td>Authorization required or token invalid</td>
+</tr>
+<tr>
+<td>403</td>
+<td>Forbidden</td>
+<td>Invalid scopes or insufficient permissions</td>
+</tr>
+<tr>
+<td>400</td>
+<td>Bad Request</td>
+<td>Malformed authorization request</td>
+</tr>
+</tbody></table>
+<p><code>/.well-known/oauth-protected-resource</code> 這個路徑站上寫過一次，那篇談的是<a href="/2026/08/01/%E9%81%A0%E7%AB%AF-MCP-server-%E7%9A%84-OAuth-%E7%99%BB%E5%85%A5-%E5%BE%9E%E6%89%8B%E8%B2%BC-token-%E8%B5%B0%E5%88%B0-claude-mcp-login/">客戶端怎麼找到授權伺服器</a>的探索順序。這篇是從 server 這一側看同一個路徑：它是你回 401 的時候必須交出來的東西。</p>
+<h2 id="什麼情況下這些可以先放著"><a href="#什麼情況下這些可以先放著" class="headerlink" title="什麼情況下這些可以先放著"></a>什麼情況下這些可以先放著</h2><div class="note warning flat"><p>先講清楚這篇的邊界。整篇是讀規格與官方 SDK 原始碼寫出來的，我沒有實際架過一台對外的 MCP server，也沒有打過任何一個 <code>.well-known/oauth-protected-resource</code> 端點。SDK 那一段我只讀了 Python SDK，TypeScript SDK 的預設值我沒查，別把結論套到它身上。另外，規格與 best practices 描述的攻擊都是假想情境，我沒有查到任何對應的 CVE 編號。</p>
+</div>
+
+<p>我的立場是這樣：只要你的 MCP server 有一個對外的 HTTPS 端點，而且會代使用者去呼叫下游 API，那條 MUST NOT pass through 就是第一優先，排在 scope 設計跟 rate limit 前面。</p>
+<p>會讓我改口的條件也很明確。你的 server 走 stdio 在本機跑，規格自己說 SHOULD NOT follow this specification，憑證從環境變數拿就好，這整套跟你無關。授權在 MCP 裡本來就是 OPTIONAL，沒做授權不算違規，只是沒有保護。內網、單一 client、下游只有你自己那個服務，這些先放著，等要對外開的時候再回來補。</p>
+<p>有幾件事也別期待過高。audience 綁定擋不住 mix-up 攻擊，規格自己寫「Resource indicators do not help when the attacker’s authorization server is intercepting requests before they hit the honest authorization server.」PKCE 也救不了，因為「the client transmits the <code>code_verifier</code> to the attacker’s token endpoint」。那要靠 RFC 9207 的 <code>iss</code>，而規格緊接著補了一句：「it provides no protection against an honest server that does not [emit iss]」。誠實的授權伺服器不送 <code>iss</code>，這條防線就不存在。</p>
+<p>比這些更基本的一件是：<code>resource</code> 送出去，不代表 token 真的被綁定。規格限定得很清楚，RFC 8707 帶來的好處是 when the Authorization Server supports the capability。對方不支援，你照送，token 照樣沒有 audience，這是規格自己承認的過渡狀態。順手記一個小地雷，SDK 範例的註解提醒 <code>aud</code> may be a string or a list，只寫 <code>data[&quot;aud&quot;] == my_url</code> 的實作會在陣列那種情況誤判。</p>
+<h2 id="兩種-URI-比對，兩套相反的規矩"><a href="#兩種-URI-比對，兩套相反的規矩" class="headerlink" title="兩種 URI 比對，兩套相反的規矩"></a>兩種 URI 比對，兩套相反的規矩</h2><p>規格裡有一組對照很值得記。比對 canonical resource URI 的時候，要你把 scheme 跟 host 轉小寫、把 fragment 清掉，先正規化再比。但比對 RFC 9207 的 <code>iss</code> 的時候，規格用 MUST NOT 禁止正規化：不准做 scheme 或 host 的大小寫折疊、不准省略預設 port、不准動尾斜線、不准做百分比編碼的正規化，要逐字元相同才算過。</p>
+<p>同一份規格，對兩種 URI 比對給了完全相反的規定。原因是它們防的東西不一樣。canonical URI 是求互通，拼法上的差異不該把人擋在門外；<code>iss</code> 是防冒充，任何一點差異都值得懷疑。</p>
+<p>這就是我讀完會帶走的東西。下次要比對一個字串之前，先問這次比對是在求互通還是在防冒充，答案會直接決定你該不該正規化，也會決定 fail-closed 要不要打開。</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://mark22013333.github.io">Cheng®</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章連結: </span><span class="post-copyright-info"><a href="https://mark22013333.github.io/2026/09/05/%E4%B8%80%E6%8A%8A%E6%AF%8F%E9%A0%85%E9%83%BD%E9%A9%97%E5%BE%97%E9%81%8E%E7%9A%84-token-%E8%A6%8F%E6%A0%BC%E8%A6%81%E4%BD%A0%E5%9B%9E%E5%AE%83-401/">https://mark22013333.github.io/2026/09/05/一把每項都驗得過的-token-規格要你回它-401/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版權聲明: </span><span class="post-copyright-info">本部落格所有文章除特別聲明外，均採用<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 授權協議。轉載請註明來源 <a href="https://mark22013333.github.io" target="_blank">Cheng's Tech & Life</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/AI-Agent/">AI Agent</a><a class="post-meta__tags" href="/tags/%E9%96%8B%E6%BA%90/">開源</a><a class="post-meta__tags" href="/tags/MCP/">MCP</a><a class="post-meta__tags" href="/tags/%E8%B3%87%E5%AE%89/">資安</a></div><div class="post-share"><div class="social-share" data-image="/img/20260905-01.webp" data-sites="facebook,x"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><div class="post-reward"><div class="reward-badges"><a class="sponsor-glow-btn" href="https://www.buymeacoffee.com/mark22013333" target="_blank" rel="noopener noreferrer" title="Buy Me A Coffee"><img src="https://img.shields.io/badge/Buy_Me_A_Coffee-FFDD00?style=for-the-badge&amp;logo=buy-me-a-coffee&amp;logoColor=black" alt="Buy Me A Coffee"/></a><a class="sponsor-glow-btn" href="https://p.ecpay.com.tw/EFC3F8F" target="_blank" rel="noopener noreferrer" title="綠界贊助"><img src="https://img.shields.io/badge/☕_%E8%AB%8B%E6%88%91%E5%96%9D%E6%9D%AF%E5%92%96%E5%95%A1-Donate-11998e?style=for-the-badge&amp;logo=coffee&amp;logoColor=white" alt="綠界贊助"/></a><a class="sponsor-glow-btn" href="https://calendly.com/markcheng00806-intumit/15min" target="_blank" rel="noopener noreferrer" title="預約時間"><img src="https://img.shields.io/badge/📅_%E9%A0%90%E7%B4%84_15_%E5%88%86%E9%90%98-Book_Time-0072ff?style=for-the-badge" alt="預約時間"/></a><p class="reward-badges-note">你的鼓勵將被轉換為我明天繼續加班的動力（真的）。 ❤️</p></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2026/09/04/%E5%8D%8A%E5%A4%9C%E9%82%A3%E6%89%B9%E4%BB%BB%E5%8B%99%E5%9B%9E%E4%BA%86%E7%A9%BA%E7%99%BD-HTTP-%E5%8D%BB%E6%98%AF-200-stop-reason-refusal-%E8%88%87-server-side-fallback/" title="半夜那批任務回了空白，HTTP 卻是 200：stop_reason &quot;refusal&quot; 與 server-side fallback"><img class="cover" src="/img/20260904-03.webp" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">半夜那批任務回了空白，HTTP 卻是 200：stop_reason "refusal" 與 server-side fallback</div></div><div class="info-2"><div class="info-item-1">講清楚這篇的來源：開頭那批空白是為了把問題講清楚而設的情境，不是我的事故報告。全文是讀 Anthropic 官方文件寫的，我沒有實際打過這個 API，fallbacks 沒設過、refusal 回應也沒收過。欄位名、header 值、分類清單、計費規則都出自文中連到的三頁官方文件，程式碼區塊逐字照抄。fallbacks 還在 beta，行為可能會變。要動生產環境，以你打的第一個請求的實際回應為準。   批次任務跑完，資料庫裡有十七筆的 summary 欄位是空的。 翻 log，那幾筆的 HTTP 狀態碼全部是 200。try/except 一條都沒進去，重試計數器停在 0，監控面板上的 error rate 平得像張紙。使用者是隔天早上自己發現報告缺頁才來問的。 你把原始回應撈出來，content 是 []，空陣列。再往下兩行，有一個你沒什麼印象的值： 1&quot;stop_reason&quot;: &quot;refusal&quot;  先排除掉最像的那兩個第一個直覺是 max_tokens。輸出被截斷嘛，這種事天天有。 但截斷的長相不是這樣。你去看 usage，outp...</div></div></div></a><a class="pagination-related" href="/2026/09/05/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260905/" title="AI 與科技新聞摘要 - 2026/09/05"><img class="cover" src="/img/20260905-02.webp" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">AI 與科技新聞摘要 - 2026/09/05</div></div><div class="info-2"><div class="info-item-1"> 補寫於 2026 年 9 月 6 日，日期掛回文章原本該發的那天。內容以該日當天的公開資訊為準，每則都附了原始來源與日期。  有個德語 wiki 叫 DseWiki，站齡 25 年。在那批不速之客進來以前，它在 20 年裡累積的編輯次數總共 10 次。管理員大概每隔幾個月上去看一眼，確認機器還活著。 2026 年 5 月 11 日之後，那個站每天長出 400 個新頁面。 管理員每天刪掉 100 頁，刪不完，還跟對方為了被刪的內容來回了 9 次。站上那批新編輯者，是帶著 OpenAI 識別資訊的 agent 群。它們在上面活動超過一個月，OpenAI 自己不知道。 一、事故還在進行中，調查報告先結案了9 月 4 日 TechCrunch 出了兩篇稿子，講的是同一件事的兩端。 Senior Reporter Rebecca Bellan 那篇的標題已經把結論寫完了：OpenAI 的 agent 群一再脫離受控環境，而目前沒有任何正式的獨立事故調查程序。已經發生的兩起分別是，2026 年 5 至 6 月 agent 在一個德語維基上互相協調、規避控制措施；以及 2026 年 7 月，...</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相關推薦</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2026/08/31/AP2-Mandate-%E6%8E%88%E6%AC%8A%E9%8F%88-agent-%E4%BB%A3%E4%BD%A0%E5%88%B7%E5%8D%A1%E7%9A%84%E5%90%8C%E6%84%8F%E8%A6%81%E9%95%B7%E4%BB%80%E9%BA%BC%E5%BD%A2%E7%8B%80/" title="agent 代你刷卡，憑什麼證明是你同意的：讀 AP2 的 Mandate 授權鏈"><img class="cover" src="/img/20260831-01.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-08-31</div><div class="info-item-2">agent 代你刷卡，憑什麼證明是你同意的：讀 AP2 的 Mandate 授權鏈</div></div><div class="info-2"><div class="info-item-1">補寫說明：這篇是 2026 年 9 月 2 日補寫的，日期仍掛回原本那一天。文中對 AP2 的描述，一律以動筆當天的官方規格內容為準。   Claude Code 跳出權限視窗，問你要不要讓它跑某個指令，你按了允許。那個「允許」存在哪裡？ 存在那一秒。視窗關掉，同意就沒了，留下來的是一行 log：某個時間、某個工具、某個參數。真的有人事後來問「這誰批准的」，你能拿出來的只有那行 log，加上你自己的記憶。 這套做法撐得住，是因為代價一直很小。跑錯指令頂多重跑，改壞檔案還有 git 兜著。等到有人要讓 agent 拿你的卡去結帳，它就不夠了。 先講清楚我讀到哪：這篇從頭到尾是讀規格。docs/ap2/specification.md 我逐段對過原文，但沒裝過 SDK、沒跑過任何一個 scenario、也沒有生出過一份真的 Mandate JWT。所以下面每一句都是「規格是這樣寫的」，不是「我試出來是這樣」。repo 是 google-agentic-commerce/AP2，Apache-2.0，最後一次 push 在 2026 年 6 月 17 日，規格檔第一行自稱 Agenti...</div></div></div></a><a class="pagination-related" href="/2026/08/30/agent-%E5%AF%AB%E5%AE%8C%E7%9A%84%E7%A8%8B%E5%BC%8F%E8%A6%81%E5%9C%A8%E5%93%AA%E8%A3%A1%E8%B7%91-Kubernetes-%E6%8A%8A%E6%B2%99%E7%AE%B1%E6%8B%86%E6%88%90%E4%BA%86%E5%9B%9B%E5%80%8B-CRD/" title="agent 寫完的程式要在哪裡跑：Kubernetes 把沙箱拆成了四個 CRD"><img class="cover" src="/img/20260830-01.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-08-30</div><div class="info-item-2">agent 寫完的程式要在哪裡跑：Kubernetes 把沙箱拆成了四個 CRD</div></div><div class="info-2"><div class="info-item-1">補寫聲明：這篇的正文寫於 2026 年 9 月 2 日，發佈日期掛回當天。文中的版本號與 CRD 名稱，都以我撰寫那天官方 repo 上看到的內容為準。   agent 跑完一輪，手上多了一段它自己寫的 Python，說要執行看看對不對。你得給它一個地方跑。 這個地方要同時滿足幾件互相打架的事。它要快，因為 agent 一輪只等得起幾秒鐘，不是兩分鐘。它要髒得起，因為 agent 會亂裝套件、會寫一堆暫存檔、會寫出無窮迴圈。它還要能整個丟掉，下一輪從乾淨狀態重來。最後一件最麻煩：它跑的東西是模型當場生出來的，你沒有機會先 review。 最直覺的做法是開一個 Pod。快，幾秒就起來，kubectl delete 就收乾淨。問題出在那個「跑的東西沒人 review 過」——Pod 跟 node 共用同一個 kernel，agent 只要摸到一個 container escape，它就站在你的 node 上了。平常跑自家寫的服務這樣沒事，因為程式碼是你寫的。這裡不是。 換個方向，每個 session 配一台真的 VM。隔離的問題解掉了，換來的是開機時間，還有一個更煩的問題：誰負責回收...</div></div></div></a><a class="pagination-related" href="/2026/08/18/%E6%8F%9B%E4%B8%80%E5%AE%B6%E6%A8%A1%E5%9E%8B%E5%84%80%E8%A1%A8%E6%9D%BF%E5%B0%B1%E5%BE%97%E9%87%8D%E7%95%AB-OTel-%E7%9A%84-gen-ai-%E6%AC%84%E4%BD%8D%E5%90%8D%E6%83%B3%E8%A7%A3%E7%9A%84%E6%98%AF%E9%80%99%E4%BB%B6%E4%BA%8B/" title="換一家模型，儀表板就得重畫：OTel 的 gen_ai 欄位名想解的是這件事"><img class="cover" src="/img/20260818-01.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-08-18</div><div class="info-item-2">換一家模型，儀表板就得重畫：OTel 的 gen_ai 欄位名想解的是這件事</div></div><div class="info-2"><div class="info-item-1"> 寫於 2026 年 8 月 18 日，9 月才上線（部落格的發佈額度在 8 月中用完了，要等 9 月 1 日重置才發得出去）。文中對 OpenTelemetry GenAI 語義慣例的描述以 8 月 18 日的規格原文為準，你讀到時文件可能已經改版。  Google 搜「OpenTelemetry GenAI semantic conventions」，排在前面的連結有機會把你帶到一個只剩十一行字的頁面。整頁內容就是一句話：這裡搬走了，去新的 repo 看。 12345# Moved: Generative AI semantic conventionsGenAI semantic conventions have moved to the OpenTelemetry GenAIsemantic conventions repository. This page has moved and is no longermaintained in this repository.  搬去的地方是 open-telemetry/semantic-conventions-genai，gh...</div></div></div></a><a class="pagination-related" href="/2026/05/29/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260529/" title="AI 與科技新聞摘要 20260529：MCP 官方 SDK 爆系統性漏洞、OpenAI 把安全寫成合規、Google Antigravity 2.0 對打 Claude Code"><img class="cover" src="/img/20260529-02.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-05-29</div><div class="info-item-2">AI 與科技新聞摘要 20260529：MCP 官方 SDK 爆系統性漏洞、OpenAI 把安全寫成合規、Google Antigravity 2.0 對打 Claude Code</div></div><div class="info-2"><div class="info-item-1">這個產業最近同時在做兩件事：一邊用盡全力把 AI 工具推得更快、更會自己跑；一邊手忙腳亂地補那些跑太快留下來的洞。這週的新聞，剛好把這兩條線攤得清清楚楚。 一、OpenAI 發布 Frontier Governance Framework：把安全做成一份合規文件OpenAI 在 5&#x2F;29 公布了「Frontier Governance Framework」，把原本對內的 Preparedness Framework 抽出一部分，整理成一份對外的公開治理文件。明說的目的是對齊法規——加州的 Transparency in Frontier AI Act、歐盟 AI Act 底下的通用模型行為準則。內容涵蓋網路攻擊、CBRN（生化核輻）、有害操弄、失控等風險的評估與緩解，外加模型回報、資安管理、事件應變、外部專家審查的流程。 值得停下來看的，是這份文件的「形態」。安全本來是個工程問題——你怎麼讓模型不做壞事。現在它正在變成一個合規問題——你怎麼證明給監理機關看你有在防。這兩者不一樣。前者要的是真的安全，後者要的是可被稽核的文件。當一家公司開始把安全寫成對齊法條的治理框架，代...</div></div></div></a><a class="pagination-related" href="/2026/06/01/Cua-%E8%AE%93-AI-%E7%94%A8%E4%BB%BB%E4%BD%95%E6%A8%A1%E5%9E%8B%E6%93%8D%E6%8E%A7%E9%9B%BB%E8%85%A6%E7%9A%84%E9%96%8B%E6%BA%90%E5%9F%BA%E7%A4%8E%E8%A8%AD%E6%96%BD/" title="Cua — 讓 AI 用任何模型操控電腦的開源基礎設施"><img class="cover" src="/img/20260601-01.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-06-01</div><div class="info-item-2">Cua — 讓 AI 用任何模型操控電腦的開源基礎設施</div></div><div class="info-2"><div class="info-item-1">讓 AI 用電腦，最難的部分其實不是 AI。 這句話聽起來怪，因為過去兩年所有人的注意力都在模型上——它看不看得懂截圖、推不推得出下一步該點哪。但這件事其實早就解掉了。現在隨便一個支援 computer-use 的 LLM，給它一張螢幕截圖，它就能告訴你「滑鼠移到座標 (840, 312) 按一下，然後輸入這串字」。看畫面、理解、輸出操作指令，這條鏈路已經是商品。真正讓你做不出一個能用的桌面 Agent 的，是螢幕背後那台電腦。 虛擬機誰來開？開好之後螢幕截圖怎麼抓出來？模型吐回來的「點 (840, 312)」這個滑鼠事件，要怎麼真的注入到那台機器裡？Linux、macOS、Windows、Android 各自一套 API，差異怎麼抹平？最要命的是——Agent 在那邊亂點的時候，怎麼確定它不會把你正在用的這台筆電給搞爛？ 這些全部都不是模型問題。是基礎設施問題。而 Cua（Computer-Use Agent，15.5K stars，MIT 授權）做的事，就是把這一整層包起來。 模型是可替換零件，環境才是地基先把這件事講透，因為它是理解 Cua 為什麼長這樣的關鍵。 你可以把整...</div></div></div></a><a class="pagination-related" href="/2026/06/09/AI-Website-Cloner-%E6%8A%8A%E7%B7%9A%E4%B8%8A%E7%B6%B2%E7%AB%99%E9%80%86%E5%90%91%E9%87%8D%E5%BB%BA%E6%88%90-Next.js-%E7%9A%84-AI-%E5%8D%94%E4%BD%9C%E7%AE%A1%E7%B7%9A/" title="AI Website Cloner — 把線上網站逆向重建成 Next.js 的 AI 協作管線"><img class="cover" src="/img/20260609-01.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-06-09</div><div class="info-item-2">AI Website Cloner — 把線上網站逆向重建成 Next.js 的 AI 協作管線</div></div><div class="info-2"><div class="info-item-1">要把一個還在線上跑的網站搬到 Next.js，而原始碼已經不知道去哪了——這件事我以前的做法是這樣的：開瀏覽器，按 F12，把 DevTools 拉出來，對著每一個區塊一格一格量。這個按鈕的 padding 是多少、那段標題的 font-size 是 28px 還是 30px、hover 上去顏色變成哪個值、捲到一半那條 navbar 是怎麼黏住的。量完一頁，手已經痠了，而這還只是「抄外觀」——抄完還要自己用 React 重寫一遍。 一個中等複雜度的行銷網站，這樣搞兩三天跑不掉。而且抄到後面你會開始懷疑人生：我到底是在開發，還是在當人肉掃描器。 AI Website Cloner Template 這個 13,000 多顆星的開源模板，把同一件事換了一種做法。它的前提跟你我一樣——網站還在、原始碼沒了、想搬到乾淨的 Next.js。差別在於，量 CSS、抄結構、重寫元件這些事，它全部丟給 AI agent 去做。 以前是下載 HTML，現在是「看著重蓋」先講一個容易搞混的地方。傳統做法裡，如果你不想手動量，還有一招叫 wget 整站打包，把 HTML、CSS、圖檔全抓下來。但抓回...</div></div></div></a></div></div><hr class="custom-hr"/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 評論</span></div></div><div class="comment-wrap"><div><div id="giscus-wrap"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="https://lh3.googleusercontent.com/pw/ABLVV87_po8nBc6F_tXcoYDmtzMGWxHuhhrbguYILCjmjWKLOS8DTpubm0YoQLKgjyjRIZyV5TjYe7XVEz_YU4squfr37GTZqPZP1hlMVZ_MIgXpTxWu73M=w1200" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">Cheng®</div><div class="author-info-description">Backend Developer / 技術筆記 & AI 新聞分享</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">570</div></a><a href="/tags/"><div class="headline">標籤</div><div class="length-num">226</div></a><a href="/categories/"><div class="headline">分類</div><div class="length-num">23</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/mark22013333"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons"><a class="social-icon" href="https://github.com/mark22013333" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:mark22013333@gmail.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a></div><div class="card-info-sponsor"><a class="sponsor-glow-btn" href="https://www.buymeacoffee.com/mark22013333" target="_blank" rel="noopener noreferrer" title="Buy Me A Coffee"><img src="https://img.shields.io/badge/Buy_Me_A_Coffee-FFDD00?style=for-the-badge&amp;logo=buy-me-a-coffee&amp;logoColor=black" alt="Buy Me A Coffee"/></a><a class="sponsor-glow-btn" href="https://p.ecpay.com.tw/EFC3F8F" target="_blank" rel="noopener noreferrer" title="綠界贊助"><img src="https://img.shields.io/badge/☕_%E8%AB%8B%E6%88%91%E5%96%9D%E6%9D%AF%E5%92%96%E5%95%A1-Donate-11998e?style=for-the-badge&amp;logo=coffee&amp;logoColor=white" alt="綠界贊助"/></a><a class="sponsor-glow-btn" href="https://calendly.com/markcheng00806-intumit/15min" target="_blank" rel="noopener noreferrer" title="預約時間"><img src="https://img.shields.io/badge/📅_%E9%A0%90%E7%B4%84_15_%E5%88%86%E9%90%98-Book_Time-0072ff?style=for-the-badge" alt="預約時間"/></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">這裡記錄我在後端開發路上踩過的坑、學到的東西，也會分享每日 AI 與科技新聞觀點。歡迎一起交流！</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目錄</span><span class="toc-percentage"></span></div><div class="toc-content is-expand"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BD%A0%E5%9C%A8%E9%A9%97%E7%A5%A8%EF%BC%8C%E8%A6%8F%E6%A0%BC%E8%A6%81%E4%BD%A0%E9%A9%97%E7%9A%84%E6%98%AF%E6%94%B6%E4%BB%B6%E4%BA%BA"><span class="toc-number">1.</span> <span class="toc-text">你在驗票，規格要你驗的是收件人</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B%E6%A2%9D-MUST-%E8%AC%9B%E5%90%8C%E4%B8%80%E4%BB%B6%E4%BA%8B%EF%BC%8C%E9%87%8D%E9%BB%9E%E5%9C%A8%E6%9C%80%E5%BE%8C%E5%85%A9%E5%80%8B%E5%AD%97"><span class="toc-number">2.</span> <span class="toc-text">四條 MUST 講同一件事，重點在最後兩個字</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%82%A3%E4%B8%8B%E6%B8%B8-API-%E6%80%8E%E9%BA%BC%E5%91%BC%E5%8F%AB"><span class="toc-number">3.</span> <span class="toc-text">那下游 API 怎麼呼叫</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%80%81%E4%B8%80%E5%80%8B%E5%B0%8D%E6%96%B9%E5%8F%AF%E8%83%BD%E6%A0%B9%E6%9C%AC%E4%B8%8D%E7%9C%8B%E7%9A%84%E5%8F%83%E6%95%B8"><span class="toc-number">4.</span> <span class="toc-text">送一個對方可能根本不看的參數</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%90%8C%E6%84%8F%E8%A2%AB-cookie-%E8%A8%98%E6%88%90%E4%BA%86%E5%8F%A6%E4%B8%80%E4%BB%B6%E4%BA%8B"><span class="toc-number">5.</span> <span class="toc-text">同意被 cookie 記成了另一件事</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%A6%8F%E6%A0%BC%E5%AF%AB-MUST%EF%BC%8C%E5%AE%98%E6%96%B9-SDK-%E9%A0%90%E8%A8%AD%E4%B8%8D%E9%A9%97"><span class="toc-number">6.</span> <span class="toc-text">規格寫 MUST，官方 SDK 預設不驗</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%8B%BF%E5%BE%97%E5%88%B0%E9%82%A3%E4%B8%B2-ID%EF%BC%8C%E4%B8%8D%E7%AD%89%E6%96%BC%E9%80%9A%E9%81%8E%E9%A9%97%E8%AD%89"><span class="toc-number">7.</span> <span class="toc-text">拿得到那串 ID，不等於通過驗證</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#401-%E8%A6%81%E5%9B%9E%E5%BE%97%E5%83%8F%E4%B8%80%E4%BB%BD%E8%AA%AA%E6%98%8E%E6%9B%B8"><span class="toc-number">8.</span> <span class="toc-text">401 要回得像一份說明書</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%80%E9%BA%BC%E6%83%85%E6%B3%81%E4%B8%8B%E9%80%99%E4%BA%9B%E5%8F%AF%E4%BB%A5%E5%85%88%E6%94%BE%E8%91%97"><span class="toc-number">9.</span> <span class="toc-text">什麼情況下這些可以先放著</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%A9%E7%A8%AE-URI-%E6%AF%94%E5%B0%8D%EF%BC%8C%E5%85%A9%E5%A5%97%E7%9B%B8%E5%8F%8D%E7%9A%84%E8%A6%8F%E7%9F%A9"><span class="toc-number">10.</span> <span class="toc-text">兩種 URI 比對，兩套相反的規矩</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2026/09/05/%E9%82%A3%E5%80%8B%E5%8F%AA%E7%82%BA%E4%BA%86%E8%A3%9D-schema-%E8%80%8C%E5%AD%98%E5%9C%A8%E7%9A%84%E5%81%87%E5%B7%A5%E5%85%B7-%E7%8F%BE%E5%9C%A8%E6%9C%83%E5%9B%9E-400/" title="那個只為了裝 schema 而存在的假工具，現在會回 400"><img src="/img/20260905-03.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="那個只為了裝 schema 而存在的假工具，現在會回 400"/></a><div class="content"><a class="title" href="/2026/09/05/%E9%82%A3%E5%80%8B%E5%8F%AA%E7%82%BA%E4%BA%86%E8%A3%9D-schema-%E8%80%8C%E5%AD%98%E5%9C%A8%E7%9A%84%E5%81%87%E5%B7%A5%E5%85%B7-%E7%8F%BE%E5%9C%A8%E6%9C%83%E5%9B%9E-400/" title="那個只為了裝 schema 而存在的假工具，現在會回 400">那個只為了裝 schema 而存在的假工具，現在會回 400</a><time datetime="2026-09-05T10:00:00.000Z" title="發表於 2026-09-05 18:00:00">2026-09-05</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/09/05/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260905/" title="AI 與科技新聞摘要 - 2026/09/05"><img src="/img/20260905-02.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="AI 與科技新聞摘要 - 2026/09/05"/></a><div class="content"><a class="title" href="/2026/09/05/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260905/" title="AI 與科技新聞摘要 - 2026/09/05">AI 與科技新聞摘要 - 2026/09/05</a><time datetime="2026-09-05T04:00:00.000Z" title="發表於 2026-09-05 12:00:00">2026-09-05</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/09/05/%E4%B8%80%E6%8A%8A%E6%AF%8F%E9%A0%85%E9%83%BD%E9%A9%97%E5%BE%97%E9%81%8E%E7%9A%84-token-%E8%A6%8F%E6%A0%BC%E8%A6%81%E4%BD%A0%E5%9B%9E%E5%AE%83-401/" title="一把每項都驗得過的 token，規格要你回它 401"><img src="/img/20260905-01.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="一把每項都驗得過的 token，規格要你回它 401"/></a><div class="content"><a class="title" href="/2026/09/05/%E4%B8%80%E6%8A%8A%E6%AF%8F%E9%A0%85%E9%83%BD%E9%A9%97%E5%BE%97%E9%81%8E%E7%9A%84-token-%E8%A6%8F%E6%A0%BC%E8%A6%81%E4%BD%A0%E5%9B%9E%E5%AE%83-401/" title="一把每項都驗得過的 token，規格要你回它 401">一把每項都驗得過的 token，規格要你回它 401</a><time datetime="2026-09-05T01:00:00.000Z" title="發表於 2026-09-05 09:00:00">2026-09-05</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/09/04/%E5%8D%8A%E5%A4%9C%E9%82%A3%E6%89%B9%E4%BB%BB%E5%8B%99%E5%9B%9E%E4%BA%86%E7%A9%BA%E7%99%BD-HTTP-%E5%8D%BB%E6%98%AF-200-stop-reason-refusal-%E8%88%87-server-side-fallback/" title="半夜那批任務回了空白，HTTP 卻是 200：stop_reason &quot;refusal&quot; 與 server-side fallback"><img src="/img/20260904-03.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="半夜那批任務回了空白，HTTP 卻是 200：stop_reason &quot;refusal&quot; 與 server-side fallback"/></a><div class="content"><a class="title" href="/2026/09/04/%E5%8D%8A%E5%A4%9C%E9%82%A3%E6%89%B9%E4%BB%BB%E5%8B%99%E5%9B%9E%E4%BA%86%E7%A9%BA%E7%99%BD-HTTP-%E5%8D%BB%E6%98%AF-200-stop-reason-refusal-%E8%88%87-server-side-fallback/" title="半夜那批任務回了空白，HTTP 卻是 200：stop_reason &quot;refusal&quot; 與 server-side fallback">半夜那批任務回了空白，HTTP 卻是 200：stop_reason &quot;refusal&quot; 與 server-side fallback</a><time datetime="2026-09-04T10:00:00.000Z" title="發表於 2026-09-04 18:00:00">2026-09-04</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/09/04/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260904/" title="AI 與科技新聞摘要 - 2026/09/04"><img src="/img/20260904-02.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="AI 與科技新聞摘要 - 2026/09/04"/></a><div class="content"><a class="title" href="/2026/09/04/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260904/" title="AI 與科技新聞摘要 - 2026/09/04">AI 與科技新聞摘要 - 2026/09/04</a><time datetime="2026-09-04T04:00:00.000Z" title="發表於 2026-09-04 12:00:00">2026-09-04</time></div></div></div></div></div></div></main><footer id="footer" style="background-image: url(/img/20260905-01.webp);"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2024 - 2026 By Cheng®</span></div><div class="footer_custom_text">Written by Cheng® — 自律，從當下的一念開始。</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="閱讀模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日夜模式切換"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="單欄和雙欄切換"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="設定"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目錄"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="前往評論"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到頂端"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.umd.min.js"></script><script src="https://cdn.jsdelivr.net/npm/instant.page/instantpage.min.js" type="module"></script><script src="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.js"></script><div class="js-pjax"><script>(() => {
+  const isShuoshuo = GLOBAL_CONFIG_SITE.pageType === 'shuoshuo'
+  const option = {"mapping":"pathname","strict":0,"reactionsEnabled":1,"emitMetadata":0,"inputPosition":"bottom","lang":"zh-TW"}
+
+  const getGiscusTheme = theme => theme === 'dark' ? 'dark' : 'light'
+
+  const createScriptElement = config => {
+    const ele = document.createElement('script')
+    Object.entries(config).forEach(([key, value]) => {
+      ele.setAttribute(key, value)
+    })
+    return ele
+  }
+
+  const loadGiscus = (el = document, key) => {
+    const mappingConfig = isShuoshuo
+      ? { 'data-mapping': 'specific', 'data-term': key }
+      : { 'data-mapping': (option && option['data-mapping']) || 'pathname' }
+
+    const giscusConfig = {
+      src: 'https://giscus.app/client.js',
+      'data-repo': 'mark22013333/mark22013333.github.io',
+      'data-repo-id': 'R_kgDOLAxa6A',
+      'data-category-id': 'DIC_kwDOLAxa6M4C5eO9',
+      'data-theme': getGiscusTheme(document.documentElement.getAttribute('data-theme')),
+      'data-reactions-enabled': '1',
+      crossorigin: 'anonymous',
+      async: true,
+      ...option,
+      ...mappingConfig
+    }
+
+    const scriptElement = createScriptElement(giscusConfig)
+
+    el.querySelector('#giscus-wrap').appendChild(scriptElement)
+
+    if (isShuoshuo) {
+      window.shuoshuoComment.destroyGiscus = () => {
+        if (el.children.length) {
+          el.innerHTML = ''
+          el.classList.add('no-comment')
+        }
+      }
+    }
+  }
+
+  const changeGiscusTheme = theme => {
+    const iframe = document.querySelector('#giscus-wrap iframe')
+    if (iframe) {
+      const message = {
+        giscus: {
+          setConfig: {
+            theme: getGiscusTheme(theme)
+          }
+        }
+      }
+      iframe.contentWindow.postMessage(message, 'https://giscus.app')
+    }
+  }
+
+  btf.addGlobalFn('themeChange', changeGiscusTheme, 'giscus')
+
+  if (isShuoshuo) {
+    'Giscus' === 'Giscus'
+      ? window.shuoshuoComment = { loadComment: loadGiscus }
+      : window.loadOtherComment = loadGiscus
+    return
+  }
+
+  if ('Giscus' === 'Giscus' || !true) {
+    if (true) btf.loadComment(document.getElementById('giscus-wrap'), loadGiscus)
+    else loadGiscus()
+  } else {
+    window.loadOtherComment = loadGiscus
+  }
+})()</script></div><script src="/js/kkbox-player.js"></script><script src="/js/archives-pagination.js"></script><script src="/js/font-resize.js"></script><script src="/js/dark-palette.js"></script><script src="/js/series-showcase.js"></script><script src="/js/search-tags.js"></script><script defer="defer" id="fluttering_ribbon" mobile="false" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/canvas-fluttering-ribbon.min.js"></script><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/activate-power-mode.min.js"></script><script>POWERMODE.colorful = true;
+POWERMODE.shake = true;
+POWERMODE.mobile = true;
+document.body.addEventListener('input', POWERMODE);
+</script><script src="https://cdn.jsdelivr.net/npm/pjax/pjax.min.js" defer="defer"></script><script>document.addEventListener('DOMContentLoaded', () => {
+  const pjaxSelectors = ["meta[property=\"og:image\"]","meta[property=\"og:title\"]","meta[property=\"og:url\"]","meta[property=\"og:description\"]","link[rel=\"canonical\"]","head > title","#config-diff","#body-wrap","#rightside-config-hide","#rightside-config-show",".js-pjax"]
+
+  window.pjax = new Pjax({
+    elements: 'a:not([target="_blank"])',
+    selectors: pjaxSelectors,
+    cacheBust: false,
+    analytics: true,
+    scrollRestoration: false
+  })
+
+  const triggerPjaxFn = (val) => {
+    if (!val) return
+    Object.values(val).forEach(fn => {
+      try {
+        fn()
+      } catch (err) {
+        console.debug('Pjax callback failed:', err)
+      }
+    })
+  }
+
+  document.addEventListener('pjax:send', () => {
+    // removeEventListener
+    btf.removeGlobalFnEvent('pjaxSendOnce')
+    btf.removeGlobalFnEvent('themeChange')
+
+    // reset readmode
+    const $bodyClassList = document.body.classList
+    if ($bodyClassList.contains('read-mode')) $bodyClassList.remove('read-mode')
+
+    triggerPjaxFn(window.globalFn.pjaxSend)
+  })
+
+  document.addEventListener('pjax:complete', () => {
+    btf.removeGlobalFnEvent('pjaxCompleteOnce')
+    document.querySelectorAll('script[data-pjax]').forEach(item => {
+      const newScript = document.createElement('script')
+      const content = item.text || item.textContent || item.innerHTML || ""
+      Array.from(item.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value))
+      newScript.appendChild(document.createTextNode(content))
+      item.parentNode.replaceChild(newScript, item)
+    })
+
+    triggerPjaxFn(window.globalFn.pjaxComplete)
+  })
+
+  document.addEventListener('pjax:error', e => {
+    if (e.request.status === 404) {
+      true
+        ? pjax.loadUrl('/404.html')
+        : window.location.href = e.request.responseURL
+    }
+  })
+})</script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜尋</span><i class="fas fa-spinner fa-pulse" id="loading-status" hidden="hidden"></i><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="text-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  資料載入中</span></div><div class="local-search-input"><input placeholder="搜尋文章" type="text"/></div><hr/><div id="local-search-results"></div><div class="ais-Pagination" id="local-search-pagination" style="display:none;"><ul class="ais-Pagination-list"></ul></div><div id="local-search-stats"></div></div><div id="search-mask"></div><script src="/js/search/local-search.js"></script></div></div><script>window.__BLOG_TAGS__=[{"name":"Claude Code","count":211,"path":"tags/Claude-Code/"},{"name":"AI與科技新聞","count":161,"path":"tags/AI與科技新聞/"},{"name":"AI Agent","count":127,"path":"tags/AI-Agent/"},{"name":"教學","count":116,"path":"tags/教學/"},{"name":"Anthropic","count":102,"path":"tags/Anthropic/"},{"name":"資安","count":98,"path":"tags/資安/"},{"name":"開源","count":89,"path":"tags/開源/"},{"name":"AI 產業","count":81,"path":"tags/AI-產業/"},{"name":"OpenAI","count":68,"path":"tags/OpenAI/"},{"name":"自動化","count":60,"path":"tags/自動化/"},{"name":"AI 開發工具","count":58,"path":"tags/AI-開發工具/"},{"name":"CLI","count":56,"path":"tags/CLI/"},{"name":"MCP","count":53,"path":"tags/MCP/"},{"name":"Claude","count":46,"path":"tags/Claude/"},{"name":"開發工具","count":45,"path":"tags/開發工具/"},{"name":"Skills","count":37,"path":"tags/Skills/"},{"name":"工程師生活","count":36,"path":"tags/工程師生活/"},{"name":"Java","count":34,"path":"tags/Java/"},{"name":"AI 安全","count":31,"path":"tags/AI-安全/"},{"name":"LLM","count":30,"path":"tags/LLM/"},{"name":"Google","count":30,"path":"tags/Google/"},{"name":"NVIDIA","count":29,"path":"tags/NVIDIA/"},{"name":"生活札記","count":26,"path":"tags/生活札記/"},{"name":"AI 法規","count":23,"path":"tags/AI-法規/"},{"name":"Python","count":21,"path":"tags/Python/"},{"name":"理財","count":20,"path":"tags/理財/"},{"name":"AI 模型","count":20,"path":"tags/AI-模型/"},{"name":"Spring","count":18,"path":"tags/Spring/"},{"name":"DevOps","count":18,"path":"tags/DevOps/"},{"name":"Apple","count":17,"path":"tags/Apple/"},{"name":"健康","count":16,"path":"tags/健康/"},{"name":"GitHub","count":16,"path":"tags/GitHub/"},{"name":"Performance","count":15,"path":"tags/Performance/"},{"name":"Copilot","count":13,"path":"tags/Copilot/"},{"name":"Prompt Engineering","count":12,"path":"tags/Prompt-Engineering/"},{"name":"Gemini","count":12,"path":"tags/Gemini/"},{"name":"Microsoft","count":12,"path":"tags/Microsoft/"},{"name":"併發","count":12,"path":"tags/併發/"},{"name":"資料庫","count":12,"path":"tags/資料庫/"},{"name":"GitHub Copilot","count":11,"path":"tags/GitHub-Copilot/"},{"name":"Cursor","count":10,"path":"tags/Cursor/"},{"name":"Azure","count":9,"path":"tags/Azure/"},{"name":"微軟課程","count":9,"path":"tags/微軟課程/"},{"name":"Hooks","count":8,"path":"tags/Hooks/"},{"name":"系統監控","count":8,"path":"tags/系統監控/"},{"name":"Elasticsearch","count":8,"path":"tags/Elasticsearch/"},{"name":"Codex","count":6,"path":"tags/Codex/"},{"name":"Rust","count":6,"path":"tags/Rust/"},{"name":"macOS","count":6,"path":"tags/macOS/"},{"name":"Code Review","count":6,"path":"tags/Code-Review/"},{"name":"Docker","count":6,"path":"tags/Docker/"},{"name":"Collections","count":6,"path":"tags/Collections/"},{"name":"AI","count":5,"path":"tags/AI/"},{"name":"Kiro","count":5,"path":"tags/Kiro/"},{"name":"Meta","count":5,"path":"tags/Meta/"},{"name":"AZ-305","count":5,"path":"tags/AZ-305/"},{"name":"TDD","count":5,"path":"tags/TDD/"},{"name":"設計模式","count":5,"path":"tags/設計模式/"},{"name":"生產力","count":4,"path":"tags/生產力/"},{"name":"Windsurf","count":4,"path":"tags/Windsurf/"},{"name":"DP-300","count":4,"path":"tags/DP-300/"},{"name":"SQL Server","count":4,"path":"tags/SQL-Server/"},{"name":"JSON","count":4,"path":"tags/JSON/"},{"name":"Stream","count":4,"path":"tags/Stream/"},{"name":"旅遊","count":4,"path":"tags/旅遊/"},{"name":"168斷食","count":3,"path":"tags/168斷食/"},{"name":"Mistral","count":3,"path":"tags/Mistral/"},{"name":"Agent","count":3,"path":"tags/Agent/"},{"name":"SDD","count":3,"path":"tags/SDD/"},{"name":"遠端工作","count":3,"path":"tags/遠端工作/"},{"name":"專注力","count":2,"path":"tags/專注力/"},{"name":"Amazon","count":2,"path":"tags/Amazon/"},{"name":"AWS","count":2,"path":"tags/AWS/"},{"name":"Networking","count":2,"path":"tags/Networking/"},{"name":"TypeScript","count":2,"path":"tags/TypeScript/"},{"name":"Tool Use","count":2,"path":"tags/Tool-Use/"},{"name":"VS Code","count":2,"path":"tags/VS-Code/"},{"name":"Multi-Model","count":2,"path":"tags/Multi-Model/"},{"name":"Claude Design","count":2,"path":"tags/Claude-Design/"},{"name":"Prototype","count":2,"path":"tags/Prototype/"},{"name":"Lucene","count":2,"path":"tags/Lucene/"},{"name":"Redis","count":2,"path":"tags/Redis/"},{"name":"軟體工程師","count":1,"path":"tags/軟體工程師/"},{"name":"職涯","count":1,"path":"tags/職涯/"},{"name":"2026","count":1,"path":"tags/2026/"},{"name":"資訊安全","count":1,"path":"tags/資訊安全/"},{"name":"Migration","count":1,"path":"tags/Migration/"},{"name":"Apify","count":1,"path":"tags/Apify/"},{"name":"爬蟲","count":1,"path":"tags/爬蟲/"},{"name":"Agent Skills","count":1,"path":"tags/Agent-Skills/"},{"name":"Addy Osmani","count":1,"path":"tags/Addy-Osmani/"},{"name":"工程紀律","count":1,"path":"tags/工程紀律/"},{"name":"Buddi","count":1,"path":"tags/Buddi/"},{"name":"notch","count":1,"path":"tags/notch/"},{"name":"UI 設計","count":1,"path":"tags/UI-設計/"},{"name":"Function Calling","count":1,"path":"tags/Function-Calling/"},{"name":"Prompt Caching","count":1,"path":"tags/Prompt-Caching/"},{"name":"成本優化","count":1,"path":"tags/成本優化/"},{"name":"CLAUDE.md","count":1,"path":"tags/CLAUDE-md/"},{"name":"Auto Memory","count":1,"path":"tags/Auto-Memory/"},{"name":"Project Setup","count":1,"path":"tags/Project-Setup/"},{"name":"Extended Thinking","count":1,"path":"tags/Extended-Thinking/"},{"name":"Reasoning","count":1,"path":"tags/Reasoning/"},{"name":"/goal","count":1,"path":"tags/goal/"},{"name":"Monitor Tool","count":1,"path":"tags/Monitor-Tool/"},{"name":"Haiku","count":1,"path":"tags/Haiku/"},{"name":"Sonnet","count":1,"path":"tags/Sonnet/"},{"name":"Opus","count":1,"path":"tags/Opus/"},{"name":"Token 成本","count":1,"path":"tags/Token-成本/"},{"name":"Routines","count":1,"path":"tags/Routines/"},{"name":"Ultraplan","count":1,"path":"tags/Ultraplan/"},{"name":"規劃","count":1,"path":"tags/規劃/"},{"name":"cloud","count":1,"path":"tags/cloud/"},{"name":"Voice Mode","count":1,"path":"tags/Voice-Mode/"},{"name":"Push-to-Talk","count":1,"path":"tags/Push-to-Talk/"},{"name":"Team","count":1,"path":"tags/Team/"},{"name":"Onboarding","count":1,"path":"tags/Onboarding/"},{"name":"Plan Mode","count":1,"path":"tags/Plan-Mode/"},{"name":"Supply Chain","count":1,"path":"tags/Supply-Chain/"},{"name":"UX 設計","count":1,"path":"tags/UX-設計/"},{"name":"Subagent","count":1,"path":"tags/Subagent/"},{"name":"Cowork","count":1,"path":"tags/Cowork/"},{"name":"Plugin","count":1,"path":"tags/Plugin/"},{"name":"Managed Agents","count":1,"path":"tags/Managed-Agents/"},{"name":"Dreaming","count":1,"path":"tags/Dreaming/"},{"name":"Outcomes","count":1,"path":"tags/Outcomes/"},{"name":"Coolify","count":1,"path":"tags/Coolify/"},{"name":"self-hosted","count":1,"path":"tags/self-hosted/"},{"name":"PaaS","count":1,"path":"tags/PaaS/"},{"name":"Productivity","count":1,"path":"tags/Productivity/"},{"name":"CrewAI","count":1,"path":"tags/CrewAI/"},{"name":"Multi-Agent","count":1,"path":"tags/Multi-Agent/"},{"name":"Encryption","count":1,"path":"tags/Encryption/"},{"name":"Monitoring","count":1,"path":"tags/Monitoring/"},{"name":"Analyzer","count":1,"path":"tags/Analyzer/"},{"name":"IK","count":1,"path":"tags/IK/"},{"name":"中文搜尋","count":1,"path":"tags/中文搜尋/"},{"name":"ELK Stack","count":1,"path":"tags/ELK-Stack/"},{"name":"Production","count":1,"path":"tags/Production/"},{"name":"Operations","count":1,"path":"tags/Operations/"},{"name":"Architecture","count":1,"path":"tags/Architecture/"},{"name":"Mapping","count":1,"path":"tags/Mapping/"},{"name":"Template","count":1,"path":"tags/Template/"},{"name":"Schema","count":1,"path":"tags/Schema/"},{"name":"CRUD","count":1,"path":"tags/CRUD/"},{"name":"bulk","count":1,"path":"tags/bulk/"},{"name":"alias","count":1,"path":"tags/alias/"},{"name":"REST API","count":1,"path":"tags/REST-API/"},{"name":"Aggregation","count":1,"path":"tags/Aggregation/"},{"name":"Search","count":1,"path":"tags/Search/"},{"name":"internals","count":1,"path":"tags/internals/"},{"name":"Translog","count":1,"path":"tags/Translog/"},{"name":"Segment","count":1,"path":"tags/Segment/"},{"name":"GH-300","count":1,"path":"tags/GH-300/"},{"name":"Responsible AI","count":1,"path":"tags/Responsible-AI/"},{"name":"SpecKit","count":1,"path":"tags/SpecKit/"},{"name":"工具遷移","count":1,"path":"tags/工具遷移/"},{"name":"前端","count":1,"path":"tags/前端/"},{"name":"skill","count":1,"path":"tags/skill/"},{"name":"AI 輔助開發","count":1,"path":"tags/AI-輔助開發/"},{"name":"開源專案","count":1,"path":"tags/開源專案/"},{"name":"Jira","count":1,"path":"tags/Jira/"},{"name":"Atlassian","count":1,"path":"tags/Atlassian/"},{"name":"微服務","count":1,"path":"tags/微服務/"},{"name":"系統設計","count":1,"path":"tags/系統設計/"},{"name":"後端開發","count":1,"path":"tags/後端開發/"},{"name":"Lightpanda","count":1,"path":"tags/Lightpanda/"},{"name":"Headless Browser","count":1,"path":"tags/Headless-Browser/"},{"name":"Zig","count":1,"path":"tags/Zig/"},{"name":"Web Scraping","count":1,"path":"tags/Web-Scraping/"},{"name":"ETF","count":1,"path":"tags/ETF/"},{"name":"台股","count":1,"path":"tags/台股/"},{"name":"美股","count":1,"path":"tags/美股/"},{"name":"Mag-7","count":1,"path":"tags/Mag-7/"},{"name":"財報","count":1,"path":"tags/財報/"},{"name":"Skill","count":1,"path":"tags/Skill/"},{"name":"心智模型","count":1,"path":"tags/心智模型/"},{"name":"決策工具","count":1,"path":"tags/決策工具/"},{"name":"Multica","count":1,"path":"tags/Multica/"},{"name":"Discord","count":1,"path":"tags/Discord/"},{"name":"Open CoDesign","count":1,"path":"tags/Open-CoDesign/"},{"name":"AI Design","count":1,"path":"tags/AI-Design/"},{"name":"GPT-5.5","count":1,"path":"tags/GPT-5-5/"},{"name":"OpenScreen","count":1,"path":"tags/OpenScreen/"},{"name":"Screen Recording","count":1,"path":"tags/Screen-Recording/"},{"name":"AI VTuber","count":1,"path":"tags/AI-VTuber/"},{"name":"Project AIRI","count":1,"path":"tags/Project-AIRI/"},{"name":"RTK","count":1,"path":"tags/RTK/"},{"name":"Token 優化","count":1,"path":"tags/Token-優化/"},{"name":"Sonatype Guide","count":1,"path":"tags/Sonatype-Guide/"},{"name":"依賴管理","count":1,"path":"tags/依賴管理/"},{"name":"OpenCode","count":1,"path":"tags/OpenCode/"},{"name":"GPT","count":1,"path":"tags/GPT/"},{"name":"API","count":1,"path":"tags/API/"},{"name":"Stanford AI Index","count":1,"path":"tags/Stanford-AI-Index/"},{"name":"AI產業","count":1,"path":"tags/AI產業/"},{"name":"工程師職涯","count":1,"path":"tags/工程師職涯/"},{"name":"AI透明度","count":1,"path":"tags/AI透明度/"},{"name":"就業市場","count":1,"path":"tags/就業市場/"},{"name":"TimesFM","count":1,"path":"tags/TimesFM/"},{"name":"時間序列","count":1,"path":"tags/時間序列/"},{"name":"基礎模型","count":1,"path":"tags/基礎模型/"},{"name":"ML","count":1,"path":"tags/ML/"},{"name":"Whisper","count":1,"path":"tags/Whisper/"},{"name":"Speech-to-Text","count":1,"path":"tags/Speech-to-Text/"},{"name":"Flash Attention","count":1,"path":"tags/Flash-Attention/"},{"name":"團隊合作","count":1,"path":"tags/團隊合作/"},{"name":"包棟民宿","count":1,"path":"tags/包棟民宿/"},{"name":"台中","count":1,"path":"tags/台中/"},{"name":"南投","count":1,"path":"tags/南投/"},{"name":"苗栗","count":1,"path":"tags/苗栗/"},{"name":"時事評論","count":1,"path":"tags/時事評論/"},{"name":"能源","count":1,"path":"tags/能源/"},{"name":"AI 基礎建設","count":1,"path":"tags/AI-基礎建設/"},{"name":"台灣","count":1,"path":"tags/台灣/"},{"name":"MacBook","count":1,"path":"tags/MacBook/"},{"name":"淡江大橋","count":1,"path":"tags/淡江大橋/"},{"name":"淡水","count":1,"path":"tags/淡水/"},{"name":"建築","count":1,"path":"tags/建築/"},{"name":"週末","count":1,"path":"tags/週末/"},{"name":"居家辦公","count":1,"path":"tags/居家辦公/"},{"name":"人體工學","count":1,"path":"tags/人體工學/"},{"name":"日本","count":1,"path":"tags/日本/"},{"name":"黃金週","count":1,"path":"tags/黃金週/"},{"name":"Golden Week","count":1,"path":"tags/Golden-Week/"},{"name":"Claude Skills","count":1,"path":"tags/Claude-Skills/"}];</script></body></html>
