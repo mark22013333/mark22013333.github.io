@@ -1,0 +1,422 @@
+<!DOCTYPE html><html lang="zh-TW" data-theme="dark"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>負載平衡以前在抹平熱點，LLM 推論反過來要製造熱點 | Cheng's Tech &amp; Life</title><meta name="author" content="Cheng®"><meta name="copyright" content="Cheng®"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#0d0d0d"><meta name="description" content="Kubernetes Gateway API Inference Extension 要求後端自報 GPU 裡的佇列深度與 KV cache 用量，再刻意把同一段前綴黏回同一台。從規格到原始碼，看這個設計把責任搬去了哪裡，以及它留下的那個 200 毫秒盲區。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="負載平衡以前在抹平熱點，LLM 推論反過來要製造熱點">
+<meta property="og:url" content="https://mark22013333.github.io/2026/09/13/%E8%B2%A0%E8%BC%89%E5%B9%B3%E8%A1%A1%E4%BB%A5%E5%89%8D%E5%9C%A8%E6%8A%B9%E5%B9%B3%E7%86%B1%E9%BB%9E-LLM-%E6%8E%A8%E8%AB%96%E5%8F%8D%E9%81%8E%E4%BE%86%E8%A6%81%E8%A3%BD%E9%80%A0%E7%86%B1%E9%BB%9E/index.html">
+<meta property="og:site_name" content="Cheng&#39;s Tech &amp; Life">
+<meta property="og:description" content="Kubernetes Gateway API Inference Extension 要求後端自報 GPU 裡的佇列深度與 KV cache 用量，再刻意把同一段前綴黏回同一台。從規格到原始碼，看這個設計把責任搬去了哪裡，以及它留下的那個 200 毫秒盲區。">
+<meta property="og:locale" content="zh_TW">
+<meta property="og:image" content="https://mark22013333.github.io/img/20260913-01.webp">
+<meta property="article:published_time" content="2026-09-12T23:00:00.000Z">
+<meta property="article:modified_time" content="2026-09-13T15:14:00.767Z">
+<meta property="article:author" content="Cheng®">
+<meta property="article:tag" content="開源">
+<meta property="article:tag" content="LLM">
+<meta property="article:tag" content="DevOps">
+<meta property="article:tag" content="Performance">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://mark22013333.github.io/img/20260913-01.webp"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "負載平衡以前在抹平熱點，LLM 推論反過來要製造熱點",
+  "url": "https://mark22013333.github.io/2026/09/13/%E8%B2%A0%E8%BC%89%E5%B9%B3%E8%A1%A1%E4%BB%A5%E5%89%8D%E5%9C%A8%E6%8A%B9%E5%B9%B3%E7%86%B1%E9%BB%9E-LLM-%E6%8E%A8%E8%AB%96%E5%8F%8D%E9%81%8E%E4%BE%86%E8%A6%81%E8%A3%BD%E9%80%A0%E7%86%B1%E9%BB%9E/",
+  "image": "https://mark22013333.github.io/img/20260913-01.webp",
+  "datePublished": "2026-09-12T23:00:00.000Z",
+  "dateModified": "2026-09-13T15:14:00.767Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "Cheng®",
+      "url": "https://mark22013333.github.io"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://mark22013333.github.io/2026/09/13/%E8%B2%A0%E8%BC%89%E5%B9%B3%E8%A1%A1%E4%BB%A5%E5%89%8D%E5%9C%A8%E6%8A%B9%E5%B9%B3%E7%86%B1%E9%BB%9E-LLM-%E6%8E%A8%E8%AB%96%E5%8F%8D%E9%81%8E%E4%BE%86%E8%A6%81%E8%A3%BD%E9%80%A0%E7%86%B1%E9%BB%9E/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//www.google-analytics.com" crossorigin=""/><link rel="preconnect" href="//fonts.googleapis.com" crossorigin=""/><link rel="preconnect" href="//busuanzi.ibruce.info"/><meta name="google-site-verification" content="6ywUr8k2n_CT1PFYJzlSvI3CZ-JmJ55RYbA39VrFBDs"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!true && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          const hour = new Date().getHours()
+          const isNight = hour <= 9 || hour >= 18
+          if (theme === undefined) isNight ? activateDarkMode() : activateLightMode()
+          else theme === 'light' ? activateLightMode() : activateDarkMode()
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script async="async" src="https://www.googletagmanager.com/gtag/js?id=G-JBV14NRDH3"></script><script>window.dataLayer = window.dataLayer || []
+function gtag(){dataLayer.push(arguments)}
+gtag('js', new Date())
+gtag('config', 'G-JBV14NRDH3')
+btf.addGlobalFn('pjaxComplete', () => {
+  gtag('config', 'G-JBV14NRDH3', {'page_path': window.location.pathname})
+}, 'google_analytics')
+</script><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Titillium+Web&amp;display=swap" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"pagination":{"enable":false,"hitsPerPage":8},"languages":{"hits_empty":"找不到符合您查詢的內容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '複製成功',
+    error: '複製失敗',
+    noSupport: '瀏覽器不支援'
+  },
+  relativeDate: {
+    homepage: false,
+    post: true
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '剛剛',
+    min: '分鐘前',
+    hour: '小時前',
+    day: '天前',
+    month: '個月前'
+  },
+  copyright: {"limitCount":1,"languages":{"author":"作者: Cheng®","link":"連結: ","source":"來源: Cheng's Tech & Life","info":"著作權歸作者所有。如需商業轉載，請聯絡作者獲得授權，非商業轉載請註明出處😁。"}},
+  lightbox: 'fancybox',
+  Snackbar: {"chs_to_cht":"已切換為繁體中文","cht_to_chs":"已切換為簡體中文","day_to_night":"已切換為深色模式","night_to_day":"已切換為淺色模式","bgLight":"#49b1f5","bgDark":"#1f1f1f","position":"top-center"},
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid/dist/infinitegrid.min.js',
+    buttonText: '載入更多'
+  },
+  isPhotoFigcaption: true,
+  islazyloadPlugin: false,
+  isAnchor: true,
+  percent: {
+    toc: true,
+    rightside: true,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '負載平衡以前在抹平熱點，LLM 推論反過來要製造熱點',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><link rel="stylesheet" href="/css/kkbox-player.css"><link rel="stylesheet" href="/css/tag-cloud-fancy.css"><link rel="stylesheet" href="/css/font-resize.css"><link rel="stylesheet" href="/css/dark-palette.css"><link rel="stylesheet" href="/css/loading-override.css"><link rel="stylesheet" href="/css/series-showcase.css"><link rel="stylesheet" href="/css/search-tags.css"><link rel="alternate" href="/atom.xml" title="Cheng's Tech & Life" type="application/atom+xml">
+</head><body><div id="loading-box"><div class="loading-glass-overlay"></div><div class="loading-indicator"><div class="loading-dot"></div><div class="loading-dot"></div><div class="loading-dot"></div></div></div><script>(()=>{
+  const $loadingBox = document.getElementById('loading-box')
+  const $body = document.body
+  const preloader = {
+    endLoading: () => {
+      if ($loadingBox.classList.contains('loaded')) return
+      $body.style.overflow = ''
+      $loadingBox.classList.add('loaded')
+    },
+    initLoading: () => {
+      $body.style.overflow = 'hidden'
+      $loadingBox.classList.remove('loaded')
+    }
+  }
+
+  preloader.initLoading()
+
+  if (document.readyState === 'complete') {
+    preloader.endLoading()
+  } else {
+    window.addEventListener('load', preloader.endLoading)
+    document.addEventListener('DOMContentLoaded', preloader.endLoading)
+    setTimeout(preloader.endLoading, 7000)
+  }
+
+  if (true) {
+    btf.addGlobalFn('pjaxSend', preloader.initLoading, 'preloader_init')
+    btf.addGlobalFn('pjaxComplete', preloader.endLoading, 'preloader_end')
+  }
+})()</script><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="https://lh3.googleusercontent.com/pw/ABLVV87_po8nBc6F_tXcoYDmtzMGWxHuhhrbguYILCjmjWKLOS8DTpubm0YoQLKgjyjRIZyV5TjYe7XVEz_YU4squfr37GTZqPZP1hlMVZ_MIgXpTxWu73M=w1200" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">594</div></a><a href="/tags/"><div class="headline">標籤</div><div class="length-num">226</div></a><a href="/categories/"><div class="headline">分類</div><div class="length-num">23</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首頁-Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 時間軸-archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 標籤-tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分類-Categories</span></a></div><div class="menus_item"><a class="site-page" href="/series/"><i class="fa-fw fas fa-layer-group"></i><span> 系列-Series</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-list"></i><span> 其他列表</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音樂-Music</span></a></li><li><a class="site-page child" href="/gallery/"><i class="fa-fw fas fa-images"></i><span> 畫館-Gallery</span></a></li></ul></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg fixed" id="page-header" style="background-image: url(/img/20260913-01.webp);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><img class="site-icon" src="https://lh3.googleusercontent.com/pw/ABLVV87_po8nBc6F_tXcoYDmtzMGWxHuhhrbguYILCjmjWKLOS8DTpubm0YoQLKgjyjRIZyV5TjYe7XVEz_YU4squfr37GTZqPZP1hlMVZ_MIgXpTxWu73M=w1200" alt="Logo"><span class="site-name">Cheng's Tech &amp; Life</span></a><a class="nav-page-title" href="/"><span class="site-name">負載平衡以前在抹平熱點，LLM 推論反過來要製造熱點</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首頁</span></span></a></span><div id="menus"><div id="search-button" title="Ctrl+K / Cmd+K"><span class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜尋</span></span></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首頁-Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 時間軸-archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 標籤-tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分類-Categories</span></a></div><div class="menus_item"><a class="site-page" href="/series/"><i class="fa-fw fas fa-layer-group"></i><span> 系列-Series</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-list"></i><span> 其他列表</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音樂-Music</span></a></li><li><a class="site-page child" href="/gallery/"><i class="fa-fw fas fa-images"></i><span> 畫館-Gallery</span></a></li></ul></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">負載平衡以前在抹平熱點，LLM 推論反過來要製造熱點</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">發表於</span><time class="post-meta-date-created" datetime="2026-09-12T23:00:00.000Z" title="發表於 2026-09-13 07:00:00">2026-09-13</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新於</span><time class="post-meta-date-updated" datetime="2026-09-13T15:14:00.767Z" title="更新於 2026-09-13 23:14:00">2026-09-13</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E5%BE%8C%E7%AB%AF%E9%96%8B%E7%99%BC/">後端開發</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">總字數:</span><span class="word-count">3.4k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">閱讀時間:</span><span>10分鐘</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">瀏覽量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><p>負載平衡器從第一天起就只有一個目標：不要讓任何一台特別忙。</p>
+<p>round-robin 是這樣，least connection 是這樣，量 EWMA 延遲挑最快那台也是這樣。招式不同，底下的心智是同一個。後端是一群可替換、無狀態、彼此沒有差別的機器，你的工作是把水倒得平均一點。這個假設好用到我們幾乎不會去想它：擴容就是多倒一杯，某台掛了就從名單上劃掉，從頭到尾沒有人需要知道那台機器的肚子裡正在發生什麼事。</p>
+<p>Kubernetes SIG 底下有個專案叫 Gateway API Inference Extension，最新的 v1.6.1 是 UTC 時間 2026 年 9 月 11 日發的。它做的事情，跟上面那段話每一句都反著來。</p>
+<h2 id="以前後端是黑箱，現在它得自報內臟"><a href="#以前後端是黑箱，現在它得自報內臟" class="headerlink" title="以前後端是黑箱，現在它得自報內臟"></a>以前後端是黑箱，現在它得自報內臟</h2><p>傳統健康檢查問的問題很簡單：你還活著嗎。回 200 就算活著。後端就算想多講一點，LB 這邊也沒有欄位可以聽——它的世界觀裡本來就沒有「這台現在有多累」這種資訊。</p>
+<p>這個專案的 003 號提案叫「模型伺服器協定」，它把問法整個換掉了。模型伺服器要開一個 Prometheus 端點，至少吐出三件事：排隊中有幾個請求、正在跑的有幾個、KV cache 用掉幾成。</p>
+<table>
+<thead>
+<tr>
+<th>語意</th>
+<th>型別</th>
+<th>vLLM</th>
+<th>Triton TensorRT-LLM</th>
+<th>trtllm-serve</th>
+<th>SGLang</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>TotalQueuedRequests</td>
+<td>Gauge</td>
+<td><code>vllm:num_requests_waiting</code></td>
+<td><code>nv_trt_llm_request_metrics&#123;request_type=waiting&#125;</code></td>
+<td><code>trtllm_num_requests_waiting</code></td>
+<td><code>sglang:num_queue_reqs</code></td>
+</tr>
+<tr>
+<td>TotalRunningRequests</td>
+<td>Gauge</td>
+<td><code>vllm:num_requests_running</code></td>
+<td><code>nv_trt_llm_request_metrics&#123;request_type=scheduled&#125;</code></td>
+<td><code>trtllm_num_requests_running</code></td>
+<td><code>sglang:num_running_reqs</code></td>
+</tr>
+<tr>
+<td>KVCacheUtilization</td>
+<td>Gauge</td>
+<td><code>vllm:kv_cache_usage_perc</code></td>
+<td><code>nv_trt_llm_kv_cache_block_metrics&#123;kv_cache_block_type=fraction&#125;</code></td>
+<td><code>trtllm_kv_cache_utilization</code></td>
+<td><code>sglang:token_usage</code></td>
+</tr>
+</tbody></table>
+<p>這張表很容易讀錯，我一開始也讀錯了。規格原文寫得很小心：「The exact metric names don’t necessarily need to be the same as the recommended names here, however the metric types and semantics MUST follow this doc.」被規定死的是型別跟語意，名稱只是推薦值。上面那四欄只是四家目前的實作長相，你自己寫的模型伺服器可以叫別的名字。</p>
+<p>另外兩個選配指標是 BlockSize 跟 NumGPUBlocks，給前綴快取的評分器算格子用的；沒吐的話就退回去讀外掛設定裡的值。</p>
+<p>LoRA 那段的設計特別髒，髒得很誠實。規格要求吐一個叫 <code>vllm:lora_requests_info</code> 的 Gauge，而這個 Gauge 的<strong>數值本身是一個時間戳</strong>，用途只是讓閘道分辨哪一筆比較新。真正的資料塞在三個 label 裡：<code>max_lora</code> 是這張卡最多能同時載幾個 adapter，<code>running_lora_adapters</code> 跟 <code>waiting_lora_adapters</code> 各是一串逗號分隔的名字。Prometheus 的 label 本來就不是拿來裝清單的，但要在一個既有的抓取端點上傳遞「這台現在記憶體裡有哪些東西」，也真的沒有更好的位置。</p>
+<p>規格自己在開頭標了狀態：Partially implemented，並且附了一句「外掛化之後，這份協定按定義就不可能那麼嚴格」。這句話擺在文件第一行。</p>
+<h2 id="Filter-跟-Score-可以都不掛，Pick-必須恰好一個"><a href="#Filter-跟-Score-可以都不掛，Pick-必須恰好一個" class="headerlink" title="Filter 跟 Score 可以都不掛，Pick 必須恰好一個"></a>Filter 跟 Score 可以都不掛，Pick 必須恰好一個</h2><p>0845 號提案定義的那套外掛框架裡，有一條約束寫得比階段本身有意思：Filter 外掛可以掛零個，Score 外掛也可以掛零個，但 Pick 外掛<strong>必須恰好一個</strong>。</p>
+<p>階段本身是三個：Filter 把不合格的端點刷掉、Score 給剩下的每一台打分、Pick 從打完分的名單裡選。提案原文直接寫了靈感來源是 kube-scheduler 的外掛系統。評分器應該把分數正規化到 0 到 1 之間，加權不在評分器裡做，統一放到 profile 的設定層——你負責觀察，我負責取捨。</p>
+<p>對照舊做法才知道這是另一個量級。以前挑機器要花多久？一次取餘數，或者一個 atomic 計數器比大小，都是 O(1) 的事。不需要記憶體，不需要記得上一個請求去了哪，也不需要知道被挑中的那台是誰。</p>
+<p>換句話說，以前餐廳門口那個人的工作是發號碼牌，現在他每來一個客人就要把全店的桌子重新評一次分。這件事本來荒謬，但當一桌客人可能坐兩分鐘也可能坐四十分鐘，而且你事先看得出來是哪一種的時候，重算就變得划算了。</p>
+<p><a href="/2026/07/02/%E9%99%90%E6%B5%81%E7%9A%84%E5%9B%9B%E7%A8%AE%E6%BC%94%E7%AE%97%E6%B3%95-%E5%9B%BA%E5%AE%9A%E8%A6%96%E7%AA%97%E6%BB%91%E5%8B%95%E8%A6%96%E7%AA%97%E6%BC%8F%E6%A1%B6%E4%BB%A4%E7%89%8C%E6%A1%B6%E5%B7%AE%E5%88%A5%E5%85%A8%E8%97%8F%E5%9C%A8%E6%99%82%E9%96%93%E6%80%8E%E9%BA%BC%E5%88%87/">限流的四種演算法</a>那篇談的是同一個位置的另一個決定：要不要讓這個請求進來。這裡談的是進來之後給誰。兩個問題在 LLM 上都比在一般 HTTP 服務上難算，因為成本的變異太大。</p>
+<h2 id="以前黏著是不得已，現在黏著是手段"><a href="#以前黏著是不得已，現在黏著是手段" class="headerlink" title="以前黏著是不得已，現在黏著是手段"></a>以前黏著是不得已，現在黏著是手段</h2><p>session affinity 在傳統 LB 的地位很尷尬。它存在是因為你的後端沒寫好、狀態留在記憶體裡，只好用客戶端 IP 把人綁回原本那台。大家都知道這是債，而且是遲早要還的那種。</p>
+<p>推論服務把這個債變成了資產。理由很單純：LLM 處理一段 prompt 的第一步是把它算成 KV cache，這步叫 prefill，很貴。如果兩個請求共用同一段開頭，而它們剛好落在同一張卡上，第二個請求那段開頭就不用重算。多輪對話、同一份系統提示詞、同一份被反覆問的文件，全都是這種形狀。把它們刻意堆到同一台去，省下來的 prefill 遠大於負載不均的損失。</p>
+<p>0602 號提案的做法我很喜歡，因為它繞過了一個明顯但走不通的路。</p>
+<p>最直覺的方案是問模型伺服器：你 cache 裡現在有哪些前綴。提案評估過，也寫下了否決理由：要改模型伺服器的 API，而且即時回報這些索引會吃掉不小的頻寬。於是它選了另一條，叫「近似前綴索引」。</p>
+<p>閘道把請求按<strong>字元</strong>切成等長的塊，注意是字元不是 token，提案原文特地說了不必真的 tokenize。然後對每塊算雜湊，公式是這樣：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hash(chunk i) = hash(chunk i content + hash(chunk i-1))</span><br></pre></td></tr></table></figure>
+
+<p>每一塊的雜湊都把前一塊的雜湊吃進去。這個設計有個漂亮的性質：只要第 N 塊對得上，前面 N-1 塊一定也對得上。像連署書上的簽名，第五個人簽的時候簽的是「前面四個人的簽名加上我自己」，所以你只要驗第五個，前四個自動成立。查表的時候就是找哪一台的前綴匹配得最長。</p>
+<p>關鍵在於這張表的來源。閘道從來沒有問過任何一台模型伺服器它的快取裡有什麼。它記的是自己的流水帳：我把哪個請求送去了哪一台，就假設那台現在有那段前綴。整張索引是推論出來的，不是查證出來的。</p>
+<p>而且前綴親和性不能單獨用。提案寫明它要跟負載一起算，做法是把前綴命中率、佇列長度、KV cache 用量湊成一個加權分數。前綴匹配還必須認 adapter，因為不同的 LoRA 不共用 KV cache，配錯了等於白比。</p>
+<h2 id="那如果挑機器的那個元件自己掛了"><a href="#那如果挑機器的那個元件自己掛了" class="headerlink" title="那如果挑機器的那個元件自己掛了"></a>那如果挑機器的那個元件自己掛了</h2><p>這是我讀到一半才想到、然後被答案嚇到的問題。</p>
+<p>InferencePool 這個 CRD 的 <code>endpointPickerRef</code> 底下有個欄位叫 <code>failureMode</code>，合法值只有兩個：<code>FailOpen</code> 是閘道自己隨便挑一台送出去，<code>FailClose</code> 是<strong>直接把請求丟掉</strong>。預設值是 <code>FailClose</code>。</p>
+<p>健康檢查那邊還有一層。協定要求端點挑選器實作 gRPC 健康檢查，而 readiness 的判準是：資料同步完成，<strong>而且</strong>在多副本部署下它是被選出來的 leader。是 follower 就回 NOT_SERVING。</p>
+<p>把這兩件事放在一起看，責任的位置就清楚了。傳統 LB 的路由決策是一個旁路的啟發式，算錯了頂多慢一點，那段程式碼掛了還有一堆 fallback。現在它是請求路徑上的一個有狀態、要選主、預設失敗就丟請求的服務。你在資料面多養了一個必須自己做高可用的元件。</p>
+<p><a href="/2026/07/13/Kong-%E8%88%87-API-Gateway-%E8%A9%B2%E4%B8%8D%E8%A9%B2%E6%93%BA%E4%B8%80%E5%80%8B%E5%AE%88%E9%96%80%E5%93%A1%E5%85%88%E6%95%B8%E6%95%B8%E4%BD%A0%E6%89%8B%E4%B8%8A%E6%9C%89%E5%B9%BE%E9%9A%BB%E6%9C%8D%E5%8B%99/">Kong 與 API Gateway</a>那篇的問題是「該不該擺一個守門員」。這裡的守門員不只擺了，他手上還有一本只有他自己看得到的帳本，而且他請假的時候整家店預設是不開門的。</p>
+<h2 id="那本帳本會過期，而且過期得很快"><a href="#那本帳本會過期，而且過期得很快" class="headerlink" title="那本帳本會過期，而且過期得很快"></a>那本帳本會過期，而且過期得很快</h2><p>寫到這裡為止都是設計的好處。現在講那條真的會咬人的。</p>
+<p>端點挑選器已經照 README 的公告搬到 <code>llm-d/llm-d-router</code> 了，飽和偵測器的原始碼在那邊。把它的預設值攤開寫成設定，長這樣：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;queueDepthThreshold&quot;</span><span class="punctuation">:</span> <span class="number">5</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;kvCacheUtilThreshold&quot;</span><span class="punctuation">:</span> <span class="number">0.8</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;metricsStalenessThreshold&quot;</span><span class="punctuation">:</span> <span class="string">&quot;200ms&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;stalenessPolicy&quot;</span><span class="punctuation">:</span> <span class="string">&quot;saturated&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;headroom&quot;</span><span class="punctuation">:</span> <span class="number">0.0</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p><code>metricsStalenessThreshold</code> 預設 200 毫秒。超過這個歲數的指標就算過期。一個兩百毫秒前抓到的數字已經不值得相信，這件事本身就說明了 GPU 裡的狀態變得多快。</p>
+<p>而程式碼裡那個欄位的註解，是整個設計最誠實的一段話。原文寫著：「In continuous batching architectures, the KV cache grows rapidly during the decode phase. A high staleness threshold combined with a high KV cache utilization limit can lead to routing traffic to an endpoint whose memory is silently expanding within the telemetry blind spot.」</p>
+<p>拆開來講就是：連續批次推論在解碼階段會讓 KV cache 快速長大，而你手上的數字是上一次抓的。如果你把過期門檻調寬一點、又把 KV cache 上限設高一點，你就有機會把流量一路送進一台記憶體正在無聲膨脹的機器，而它在你的遙測裡看起來還很健康。這段話的出處才是重點：它就寫在那組預設值常數旁邊，作者自己留的。</p>
+<p>指標真的收不到的時候要怎麼辦，做成一個可以選的策略，只有兩個值。預設的 <code>saturated</code> 把沒有指標的端點當成完全飽和，所以一旦全場指標蒐集掛掉，派工會整個停下來，寧可不發也不盲發。另一個 <code>ignore</code> 把它們排除在平均之外，於是全場都過期時分數算出來是零、流量照發，賭的是「指標掛掉的可用性損失」大於「送進可能過載的機器的風險」。</p>
+<p>近似索引那邊也有它自己的帳要還。提案的缺點欄列得很清楚：它依賴對模型伺服器逐出策略的理解，換個環境可能要重調；索引放在記憶體裡，重啟就得重建；而且端點挑選器一旦跑多份，各自只看得到自己經手的請求，命中率會下降。</p>
+<div class="note warning flat"><p>我只讀了規格、提案與原始碼，沒有實際部署或跑過這套系統。官方 README 宣稱它能改善尾延遲與吞吐，但那句話裡沒有附任何數字，我也沒有找到官方的基準測試報告，所以這篇不引用任何效能數據。上面提到的欄位名、預設值與警語，全部是回 repo 原文逐項核對過的。</p>
+</div>
+
+<h2 id="什麼時候這整套對你是純成本"><a href="#什麼時候這整套對你是純成本" class="headerlink" title="什麼時候這整套對你是純成本"></a>什麼時候這整套對你是純成本</h2><p>我的立場是這樣：前綴親和性這部分，值不值得完全取決於你的流量長什麼樣。</p>
+<p>如果你的請求彼此之間幾乎沒有共用開頭，每次都是全新的短 prompt，那前綴索引每次都會算出一個很短的匹配，你付了維護那張表的代價，換回來的 prefill 節省接近零，卻同時把負載推得比 round-robin 更不平均。這種情況下該做的事是把前綴評分器關掉，退回去只看佇列深度跟 KV cache 用量。</p>
+<p>會讓我改變這個判斷的條件也很具體：只要你的系統裡有一份夠長、夠多請求共用的系統提示詞或文件脈絡，計算就翻過來了，因為那段前綴的 prefill 成本是固定支出，而它被省下的次數跟請求量成正比。</p>
+<h2 id="搬完家之後，k8s-sigs-這邊還剩下什麼"><a href="#搬完家之後，k8s-sigs-這邊還剩下什麼" class="headerlink" title="搬完家之後，k8s-sigs 這邊還剩下什麼"></a>搬完家之後，k8s-sigs 這邊還剩下什麼</h2><p>那則搬遷公告值得再讀一次。端點挑選器、InferenceObjective、InferenceModelRewrite 跟 Body Based Router 全部搬去 llm-d 家族的 repo，k8s-sigs 這邊只留下輕量版的挑選器、InferencePool API，以及一致性測試。標準組織把最搶眼的那塊讓出去，自己守著介面跟「你說你實作了，那我來驗」的測試套件。</p>
+<p>Gateway API 本體走的也是這條路：repo 裡有一整包 <code>conformance/</code> 測試，實作交給 Envoy Gateway、kgateway、GKE Gateway 那些人各做各的。這個定位比任何功能清單都更能說明它想成為什麼。</p>
+<p>「後端是一群可替換的機器」——這個模型到這裡就不成立了。以前你調負載平衡是在轉一個旋鈕，現在你是在寫一個排程器的評分函式，而這個函式的輸入是別人 GPU 裡的內臟，還附帶一個兩百毫秒的保鮮期。</p>
+<p>下次有人跟你說某某系統的負載沒有平均分散，先別急著當成問題。問一句：不平均，是因為它算錯了，還是因為它算對了。</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://mark22013333.github.io">Cheng®</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章連結: </span><span class="post-copyright-info"><a href="https://mark22013333.github.io/2026/09/13/%E8%B2%A0%E8%BC%89%E5%B9%B3%E8%A1%A1%E4%BB%A5%E5%89%8D%E5%9C%A8%E6%8A%B9%E5%B9%B3%E7%86%B1%E9%BB%9E-LLM-%E6%8E%A8%E8%AB%96%E5%8F%8D%E9%81%8E%E4%BE%86%E8%A6%81%E8%A3%BD%E9%80%A0%E7%86%B1%E9%BB%9E/">https://mark22013333.github.io/2026/09/13/負載平衡以前在抹平熱點-LLM-推論反過來要製造熱點/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版權聲明: </span><span class="post-copyright-info">本部落格所有文章除特別聲明外，均採用<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 授權協議。轉載請註明來源 <a href="https://mark22013333.github.io" target="_blank">Cheng's Tech & Life</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E9%96%8B%E6%BA%90/">開源</a><a class="post-meta__tags" href="/tags/LLM/">LLM</a><a class="post-meta__tags" href="/tags/DevOps/">DevOps</a><a class="post-meta__tags" href="/tags/Performance/">Performance</a></div><div class="post-share"><div class="social-share" data-image="/img/20260913-01.webp" data-sites="facebook,x"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><div class="post-reward"><div class="reward-badges"><a class="sponsor-glow-btn" href="https://www.buymeacoffee.com/mark22013333" target="_blank" rel="noopener noreferrer" title="Buy Me A Coffee"><img src="https://img.shields.io/badge/Buy_Me_A_Coffee-FFDD00?style=for-the-badge&amp;logo=buy-me-a-coffee&amp;logoColor=black" alt="Buy Me A Coffee"/></a><a class="sponsor-glow-btn" href="https://p.ecpay.com.tw/EFC3F8F" target="_blank" rel="noopener noreferrer" title="綠界贊助"><img src="https://img.shields.io/badge/☕_%E8%AB%8B%E6%88%91%E5%96%9D%E6%9D%AF%E5%92%96%E5%95%A1-Donate-11998e?style=for-the-badge&amp;logo=coffee&amp;logoColor=white" alt="綠界贊助"/></a><a class="sponsor-glow-btn" href="https://calendly.com/markcheng00806-intumit/15min" target="_blank" rel="noopener noreferrer" title="預約時間"><img src="https://img.shields.io/badge/📅_%E9%A0%90%E7%B4%84_15_%E5%88%86%E9%90%98-Book_Time-0072ff?style=for-the-badge" alt="預約時間"/></a><p class="reward-badges-note">你的鼓勵將被轉換為我明天繼續加班的動力（真的）。 ❤️</p></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2026/09/12/%E6%97%A5%E6%9C%AC%E5%85%8D%E7%A8%8511%E6%9C%881%E6%97%A5%E6%94%B9%E6%88%90%E5%85%88%E4%BB%98%E5%BE%8C%E9%80%80-%E5%B0%81%E8%A2%8B%E6%B2%92%E4%BA%86%E4%B9%9F%E6%8A%8A%E6%9C%80%E5%BE%8C%E4%B8%80%E9%81%93%E6%8F%90%E9%86%92%E6%8B%BF%E6%8E%89%E4%BA%86/" title="日本免稅 11 月 1 日改成先付後退：封袋沒了，也把最後一道提醒拿掉了"><img class="cover" src="/img/20260912-03.webp" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">日本免稅 11 月 1 日改成先付後退：封袋沒了，也把最後一道提醒拿掉了</div></div><div class="info-2"><div class="info-item-1">那個透明塑膠袋，快要沒有了。 在日本買藥妝、零食、面膜，結帳時店員會把東西裝進一個封起來的袋子，印著離境前不要拆開。那是消耗品免稅的規矩：整包原封不動帶出國，袋子就是那道鎖。2026 年 10 月 31 日之後，它不會再出現。 跟它一起消失的，是「結帳當下就少付稅」這件事。 袋子還在的時候，風險不在你身上舊制的邏輯很單純。免稅櫃檯出示護照，店家確認完身分，直接用未稅價賣給你，或是在結帳櫃檯當場退稅。錢在那一刻就省下來了。 要做本人確認、要留紀錄、出錯被追稅的是店家。商品分成一般品跟消耗品，消耗品才要封袋，也才有 50 萬日圓的購買上限；家電、手錶、包包那種一般品，買了拆開用沒人管。 所以你在店裡就結案了。機場那一關，對多數人只是走過去而已。 2025 年 4 月，第一條路先被封掉先鬆動的不是袋子，是寄送。 2025 年 3 月 31 日以前，免稅買完的東西可以自己拿去郵局寄回台灣，出境時向海關出示配送單，輸出確認就算完成。這叫別送。2025 年 4 月 1 日起，這條路廢止了。 之後只剩一個例外：免稅店事先跟第二種貨物利用運送事業者簽代理店契約，由店舖直接寄到海外，也就是直送制度...</div></div></div></a><a class="pagination-related" href="/2026/09/13/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260913/" title="AI 與科技新聞摘要 - 2026/09/13"><img class="cover" src="/img/20260913-02.webp" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">AI 與科技新聞摘要 - 2026/09/13</div></div><div class="info-2"><div class="info-item-1">電話打到你的私人手機，不是公司分機。對面自稱是 IT help desk，說要協助你把登入方式換成 passkey，就是公司前陣子宣布要全面導入、號稱釣不走的那個東西。你還在想這支號碼他是從哪裡拿到的，簡訊就進來了，附一條連結，點開的畫面跟 Microsoft 的登入頁一模一樣。 這是 9 月 13 日那篇報導裡描述的其中一段。 一、被釣走的不是 passkey，是「幫你設定 passkey」The Hacker News 9 月 13 日刊出的分析，資料來源是 Microsoft Security Research team。這批活動的時間口徑要看清楚：原文寫的是 “detected since May 2026”，偵測到的起點是今年五月，這不等於行動從五月才開始。 手法照原文攤開是這樣。攻擊者先打語音電話到員工的私人手機冒充 IT help desk，再用簡訊把人導到仿冒的 Microsoft 登入介面，接著走 adversary-in-the-middle（AitM）或 device-code 認證流程取得憑證或存取權。得手之後才是重點：他們在被入侵的帳號上註冊自己控制的驗...</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相關推薦</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2026/05/15/Hermes-Agent-%E5%9C%A8%E8%87%AA%E5%AE%B6-VM-%E9%83%A8%E7%BD%B2-AI-%E5%8A%A9%E7%90%86%E7%9A%84%E5%AE%8C%E6%95%B4%E8%B8%A9%E5%9D%91%E8%A8%98%E9%8C%84/" title="Hermes Agent — 在自家 VM 部署 AI 助理的完整踩坑記錄"><img class="cover" src="/img/20260515-01.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-05-15</div><div class="info-item-2">Hermes Agent — 在自家 VM 部署 AI 助理的完整踩坑記錄</div></div><div class="info-2"><div class="info-item-1">你以為自架 AI 助理最難的是模型。不是。 模型換六次就好了。真正會讓你卡住的，是 nginx 回傳 400、瀏覽器無限 redirect、還有人設怎麼寫都不生效這種鬼問題。NousResearch 的 Hermes Agent v0.13.0 是一套開源 AI 代理框架，可以接各種 LLM 後端，自帶 Dashboard 跟多平台 Gateway。我在公司的 Ubuntu 26.04 VM 上把它跑起來，串上 LINE 聊天機器人，中間踩的坑比安裝步驟還多。 這篇文章是 Notion 開發筆記的整理，保留原始的踩坑順序。不是教學文，比較像驗屍報告。  先畫一張圖整體架構其實不複雜，用一句話講完：外面的流量進來先經過 nginx 做 SSL 終止，然後根據路徑決定往哪送。 12345Internet → TP-Link Router (port 80+443)         → VM 235: nginx 中央閘道 (SSL 終止)              ├── /            → VM 199:80   (CoolApps 管理系統)              ...</div></div></div></a><a class="pagination-related" href="/2026/08/29/Frappe-HR-%E6%9C%80%E5%80%BC%E5%BE%97%E6%8A%84%E7%9A%84%E6%98%AF%E5%AE%83%E6%B1%BA%E5%AE%9A%E4%B8%8D%E5%81%9A%E7%9A%84%E9%82%A3%E9%83%A8%E5%88%86/" title="Frappe HR 最值得抄的是它決定不做的那部分"><img class="cover" src="/img/20260829-01.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-08-29</div><div class="info-item-2">Frappe HR 最值得抄的是它決定不做的那部分</div></div><div class="info-2"><div class="info-item-1">Frappe HR 最強的一段設計，是它把全系統最重要的那張表交給別人管。 Employee。員工主檔。請假要它、打卡要它、薪資單要它、報帳單也要它。這張表不在 frappe/hrms 這個 repo 裡，它住在 ERPNext。 看到這種結構，直覺反應通常是「欠債」：核心資料不在自己手上，等於把命脈交給上游。但順序其實是反的。正因為 Employee 不歸它管，它才有力氣去長出 160 個自己的 DocType，而不用分神維護一張全公司每個模組都在戳的主檔。 一行相依決定了整個架構hrms/hooks.py:7 寫著這個： 1required_apps = [&quot;frappe/erpnext&quot;]  裝 hrms 之前，站台上得先有 frappe（框架）跟 erpnext（ERP 業務層）。三層各自端出來的東西是這樣分的：    這一層 它負責給的東西    frappe（框架） DocType、權限、排程、REST API、自動生成的後台介面   erpnext（ERP 業務層） 會計傳票、Payment Entry、Company、Holiday List，...</div></div></div></a><a class="pagination-related" href="/2026/08/18/%E6%8F%9B%E4%B8%80%E5%AE%B6%E6%A8%A1%E5%9E%8B%E5%84%80%E8%A1%A8%E6%9D%BF%E5%B0%B1%E5%BE%97%E9%87%8D%E7%95%AB-OTel-%E7%9A%84-gen-ai-%E6%AC%84%E4%BD%8D%E5%90%8D%E6%83%B3%E8%A7%A3%E7%9A%84%E6%98%AF%E9%80%99%E4%BB%B6%E4%BA%8B/" title="換一家模型，儀表板就得重畫：OTel 的 gen_ai 欄位名想解的是這件事"><img class="cover" src="/img/20260818-01.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-08-18</div><div class="info-item-2">換一家模型，儀表板就得重畫：OTel 的 gen_ai 欄位名想解的是這件事</div></div><div class="info-2"><div class="info-item-1"> 寫於 2026 年 8 月 18 日，9 月才上線（部落格的發佈額度在 8 月中用完了，要等 9 月 1 日重置才發得出去）。文中對 OpenTelemetry GenAI 語義慣例的描述以 8 月 18 日的規格原文為準，你讀到時文件可能已經改版。  Google 搜「OpenTelemetry GenAI semantic conventions」，排在前面的連結有機會把你帶到一個只剩十一行字的頁面。整頁內容就是一句話：這裡搬走了，去新的 repo 看。 12345# Moved: Generative AI semantic conventionsGenAI semantic conventions have moved to the OpenTelemetry GenAIsemantic conventions repository. This page has moved and is no longermaintained in this repository.  搬去的地方是 open-telemetry/semantic-conventions-genai，gh...</div></div></div></a><a class="pagination-related" href="/2026/07/03/CosyVoice-%E4%B8%AD%E6%96%87%E8%AA%9E%E9%9F%B3%E8%A4%87%E8%A3%BD%E5%BE%9E%E8%AB%8B%E9%85%8D%E9%9F%B3%E5%93%A1%E9%80%B2%E9%8C%84%E9%9F%B3%E5%AE%A4%E8%AE%8A%E6%88%90%E7%B5%A6%E5%AE%8330%E7%A7%92%E9%8C%84%E9%9F%B3/" title="CosyVoice 完整教學 — 中文語音複製，從「請配音員進錄音室」變成「給它 30 秒錄音」"><img class="cover" src="/img/20260703-01.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-07-03</div><div class="info-item-2">CosyVoice 完整教學 — 中文語音複製，從「請配音員進錄音室」變成「給它 30 秒錄音」</div></div><div class="info-2"><div class="info-item-1">先把場景擺出來。你要讓「某一個特定的聲音」念一段文字——可能是公司品牌的旁白、一集有聲書、一段客服提示音、一支短影音的口白。這件事聽起來很日常，但直到不久之前，你能走的路只有兩條，而且兩條都不太好走。 第一條，請真人配音。找配音員、喬檔期、進錄音室。聲音是好聽，但貴、慢，最要命的是——腳本改一個字，就得把人再約回來重錄一段。第二條，用系統內建的 TTS。快、免費，但你一聽就知道那是機器在講話：斷句怪、重音錯、多音字亂念，中文更慘，方言根本不存在。 這篇要講的 CosyVoice，是阿里巴巴通義實驗室開源的中文語音合成模型。它有意思的地方，不在於「又一個 TTS」，而在於它把上面那件事的做法，整個換了一種姿勢。所以我不打算照功能表一條條念給你聽，我想沿著同一個動作——讓指定的聲音念指定的文字——把「以前怎麼做」和「現在怎麼做」擺在一起看。差別擺出來，你自己就會看到那條線移到哪去了。 舊做法：要一個聲音，先得餵飽它過去要讓 AI 用「某個特定的人」的聲音講話，路徑大致是這樣：你得先蒐集這個人大量的錄音，幾十分鐘、甚至幾小時的乾淨語料，然後拿這批資料去訓練（或微調）一個專屬於這個聲音的...</div></div></div></a><a class="pagination-related" href="/2026/05/16/Rapid-MLX-Apple-Silicon-%E4%B8%8A%E6%9C%80%E5%BF%AB%E7%9A%84%E6%9C%AC%E5%9C%B0-LLM-%E6%8E%A8%E7%90%86%E4%BC%BA%E6%9C%8D%E5%99%A8/" title="Rapid-MLX — Apple Silicon 上最快的本地 LLM 推理伺服器"><img class="cover" src="/img/20260516-01.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-05-16</div><div class="info-item-2">Rapid-MLX — Apple Silicon 上最快的本地 LLM 推理伺服器</div></div><div class="info-2"><div class="info-item-1">大部分人拿 Mac 跑本地模型，裝的第一個東西是 Ollama。 這很合理。Ollama 名氣大、社群活躍、一行指令就能跑。但它有一個你可能沒注意到的問題：它不是為 Apple Silicon 設計的。Ollama 底層跑的是 llama.cpp，那是一個 C++ 推理引擎，主要針對 CPU 和 CUDA GPU 優化。在 Mac 上用，等於你開了一台跑車，但引擎裝的是腳踏車的變速器。 Rapid-MLX 走的是完全不同的路線。它直接站在 Apple 自家的 MLX 框架上，所有計算走 Metal GPU kernels，而且完全利用 Apple Silicon 的統一記憶體架構——CPU 和 GPU 看到的是同一塊記憶體，不需要來回搬資料。結果就是：同一台 Mac、同一個模型，推理速度快 2 到 4 倍。  這幾層的關係其實很簡單，但混在一起看會暈。 想像一間餐廳。MLX 是廚房裡的爐具——Apple 做的底層機器學習框架，專門替 Apple Silicon 的 Metal GPU 和統一記憶體優化過。mlx-lm 是廚師，負責把模型載進來、跑 tokenizer、生成文字。R...</div></div></div></a><a class="pagination-related" href="/2026/06/12/ValueCell-%E9%96%8B%E6%BA%90-Multi-Agent-%E9%87%91%E8%9E%8D%E5%B9%B3%E5%8F%B0-%E6%95%A3%E6%88%B6%E7%9A%84%E6%8A%95%E8%B3%87%E7%A0%94%E7%A9%B6%E5%BE%9E%E9%96%8B%E4%BA%8C%E5%8D%81%E5%80%8B%E5%88%86%E9%A0%81%E8%AE%8A%E6%88%90%E4%BA%A4%E7%B5%A6%E4%B8%80%E6%94%AF-AI-%E5%9C%98%E9%9A%8A/" title="ValueCell — 散戶的投資研究，從開二十個分頁變成交給一支 AI 團隊"><img class="cover" src="/img/20260612-01.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-06-12</div><div class="info-item-2">ValueCell — 散戶的投資研究，從開二十個分頁變成交給一支 AI 團隊</div></div><div class="info-2"><div class="info-item-1">先講一個大部分散戶都很熟的下午。你想搞清楚一支美股值不值得買，於是螢幕上開始長出分頁：一個開著 SEC EDGAR 在啃那份四十幾頁、又臭又長的英文 10-K，一個開著三四家財經媒體追最新消息，一個開著看盤軟體盯線，還有一個 Google 翻譯隨時待命。Bloomberg Terminal 一年要幾萬美金，不在考慮範圍。研究到一半，你已經忘了最初想問的問題是什麼。 這套流程的問題不在哪一步特別難，而在它假設「研究的人」要同時是會計、是記者、是程式設計師、還是個不會累的盯盤機器。ValueCell 這個開源專案的切入點，剛好就是把這個假設拆掉。 舊做法：一個人要會所有事把上面那個下午拆開來看，散戶其實在同時扮演四種角色。 查財報基本面，是分析師的活；追即時新聞、判斷哪條跟你持倉有關，是記者的活；想做量化交易卻不會寫策略程式，卡的是工程師那一關；每天盯盤怕錯過重大消息，那是一個全職的活。一個人要把這四件事都做好，現實上不可能，所以散戶的研究品質，通常就卡在自己最弱的那一環。 英文不好的，財報那關就過不去。不會寫 code 的，量化那關就過不去。沒時間盯盤的，新聞那關就漏掉。瓶頸從來不...</div></div></div></a></div></div><hr class="custom-hr"/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 評論</span></div></div><div class="comment-wrap"><div><div id="giscus-wrap"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="https://lh3.googleusercontent.com/pw/ABLVV87_po8nBc6F_tXcoYDmtzMGWxHuhhrbguYILCjmjWKLOS8DTpubm0YoQLKgjyjRIZyV5TjYe7XVEz_YU4squfr37GTZqPZP1hlMVZ_MIgXpTxWu73M=w1200" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">Cheng®</div><div class="author-info-description">Backend Developer / 技術筆記 & AI 新聞分享</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">594</div></a><a href="/tags/"><div class="headline">標籤</div><div class="length-num">226</div></a><a href="/categories/"><div class="headline">分類</div><div class="length-num">23</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/mark22013333"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons"><a class="social-icon" href="https://github.com/mark22013333" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:mark22013333@gmail.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a></div><div class="card-info-sponsor"><a class="sponsor-glow-btn" href="https://www.buymeacoffee.com/mark22013333" target="_blank" rel="noopener noreferrer" title="Buy Me A Coffee"><img src="https://img.shields.io/badge/Buy_Me_A_Coffee-FFDD00?style=for-the-badge&amp;logo=buy-me-a-coffee&amp;logoColor=black" alt="Buy Me A Coffee"/></a><a class="sponsor-glow-btn" href="https://p.ecpay.com.tw/EFC3F8F" target="_blank" rel="noopener noreferrer" title="綠界贊助"><img src="https://img.shields.io/badge/☕_%E8%AB%8B%E6%88%91%E5%96%9D%E6%9D%AF%E5%92%96%E5%95%A1-Donate-11998e?style=for-the-badge&amp;logo=coffee&amp;logoColor=white" alt="綠界贊助"/></a><a class="sponsor-glow-btn" href="https://calendly.com/markcheng00806-intumit/15min" target="_blank" rel="noopener noreferrer" title="預約時間"><img src="https://img.shields.io/badge/📅_%E9%A0%90%E7%B4%84_15_%E5%88%86%E9%90%98-Book_Time-0072ff?style=for-the-badge" alt="預約時間"/></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">這裡記錄我在後端開發路上踩過的坑、學到的東西，也會分享每日 AI 與科技新聞觀點。歡迎一起交流！</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目錄</span><span class="toc-percentage"></span></div><div class="toc-content is-expand"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%A5%E5%89%8D%E5%BE%8C%E7%AB%AF%E6%98%AF%E9%BB%91%E7%AE%B1%EF%BC%8C%E7%8F%BE%E5%9C%A8%E5%AE%83%E5%BE%97%E8%87%AA%E5%A0%B1%E5%85%A7%E8%87%9F"><span class="toc-number">1.</span> <span class="toc-text">以前後端是黑箱，現在它得自報內臟</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Filter-%E8%B7%9F-Score-%E5%8F%AF%E4%BB%A5%E9%83%BD%E4%B8%8D%E6%8E%9B%EF%BC%8CPick-%E5%BF%85%E9%A0%88%E6%81%B0%E5%A5%BD%E4%B8%80%E5%80%8B"><span class="toc-number">2.</span> <span class="toc-text">Filter 跟 Score 可以都不掛，Pick 必須恰好一個</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%A5%E5%89%8D%E9%BB%8F%E8%91%97%E6%98%AF%E4%B8%8D%E5%BE%97%E5%B7%B2%EF%BC%8C%E7%8F%BE%E5%9C%A8%E9%BB%8F%E8%91%97%E6%98%AF%E6%89%8B%E6%AE%B5"><span class="toc-number">3.</span> <span class="toc-text">以前黏著是不得已，現在黏著是手段</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%82%A3%E5%A6%82%E6%9E%9C%E6%8C%91%E6%A9%9F%E5%99%A8%E7%9A%84%E9%82%A3%E5%80%8B%E5%85%83%E4%BB%B6%E8%87%AA%E5%B7%B1%E6%8E%9B%E4%BA%86"><span class="toc-number">4.</span> <span class="toc-text">那如果挑機器的那個元件自己掛了</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%82%A3%E6%9C%AC%E5%B8%B3%E6%9C%AC%E6%9C%83%E9%81%8E%E6%9C%9F%EF%BC%8C%E8%80%8C%E4%B8%94%E9%81%8E%E6%9C%9F%E5%BE%97%E5%BE%88%E5%BF%AB"><span class="toc-number">5.</span> <span class="toc-text">那本帳本會過期，而且過期得很快</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%80%E9%BA%BC%E6%99%82%E5%80%99%E9%80%99%E6%95%B4%E5%A5%97%E5%B0%8D%E4%BD%A0%E6%98%AF%E7%B4%94%E6%88%90%E6%9C%AC"><span class="toc-number">6.</span> <span class="toc-text">什麼時候這整套對你是純成本</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%90%AC%E5%AE%8C%E5%AE%B6%E4%B9%8B%E5%BE%8C%EF%BC%8Ck8s-sigs-%E9%80%99%E9%82%8A%E9%82%84%E5%89%A9%E4%B8%8B%E4%BB%80%E9%BA%BC"><span class="toc-number">7.</span> <span class="toc-text">搬完家之後，k8s-sigs 這邊還剩下什麼</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2026/09/13/%E6%9C%88%E7%A5%A8%E9%82%84%E6%98%AF%E5%B8%B8%E5%AE%A2%E5%84%AA%E6%83%A0-%E9%80%9A%E5%8B%A4%E6%97%8F%E7%9A%84%E5%88%86%E7%95%8C%E7%B7%9A%E4%B8%8D%E5%9C%A8%E9%82%A31200%E5%85%83/" title="月票還是常客優惠？通勤族的分界線不在那 1,200 元"><img src="/img/20260913-03.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="月票還是常客優惠？通勤族的分界線不在那 1,200 元"/></a><div class="content"><a class="title" href="/2026/09/13/%E6%9C%88%E7%A5%A8%E9%82%84%E6%98%AF%E5%B8%B8%E5%AE%A2%E5%84%AA%E6%83%A0-%E9%80%9A%E5%8B%A4%E6%97%8F%E7%9A%84%E5%88%86%E7%95%8C%E7%B7%9A%E4%B8%8D%E5%9C%A8%E9%82%A31200%E5%85%83/" title="月票還是常客優惠？通勤族的分界線不在那 1,200 元">月票還是常客優惠？通勤族的分界線不在那 1,200 元</a><time datetime="2026-09-13T03:00:00.000Z" title="發表於 2026-09-13 11:00:00">2026-09-13</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/09/13/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260913/" title="AI 與科技新聞摘要 - 2026/09/13"><img src="/img/20260913-02.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="AI 與科技新聞摘要 - 2026/09/13"/></a><div class="content"><a class="title" href="/2026/09/13/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260913/" title="AI 與科技新聞摘要 - 2026/09/13">AI 與科技新聞摘要 - 2026/09/13</a><time datetime="2026-09-13T01:00:00.000Z" title="發表於 2026-09-13 09:00:00">2026-09-13</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/09/13/%E8%B2%A0%E8%BC%89%E5%B9%B3%E8%A1%A1%E4%BB%A5%E5%89%8D%E5%9C%A8%E6%8A%B9%E5%B9%B3%E7%86%B1%E9%BB%9E-LLM-%E6%8E%A8%E8%AB%96%E5%8F%8D%E9%81%8E%E4%BE%86%E8%A6%81%E8%A3%BD%E9%80%A0%E7%86%B1%E9%BB%9E/" title="負載平衡以前在抹平熱點，LLM 推論反過來要製造熱點"><img src="/img/20260913-01.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="負載平衡以前在抹平熱點，LLM 推論反過來要製造熱點"/></a><div class="content"><a class="title" href="/2026/09/13/%E8%B2%A0%E8%BC%89%E5%B9%B3%E8%A1%A1%E4%BB%A5%E5%89%8D%E5%9C%A8%E6%8A%B9%E5%B9%B3%E7%86%B1%E9%BB%9E-LLM-%E6%8E%A8%E8%AB%96%E5%8F%8D%E9%81%8E%E4%BE%86%E8%A6%81%E8%A3%BD%E9%80%A0%E7%86%B1%E9%BB%9E/" title="負載平衡以前在抹平熱點，LLM 推論反過來要製造熱點">負載平衡以前在抹平熱點，LLM 推論反過來要製造熱點</a><time datetime="2026-09-12T23:00:00.000Z" title="發表於 2026-09-13 07:00:00">2026-09-13</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/09/12/%E6%97%A5%E6%9C%AC%E5%85%8D%E7%A8%8511%E6%9C%881%E6%97%A5%E6%94%B9%E6%88%90%E5%85%88%E4%BB%98%E5%BE%8C%E9%80%80-%E5%B0%81%E8%A2%8B%E6%B2%92%E4%BA%86%E4%B9%9F%E6%8A%8A%E6%9C%80%E5%BE%8C%E4%B8%80%E9%81%93%E6%8F%90%E9%86%92%E6%8B%BF%E6%8E%89%E4%BA%86/" title="日本免稅 11 月 1 日改成先付後退：封袋沒了，也把最後一道提醒拿掉了"><img src="/img/20260912-03.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="日本免稅 11 月 1 日改成先付後退：封袋沒了，也把最後一道提醒拿掉了"/></a><div class="content"><a class="title" href="/2026/09/12/%E6%97%A5%E6%9C%AC%E5%85%8D%E7%A8%8511%E6%9C%881%E6%97%A5%E6%94%B9%E6%88%90%E5%85%88%E4%BB%98%E5%BE%8C%E9%80%80-%E5%B0%81%E8%A2%8B%E6%B2%92%E4%BA%86%E4%B9%9F%E6%8A%8A%E6%9C%80%E5%BE%8C%E4%B8%80%E9%81%93%E6%8F%90%E9%86%92%E6%8B%BF%E6%8E%89%E4%BA%86/" title="日本免稅 11 月 1 日改成先付後退：封袋沒了，也把最後一道提醒拿掉了">日本免稅 11 月 1 日改成先付後退：封袋沒了，也把最後一道提醒拿掉了</a><time datetime="2026-09-12T10:00:00.000Z" title="發表於 2026-09-12 18:00:00">2026-09-12</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/09/12/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260912/" title="AI 與科技新聞摘要 - 2026/09/12"><img src="/img/20260912-02.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="AI 與科技新聞摘要 - 2026/09/12"/></a><div class="content"><a class="title" href="/2026/09/12/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260912/" title="AI 與科技新聞摘要 - 2026/09/12">AI 與科技新聞摘要 - 2026/09/12</a><time datetime="2026-09-12T04:00:00.000Z" title="發表於 2026-09-12 12:00:00">2026-09-12</time></div></div></div></div></div></div></main><footer id="footer" style="background-image: url(/img/20260913-01.webp);"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2024 - 2026 By Cheng®</span></div><div class="footer_custom_text">Written by Cheng® — 自律，從當下的一念開始。</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="閱讀模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日夜模式切換"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="單欄和雙欄切換"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="設定"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目錄"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="前往評論"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到頂端"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.umd.min.js"></script><script src="https://cdn.jsdelivr.net/npm/instant.page/instantpage.min.js" type="module"></script><script src="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.js"></script><div class="js-pjax"><script>(() => {
+  const isShuoshuo = GLOBAL_CONFIG_SITE.pageType === 'shuoshuo'
+  const option = {"mapping":"pathname","strict":0,"reactionsEnabled":1,"emitMetadata":0,"inputPosition":"bottom","lang":"zh-TW"}
+
+  const getGiscusTheme = theme => theme === 'dark' ? 'dark' : 'light'
+
+  const createScriptElement = config => {
+    const ele = document.createElement('script')
+    Object.entries(config).forEach(([key, value]) => {
+      ele.setAttribute(key, value)
+    })
+    return ele
+  }
+
+  const loadGiscus = (el = document, key) => {
+    const mappingConfig = isShuoshuo
+      ? { 'data-mapping': 'specific', 'data-term': key }
+      : { 'data-mapping': (option && option['data-mapping']) || 'pathname' }
+
+    const giscusConfig = {
+      src: 'https://giscus.app/client.js',
+      'data-repo': 'mark22013333/mark22013333.github.io',
+      'data-repo-id': 'R_kgDOLAxa6A',
+      'data-category-id': 'DIC_kwDOLAxa6M4C5eO9',
+      'data-theme': getGiscusTheme(document.documentElement.getAttribute('data-theme')),
+      'data-reactions-enabled': '1',
+      crossorigin: 'anonymous',
+      async: true,
+      ...option,
+      ...mappingConfig
+    }
+
+    const scriptElement = createScriptElement(giscusConfig)
+
+    el.querySelector('#giscus-wrap').appendChild(scriptElement)
+
+    if (isShuoshuo) {
+      window.shuoshuoComment.destroyGiscus = () => {
+        if (el.children.length) {
+          el.innerHTML = ''
+          el.classList.add('no-comment')
+        }
+      }
+    }
+  }
+
+  const changeGiscusTheme = theme => {
+    const iframe = document.querySelector('#giscus-wrap iframe')
+    if (iframe) {
+      const message = {
+        giscus: {
+          setConfig: {
+            theme: getGiscusTheme(theme)
+          }
+        }
+      }
+      iframe.contentWindow.postMessage(message, 'https://giscus.app')
+    }
+  }
+
+  btf.addGlobalFn('themeChange', changeGiscusTheme, 'giscus')
+
+  if (isShuoshuo) {
+    'Giscus' === 'Giscus'
+      ? window.shuoshuoComment = { loadComment: loadGiscus }
+      : window.loadOtherComment = loadGiscus
+    return
+  }
+
+  if ('Giscus' === 'Giscus' || !true) {
+    if (true) btf.loadComment(document.getElementById('giscus-wrap'), loadGiscus)
+    else loadGiscus()
+  } else {
+    window.loadOtherComment = loadGiscus
+  }
+})()</script></div><script src="/js/kkbox-player.js"></script><script src="/js/archives-pagination.js"></script><script src="/js/font-resize.js"></script><script src="/js/dark-palette.js"></script><script src="/js/series-showcase.js"></script><script src="/js/search-tags.js"></script><script defer="defer" id="fluttering_ribbon" mobile="false" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/canvas-fluttering-ribbon.min.js"></script><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/activate-power-mode.min.js"></script><script>POWERMODE.colorful = true;
+POWERMODE.shake = true;
+POWERMODE.mobile = true;
+document.body.addEventListener('input', POWERMODE);
+</script><script src="https://cdn.jsdelivr.net/npm/pjax/pjax.min.js" defer="defer"></script><script>document.addEventListener('DOMContentLoaded', () => {
+  const pjaxSelectors = ["meta[property=\"og:image\"]","meta[property=\"og:title\"]","meta[property=\"og:url\"]","meta[property=\"og:description\"]","link[rel=\"canonical\"]","head > title","#config-diff","#body-wrap","#rightside-config-hide","#rightside-config-show",".js-pjax"]
+
+  window.pjax = new Pjax({
+    elements: 'a:not([target="_blank"])',
+    selectors: pjaxSelectors,
+    cacheBust: false,
+    analytics: true,
+    scrollRestoration: false
+  })
+
+  const triggerPjaxFn = (val) => {
+    if (!val) return
+    Object.values(val).forEach(fn => {
+      try {
+        fn()
+      } catch (err) {
+        console.debug('Pjax callback failed:', err)
+      }
+    })
+  }
+
+  document.addEventListener('pjax:send', () => {
+    // removeEventListener
+    btf.removeGlobalFnEvent('pjaxSendOnce')
+    btf.removeGlobalFnEvent('themeChange')
+
+    // reset readmode
+    const $bodyClassList = document.body.classList
+    if ($bodyClassList.contains('read-mode')) $bodyClassList.remove('read-mode')
+
+    triggerPjaxFn(window.globalFn.pjaxSend)
+  })
+
+  document.addEventListener('pjax:complete', () => {
+    btf.removeGlobalFnEvent('pjaxCompleteOnce')
+    document.querySelectorAll('script[data-pjax]').forEach(item => {
+      const newScript = document.createElement('script')
+      const content = item.text || item.textContent || item.innerHTML || ""
+      Array.from(item.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value))
+      newScript.appendChild(document.createTextNode(content))
+      item.parentNode.replaceChild(newScript, item)
+    })
+
+    triggerPjaxFn(window.globalFn.pjaxComplete)
+  })
+
+  document.addEventListener('pjax:error', e => {
+    if (e.request.status === 404) {
+      true
+        ? pjax.loadUrl('/404.html')
+        : window.location.href = e.request.responseURL
+    }
+  })
+})</script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜尋</span><i class="fas fa-spinner fa-pulse" id="loading-status" hidden="hidden"></i><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="text-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  資料載入中</span></div><div class="local-search-input"><input placeholder="搜尋文章" type="text"/></div><hr/><div id="local-search-results"></div><div class="ais-Pagination" id="local-search-pagination" style="display:none;"><ul class="ais-Pagination-list"></ul></div><div id="local-search-stats"></div></div><div id="search-mask"></div><script src="/js/search/local-search.js"></script></div></div><script>window.__BLOG_TAGS__=[{"name":"Claude Code","count":216,"path":"tags/Claude-Code/"},{"name":"AI與科技新聞","count":169,"path":"tags/AI與科技新聞/"},{"name":"AI Agent","count":137,"path":"tags/AI-Agent/"},{"name":"教學","count":121,"path":"tags/教學/"},{"name":"Anthropic","count":109,"path":"tags/Anthropic/"},{"name":"資安","count":105,"path":"tags/資安/"},{"name":"開源","count":97,"path":"tags/開源/"},{"name":"AI 產業","count":88,"path":"tags/AI-產業/"},{"name":"OpenAI","count":72,"path":"tags/OpenAI/"},{"name":"自動化","count":60,"path":"tags/自動化/"},{"name":"AI 開發工具","count":59,"path":"tags/AI-開發工具/"},{"name":"CLI","count":59,"path":"tags/CLI/"},{"name":"MCP","count":59,"path":"tags/MCP/"},{"name":"開發工具","count":50,"path":"tags/開發工具/"},{"name":"Claude","count":46,"path":"tags/Claude/"},{"name":"工程師生活","count":38,"path":"tags/工程師生活/"},{"name":"Skills","count":38,"path":"tags/Skills/"},{"name":"Java","count":34,"path":"tags/Java/"},{"name":"Google","count":32,"path":"tags/Google/"},{"name":"AI 安全","count":32,"path":"tags/AI-安全/"},{"name":"LLM","count":31,"path":"tags/LLM/"},{"name":"NVIDIA","count":30,"path":"tags/NVIDIA/"},{"name":"生活札記","count":29,"path":"tags/生活札記/"},{"name":"AI 法規","count":27,"path":"tags/AI-法規/"},{"name":"理財","count":23,"path":"tags/理財/"},{"name":"Python","count":21,"path":"tags/Python/"},{"name":"AI 模型","count":20,"path":"tags/AI-模型/"},{"name":"DevOps","count":19,"path":"tags/DevOps/"},{"name":"Spring","count":18,"path":"tags/Spring/"},{"name":"Apple","count":17,"path":"tags/Apple/"},{"name":"健康","count":16,"path":"tags/健康/"},{"name":"GitHub","count":16,"path":"tags/GitHub/"},{"name":"Performance","count":16,"path":"tags/Performance/"},{"name":"Microsoft","count":13,"path":"tags/Microsoft/"},{"name":"Copilot","count":13,"path":"tags/Copilot/"},{"name":"Prompt Engineering","count":12,"path":"tags/Prompt-Engineering/"},{"name":"Gemini","count":12,"path":"tags/Gemini/"},{"name":"併發","count":12,"path":"tags/併發/"},{"name":"資料庫","count":12,"path":"tags/資料庫/"},{"name":"GitHub Copilot","count":11,"path":"tags/GitHub-Copilot/"},{"name":"Cursor","count":10,"path":"tags/Cursor/"},{"name":"Azure","count":9,"path":"tags/Azure/"},{"name":"微軟課程","count":9,"path":"tags/微軟課程/"},{"name":"Hooks","count":8,"path":"tags/Hooks/"},{"name":"系統監控","count":8,"path":"tags/系統監控/"},{"name":"Elasticsearch","count":8,"path":"tags/Elasticsearch/"},{"name":"Codex","count":6,"path":"tags/Codex/"},{"name":"Meta","count":6,"path":"tags/Meta/"},{"name":"Rust","count":6,"path":"tags/Rust/"},{"name":"macOS","count":6,"path":"tags/macOS/"},{"name":"Code Review","count":6,"path":"tags/Code-Review/"},{"name":"Docker","count":6,"path":"tags/Docker/"},{"name":"Collections","count":6,"path":"tags/Collections/"},{"name":"AI","count":5,"path":"tags/AI/"},{"name":"Kiro","count":5,"path":"tags/Kiro/"},{"name":"AZ-305","count":5,"path":"tags/AZ-305/"},{"name":"TDD","count":5,"path":"tags/TDD/"},{"name":"設計模式","count":5,"path":"tags/設計模式/"},{"name":"旅遊","count":5,"path":"tags/旅遊/"},{"name":"生產力","count":4,"path":"tags/生產力/"},{"name":"Mistral","count":4,"path":"tags/Mistral/"},{"name":"Windsurf","count":4,"path":"tags/Windsurf/"},{"name":"DP-300","count":4,"path":"tags/DP-300/"},{"name":"SQL Server","count":4,"path":"tags/SQL-Server/"},{"name":"JSON","count":4,"path":"tags/JSON/"},{"name":"Stream","count":4,"path":"tags/Stream/"},{"name":"168斷食","count":3,"path":"tags/168斷食/"},{"name":"Amazon","count":3,"path":"tags/Amazon/"},{"name":"Agent","count":3,"path":"tags/Agent/"},{"name":"SDD","count":3,"path":"tags/SDD/"},{"name":"遠端工作","count":3,"path":"tags/遠端工作/"},{"name":"專注力","count":2,"path":"tags/專注力/"},{"name":"AWS","count":2,"path":"tags/AWS/"},{"name":"Networking","count":2,"path":"tags/Networking/"},{"name":"Tool Use","count":2,"path":"tags/Tool-Use/"},{"name":"VS Code","count":2,"path":"tags/VS-Code/"},{"name":"Multi-Model","count":2,"path":"tags/Multi-Model/"},{"name":"TypeScript","count":2,"path":"tags/TypeScript/"},{"name":"Claude Design","count":2,"path":"tags/Claude-Design/"},{"name":"Prototype","count":2,"path":"tags/Prototype/"},{"name":"Lucene","count":2,"path":"tags/Lucene/"},{"name":"Redis","count":2,"path":"tags/Redis/"},{"name":"軟體工程師","count":1,"path":"tags/軟體工程師/"},{"name":"職涯","count":1,"path":"tags/職涯/"},{"name":"2026","count":1,"path":"tags/2026/"},{"name":"資訊安全","count":1,"path":"tags/資訊安全/"},{"name":"Migration","count":1,"path":"tags/Migration/"},{"name":"Agent Skills","count":1,"path":"tags/Agent-Skills/"},{"name":"Addy Osmani","count":1,"path":"tags/Addy-Osmani/"},{"name":"工程紀律","count":1,"path":"tags/工程紀律/"},{"name":"Apify","count":1,"path":"tags/Apify/"},{"name":"爬蟲","count":1,"path":"tags/爬蟲/"},{"name":"Buddi","count":1,"path":"tags/Buddi/"},{"name":"notch","count":1,"path":"tags/notch/"},{"name":"UI 設計","count":1,"path":"tags/UI-設計/"},{"name":"Prompt Caching","count":1,"path":"tags/Prompt-Caching/"},{"name":"成本優化","count":1,"path":"tags/成本優化/"},{"name":"Function Calling","count":1,"path":"tags/Function-Calling/"},{"name":"CLAUDE.md","count":1,"path":"tags/CLAUDE-md/"},{"name":"Auto Memory","count":1,"path":"tags/Auto-Memory/"},{"name":"Project Setup","count":1,"path":"tags/Project-Setup/"},{"name":"Extended Thinking","count":1,"path":"tags/Extended-Thinking/"},{"name":"Reasoning","count":1,"path":"tags/Reasoning/"},{"name":"/goal","count":1,"path":"tags/goal/"},{"name":"Monitor Tool","count":1,"path":"tags/Monitor-Tool/"},{"name":"Plan Mode","count":1,"path":"tags/Plan-Mode/"},{"name":"Haiku","count":1,"path":"tags/Haiku/"},{"name":"Sonnet","count":1,"path":"tags/Sonnet/"},{"name":"Opus","count":1,"path":"tags/Opus/"},{"name":"Token 成本","count":1,"path":"tags/Token-成本/"},{"name":"Routines","count":1,"path":"tags/Routines/"},{"name":"Ultraplan","count":1,"path":"tags/Ultraplan/"},{"name":"規劃","count":1,"path":"tags/規劃/"},{"name":"cloud","count":1,"path":"tags/cloud/"},{"name":"Voice Mode","count":1,"path":"tags/Voice-Mode/"},{"name":"Push-to-Talk","count":1,"path":"tags/Push-to-Talk/"},{"name":"Team","count":1,"path":"tags/Team/"},{"name":"Onboarding","count":1,"path":"tags/Onboarding/"},{"name":"Supply Chain","count":1,"path":"tags/Supply-Chain/"},{"name":"Subagent","count":1,"path":"tags/Subagent/"},{"name":"UX 設計","count":1,"path":"tags/UX-設計/"},{"name":"Cowork","count":1,"path":"tags/Cowork/"},{"name":"Plugin","count":1,"path":"tags/Plugin/"},{"name":"Managed Agents","count":1,"path":"tags/Managed-Agents/"},{"name":"Dreaming","count":1,"path":"tags/Dreaming/"},{"name":"Outcomes","count":1,"path":"tags/Outcomes/"},{"name":"Coolify","count":1,"path":"tags/Coolify/"},{"name":"self-hosted","count":1,"path":"tags/self-hosted/"},{"name":"PaaS","count":1,"path":"tags/PaaS/"},{"name":"Productivity","count":1,"path":"tags/Productivity/"},{"name":"Encryption","count":1,"path":"tags/Encryption/"},{"name":"CrewAI","count":1,"path":"tags/CrewAI/"},{"name":"Multi-Agent","count":1,"path":"tags/Multi-Agent/"},{"name":"Monitoring","count":1,"path":"tags/Monitoring/"},{"name":"ELK Stack","count":1,"path":"tags/ELK-Stack/"},{"name":"Mapping","count":1,"path":"tags/Mapping/"},{"name":"Template","count":1,"path":"tags/Template/"},{"name":"Schema","count":1,"path":"tags/Schema/"},{"name":"Architecture","count":1,"path":"tags/Architecture/"},{"name":"Aggregation","count":1,"path":"tags/Aggregation/"},{"name":"Search","count":1,"path":"tags/Search/"},{"name":"CRUD","count":1,"path":"tags/CRUD/"},{"name":"bulk","count":1,"path":"tags/bulk/"},{"name":"alias","count":1,"path":"tags/alias/"},{"name":"REST API","count":1,"path":"tags/REST-API/"},{"name":"Analyzer","count":1,"path":"tags/Analyzer/"},{"name":"IK","count":1,"path":"tags/IK/"},{"name":"中文搜尋","count":1,"path":"tags/中文搜尋/"},{"name":"internals","count":1,"path":"tags/internals/"},{"name":"Translog","count":1,"path":"tags/Translog/"},{"name":"Segment","count":1,"path":"tags/Segment/"},{"name":"Production","count":1,"path":"tags/Production/"},{"name":"Operations","count":1,"path":"tags/Operations/"},{"name":"GH-300","count":1,"path":"tags/GH-300/"},{"name":"Responsible AI","count":1,"path":"tags/Responsible-AI/"},{"name":"SpecKit","count":1,"path":"tags/SpecKit/"},{"name":"工具遷移","count":1,"path":"tags/工具遷移/"},{"name":"前端","count":1,"path":"tags/前端/"},{"name":"skill","count":1,"path":"tags/skill/"},{"name":"AI 輔助開發","count":1,"path":"tags/AI-輔助開發/"},{"name":"開源專案","count":1,"path":"tags/開源專案/"},{"name":"Jira","count":1,"path":"tags/Jira/"},{"name":"Atlassian","count":1,"path":"tags/Atlassian/"},{"name":"微服務","count":1,"path":"tags/微服務/"},{"name":"系統設計","count":1,"path":"tags/系統設計/"},{"name":"後端開發","count":1,"path":"tags/後端開發/"},{"name":"Lightpanda","count":1,"path":"tags/Lightpanda/"},{"name":"Headless Browser","count":1,"path":"tags/Headless-Browser/"},{"name":"Zig","count":1,"path":"tags/Zig/"},{"name":"Web Scraping","count":1,"path":"tags/Web-Scraping/"},{"name":"ETF","count":1,"path":"tags/ETF/"},{"name":"台股","count":1,"path":"tags/台股/"},{"name":"美股","count":1,"path":"tags/美股/"},{"name":"Mag-7","count":1,"path":"tags/Mag-7/"},{"name":"財報","count":1,"path":"tags/財報/"},{"name":"Multica","count":1,"path":"tags/Multica/"},{"name":"Skill","count":1,"path":"tags/Skill/"},{"name":"心智模型","count":1,"path":"tags/心智模型/"},{"name":"決策工具","count":1,"path":"tags/決策工具/"},{"name":"Discord","count":1,"path":"tags/Discord/"},{"name":"GPT-5.5","count":1,"path":"tags/GPT-5-5/"},{"name":"OpenScreen","count":1,"path":"tags/OpenScreen/"},{"name":"Screen Recording","count":1,"path":"tags/Screen-Recording/"},{"name":"OpenCode","count":1,"path":"tags/OpenCode/"},{"name":"GPT","count":1,"path":"tags/GPT/"},{"name":"RTK","count":1,"path":"tags/RTK/"},{"name":"Token 優化","count":1,"path":"tags/Token-優化/"},{"name":"AI VTuber","count":1,"path":"tags/AI-VTuber/"},{"name":"Project AIRI","count":1,"path":"tags/Project-AIRI/"},{"name":"Open CoDesign","count":1,"path":"tags/Open-CoDesign/"},{"name":"AI Design","count":1,"path":"tags/AI-Design/"},{"name":"Sonatype Guide","count":1,"path":"tags/Sonatype-Guide/"},{"name":"依賴管理","count":1,"path":"tags/依賴管理/"},{"name":"Stanford AI Index","count":1,"path":"tags/Stanford-AI-Index/"},{"name":"AI產業","count":1,"path":"tags/AI產業/"},{"name":"工程師職涯","count":1,"path":"tags/工程師職涯/"},{"name":"AI透明度","count":1,"path":"tags/AI透明度/"},{"name":"就業市場","count":1,"path":"tags/就業市場/"},{"name":"API","count":1,"path":"tags/API/"},{"name":"TimesFM","count":1,"path":"tags/TimesFM/"},{"name":"時間序列","count":1,"path":"tags/時間序列/"},{"name":"基礎模型","count":1,"path":"tags/基礎模型/"},{"name":"ML","count":1,"path":"tags/ML/"},{"name":"Whisper","count":1,"path":"tags/Whisper/"},{"name":"Speech-to-Text","count":1,"path":"tags/Speech-to-Text/"},{"name":"Flash Attention","count":1,"path":"tags/Flash-Attention/"},{"name":"團隊合作","count":1,"path":"tags/團隊合作/"},{"name":"包棟民宿","count":1,"path":"tags/包棟民宿/"},{"name":"台中","count":1,"path":"tags/台中/"},{"name":"南投","count":1,"path":"tags/南投/"},{"name":"苗栗","count":1,"path":"tags/苗栗/"},{"name":"時事評論","count":1,"path":"tags/時事評論/"},{"name":"能源","count":1,"path":"tags/能源/"},{"name":"AI 基礎建設","count":1,"path":"tags/AI-基礎建設/"},{"name":"台灣","count":1,"path":"tags/台灣/"},{"name":"MacBook","count":1,"path":"tags/MacBook/"},{"name":"淡江大橋","count":1,"path":"tags/淡江大橋/"},{"name":"淡水","count":1,"path":"tags/淡水/"},{"name":"建築","count":1,"path":"tags/建築/"},{"name":"週末","count":1,"path":"tags/週末/"},{"name":"Claude Skills","count":1,"path":"tags/Claude-Skills/"},{"name":"居家辦公","count":1,"path":"tags/居家辦公/"},{"name":"人體工學","count":1,"path":"tags/人體工學/"},{"name":"日本","count":1,"path":"tags/日本/"},{"name":"黃金週","count":1,"path":"tags/黃金週/"},{"name":"Golden Week","count":1,"path":"tags/Golden-Week/"}];</script></body></html>
