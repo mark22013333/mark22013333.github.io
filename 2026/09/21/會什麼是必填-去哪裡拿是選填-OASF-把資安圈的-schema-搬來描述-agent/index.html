@@ -1,0 +1,533 @@
+<!DOCTYPE html><html lang="zh-TW" data-theme="dark"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>會什麼是必填，去哪裡拿是選填：OASF 把資安圈的 schema 搬來描述 agent | Cheng's Tech &amp; Life</title><meta name="author" content="Cheng®"><meta name="copyright" content="Cheng®"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#0d0d0d"><meta name="description" content="一份完全沒寫怎麼取得的 agent 描述檔，在這套 schema 底下仍然合法。而這套 schema 的骨架，是從資安事件的框架整套搬過來的。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="會什麼是必填，去哪裡拿是選填：OASF 把資安圈的 schema 搬來描述 agent">
+<meta property="og:url" content="https://mark22013333.github.io/2026/09/21/%E6%9C%83%E4%BB%80%E9%BA%BC%E6%98%AF%E5%BF%85%E5%A1%AB-%E5%8E%BB%E5%93%AA%E8%A3%A1%E6%8B%BF%E6%98%AF%E9%81%B8%E5%A1%AB-OASF-%E6%8A%8A%E8%B3%87%E5%AE%89%E5%9C%88%E7%9A%84-schema-%E6%90%AC%E4%BE%86%E6%8F%8F%E8%BF%B0-agent/index.html">
+<meta property="og:site_name" content="Cheng&#39;s Tech &amp; Life">
+<meta property="og:description" content="一份完全沒寫怎麼取得的 agent 描述檔，在這套 schema 底下仍然合法。而這套 schema 的骨架，是從資安事件的框架整套搬過來的。">
+<meta property="og:locale" content="zh_TW">
+<meta property="og:image" content="https://mark22013333.github.io/img/20260921-01.webp">
+<meta property="article:published_time" content="2026-09-21T01:00:00.000Z">
+<meta property="article:modified_time" content="2026-09-21T12:39:29.757Z">
+<meta property="article:author" content="Cheng®">
+<meta property="article:tag" content="AI 開發工具">
+<meta property="article:tag" content="AI Agent">
+<meta property="article:tag" content="開源">
+<meta property="article:tag" content="MCP">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://mark22013333.github.io/img/20260921-01.webp"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "會什麼是必填，去哪裡拿是選填：OASF 把資安圈的 schema 搬來描述 agent",
+  "url": "https://mark22013333.github.io/2026/09/21/%E6%9C%83%E4%BB%80%E9%BA%BC%E6%98%AF%E5%BF%85%E5%A1%AB-%E5%8E%BB%E5%93%AA%E8%A3%A1%E6%8B%BF%E6%98%AF%E9%81%B8%E5%A1%AB-OASF-%E6%8A%8A%E8%B3%87%E5%AE%89%E5%9C%88%E7%9A%84-schema-%E6%90%AC%E4%BE%86%E6%8F%8F%E8%BF%B0-agent/",
+  "image": "https://mark22013333.github.io/img/20260921-01.webp",
+  "datePublished": "2026-09-21T01:00:00.000Z",
+  "dateModified": "2026-09-21T12:39:29.757Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "Cheng®",
+      "url": "https://mark22013333.github.io"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://mark22013333.github.io/2026/09/21/%E6%9C%83%E4%BB%80%E9%BA%BC%E6%98%AF%E5%BF%85%E5%A1%AB-%E5%8E%BB%E5%93%AA%E8%A3%A1%E6%8B%BF%E6%98%AF%E9%81%B8%E5%A1%AB-OASF-%E6%8A%8A%E8%B3%87%E5%AE%89%E5%9C%88%E7%9A%84-schema-%E6%90%AC%E4%BE%86%E6%8F%8F%E8%BF%B0-agent/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//www.google-analytics.com" crossorigin=""/><link rel="preconnect" href="//fonts.googleapis.com" crossorigin=""/><link rel="preconnect" href="//busuanzi.ibruce.info"/><meta name="google-site-verification" content="6ywUr8k2n_CT1PFYJzlSvI3CZ-JmJ55RYbA39VrFBDs"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!true && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          const hour = new Date().getHours()
+          const isNight = hour <= 9 || hour >= 18
+          if (theme === undefined) isNight ? activateDarkMode() : activateLightMode()
+          else theme === 'light' ? activateLightMode() : activateDarkMode()
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script async="async" src="https://www.googletagmanager.com/gtag/js?id=G-JBV14NRDH3"></script><script>window.dataLayer = window.dataLayer || []
+function gtag(){dataLayer.push(arguments)}
+gtag('js', new Date())
+gtag('config', 'G-JBV14NRDH3')
+btf.addGlobalFn('pjaxComplete', () => {
+  gtag('config', 'G-JBV14NRDH3', {'page_path': window.location.pathname})
+}, 'google_analytics')
+</script><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Titillium+Web&amp;display=swap" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"pagination":{"enable":false,"hitsPerPage":8},"languages":{"hits_empty":"找不到符合您查詢的內容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '複製成功',
+    error: '複製失敗',
+    noSupport: '瀏覽器不支援'
+  },
+  relativeDate: {
+    homepage: false,
+    post: true
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '剛剛',
+    min: '分鐘前',
+    hour: '小時前',
+    day: '天前',
+    month: '個月前'
+  },
+  copyright: {"limitCount":1,"languages":{"author":"作者: Cheng®","link":"連結: ","source":"來源: Cheng's Tech & Life","info":"著作權歸作者所有。如需商業轉載，請聯絡作者獲得授權，非商業轉載請註明出處😁。"}},
+  lightbox: 'fancybox',
+  Snackbar: {"chs_to_cht":"已切換為繁體中文","cht_to_chs":"已切換為簡體中文","day_to_night":"已切換為深色模式","night_to_day":"已切換為淺色模式","bgLight":"#49b1f5","bgDark":"#1f1f1f","position":"top-center"},
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid/dist/infinitegrid.min.js',
+    buttonText: '載入更多'
+  },
+  isPhotoFigcaption: true,
+  islazyloadPlugin: false,
+  isAnchor: true,
+  percent: {
+    toc: true,
+    rightside: true,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '會什麼是必填，去哪裡拿是選填：OASF 把資安圈的 schema 搬來描述 agent',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><link rel="stylesheet" href="/css/kkbox-player.css"><link rel="stylesheet" href="/css/tag-cloud-fancy.css"><link rel="stylesheet" href="/css/font-resize.css"><link rel="stylesheet" href="/css/dark-palette.css"><link rel="stylesheet" href="/css/loading-override.css"><link rel="stylesheet" href="/css/series-showcase.css"><link rel="stylesheet" href="/css/search-tags.css"><link rel="alternate" href="/atom.xml" title="Cheng's Tech & Life" type="application/atom+xml">
+</head><body><div id="loading-box"><div class="loading-glass-overlay"></div><div class="loading-indicator"><div class="loading-dot"></div><div class="loading-dot"></div><div class="loading-dot"></div></div></div><script>(()=>{
+  const $loadingBox = document.getElementById('loading-box')
+  const $body = document.body
+  const preloader = {
+    endLoading: () => {
+      if ($loadingBox.classList.contains('loaded')) return
+      $body.style.overflow = ''
+      $loadingBox.classList.add('loaded')
+    },
+    initLoading: () => {
+      $body.style.overflow = 'hidden'
+      $loadingBox.classList.remove('loaded')
+    }
+  }
+
+  preloader.initLoading()
+
+  if (document.readyState === 'complete') {
+    preloader.endLoading()
+  } else {
+    window.addEventListener('load', preloader.endLoading)
+    document.addEventListener('DOMContentLoaded', preloader.endLoading)
+    setTimeout(preloader.endLoading, 7000)
+  }
+
+  if (true) {
+    btf.addGlobalFn('pjaxSend', preloader.initLoading, 'preloader_init')
+    btf.addGlobalFn('pjaxComplete', preloader.endLoading, 'preloader_end')
+  }
+})()</script><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="https://lh3.googleusercontent.com/pw/ABLVV87_po8nBc6F_tXcoYDmtzMGWxHuhhrbguYILCjmjWKLOS8DTpubm0YoQLKgjyjRIZyV5TjYe7XVEz_YU4squfr37GTZqPZP1hlMVZ_MIgXpTxWu73M=w1200" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">618</div></a><a href="/tags/"><div class="headline">標籤</div><div class="length-num">226</div></a><a href="/categories/"><div class="headline">分類</div><div class="length-num">23</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首頁-Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 時間軸-archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 標籤-tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分類-Categories</span></a></div><div class="menus_item"><a class="site-page" href="/series/"><i class="fa-fw fas fa-layer-group"></i><span> 系列-Series</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-list"></i><span> 其他列表</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音樂-Music</span></a></li><li><a class="site-page child" href="/gallery/"><i class="fa-fw fas fa-images"></i><span> 畫館-Gallery</span></a></li></ul></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg fixed" id="page-header" style="background-image: url(/img/20260921-01.webp);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><img class="site-icon" src="https://lh3.googleusercontent.com/pw/ABLVV87_po8nBc6F_tXcoYDmtzMGWxHuhhrbguYILCjmjWKLOS8DTpubm0YoQLKgjyjRIZyV5TjYe7XVEz_YU4squfr37GTZqPZP1hlMVZ_MIgXpTxWu73M=w1200" alt="Logo"><span class="site-name">Cheng's Tech &amp; Life</span></a><a class="nav-page-title" href="/"><span class="site-name">會什麼是必填，去哪裡拿是選填：OASF 把資安圈的 schema 搬來描述 agent</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首頁</span></span></a></span><div id="menus"><div id="search-button" title="Ctrl+K / Cmd+K"><span class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜尋</span></span></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首頁-Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 時間軸-archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 標籤-tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分類-Categories</span></a></div><div class="menus_item"><a class="site-page" href="/series/"><i class="fa-fw fas fa-layer-group"></i><span> 系列-Series</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-list"></i><span> 其他列表</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音樂-Music</span></a></li><li><a class="site-page child" href="/gallery/"><i class="fa-fw fas fa-images"></i><span> 畫館-Gallery</span></a></li></ul></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">會什麼是必填，去哪裡拿是選填：OASF 把資安圈的 schema 搬來描述 agent</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">發表於</span><time class="post-meta-date-created" datetime="2026-09-21T01:00:00.000Z" title="發表於 2026-09-21 09:00:00">2026-09-21</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新於</span><time class="post-meta-date-updated" datetime="2026-09-21T12:39:29.757Z" title="更新於 2026-09-21 20:39:29">2026-09-21</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/AI-Agent/">AI Agent</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">總字數:</span><span class="word-count">3.9k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">閱讀時間:</span><span>13分鐘</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">瀏覽量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><p>一份 agent 的描述檔躺在目錄裡。名字有了，版本有了，schema 版本有了，作者有了，建立時間照 RFC-3339 寫得工工整整，會做哪些事也列得清清楚楚。</p>
+<p>唯一沒寫的是：你要去哪裡拿到它。</p>
+<p>然後這份檔案完全合法。不是有人偷懶漏填，是規格本來就允許。</p>
+<p>要弄懂這個設計怎麼長成這樣，得先往回退一步，退到一個跟 agent 沒什麼關係的地方。</p>
+<h2 id="骨架是從資安圈搬過來的"><a href="#骨架是從資安圈搬過來的" class="headerlink" title="骨架是從資安圈搬過來的"></a>骨架是從資安圈搬過來的</h2><p>OASF（Open Agentic Schema Framework）的 README 第一段是這樣定義自己的：</p>
+<blockquote>
+<p>The Open Agentic Schema Framework (OASF) is a standardized schema system for defining and managing AI agent capabilities, interactions, and metadata. It provides a structured way to describe agent attributes, capabilities, and relationships using attribute-based taxonomies.</p>
+</blockquote>
+<p>這種段落你大概會直接滑過去。下一段交代了它是從哪裡抄來的：</p>
+<blockquote>
+<p>OASF is highly inspired from <a target="_blank" rel="noopener" href="https://ocsf.io/">OCSF (Open Cybersecurity Schema Framework)</a> in terms of data modeling philosophy but also in terms of implementation. The server is a derivative work of OCSF schema server and the schema update workflows reproduce those developed by OCSF.</p>
+</blockquote>
+<p>搬過來的有三樣：資料建模的哲學、實作、schema 的更新流程。schema server 直接寫明是 OCSF schema server 的 derivative work，不是「參考了它的想法」，是拿它的東西改的。這句話是 README 自己寫的，不是我從相似度推的。</p>
+<p>所以，描述 AI agent 會做什麼的那套骨架，原本是為資安領域的事件正規化長出來的。</p>
+<p>這件事其實沒那麼跳。一個要把來源雜亂、格式各異的東西壓成同一種形狀的框架，跟另一個要把各家廠商、各種宣稱的 agent 壓成同一種形狀的框架，要解的是同一個形狀的問題。差別只在格子裡裝什麼。就像超市那套條碼與品類代碼，它一點都不在乎你賣的是牛奶還是螺絲起子，它只在乎每樣東西都有一格可以填、而且大家填的是同一格。</p>
+<h2 id="為什麼不乾脆自己另開一套"><a href="#為什麼不乾脆自己另開一套" class="headerlink" title="為什麼不乾脆自己另開一套"></a>為什麼不乾脆自己另開一套</h2><p>今天要描述一個 agent，能選的格式不只一種。MCP 有自己的 server schema，A2A 有自己的 card，Oracle 那邊有 Open Agent Spec，<code>SKILL.md</code> 有自己的 frontmatter，AGNTCY 本身也曾經有一套 Agent Connect Protocol。</p>
+<p>面對「又一個標準」這種指控，OASF 的回答是不當玩家，當索引。它沒有再生一套 agent card 格式去跟這些搶，而是把它們各建一個 module 收進來，變成 record 底下的一個欄位。</p>
+<p>module 的分類只有兩格：<code>core</code>（uid 1）與 <code>integration</code>（uid 2）。整個生態就這樣被塞進兩個格子。<code>integration</code> 底下目前有四個實際的 module，分別對到 MCP、A2A、Oracle 的 Agent Spec，以及 ACP。</p>
+<p>這裡有個地方很容易讀歪。<code>agentspec</code> 這個 module 的 reference 指向 Oracle 的 Open Agent Spec 文件站，<code>agentskills</code> 指向 <code>agentskills.io</code> 的規格頁。這只代表 OASF 引用了那些規格、替它們建了格子，不代表兩邊有任何合作、聯手或誰加入了誰。引用就只是引用。</p>
+<p>這個定位有代價：完整性永遠落後被收編的那幾份規格一個版本。對方改了，你得跟著改 module，改完還得等自己發版。</p>
+<h2 id="第一個被收掉的，是自家的協定"><a href="#第一個被收掉的，是自家的協定" class="headerlink" title="第一個被收掉的，是自家的協定"></a>第一個被收掉的，是自家的協定</h2><p><code>schema/modules/integration/acp_manifest.json</code> 與 <code>schema/objects/acp.json</code>，這兩個檔案上掛著逐字相同的一段 <code>@deprecated</code>。<code>message</code> 是 “ACP is deprecated, please use A2A instead.”，<code>since</code> 是 <code>0.8.0</code>。</p>
+<p>這個 ACP 是 Agent Connect Protocol，AGNTCY 自己的協定，<code>acp_manifest.json</code> 的 <code>description</code> 就寫著 “Agent Connect Protocol manifest”。順帶一提，ACP 這三個字母在 agent 生態裡不只指一個東西，看到縮寫先確認全名比較不會出事。</p>
+<p>從 <code>acp.json</code> 的欄位看得出它原本設計得不隨便。<code>capabilities</code>（”Declares what invocation features this agent is capable of.”）、<code>input</code>、<code>output</code> 三項都是 required；<code>input</code>、<code>output</code>、<code>custom_streaming_update</code>、<code>thread_state</code>、<code>config</code> 全部 reference 到 <code>openapi_schema_object</code>，也就是整套蓋在 OpenAPI Schema Object 上面。欄位之間還有條件約束：<code>custom_streaming_update</code> 的規定是「Must be specified if <code>streaming.custom</code> capability is true and cannot be specified otherwise.」，<code>thread_state</code> 是「Cannot be specified if <code>threads</code> capability is false.」</p>
+<p>有人認真坐下來設計過這個東西。然後它被自己所屬的 schema 標成 deprecated，訊息要人改用另一條線上的規格。</p>
+<p>先把這句話的範圍界定清楚。<code>since: &quot;0.8.0&quot;</code> 的意思只有一個：在 OASF schema 的 0.8.0 版被標記為 deprecated。它不代表那個協定在那個時間點停止運作，也不代表誰對外發過什麼聲明。被 deprecated 的定義就只到「這份 schema 不再建議你用它」為止，再往外推都是腦補。</p>
+<p>但這件事出現的位置很值得注意。一個組織收手自家規格、改指向別人的規格，這種事通常會出現在部落格、在 roadmap、在某場活動的 keynote。這一次它出現在一個 JSON 檔案的欄位裡。要看到它，你得打開 repo、找到那個路徑、讀完那個物件，然後注意到多了一個 <code>@deprecated</code> 鍵。</p>
+<p>我偏好這種形式的誠實。roadmap 可以重寫，公告可以下架，<code>@deprecated.since</code> 留在 schema 裡會被每一個消費這份 schema 的工具讀到。你不用相信任何人的口頭說法，程式自己會看到。</p>
+<h2 id="第二個被收掉的，是把別人整包抄過來"><a href="#第二個被收掉的，是把別人整包抄過來" class="headerlink" title="第二個被收掉的，是把別人整包抄過來"></a>第二個被收掉的，是把別人整包抄過來</h2><p><code>mcp_data.json</code> 裡有一個叫 <code>mcp_data</code> 的欄位，描述寫著 “The complete original MCP server JSON data structure for full fidelity storage.”。意思是把整包原始的 MCP server JSON 內嵌進 record，一個位元組都不漏。</p>
+<p>它現在掛著 “Inline original MCP payload is deprecated, please use module.artifact instead.”，<code>since</code> 是 <code>1.0.0</code>。</p>
+<p>理由不難推。把別人的整包 JSON 抄進自己的 record，等於對方每改一次版，你手上這份就過期一次。而 OASF 自己有一條版本不可變政策：一個 schema 版本發布之後就不再改動，只接受非破壞性的修正（文件更新、小 bug），任何刪除、新增或結構變更都得進下一版。兩件事湊在一起，你會得到一份既不能改、又註定要過期的副本。</p>
+<p>這條死路的好處是已經有人走過，而且留下了路標。下次你想在自己的資料模型裡「為了完整性」內嵌別人家的整份文件，可以直接跳過這一步，不用自己再撞一次。</p>
+<p>同一個檔案 reference 了 MCP 官方 server schema 的網址，而且是帶日期的那種：<code>https://static.modelcontextprotocol.io/schemas/2025-09-29/server.schema.json</code>。指向一個會動的 latest，跟指向一個釘死的日期，是兩種完全不同的外部依賴態度，前者省事、後者可重現。</p>
+<div class="timeline blue"><div class='timeline-item headline'>
+        <div class='timeline-item-title'>
+          <div class='item-circle'><p>OASF 留在 schema 裡的路線修正史</p>
+</div>
+        </div>
+      </div><div class='timeline-item'>
+        <div class='timeline-item-title'>
+          <div class='item-circle'><p>0.8.0</p>
+</div>
+        </div>
+        <div class='timeline-item-content'><p>自家的 Agent Connect Protocol 被標 <code>@deprecated</code>，訊息逐字是 “ACP is deprecated, please use A2A instead.”</p>
+</div>
+      </div><div class='timeline-item'>
+        <div class='timeline-item-title'>
+          <div class='item-circle'><p>1.0.0</p>
+</div>
+        </div>
+        <div class='timeline-item-content'><p>內嵌整包原始 MCP payload 的 <code>mcp_data</code> 欄位被標 <code>@deprecated</code>，訊息要人改用 <code>module.artifact</code>。</p>
+</div>
+      </div><div class='timeline-item'>
+        <div class='timeline-item-title'>
+          <div class='item-circle'><p>v1.1.0（2026-07-10）</p>
+</div>
+        </div>
+        <div class='timeline-item-content'><p>目前的最新正式 release。官方託管的 schema server 頁尾標的框架版本也是 1.1.0，server 版本 1.1.1。</p>
+</div>
+      </div><div class='timeline-item'>
+        <div class='timeline-item-title'>
+          <div class='item-circle'><p>1.2.0-dev</p>
+</div>
+        </div>
+        <div class='timeline-item-content'><p>main 分支 <code>schema/version.json</code> 現在的值。下一版還沒發出來。</p>
+</div>
+      </div></div>
+
+<h2 id="必填清單在說什麼"><a href="#必填清單在說什麼" class="headerlink" title="必填清單在說什麼"></a>必填清單在說什麼</h2><p>回到開場那份檔案。record 物件（<code>schema/objects/record.json</code>，main 分支）定義了 11 個 attribute，<code>requirement</code> 那一格照抄如下：</p>
+<table>
+<thead>
+<tr>
+<th>欄位</th>
+<th>requirement</th>
+<th>這格裝什麼</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>name</code></td>
+<td>required</td>
+<td>record 的名稱</td>
+</tr>
+<tr>
+<td><code>version</code></td>
+<td>required</td>
+<td>record 的版本（原文寫「MAY conform to a specific versioning schema」）</td>
+</tr>
+<tr>
+<td><code>schema_version</code></td>
+<td>required</td>
+<td>OASF schema 的版本</td>
+</tr>
+<tr>
+<td><code>description</code></td>
+<td>required</td>
+<td>record 的描述</td>
+</tr>
+<tr>
+<td><code>authors</code></td>
+<td>required</td>
+<td>作者清單</td>
+</tr>
+<tr>
+<td><code>created_at</code></td>
+<td>required</td>
+<td>建立時間，值 MUST 符合 RFC-3339</td>
+</tr>
+<tr>
+<td><code>skills</code></td>
+<td>required</td>
+<td>與此 record 關聯的 skills 清單</td>
+</tr>
+<tr>
+<td><code>domains</code></td>
+<td>recommended</td>
+<td>與此 record 關聯的 domains 清單</td>
+</tr>
+<tr>
+<td><code>modules</code></td>
+<td>recommended</td>
+<td>更深入描述這個 record 與其能力的 modules</td>
+</tr>
+<tr>
+<td><code>annotations</code></td>
+<td>optional</td>
+<td>附加 metadata</td>
+</tr>
+<tr>
+<td><code>locators</code></td>
+<td>optional</td>
+<td>這個 record 可以在哪裡被找到或使用</td>
+</tr>
+</tbody></table>
+<p>七個 required、兩個 recommended、兩個 optional。</p>
+<p>看一下擠進 required 那一格的是哪些。名字、版本、schema 版本、描述、作者、建立時間，這六個是身分資料，任何一份 metadata 都會要，沒什麼好談。真正做了選擇的是第七個。</p>
+<p><code>skills</code> required，<code>locators</code> optional。</p>
+<p>這東西會做什麼，你必須說。這東西去哪裡拿，你可以不說。</p>
+<p>開場那份檔案為什麼合法，答案就在這一行。</p>
+<p>我的判斷是這個順序在押一個注：目錄先解決媒合，取得排後面。這注要贏，前提是目錄大到「找得到」本身就有價值。一個規模不大的目錄，找到之後拿不到，等於沒找到；一個夠大的目錄，光是知道「原來有人做過這種東西」就值錢，剩下的你自己想辦法聯絡。所以 required 跟 optional 這一格不只是欄位設計，是在賭這個目錄最後會長到多大。</p>
+<p>會讓我改口的條件很具體：哪一版把 <code>locators</code> 升成 required，或者 dir 那一側的客戶端開始在 runtime 硬性要求它，就代表這注沒押中，光靠媒合撐不起一個目錄。</p>
+<p>對寫客戶端的人來說，這個設計的帳單會在 runtime 才寄到。schema 驗證不會擋一筆沒有 <code>locators</code> 的 record，所以你照著 schema 寫的整合測試也不會擋。等到有人真的想把它拉下來用，才發現那一格是空的。缺的那條 fallback 路徑，不能等到那一刻才開始寫。</p>
+<p>而 <code>locators</code> 自己一旦要寫，規矩其實很嚴。<code>type</code> 是一份封閉列舉，共七個值：<code>unspecified</code>、<code>helm_chart</code>、<code>container_image</code>、<code>package</code>、<code>source_code</code>、<code>binary</code>、<code>url</code>。<code>urls</code> 是 required，值 MUST 符合 RFC 1738、SHOULD 用 http 與 https scheme。有寫就得寫好，只是你可以不寫。</p>
+<p>不過 <code>type</code> 的描述用的是「Allowed values MAY be defined for common manifest types.」一份封閉列舉配一句 MAY，讀起來像是這一格還沒想定。</p>
+<h2 id="下一層的必填邏輯整個翻過來"><a href="#下一層的必填邏輯整個翻過來" class="headerlink" title="下一層的必填邏輯整個翻過來"></a>下一層的必填邏輯整個翻過來</h2><p>MCP module 描述一台 MCP server。<code>name</code> 是 required，<code>description</code>、<code>prompts</code>、<code>resources</code>、<code>tools</code> 全部 optional，而 <code>connections</code>（怎麼連上這台 server，本機套件或遠端端點）是 required。</p>
+<table>
+<thead>
+<tr>
+<th>描述的對象</th>
+<th>「會做什麼」</th>
+<th>「怎麼拿到／怎麼連上」</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>record（agent 本體）</td>
+<td><code>skills</code> required</td>
+<td><code>locators</code> optional</td>
+</tr>
+<tr>
+<td>MCP module（外接的 server）</td>
+<td><code>tools</code> optional</td>
+<td><code>connections</code> required</td>
+</tr>
+</tbody></table>
+<p>同一份 schema，差一層，兩套剛好相反的必填邏輯。</p>
+<p>這不是自相矛盾，是兩種東西在目錄裡扮演的角色不一樣。agent 本體是被「找」的那一方，找的人在乎它會什麼；MCP server 是被「接」的那一方，接的人在乎怎麼接上去，至於它有哪些工具，連上去問一下就有了。必填欄位洩漏的是設計者的假設：誰會來讀這份資料，那個人手上缺什麼。</p>
+<h2 id="把-skill-放進哪一格，本身就是主張"><a href="#把-skill-放進哪一格，本身就是主張" class="headerlink" title="把 skill 放進哪一格，本身就是主張"></a>把 skill 放進哪一格，本身就是主張</h2><p>module 只有兩個 category，所以每一次歸類都是一次表態。MCP 與 A2A 進了 <code>integration</code>，而從 <code>SKILL.md</code> 來的 Agent Skills 進了 <code>core/language_model</code>。</p>
+<p>同樣都是「這個 agent 的能力從哪裡來」，一個被當成外接的東西，一個被當成語言模型本體的一部分。</p>
+<p><code>agentskills_manifest</code> 這個物件的 description 只有一句：「Normalized metadata extracted from a SKILL.md file.」欄位共七項，<code>name</code> 與 <code>description</code> required，<code>version</code>、<code>license</code>、<code>compatibility</code>、<code>allowed_tools</code>、<code>frontmatter_metadata</code> 都是 optional。</p>
+<p>這裡又冒出一個不同調的地方：record 層的 <code>version</code> 是 required，到了 skill manifest 這一層變成 optional。同一個概念在兩層之間鬆緊不一，通常代表這兩層是不同時候、為了不同需求長出來的。</p>
+<p>skills 那一側的分類法規模不小，<code>schema/skills/</code> 底下有 18 個頂層分類目錄，從 <code>software_engineering</code>、<code>cybersecurity</code>、<code>data_engineering_analytics</code> 到 <code>reasoning_planning</code>、<code>tool_use_automation</code> 都有。這個 18 我另外回官方託管的 schema server 對過，<code>schema.oasf.outshift.com/skill_categories</code> 那頁列出的 skill category 同樣是 18 個，名稱一一對得上。要注意這是<strong>頂層分類</strong>的數量，不是 skill 總數，每個目錄底下還有子項目，我沒有逐層展開數。</p>
+<h2 id="走到現在：目錄那一側"><a href="#走到現在：目錄那一側" class="headerlink" title="走到現在：目錄那一側"></a>走到現在：目錄那一側</h2><p>Directory（<code>agntcy/dir</code>）是把這套 schema 拿去用的那一半。README 的定義是：</p>
+<blockquote>
+<p>The Directory (dir) allows publication, exchange, and discovery of information about records over a distributed peer-to-peer network.</p>
+</blockquote>
+<p>它列的六項特性裡，最值得停下來的是 Verifiable Claims 那條，因為 README 在那裡承認了一件事：</p>
+<blockquote>
+<p>agent capabilities are often subjectively evaluated</p>
+</blockquote>
+<p>它沒有假裝自己能驗證「這個 agent 真的會做這件事」。它只承諾用密碼學保證這段宣稱確實是某人簽的、路上沒被改過。驗的是出處，不是能力。</p>
+<p>架構那一側走的是 content-addressing 拿到全域唯一性、DHT 做內容發現與同步。這跟站上九月初寫的〈<a href="/2026/09/07/%E5%BE%9E%E6%94%B9%E5%88%A5%E4%BA%BA%E7%9A%84-README-%E5%88%B0%E8%AD%89%E6%98%8E%E5%9F%9F%E5%90%8D%E6%98%AF%E4%BD%A0%E7%9A%84-MCP-Registry-%E7%9A%84%E4%B8%89%E9%81%93%E9%A9%97%E8%AD%89/">從改別人的 README 到證明域名是你的：MCP Registry 的三道驗證</a>〉不在同一層：那邊解的是名字歸誰、命名空間對不對得上；這邊連「名字」都不是主要問題，唯一性交給內容雜湊，發現交給 DHT，「這段話是誰說的」交給簽章。兩邊都在回答「怎麼被找到」，但一個是中心化登錄加所有權驗證，一個是內容定址加分散式雜湊表。走哪條路，取決於你認為目錄本身該不該有一個管理員。</p>
+<p>幾個現況的數字，全部是 2026-09-21 當下用 GitHub API 抓的欄位值：<code>agntcy/oasf</code> 與 <code>agntcy/dir</code> 是同一天開的（2025-02-10），都是 Apache-2.0，<code>archived</code> 都是 false，stars 分別是 334 與 190。oasf 最後一次 push 在 2026-09-08，dir 在 2026-09-20。dir 最新 release 是 v1.7.0（2026-08-18），oasf 是 v1.1.0（2026-07-10）。</p>
+<p>治理那一側也講清楚，因為這格特別容易讀歪。<code>MAINTAINERS.md</code> 列了五位具名維護者。<code>CONTRIBUTORS.md</code> 只有兩項：Cisco Systems Inc. 與「OASF a Series of LF Projects, LLC」，而且那個檔案自己寫明了它的定義：「CONTRIBUTOR file should only contain list of copyright holder (i.e. employers of maintainers).」版權持有者，不是共同開發者名單，更不是採用者名單。這種檔案很容易被讀成「誰在用」。它不是。</p>
+<h2 id="這篇的邊界"><a href="#這篇的邊界" class="headerlink" title="這篇的邊界"></a>這篇的邊界</h2><p>全部來自公開文件與原始碼的閱讀。我沒有裝過 dir、沒有發過一筆 record、沒有跑過任何 CLI 或 server。上面每一個欄位名、每一個 <code>requirement</code> 值、每一段 <code>@deprecated</code> 訊息都照抄檔案原文。</p>
+<p>口徑也要講清楚。最新的正式 release 是 v1.1.0，但 main 分支的 <code>schema/version.json</code> 已經是 <code>1.2.0-dev</code>。我引的 <code>record.json</code>、<code>locator.json</code>、<code>mcp_data.json</code>、<code>acp.json</code> 這些細節讀的是 main 分支（2026-09-21），不保證每一條都已經進了某個正式版。</p>
+<p>還有一整排我沒查的：有沒有任何實際採用者（完全沒查證）、DHT 用的是哪個實作與什麼 routing 演算法、OASF 跟 OCSF 之間除了 inspired 與 derivative work 有沒有正式的治理關聯。README 沒說組織關係，我就不往下推。</p>
+<h2 id="下一個-deprecated-會蓋在誰身上"><a href="#下一個-deprecated-會蓋在誰身上" class="headerlink" title="下一個 @deprecated 會蓋在誰身上"></a>下一個 <code>@deprecated</code> 會蓋在誰身上</h2><p>這個 repo 把自己的路線修正史，一版一版留在 <code>@deprecated.since</code> 欄位裡。0.8.0 收掉自家的協定，1.0.0 收掉內嵌別人 payload 的做法。兩次都沒有配公告，兩次都寫在一個 JSON 欄位裡。讀 schema 的工具會讀到，讀新聞的人不會。</p>
+<p>main 分支現在停在 <code>1.2.0-dev</code>。</p>
+<p><code>skills</code> 那條 required 撐不撐得住，<code>locators</code> 會不會被提上來，<code>integration</code> 底下剩下那幾個 module 誰接著被 <code>@deprecated</code> 蓋掉，答案大概不會寫在任何一篇公告裡。它會出現在某個檔案多出來的那幾行。</p>
+<hr>
+<p><strong>參考來源</strong></p>
+<ul>
+<li>OASF 規格與 README：<a target="_blank" rel="noopener" href="https://github.com/agntcy/oasf">agntcy&#x2F;oasf</a>（Apache-2.0）</li>
+<li>Directory：<a target="_blank" rel="noopener" href="https://github.com/agntcy/dir">agntcy&#x2F;dir</a>（Apache-2.0）</li>
+<li>官方託管的 schema server：<a target="_blank" rel="noopener" href="https://schema.oasf.outshift.com/skill_categories">schema.oasf.outshift.com</a></li>
+<li>血緣來源：<a target="_blank" rel="noopener" href="https://ocsf.io/">OCSF (Open Cybersecurity Schema Framework)</a></li>
+</ul>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://mark22013333.github.io">Cheng®</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章連結: </span><span class="post-copyright-info"><a href="https://mark22013333.github.io/2026/09/21/%E6%9C%83%E4%BB%80%E9%BA%BC%E6%98%AF%E5%BF%85%E5%A1%AB-%E5%8E%BB%E5%93%AA%E8%A3%A1%E6%8B%BF%E6%98%AF%E9%81%B8%E5%A1%AB-OASF-%E6%8A%8A%E8%B3%87%E5%AE%89%E5%9C%88%E7%9A%84-schema-%E6%90%AC%E4%BE%86%E6%8F%8F%E8%BF%B0-agent/">https://mark22013333.github.io/2026/09/21/會什麼是必填-去哪裡拿是選填-OASF-把資安圈的-schema-搬來描述-agent/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版權聲明: </span><span class="post-copyright-info">本部落格所有文章除特別聲明外，均採用<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 授權協議。轉載請註明來源 <a href="https://mark22013333.github.io" target="_blank">Cheng's Tech & Life</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/AI-%E9%96%8B%E7%99%BC%E5%B7%A5%E5%85%B7/">AI 開發工具</a><a class="post-meta__tags" href="/tags/AI-Agent/">AI Agent</a><a class="post-meta__tags" href="/tags/%E9%96%8B%E6%BA%90/">開源</a><a class="post-meta__tags" href="/tags/MCP/">MCP</a></div><div class="post-share"><div class="social-share" data-image="/img/20260921-01.webp" data-sites="facebook,x"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><div class="post-reward"><div class="reward-badges"><a class="sponsor-glow-btn" href="https://www.buymeacoffee.com/mark22013333" target="_blank" rel="noopener noreferrer" title="Buy Me A Coffee"><img src="https://img.shields.io/badge/Buy_Me_A_Coffee-FFDD00?style=for-the-badge&amp;logo=buy-me-a-coffee&amp;logoColor=black" alt="Buy Me A Coffee"/></a><a class="sponsor-glow-btn" href="https://p.ecpay.com.tw/EFC3F8F" target="_blank" rel="noopener noreferrer" title="綠界贊助"><img src="https://img.shields.io/badge/☕_%E8%AB%8B%E6%88%91%E5%96%9D%E6%9D%AF%E5%92%96%E5%95%A1-Donate-11998e?style=for-the-badge&amp;logo=coffee&amp;logoColor=white" alt="綠界贊助"/></a><a class="sponsor-glow-btn" href="https://calendly.com/markcheng00806-intumit/15min" target="_blank" rel="noopener noreferrer" title="預約時間"><img src="https://img.shields.io/badge/📅_%E9%A0%90%E7%B4%84_15_%E5%88%86%E9%90%98-Book_Time-0072ff?style=for-the-badge" alt="預約時間"/></a><p class="reward-badges-note">你的鼓勵將被轉換為我明天繼續加班的動力（真的）。 ❤️</p></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2026/09/20/%E9%81%8E%E5%8B%9E%E9%96%80%E6%AA%BB%E5%BE%9E-92-%E5%B0%8F%E6%99%82%E8%AE%8A%E6%88%90-100-%E5%B0%8F%E6%99%82-%E4%BD%86%E6%B2%92%E6%9C%89%E4%B8%80%E6%A2%9D%E6%A8%99%E6%BA%96%E8%A2%AB%E6%94%BE%E5%AF%AC/" title="過勞門檻從 92 小時變成 100 小時，但沒有一條標準被放寬"><img class="cover" src="/img/20260920-03.webp" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">過勞門檻從 92 小時變成 100 小時，但沒有一條標準被放寬</div></div><div class="info-2"><div class="info-item-1">搜尋「過勞 加班 時數」，第一頁大概會給你這個答案：發病前一個月加班超過 92 小時。 這個數字十年前就被改掉了。現行的認定指引寫的是 100。 假設你這個月加了 60 小時，打卡系統上那個數字你自己看了都有點心虛。照 92 算，你離那條線還有 32 小時，這個距離足夠讓人鬆一口氣，也足夠讓人有點火大：原來我這樣還不算。 那 32 小時是拿一個過期的數字算出來的。而 92 跟 100 的差別也不只是 8 小時，它們量的不是同一件事。 先看現在那張表怎麼寫管這件事的文件叫《職業促發腦血管及心臟疾病（外傷導致者除外）之認定參考指引》，現行版本是民國 107 年 10 月 15 日的第四次修正。名字很長，做的事很單純：把「什麼情況下，可以判斷這場腦中風或心肌梗塞跟工作有關」寫成一張可以照著看的表。 長期工作過重的部分，它給了三條線。發病前 1 個月的加班時數超過 100 小時，指引的用詞是「可依其加班產生之工作負荷與發病有極強之相關性作出判斷」。發病前 2 至 6 個月內的任一期間，月平均加班超過 80 小時，一樣是極強相關性。第三條寫得最委婉：如果這幾個期間的加班時數全都小於 45 ...</div></div></div></a><a class="pagination-related" href="/2026/09/21/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260921/" title="AI 與科技新聞摘要 - 2026/09/21"><img class="cover" src="/img/20260921-02.webp" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">AI 與科技新聞摘要 - 2026/09/21</div></div><div class="info-2"><div class="info-item-1">OpenAI 廣告 pixel 的 SDK 裡有一條不帶 credentials 的路徑，寫得很對，但它從來沒有機會執行。就算執行了也來不及：瀏覽器載入 &lt;script src&gt; 的那一刻就把 cookie 附上去了，那發生在任何一行 OpenAI 的程式碼跑起來之前。防護寫在應用層，洩漏發生在更早的地方。 層級選錯，寫得再對都不會生效。而這個毛病不只長在程式碼裡，也長在「誰有權決定一個 cookie 算哪一類」這種地方。 一、那個 cookie 叫 __obi，被歸類在「分析」Buchodi’s Threat Intel 的研究者在九月二十日把整條鏈逐包拆開了。 從 ChatGPT 網頁端開始：前端產生一個 16 byte 的識別碼，送到 OpenAI 後端換回一個 RS256 簽章的 JWT。那個 JWT 裡帶著 obi 值，還有一個指向已登入帳號的 subject。token 再提交給 OpenAI 的廣告基礎設施，由它把 __obi 這個 cookie 設下來。JWT 裡的 obi 值跟 cookie 的值，一模一樣。 cookie 的屬性逐字是這樣：Same...</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相關推薦</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2026/06/09/AI-Website-Cloner-%E6%8A%8A%E7%B7%9A%E4%B8%8A%E7%B6%B2%E7%AB%99%E9%80%86%E5%90%91%E9%87%8D%E5%BB%BA%E6%88%90-Next.js-%E7%9A%84-AI-%E5%8D%94%E4%BD%9C%E7%AE%A1%E7%B7%9A/" title="AI Website Cloner — 把線上網站逆向重建成 Next.js 的 AI 協作管線"><img class="cover" src="/img/20260609-01.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-06-09</div><div class="info-item-2">AI Website Cloner — 把線上網站逆向重建成 Next.js 的 AI 協作管線</div></div><div class="info-2"><div class="info-item-1">要把一個還在線上跑的網站搬到 Next.js，而原始碼已經不知道去哪了——這件事我以前的做法是這樣的：開瀏覽器，按 F12，把 DevTools 拉出來，對著每一個區塊一格一格量。這個按鈕的 padding 是多少、那段標題的 font-size 是 28px 還是 30px、hover 上去顏色變成哪個值、捲到一半那條 navbar 是怎麼黏住的。量完一頁，手已經痠了，而這還只是「抄外觀」——抄完還要自己用 React 重寫一遍。 一個中等複雜度的行銷網站，這樣搞兩三天跑不掉。而且抄到後面你會開始懷疑人生：我到底是在開發，還是在當人肉掃描器。 AI Website Cloner Template 這個 13,000 多顆星的開源模板，把同一件事換了一種做法。它的前提跟你我一樣——網站還在、原始碼沒了、想搬到乾淨的 Next.js。差別在於，量 CSS、抄結構、重寫元件這些事，它全部丟給 AI agent 去做。 以前是下載 HTML，現在是「看著重蓋」先講一個容易搞混的地方。傳統做法裡，如果你不想手動量，還有一招叫 wget 整站打包，把 HTML、CSS、圖檔全抓下來。但抓回...</div></div></div></a><a class="pagination-related" href="/2026/09/10/server-%E4%B8%8D%E5%87%86%E5%86%8D%E5%8F%8D%E5%95%8F%E4%BD%A0-%E9%80%99%E8%AE%93-MCP-server-%E8%AE%8A%E5%A5%BD%E5%AF%AB%E4%BA%86/" title="server 不准再反問你，這讓 MCP server 變好寫了"><img class="cover" src="/img/20260910-01.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-09-10</div><div class="info-item-2">server 不准再反問你，這讓 MCP server 變好寫了</div></div><div class="info-2"><div class="info-item-1">把「server 主動問使用者」這個能力拿掉，MCP server 反而變好寫了。 這句話在 2026-07-28 這版規格上是字面成立的。MRTR 那頁開場的 Note 寫得毫不客氣：server 要送 roots/list、sampling/createMessage、elicitation/create 這類請求，MUST 走新的模式，然後補了一句 The previous pattern of server-initiated requests is no longer supported. This is a breaking change. 八月那篇寫 A2A 的時候，我卡在 MCP 沒有「我需要你補一點東西才能繼續」這個狀態。那篇當時的結論是：你硬要在 MCP 工具裡表達它，只能自己發明一套約定，回一包特殊的 JSON 說「請再呼叫我一次並帶上 X」，再去 client 那邊寫膠水認這個約定。 那包特殊的 JSON 現在寫進規格了。 那包 JSON 現在有名字了它叫 InputRequiredResult，是一種 Result，不是錯誤。裡面兩個欄位都是選配的：in...</div></div></div></a><a class="pagination-related" href="/2026/08/22/%E4%B8%80%E5%80%8Bagent%E4%B8%AD%E9%80%94%E5%8F%8D%E5%95%8F%E4%BD%A0%E5%95%8F%E9%A1%8C-%E9%80%99%E4%BB%B6%E4%BA%8B%E5%9C%A8MCP%E7%9A%84%E6%8A%BD%E8%B1%A1%E8%A3%A1%E6%B2%92%E6%9C%89%E4%BD%8D%E7%BD%AE/" title="一個 agent 中途反問你問題，這件事在 MCP 的抽象裡沒有位置"><img class="cover" src="/img/20260822-01.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-08-22</div><div class="info-item-2">一個 agent 中途反問你問題，這件事在 MCP 的抽象裡沒有位置</div></div><div class="info-2"><div class="info-item-1"> 寫於 2026 年 8 月 22 日，9 月才上線（部落格的發佈額度在 8 月中用完了，稿子積壓了三週）。文中對 A2A 的描述以 8 月 22 日的官方文件與 repo 狀態為準，你讀到時規格可能已經改版。  2025 年 3 月 25 日，一個 repo 落下第一顆 commit，訊息就兩個字：Initial commit。接下來兩個禮拜，那個 repo 一顆 commit 都沒有。4 月 9 日一天之內，llms.txt 進來了，README 補上介紹影片跟整段核心概念，PR 一個接一個。一個專案被推出去見人的時候就長這樣。 那個 repo 叫 A2A，全名 Agent2Agent。當時 MCP 的第一版規格（版本編號就叫 2024-11-05）已經公開快五個月，工具鏈剛長起來，每個人都在寫自己的 MCP server。所以第一個反應幾乎都一樣：我已經有 MCP 了，你這個是要幹嘛。 這個問題問得對，而且答案跟功能表沒什麼關係。 在那之前，你只能把另一個 agent 包成工具你手上有兩個 agent。A 讀 codebase 出計畫，B 跑測試跟部署，兩個各有一套 MCP...</div></div></div></a><a class="pagination-related" href="/2026/09/05/%E4%B8%80%E6%8A%8A%E6%AF%8F%E9%A0%85%E9%83%BD%E9%A9%97%E5%BE%97%E9%81%8E%E7%9A%84-token-%E8%A6%8F%E6%A0%BC%E8%A6%81%E4%BD%A0%E5%9B%9E%E5%AE%83-401/" title="一把每項都驗得過的 token，規格要你回它 401"><img class="cover" src="/img/20260905-01.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-09-05</div><div class="info-item-2">一把每項都驗得過的 token，規格要你回它 401</div></div><div class="info-2"><div class="info-item-1">整份 MCP 授權規格繞著一件事打轉：它要你把一把完全合法的 token 丟掉。 簽章驗得過、還沒過期、scope 也完全對得上，你的 server 照樣得回它 401。 會撞到這條，通常是因為你要把一台本來只跑在本機的 MCP server 拉出來對外開。這時候最省事的接法有兩種。一種是把 client 送來的 Authorization: Bearer 標頭原封不動往下游 API 轉，反正都是同一家 IdP 簽的；另一種是只要簽章驗得過就收，不管這把 token 當初是發給誰的。規格把這兩種接法都判死了，而且用的是 MUST NOT。 你在驗票，規格要你驗的是收件人大部分人對 OAuth 的心智模型是驗票。票沒被竄改、還在效期內、座位等級對得上，放行。 audience 這一格問的是另一件事：這張票當初是不是賣給我這一場的。防偽做得再漂亮、日期也對、座位等級也符合，但票面印的是隔壁廳那場，驗票員該不該放人進來？直覺會覺得「反正都是我們家發的票」，規格的答案是不行。 四條 MUST 講同一件事，重點在最後兩個字MCP Specification 2026-07-28 的 Aut...</div></div></div></a><a class="pagination-related" href="/2026/06/01/Cua-%E8%AE%93-AI-%E7%94%A8%E4%BB%BB%E4%BD%95%E6%A8%A1%E5%9E%8B%E6%93%8D%E6%8E%A7%E9%9B%BB%E8%85%A6%E7%9A%84%E9%96%8B%E6%BA%90%E5%9F%BA%E7%A4%8E%E8%A8%AD%E6%96%BD/" title="Cua — 讓 AI 用任何模型操控電腦的開源基礎設施"><img class="cover" src="/img/20260601-01.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-06-01</div><div class="info-item-2">Cua — 讓 AI 用任何模型操控電腦的開源基礎設施</div></div><div class="info-2"><div class="info-item-1">讓 AI 用電腦，最難的部分其實不是 AI。 這句話聽起來怪，因為過去兩年所有人的注意力都在模型上——它看不看得懂截圖、推不推得出下一步該點哪。但這件事其實早就解掉了。現在隨便一個支援 computer-use 的 LLM，給它一張螢幕截圖，它就能告訴你「滑鼠移到座標 (840, 312) 按一下，然後輸入這串字」。看畫面、理解、輸出操作指令，這條鏈路已經是商品。真正讓你做不出一個能用的桌面 Agent 的，是螢幕背後那台電腦。 虛擬機誰來開？開好之後螢幕截圖怎麼抓出來？模型吐回來的「點 (840, 312)」這個滑鼠事件，要怎麼真的注入到那台機器裡？Linux、macOS、Windows、Android 各自一套 API，差異怎麼抹平？最要命的是——Agent 在那邊亂點的時候，怎麼確定它不會把你正在用的這台筆電給搞爛？ 這些全部都不是模型問題。是基礎設施問題。而 Cua（Computer-Use Agent，15.5K stars，MIT 授權）做的事，就是把這一整層包起來。 模型是可替換零件，環境才是地基先把這件事講透，因為它是理解 Cua 為什麼長這樣的關鍵。 你可以把整...</div></div></div></a><a class="pagination-related" href="/2026/06/17/Ponytail-%E8%AE%93-AI-%E5%B0%91%E5%AF%AB%E7%A8%8B%E5%BC%8F%E7%A2%BC-%E4%B8%80%E9%81%93%E6%B1%BA%E7%AD%96%E9%9A%8E%E6%A2%AF%E8%A9%B2%E4%B8%8D%E8%A9%B2%E8%A3%9D%E9%80%B2%E4%BD%A0%E7%9A%84-coding-agent/" title="Ponytail — 讓 AI 少寫程式碼，一道決策階梯該不該裝進你的 coding agent"><img class="cover" src="/img/20260617-01.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-06-17</div><div class="info-item-2">Ponytail — 讓 AI 少寫程式碼，一道決策階梯該不該裝進你的 coding agent</div></div><div class="info-2"><div class="info-item-1">先別急著裝。裝 Ponytail 之前，你只需要回答一個問題：你那隻 AI coding agent，平常是寫太少，還是寫太多？ 這個問題的答案，幾乎決定了 Ponytail 對你是神器還是雜訊。如果你的 agent 老是偷懶、該補的驗證不補、邏輯寫一半就收工——那它不缺一個叫它「少做一點」的工具。但如果你常常遇到另一種情況：你只是要一個日期選擇器，它二話不說裝了 flatpickr、包了一層 wrapper component、還順手幫你寫了時區處理——那 Ponytail 正是衝著你這隻 agent 來的。 Ponytail 是 2026 年 6 月爆紅的一個 agent skill，作者是個人開發者 DietrichGebert，建立才四天就衝上 21,000+ stars。它的工作只有一件事，而且這件事可以濃縮成一句話：最好的程式碼，是你根本沒寫的那一行（The best code is the code you never wrote）。 它到底在攔什麼四天兩萬星這個數字，比工具本身更值得想一下。一個只是「叫 AI 少寫一點」的 prompt，憑什麼讓這麼多人有共鳴？ ...</div></div></div></a></div></div><hr class="custom-hr"/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 評論</span></div></div><div class="comment-wrap"><div><div id="giscus-wrap"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="https://lh3.googleusercontent.com/pw/ABLVV87_po8nBc6F_tXcoYDmtzMGWxHuhhrbguYILCjmjWKLOS8DTpubm0YoQLKgjyjRIZyV5TjYe7XVEz_YU4squfr37GTZqPZP1hlMVZ_MIgXpTxWu73M=w1200" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">Cheng®</div><div class="author-info-description">Backend Developer / 技術筆記 & AI 新聞分享</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">618</div></a><a href="/tags/"><div class="headline">標籤</div><div class="length-num">226</div></a><a href="/categories/"><div class="headline">分類</div><div class="length-num">23</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/mark22013333"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons"><a class="social-icon" href="https://github.com/mark22013333" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:mark22013333@gmail.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a></div><div class="card-info-sponsor"><a class="sponsor-glow-btn" href="https://www.buymeacoffee.com/mark22013333" target="_blank" rel="noopener noreferrer" title="Buy Me A Coffee"><img src="https://img.shields.io/badge/Buy_Me_A_Coffee-FFDD00?style=for-the-badge&amp;logo=buy-me-a-coffee&amp;logoColor=black" alt="Buy Me A Coffee"/></a><a class="sponsor-glow-btn" href="https://p.ecpay.com.tw/EFC3F8F" target="_blank" rel="noopener noreferrer" title="綠界贊助"><img src="https://img.shields.io/badge/☕_%E8%AB%8B%E6%88%91%E5%96%9D%E6%9D%AF%E5%92%96%E5%95%A1-Donate-11998e?style=for-the-badge&amp;logo=coffee&amp;logoColor=white" alt="綠界贊助"/></a><a class="sponsor-glow-btn" href="https://calendly.com/markcheng00806-intumit/15min" target="_blank" rel="noopener noreferrer" title="預約時間"><img src="https://img.shields.io/badge/📅_%E9%A0%90%E7%B4%84_15_%E5%88%86%E9%90%98-Book_Time-0072ff?style=for-the-badge" alt="預約時間"/></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">這裡記錄我在後端開發路上踩過的坑、學到的東西，也會分享每日 AI 與科技新聞觀點。歡迎一起交流！</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目錄</span><span class="toc-percentage"></span></div><div class="toc-content is-expand"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%AA%A8%E6%9E%B6%E6%98%AF%E5%BE%9E%E8%B3%87%E5%AE%89%E5%9C%88%E6%90%AC%E9%81%8E%E4%BE%86%E7%9A%84"><span class="toc-number">1.</span> <span class="toc-text">骨架是從資安圈搬過來的</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%82%BA%E4%BB%80%E9%BA%BC%E4%B8%8D%E4%B9%BE%E8%84%86%E8%87%AA%E5%B7%B1%E5%8F%A6%E9%96%8B%E4%B8%80%E5%A5%97"><span class="toc-number">2.</span> <span class="toc-text">為什麼不乾脆自己另開一套</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%B8%80%E5%80%8B%E8%A2%AB%E6%94%B6%E6%8E%89%E7%9A%84%EF%BC%8C%E6%98%AF%E8%87%AA%E5%AE%B6%E7%9A%84%E5%8D%94%E5%AE%9A"><span class="toc-number">3.</span> <span class="toc-text">第一個被收掉的，是自家的協定</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%BA%8C%E5%80%8B%E8%A2%AB%E6%94%B6%E6%8E%89%E7%9A%84%EF%BC%8C%E6%98%AF%E6%8A%8A%E5%88%A5%E4%BA%BA%E6%95%B4%E5%8C%85%E6%8A%84%E9%81%8E%E4%BE%86"><span class="toc-number">4.</span> <span class="toc-text">第二個被收掉的，是把別人整包抄過來</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%BF%85%E5%A1%AB%E6%B8%85%E5%96%AE%E5%9C%A8%E8%AA%AA%E4%BB%80%E9%BA%BC"><span class="toc-number">5.</span> <span class="toc-text">必填清單在說什麼</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%8B%E4%B8%80%E5%B1%A4%E7%9A%84%E5%BF%85%E5%A1%AB%E9%82%8F%E8%BC%AF%E6%95%B4%E5%80%8B%E7%BF%BB%E9%81%8E%E4%BE%86"><span class="toc-number">6.</span> <span class="toc-text">下一層的必填邏輯整個翻過來</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%8A%8A-skill-%E6%94%BE%E9%80%B2%E5%93%AA%E4%B8%80%E6%A0%BC%EF%BC%8C%E6%9C%AC%E8%BA%AB%E5%B0%B1%E6%98%AF%E4%B8%BB%E5%BC%B5"><span class="toc-number">7.</span> <span class="toc-text">把 skill 放進哪一格，本身就是主張</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%B5%B0%E5%88%B0%E7%8F%BE%E5%9C%A8%EF%BC%9A%E7%9B%AE%E9%8C%84%E9%82%A3%E4%B8%80%E5%81%B4"><span class="toc-number">8.</span> <span class="toc-text">走到現在：目錄那一側</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%80%99%E7%AF%87%E7%9A%84%E9%82%8A%E7%95%8C"><span class="toc-number">9.</span> <span class="toc-text">這篇的邊界</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%8B%E4%B8%80%E5%80%8B-deprecated-%E6%9C%83%E8%93%8B%E5%9C%A8%E8%AA%B0%E8%BA%AB%E4%B8%8A"><span class="toc-number">10.</span> <span class="toc-text">下一個 @deprecated 會蓋在誰身上</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2026/09/21/description-%E6%94%B9%E5%86%8D%E5%BC%B7%E4%B9%9F%E6%B2%92%E7%94%A8-skill-%E6%AD%A3%E6%96%87%E5%9C%A8-context-%E8%A3%A1%E7%9A%84%E4%B8%80%E7%94%9F/" title="description 改再強也沒用：skill 正文在 context 裡的一生"><img src="/img/20260921-03.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="description 改再強也沒用：skill 正文在 context 裡的一生"/></a><div class="content"><a class="title" href="/2026/09/21/description-%E6%94%B9%E5%86%8D%E5%BC%B7%E4%B9%9F%E6%B2%92%E7%94%A8-skill-%E6%AD%A3%E6%96%87%E5%9C%A8-context-%E8%A3%A1%E7%9A%84%E4%B8%80%E7%94%9F/" title="description 改再強也沒用：skill 正文在 context 裡的一生">description 改再強也沒用：skill 正文在 context 裡的一生</a><time datetime="2026-09-21T10:00:00.000Z" title="發表於 2026-09-21 18:00:00">2026-09-21</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/09/21/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260921/" title="AI 與科技新聞摘要 - 2026/09/21"><img src="/img/20260921-02.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="AI 與科技新聞摘要 - 2026/09/21"/></a><div class="content"><a class="title" href="/2026/09/21/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260921/" title="AI 與科技新聞摘要 - 2026/09/21">AI 與科技新聞摘要 - 2026/09/21</a><time datetime="2026-09-21T04:00:00.000Z" title="發表於 2026-09-21 12:00:00">2026-09-21</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/09/21/%E6%9C%83%E4%BB%80%E9%BA%BC%E6%98%AF%E5%BF%85%E5%A1%AB-%E5%8E%BB%E5%93%AA%E8%A3%A1%E6%8B%BF%E6%98%AF%E9%81%B8%E5%A1%AB-OASF-%E6%8A%8A%E8%B3%87%E5%AE%89%E5%9C%88%E7%9A%84-schema-%E6%90%AC%E4%BE%86%E6%8F%8F%E8%BF%B0-agent/" title="會什麼是必填，去哪裡拿是選填：OASF 把資安圈的 schema 搬來描述 agent"><img src="/img/20260921-01.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="會什麼是必填，去哪裡拿是選填：OASF 把資安圈的 schema 搬來描述 agent"/></a><div class="content"><a class="title" href="/2026/09/21/%E6%9C%83%E4%BB%80%E9%BA%BC%E6%98%AF%E5%BF%85%E5%A1%AB-%E5%8E%BB%E5%93%AA%E8%A3%A1%E6%8B%BF%E6%98%AF%E9%81%B8%E5%A1%AB-OASF-%E6%8A%8A%E8%B3%87%E5%AE%89%E5%9C%88%E7%9A%84-schema-%E6%90%AC%E4%BE%86%E6%8F%8F%E8%BF%B0-agent/" title="會什麼是必填，去哪裡拿是選填：OASF 把資安圈的 schema 搬來描述 agent">會什麼是必填，去哪裡拿是選填：OASF 把資安圈的 schema 搬來描述 agent</a><time datetime="2026-09-21T01:00:00.000Z" title="發表於 2026-09-21 09:00:00">2026-09-21</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/09/20/%E9%81%8E%E5%8B%9E%E9%96%80%E6%AA%BB%E5%BE%9E-92-%E5%B0%8F%E6%99%82%E8%AE%8A%E6%88%90-100-%E5%B0%8F%E6%99%82-%E4%BD%86%E6%B2%92%E6%9C%89%E4%B8%80%E6%A2%9D%E6%A8%99%E6%BA%96%E8%A2%AB%E6%94%BE%E5%AF%AC/" title="過勞門檻從 92 小時變成 100 小時，但沒有一條標準被放寬"><img src="/img/20260920-03.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="過勞門檻從 92 小時變成 100 小時，但沒有一條標準被放寬"/></a><div class="content"><a class="title" href="/2026/09/20/%E9%81%8E%E5%8B%9E%E9%96%80%E6%AA%BB%E5%BE%9E-92-%E5%B0%8F%E6%99%82%E8%AE%8A%E6%88%90-100-%E5%B0%8F%E6%99%82-%E4%BD%86%E6%B2%92%E6%9C%89%E4%B8%80%E6%A2%9D%E6%A8%99%E6%BA%96%E8%A2%AB%E6%94%BE%E5%AF%AC/" title="過勞門檻從 92 小時變成 100 小時，但沒有一條標準被放寬">過勞門檻從 92 小時變成 100 小時，但沒有一條標準被放寬</a><time datetime="2026-09-20T10:00:00.000Z" title="發表於 2026-09-20 18:00:00">2026-09-20</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/09/20/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260920/" title="AI 與科技新聞摘要 - 2026/09/20"><img src="/img/20260920-02.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="AI 與科技新聞摘要 - 2026/09/20"/></a><div class="content"><a class="title" href="/2026/09/20/AI-%E8%88%87%E7%A7%91%E6%8A%80%E6%96%B0%E8%81%9E%E6%91%98%E8%A6%81-20260920/" title="AI 與科技新聞摘要 - 2026/09/20">AI 與科技新聞摘要 - 2026/09/20</a><time datetime="2026-09-20T04:00:00.000Z" title="發表於 2026-09-20 12:00:00">2026-09-20</time></div></div></div></div></div></div></main><footer id="footer" style="background-image: url(/img/20260921-01.webp);"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2024 - 2026 By Cheng®</span></div><div class="footer_custom_text">Written by Cheng® — 自律，從當下的一念開始。</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="閱讀模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日夜模式切換"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="單欄和雙欄切換"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="設定"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目錄"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="前往評論"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到頂端"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.umd.min.js"></script><script src="https://cdn.jsdelivr.net/npm/instant.page/instantpage.min.js" type="module"></script><script src="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.js"></script><div class="js-pjax"><script>(() => {
+  const isShuoshuo = GLOBAL_CONFIG_SITE.pageType === 'shuoshuo'
+  const option = {"mapping":"pathname","strict":0,"reactionsEnabled":1,"emitMetadata":0,"inputPosition":"bottom","lang":"zh-TW"}
+
+  const getGiscusTheme = theme => theme === 'dark' ? 'dark' : 'light'
+
+  const createScriptElement = config => {
+    const ele = document.createElement('script')
+    Object.entries(config).forEach(([key, value]) => {
+      ele.setAttribute(key, value)
+    })
+    return ele
+  }
+
+  const loadGiscus = (el = document, key) => {
+    const mappingConfig = isShuoshuo
+      ? { 'data-mapping': 'specific', 'data-term': key }
+      : { 'data-mapping': (option && option['data-mapping']) || 'pathname' }
+
+    const giscusConfig = {
+      src: 'https://giscus.app/client.js',
+      'data-repo': 'mark22013333/mark22013333.github.io',
+      'data-repo-id': 'R_kgDOLAxa6A',
+      'data-category-id': 'DIC_kwDOLAxa6M4C5eO9',
+      'data-theme': getGiscusTheme(document.documentElement.getAttribute('data-theme')),
+      'data-reactions-enabled': '1',
+      crossorigin: 'anonymous',
+      async: true,
+      ...option,
+      ...mappingConfig
+    }
+
+    const scriptElement = createScriptElement(giscusConfig)
+
+    el.querySelector('#giscus-wrap').appendChild(scriptElement)
+
+    if (isShuoshuo) {
+      window.shuoshuoComment.destroyGiscus = () => {
+        if (el.children.length) {
+          el.innerHTML = ''
+          el.classList.add('no-comment')
+        }
+      }
+    }
+  }
+
+  const changeGiscusTheme = theme => {
+    const iframe = document.querySelector('#giscus-wrap iframe')
+    if (iframe) {
+      const message = {
+        giscus: {
+          setConfig: {
+            theme: getGiscusTheme(theme)
+          }
+        }
+      }
+      iframe.contentWindow.postMessage(message, 'https://giscus.app')
+    }
+  }
+
+  btf.addGlobalFn('themeChange', changeGiscusTheme, 'giscus')
+
+  if (isShuoshuo) {
+    'Giscus' === 'Giscus'
+      ? window.shuoshuoComment = { loadComment: loadGiscus }
+      : window.loadOtherComment = loadGiscus
+    return
+  }
+
+  if ('Giscus' === 'Giscus' || !true) {
+    if (true) btf.loadComment(document.getElementById('giscus-wrap'), loadGiscus)
+    else loadGiscus()
+  } else {
+    window.loadOtherComment = loadGiscus
+  }
+})()</script></div><script src="/js/kkbox-player.js"></script><script src="/js/archives-pagination.js"></script><script src="/js/font-resize.js"></script><script src="/js/dark-palette.js"></script><script src="/js/series-showcase.js"></script><script src="/js/search-tags.js"></script><script defer="defer" id="fluttering_ribbon" mobile="false" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/canvas-fluttering-ribbon.min.js"></script><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/activate-power-mode.min.js"></script><script>POWERMODE.colorful = true;
+POWERMODE.shake = true;
+POWERMODE.mobile = true;
+document.body.addEventListener('input', POWERMODE);
+</script><script src="https://cdn.jsdelivr.net/npm/pjax/pjax.min.js" defer="defer"></script><script>document.addEventListener('DOMContentLoaded', () => {
+  const pjaxSelectors = ["meta[property=\"og:image\"]","meta[property=\"og:title\"]","meta[property=\"og:url\"]","meta[property=\"og:description\"]","link[rel=\"canonical\"]","head > title","#config-diff","#body-wrap","#rightside-config-hide","#rightside-config-show",".js-pjax"]
+
+  window.pjax = new Pjax({
+    elements: 'a:not([target="_blank"])',
+    selectors: pjaxSelectors,
+    cacheBust: false,
+    analytics: true,
+    scrollRestoration: false
+  })
+
+  const triggerPjaxFn = (val) => {
+    if (!val) return
+    Object.values(val).forEach(fn => {
+      try {
+        fn()
+      } catch (err) {
+        console.debug('Pjax callback failed:', err)
+      }
+    })
+  }
+
+  document.addEventListener('pjax:send', () => {
+    // removeEventListener
+    btf.removeGlobalFnEvent('pjaxSendOnce')
+    btf.removeGlobalFnEvent('themeChange')
+
+    // reset readmode
+    const $bodyClassList = document.body.classList
+    if ($bodyClassList.contains('read-mode')) $bodyClassList.remove('read-mode')
+
+    triggerPjaxFn(window.globalFn.pjaxSend)
+  })
+
+  document.addEventListener('pjax:complete', () => {
+    btf.removeGlobalFnEvent('pjaxCompleteOnce')
+    document.querySelectorAll('script[data-pjax]').forEach(item => {
+      const newScript = document.createElement('script')
+      const content = item.text || item.textContent || item.innerHTML || ""
+      Array.from(item.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value))
+      newScript.appendChild(document.createTextNode(content))
+      item.parentNode.replaceChild(newScript, item)
+    })
+
+    triggerPjaxFn(window.globalFn.pjaxComplete)
+  })
+
+  document.addEventListener('pjax:error', e => {
+    if (e.request.status === 404) {
+      true
+        ? pjax.loadUrl('/404.html')
+        : window.location.href = e.request.responseURL
+    }
+  })
+})</script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜尋</span><i class="fas fa-spinner fa-pulse" id="loading-status" hidden="hidden"></i><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="text-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  資料載入中</span></div><div class="local-search-input"><input placeholder="搜尋文章" type="text"/></div><hr/><div id="local-search-results"></div><div class="ais-Pagination" id="local-search-pagination" style="display:none;"><ul class="ais-Pagination-list"></ul></div><div id="local-search-stats"></div></div><div id="search-mask"></div><script src="/js/search/local-search.js"></script></div></div><script>window.__BLOG_TAGS__=[{"name":"Claude Code","count":223,"path":"tags/Claude-Code/"},{"name":"AI與科技新聞","count":177,"path":"tags/AI與科技新聞/"},{"name":"AI Agent","count":147,"path":"tags/AI-Agent/"},{"name":"教學","count":127,"path":"tags/教學/"},{"name":"資安","count":116,"path":"tags/資安/"},{"name":"Anthropic","count":112,"path":"tags/Anthropic/"},{"name":"開源","count":105,"path":"tags/開源/"},{"name":"AI 產業","count":94,"path":"tags/AI-產業/"},{"name":"OpenAI","count":74,"path":"tags/OpenAI/"},{"name":"CLI","count":63,"path":"tags/CLI/"},{"name":"AI 開發工具","count":62,"path":"tags/AI-開發工具/"},{"name":"自動化","count":61,"path":"tags/自動化/"},{"name":"MCP","count":61,"path":"tags/MCP/"},{"name":"開發工具","count":53,"path":"tags/開發工具/"},{"name":"Claude","count":46,"path":"tags/Claude/"},{"name":"工程師生活","count":40,"path":"tags/工程師生活/"},{"name":"Skills","count":39,"path":"tags/Skills/"},{"name":"Google","count":35,"path":"tags/Google/"},{"name":"AI 安全","count":35,"path":"tags/AI-安全/"},{"name":"Java","count":34,"path":"tags/Java/"},{"name":"LLM","count":32,"path":"tags/LLM/"},{"name":"生活札記","count":31,"path":"tags/生活札記/"},{"name":"NVIDIA","count":31,"path":"tags/NVIDIA/"},{"name":"AI 法規","count":30,"path":"tags/AI-法規/"},{"name":"理財","count":24,"path":"tags/理財/"},{"name":"Python","count":22,"path":"tags/Python/"},{"name":"AI 模型","count":21,"path":"tags/AI-模型/"},{"name":"DevOps","count":20,"path":"tags/DevOps/"},{"name":"Spring","count":18,"path":"tags/Spring/"},{"name":"健康","count":17,"path":"tags/健康/"},{"name":"Apple","count":17,"path":"tags/Apple/"},{"name":"GitHub","count":16,"path":"tags/GitHub/"},{"name":"Performance","count":16,"path":"tags/Performance/"},{"name":"Gemini","count":13,"path":"tags/Gemini/"},{"name":"Microsoft","count":13,"path":"tags/Microsoft/"},{"name":"Copilot","count":13,"path":"tags/Copilot/"},{"name":"Prompt Engineering","count":12,"path":"tags/Prompt-Engineering/"},{"name":"併發","count":12,"path":"tags/併發/"},{"name":"資料庫","count":12,"path":"tags/資料庫/"},{"name":"GitHub Copilot","count":11,"path":"tags/GitHub-Copilot/"},{"name":"Cursor","count":10,"path":"tags/Cursor/"},{"name":"Azure","count":9,"path":"tags/Azure/"},{"name":"微軟課程","count":9,"path":"tags/微軟課程/"},{"name":"Hooks","count":8,"path":"tags/Hooks/"},{"name":"系統監控","count":8,"path":"tags/系統監控/"},{"name":"Elasticsearch","count":8,"path":"tags/Elasticsearch/"},{"name":"Docker","count":7,"path":"tags/Docker/"},{"name":"Codex","count":6,"path":"tags/Codex/"},{"name":"Meta","count":6,"path":"tags/Meta/"},{"name":"Rust","count":6,"path":"tags/Rust/"},{"name":"macOS","count":6,"path":"tags/macOS/"},{"name":"Code Review","count":6,"path":"tags/Code-Review/"},{"name":"Collections","count":6,"path":"tags/Collections/"},{"name":"AI","count":5,"path":"tags/AI/"},{"name":"Kiro","count":5,"path":"tags/Kiro/"},{"name":"AZ-305","count":5,"path":"tags/AZ-305/"},{"name":"TDD","count":5,"path":"tags/TDD/"},{"name":"設計模式","count":5,"path":"tags/設計模式/"},{"name":"旅遊","count":5,"path":"tags/旅遊/"},{"name":"生產力","count":4,"path":"tags/生產力/"},{"name":"Mistral","count":4,"path":"tags/Mistral/"},{"name":"Windsurf","count":4,"path":"tags/Windsurf/"},{"name":"Amazon","count":4,"path":"tags/Amazon/"},{"name":"DP-300","count":4,"path":"tags/DP-300/"},{"name":"SQL Server","count":4,"path":"tags/SQL-Server/"},{"name":"JSON","count":4,"path":"tags/JSON/"},{"name":"Stream","count":4,"path":"tags/Stream/"},{"name":"168斷食","count":3,"path":"tags/168斷食/"},{"name":"TypeScript","count":3,"path":"tags/TypeScript/"},{"name":"Agent","count":3,"path":"tags/Agent/"},{"name":"SDD","count":3,"path":"tags/SDD/"},{"name":"遠端工作","count":3,"path":"tags/遠端工作/"},{"name":"專注力","count":2,"path":"tags/專注力/"},{"name":"AWS","count":2,"path":"tags/AWS/"},{"name":"Networking","count":2,"path":"tags/Networking/"},{"name":"Tool Use","count":2,"path":"tags/Tool-Use/"},{"name":"VS Code","count":2,"path":"tags/VS-Code/"},{"name":"Multi-Model","count":2,"path":"tags/Multi-Model/"},{"name":"Claude Design","count":2,"path":"tags/Claude-Design/"},{"name":"Prototype","count":2,"path":"tags/Prototype/"},{"name":"Lucene","count":2,"path":"tags/Lucene/"},{"name":"Redis","count":2,"path":"tags/Redis/"},{"name":"軟體工程師","count":1,"path":"tags/軟體工程師/"},{"name":"職涯","count":1,"path":"tags/職涯/"},{"name":"2026","count":1,"path":"tags/2026/"},{"name":"資訊安全","count":1,"path":"tags/資訊安全/"},{"name":"Migration","count":1,"path":"tags/Migration/"},{"name":"Agent Skills","count":1,"path":"tags/Agent-Skills/"},{"name":"Addy Osmani","count":1,"path":"tags/Addy-Osmani/"},{"name":"工程紀律","count":1,"path":"tags/工程紀律/"},{"name":"Apify","count":1,"path":"tags/Apify/"},{"name":"爬蟲","count":1,"path":"tags/爬蟲/"},{"name":"Buddi","count":1,"path":"tags/Buddi/"},{"name":"notch","count":1,"path":"tags/notch/"},{"name":"Prompt Caching","count":1,"path":"tags/Prompt-Caching/"},{"name":"成本優化","count":1,"path":"tags/成本優化/"},{"name":"UI 設計","count":1,"path":"tags/UI-設計/"},{"name":"Function Calling","count":1,"path":"tags/Function-Calling/"},{"name":"CLAUDE.md","count":1,"path":"tags/CLAUDE-md/"},{"name":"Auto Memory","count":1,"path":"tags/Auto-Memory/"},{"name":"Project Setup","count":1,"path":"tags/Project-Setup/"},{"name":"Extended Thinking","count":1,"path":"tags/Extended-Thinking/"},{"name":"Reasoning","count":1,"path":"tags/Reasoning/"},{"name":"/goal","count":1,"path":"tags/goal/"},{"name":"Monitor Tool","count":1,"path":"tags/Monitor-Tool/"},{"name":"Plan Mode","count":1,"path":"tags/Plan-Mode/"},{"name":"Haiku","count":1,"path":"tags/Haiku/"},{"name":"Sonnet","count":1,"path":"tags/Sonnet/"},{"name":"Opus","count":1,"path":"tags/Opus/"},{"name":"Token 成本","count":1,"path":"tags/Token-成本/"},{"name":"Routines","count":1,"path":"tags/Routines/"},{"name":"Ultraplan","count":1,"path":"tags/Ultraplan/"},{"name":"規劃","count":1,"path":"tags/規劃/"},{"name":"cloud","count":1,"path":"tags/cloud/"},{"name":"Team","count":1,"path":"tags/Team/"},{"name":"Onboarding","count":1,"path":"tags/Onboarding/"},{"name":"Voice Mode","count":1,"path":"tags/Voice-Mode/"},{"name":"Push-to-Talk","count":1,"path":"tags/Push-to-Talk/"},{"name":"Supply Chain","count":1,"path":"tags/Supply-Chain/"},{"name":"Subagent","count":1,"path":"tags/Subagent/"},{"name":"Cowork","count":1,"path":"tags/Cowork/"},{"name":"Plugin","count":1,"path":"tags/Plugin/"},{"name":"UX 設計","count":1,"path":"tags/UX-設計/"},{"name":"Managed Agents","count":1,"path":"tags/Managed-Agents/"},{"name":"Dreaming","count":1,"path":"tags/Dreaming/"},{"name":"Outcomes","count":1,"path":"tags/Outcomes/"},{"name":"Coolify","count":1,"path":"tags/Coolify/"},{"name":"self-hosted","count":1,"path":"tags/self-hosted/"},{"name":"PaaS","count":1,"path":"tags/PaaS/"},{"name":"CrewAI","count":1,"path":"tags/CrewAI/"},{"name":"Multi-Agent","count":1,"path":"tags/Multi-Agent/"},{"name":"Encryption","count":1,"path":"tags/Encryption/"},{"name":"Productivity","count":1,"path":"tags/Productivity/"},{"name":"Monitoring","count":1,"path":"tags/Monitoring/"},{"name":"Analyzer","count":1,"path":"tags/Analyzer/"},{"name":"IK","count":1,"path":"tags/IK/"},{"name":"中文搜尋","count":1,"path":"tags/中文搜尋/"},{"name":"ELK Stack","count":1,"path":"tags/ELK-Stack/"},{"name":"Production","count":1,"path":"tags/Production/"},{"name":"Operations","count":1,"path":"tags/Operations/"},{"name":"Architecture","count":1,"path":"tags/Architecture/"},{"name":"Mapping","count":1,"path":"tags/Mapping/"},{"name":"Template","count":1,"path":"tags/Template/"},{"name":"Schema","count":1,"path":"tags/Schema/"},{"name":"Aggregation","count":1,"path":"tags/Aggregation/"},{"name":"Search","count":1,"path":"tags/Search/"},{"name":"internals","count":1,"path":"tags/internals/"},{"name":"Translog","count":1,"path":"tags/Translog/"},{"name":"Segment","count":1,"path":"tags/Segment/"},{"name":"SpecKit","count":1,"path":"tags/SpecKit/"},{"name":"GH-300","count":1,"path":"tags/GH-300/"},{"name":"Responsible AI","count":1,"path":"tags/Responsible-AI/"},{"name":"CRUD","count":1,"path":"tags/CRUD/"},{"name":"bulk","count":1,"path":"tags/bulk/"},{"name":"alias","count":1,"path":"tags/alias/"},{"name":"REST API","count":1,"path":"tags/REST-API/"},{"name":"工具遷移","count":1,"path":"tags/工具遷移/"},{"name":"前端","count":1,"path":"tags/前端/"},{"name":"skill","count":1,"path":"tags/skill/"},{"name":"AI 輔助開發","count":1,"path":"tags/AI-輔助開發/"},{"name":"開源專案","count":1,"path":"tags/開源專案/"},{"name":"Jira","count":1,"path":"tags/Jira/"},{"name":"Atlassian","count":1,"path":"tags/Atlassian/"},{"name":"微服務","count":1,"path":"tags/微服務/"},{"name":"系統設計","count":1,"path":"tags/系統設計/"},{"name":"後端開發","count":1,"path":"tags/後端開發/"},{"name":"Lightpanda","count":1,"path":"tags/Lightpanda/"},{"name":"Headless Browser","count":1,"path":"tags/Headless-Browser/"},{"name":"Zig","count":1,"path":"tags/Zig/"},{"name":"Web Scraping","count":1,"path":"tags/Web-Scraping/"},{"name":"ETF","count":1,"path":"tags/ETF/"},{"name":"台股","count":1,"path":"tags/台股/"},{"name":"美股","count":1,"path":"tags/美股/"},{"name":"Mag-7","count":1,"path":"tags/Mag-7/"},{"name":"財報","count":1,"path":"tags/財報/"},{"name":"Multica","count":1,"path":"tags/Multica/"},{"name":"OpenCode","count":1,"path":"tags/OpenCode/"},{"name":"GPT","count":1,"path":"tags/GPT/"},{"name":"Discord","count":1,"path":"tags/Discord/"},{"name":"Open CoDesign","count":1,"path":"tags/Open-CoDesign/"},{"name":"AI Design","count":1,"path":"tags/AI-Design/"},{"name":"Skill","count":1,"path":"tags/Skill/"},{"name":"心智模型","count":1,"path":"tags/心智模型/"},{"name":"決策工具","count":1,"path":"tags/決策工具/"},{"name":"GPT-5.5","count":1,"path":"tags/GPT-5-5/"},{"name":"OpenScreen","count":1,"path":"tags/OpenScreen/"},{"name":"Screen Recording","count":1,"path":"tags/Screen-Recording/"},{"name":"AI VTuber","count":1,"path":"tags/AI-VTuber/"},{"name":"Project AIRI","count":1,"path":"tags/Project-AIRI/"},{"name":"RTK","count":1,"path":"tags/RTK/"},{"name":"Token 優化","count":1,"path":"tags/Token-優化/"},{"name":"Sonatype Guide","count":1,"path":"tags/Sonatype-Guide/"},{"name":"依賴管理","count":1,"path":"tags/依賴管理/"},{"name":"API","count":1,"path":"tags/API/"},{"name":"TimesFM","count":1,"path":"tags/TimesFM/"},{"name":"時間序列","count":1,"path":"tags/時間序列/"},{"name":"基礎模型","count":1,"path":"tags/基礎模型/"},{"name":"ML","count":1,"path":"tags/ML/"},{"name":"Stanford AI Index","count":1,"path":"tags/Stanford-AI-Index/"},{"name":"AI產業","count":1,"path":"tags/AI產業/"},{"name":"工程師職涯","count":1,"path":"tags/工程師職涯/"},{"name":"AI透明度","count":1,"path":"tags/AI透明度/"},{"name":"就業市場","count":1,"path":"tags/就業市場/"},{"name":"Whisper","count":1,"path":"tags/Whisper/"},{"name":"Speech-to-Text","count":1,"path":"tags/Speech-to-Text/"},{"name":"Flash Attention","count":1,"path":"tags/Flash-Attention/"},{"name":"團隊合作","count":1,"path":"tags/團隊合作/"},{"name":"包棟民宿","count":1,"path":"tags/包棟民宿/"},{"name":"台中","count":1,"path":"tags/台中/"},{"name":"南投","count":1,"path":"tags/南投/"},{"name":"苗栗","count":1,"path":"tags/苗栗/"},{"name":"時事評論","count":1,"path":"tags/時事評論/"},{"name":"能源","count":1,"path":"tags/能源/"},{"name":"AI 基礎建設","count":1,"path":"tags/AI-基礎建設/"},{"name":"台灣","count":1,"path":"tags/台灣/"},{"name":"MacBook","count":1,"path":"tags/MacBook/"},{"name":"淡江大橋","count":1,"path":"tags/淡江大橋/"},{"name":"淡水","count":1,"path":"tags/淡水/"},{"name":"建築","count":1,"path":"tags/建築/"},{"name":"週末","count":1,"path":"tags/週末/"},{"name":"Claude Skills","count":1,"path":"tags/Claude-Skills/"},{"name":"居家辦公","count":1,"path":"tags/居家辦公/"},{"name":"人體工學","count":1,"path":"tags/人體工學/"},{"name":"日本","count":1,"path":"tags/日本/"},{"name":"黃金週","count":1,"path":"tags/黃金週/"},{"name":"Golden Week","count":1,"path":"tags/Golden-Week/"}];</script></body></html>
