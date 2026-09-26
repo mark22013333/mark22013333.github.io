@@ -1,0 +1,20 @@
+{
+  "projects": [
+    { "type": "service", "name": "倒垃圾了嗎？", "url": "https://trashtrackt.longhopick.com", "repo": "trash-track",
+      "desc": "輸入台灣地址，查今天有沒有垃圾車、附近的清運停靠點。" },
+    { "type": "service", "name": "家庭任務集點樂園", "url": "https://familyreward.longhopick.com", "repo": "FamilyReward",
+      "desc": "家庭任務集點與獎勵系統。" },
+    { "type": "plugin", "name": "crew/", "url": "https://github.com/mark22013333/crew", "repo": "crew",
+      "desc": "整合 Notion 的 Claude Code 開發工作流，涵蓋 Bug 管理與功能開發。" },
+    { "type": "app", "name": "VoiceType", "url": "https://github.com/mark22013333/VoiceType", "repo": "VoiceType",
+      "desc": "macOS／Windows 語音轉文字，Whisper 離線辨識加 Claude 潤稿。" },
+    { "type": "app", "name": "ForgeView", "url": "https://github.com/mark22013333/ForgeView", "repo": "ForgeView",
+      "desc": "管理 OpenSpec／Crew 規格檔，內嵌 Claude Code 終端機。" },
+    { "type": "plugin", "name": "forge/", "url": "https://github.com/mark22013333/forge", "repo": "forge",
+      "desc": "開發者工具類 skill 的 Claude Code marketplace。" },
+    { "type": "plugin", "name": "statusline-kit/", "url": "https://github.com/mark22013333/statusline-kit", "repo": "statusline-kit",
+      "desc": "可自訂內容的 Claude Code 狀態列。" },
+    { "type": "cli", "name": "treef", "url": "https://github.com/mark22013333/treef", "repo": "treef",
+      "desc": "帶 emoji、顏色、檔案大小與 Git 狀態的目錄樹。" }
+  ]
+}

@@ -1,4 +1,6 @@
 User-agent: *
 Allow: /
 
+# 舊部落格網址已轉到 blog.longhopick.com；保留舊 sitemap 讓搜尋引擎重新爬到轉址
 Sitemap: https://mark22013333.github.io/sitemap.xml
+Sitemap: https://blog.longhopick.com/sitemap.xml

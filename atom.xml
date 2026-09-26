@@ -12,7 +12,16 @@
   <title>
     <![CDATA[Cheng's Tech & Life]]>
   </title>
-  <updated>2026-09-23T13:10:57.653Z</updated>
+  <updated>2026-09-26T12:00:00.000Z</updated>
+  <entry>
+    <title>部落格搬家了：請改訂閱 blog.longhopick.com/atom.xml</title>
+    <link href="https://blog.longhopick.com/" rel="alternate"/>
+    <id>https://mark22013333.github.io/moved-2026-09-26</id>
+    <published>2026-09-26T12:00:00.000Z</published>
+    <updated>2026-09-26T12:00:00.000Z</updated>
+    <content type="html"><![CDATA[<p>Cheng's Tech &amp; Life 已經搬到 <a href="https://blog.longhopick.com/">https://blog.longhopick.com/</a>。舊網址的文章都會自動轉到新站。</p><p>這個 RSS 之後不會再更新，請在閱讀器改訂閱 <a href="https://blog.longhopick.com/atom.xml">https://blog.longhopick.com/atom.xml</a>。</p>]]></content>
+    <summary type="html">部落格已搬到 blog.longhopick.com，請改訂閱新的 RSS。</summary>
+  </entry>
   <entry>
     <author>
       <name>Cheng®</name>
