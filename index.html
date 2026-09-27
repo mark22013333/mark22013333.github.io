@@ -76,6 +76,8 @@ h1{margin:4px 0 0;font:600 clamp(20px,2.4vw,26px)/1.3 var(--mono);color:var(--br
 .status button.cur{background:var(--bg);color:var(--green)}
 .status button.cur::after{content:"*"}
 .status .hint{opacity:.75;white-space:nowrap}
+.status .right{display:flex;align-items:center;gap:12px}
+.status .bgbtn{background:var(--bg);color:var(--amber);padding:0 8px}
 .toast{position:fixed;left:50%;bottom:calc(var(--status-h) + 14px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:4;
   background:var(--amber);color:var(--bg);font-size:13px;padding:4px 12px;opacity:0;transition:opacity .2s;pointer-events:none}
 .toast.on{opacity:1}
@@ -129,7 +131,7 @@ h1{margin:4px 0 0;font:600 clamp(20px,2.4vw,26px)/1.3 var(--mono);color:var(--br
     <button type="button" data-win="2">2:blog</button>
     <button type="button" data-win="3">3:github</button>
   </span>
-  <span class="hint">0–3 切換　↑↓ 選擇　Enter 開啟</span>
+  <span class="right"><span class="hint">0–3 切換　↑↓ 選擇　Enter 開啟　b 換背景</span><button type="button" class="bgbtn" id="bgbtn" aria-label="切換背景樣式">bg:等高線</button></span>
 </nav>
 <div class="toast" role="status" aria-live="polite"></div>
 
@@ -194,19 +196,45 @@ h1{margin:4px 0 0;font:600 clamp(20px,2.4vw,26px)/1.3 var(--mono);color:var(--br
       });
     });
 
-  /* ---------- 背景：等高線字元場 ---------- */
-  (function () {
-    var pre = document.querySelector('pre.field');
-    var RAMP = ' .:-=+', L = RAMP.length, CW = 7.2, LH = 14;
-    var cols, rows, mx = -999, my = -999, t = 0, timer = null;
+  /* ---------- 背景字元場（可切換樣式，選擇記在 localStorage） ---------- */
+  var bg = (function () {
+    var pre = document.querySelector('pre.field'), btn = document.getElementById('bgbtn');
+    var CW = 7.2, LH = 14;
+    var STYLES = [
+      { id: 'contour', name: '等高線', ramp: ' .:-=+', pick: function (x, y, t) {
+          var f = (Math.sin(x * .045 + t * .12) + Math.cos(y * .08 - t * .1) + Math.sin((x * .5 - y) * .03 + t * .07)) * 2.2;
+          f -= Math.floor(f);
+          return f < .1 ? 5 : f < .18 ? 2 : (f > .55 && f < .58 ? 1 : 0);
+        } },
+      { id: 'wave', name: '波紋', ramp: ' .·:-=+*', pick: function (x, y, t) {
+          var v = (Math.sin(x * .11 + t * .6) + Math.sin(y * .17 - t * .45) + Math.sin((x + y) * .07 + t * .3) + 3) / 6;
+          return Math.max(0, Math.min(7, Math.floor(v * 8)));
+        } },
+      { id: 'ripple', name: '漣漪', ramp: ' ..·:~=', ripple: true, pick: function (x, y, t, extra) {
+          var v = (Math.sin(x * .06 + t * .25) * Math.cos(y * .09 - t * .2) + 1) / 2 * .55 + extra;
+          return Math.max(0, Math.min(6, Math.floor(v * 7)));
+        } },
+      { id: 'off', name: '關閉' }
+    ];
+    var cur = 0, cols, rows, mx = -999, my = -999, t = 0, timer = null, rips = [], lastRip = 0;
+    try { var saved = localStorage.getItem('workbench-bg'); STYLES.forEach(function (s, i) { if (s.id === saved) cur = i; }); } catch (e) {}
+
     function size() { cols = Math.ceil(innerWidth / CW) + 1; rows = Math.ceil(innerHeight / LH) + 1; }
-    function v(x, y) { return Math.sin(x * .045 + t * .12) + Math.cos(y * .08 - t * .1) + Math.sin((x * .5 - y) * .03 + t * .07); }
     function frame() {
-      var out = '', cw = innerWidth / cols;
+      var st = STYLES[cur];
+      if (!st.ramp) { pre.textContent = ''; return; }
+      var out = '', cw = innerWidth / cols, R = st.ramp;
       for (var y = 0; y < rows; y++) {
         for (var x = 0; x < cols; x++) {
-          var f = v(x, y) * 2.2; f -= Math.floor(f);
-          var ch = RAMP[f < .1 ? L - 1 : f < .18 ? 2 : (f > .55 && f < .58 ? 1 : 0)];
+          var extra = 0;
+          if (st.ripple) {
+            for (var r = 0; r < rips.length; r++) {
+              var rx = (x * cw - rips[r][0]) / cw, ry = (y * LH - rips[r][1]) / LH * 1.9;
+              var age = t - rips[r][2], w = Math.sqrt(rx * rx + ry * ry) - age * 14;
+              if (w > -1.5 && w < 1.5) extra += (1.5 - Math.abs(w)) / 1.5 * .6 * Math.max(0, 1 - age / 2.2);
+            }
+          }
+          var ch = R[st.pick(x, y, t, extra)];
           var dx = (x * cw - mx) / cw, dy = (y * LH - my) / LH * 1.9;
           out += (ch !== ' ' && dx * dx + dy * dy < 49) ? '<b>' + ch + '</b>' : ch;
         }
@@ -214,15 +242,28 @@ h1{margin:4px 0 0;font:600 clamp(20px,2.4vw,26px)/1.3 var(--mono);color:var(--br
       }
       pre.innerHTML = out;
       t += .066;
+      rips = rips.filter(function (r) { return t - r[2] < 2.2; });
     }
-    function start() { if (!timer && !reduce) timer = setInterval(frame, 66); }
+    function start() { if (!timer && !reduce && STYLES[cur].ramp) timer = setInterval(frame, 66); }
     function stop() { clearInterval(timer); timer = null; }
-    size(); frame();
+    function label() { btn.textContent = 'bg:' + STYLES[cur].name; }
+    function next() {
+      cur = (cur + 1) % STYLES.length;
+      try { localStorage.setItem('workbench-bg', STYLES[cur].id); } catch (e) {}
+      label(); stop(); frame(); start();
+      return STYLES[cur].name;
+    }
+    size(); label(); frame();
     addEventListener('resize', function () { size(); frame(); });
-    addEventListener('pointermove', function (e) { mx = e.clientX; my = e.clientY; if (reduce) frame(); });
+    addEventListener('pointermove', function (e) {
+      mx = e.clientX; my = e.clientY;
+      if (STYLES[cur].ripple && t - lastRip > .5) { rips.push([mx, my, t]); lastRip = t; }
+      if (reduce) frame();
+    });
     document.addEventListener('pointerleave', function () { mx = my = -999; });
     document.addEventListener('visibilitychange', function () { document.hidden ? stop() : start(); });
     start();
+    return { next: next, btn: btn };
   })();
 
   /* ---------- tmux 鍵盤操作 ---------- */
@@ -251,6 +292,7 @@ h1{margin:4px 0 0;font:600 clamp(20px,2.4vw,26px)/1.3 var(--mono);color:var(--br
       } else go(URLS[n]);
     }
     wins.forEach(function (w) { w.addEventListener('click', function () { win(+w.dataset.win); }); });
+    bg.btn.addEventListener('click', function () { say('背景：' + bg.next()); });
     document.addEventListener('keydown', function (e) {
       if (e.metaKey || e.ctrlKey || e.altKey) return;
       var t = e.target, tag = (t.tagName || '').toLowerCase();
@@ -261,6 +303,7 @@ h1{margin:4px 0 0;font:600 clamp(20px,2.4vw,26px)/1.3 var(--mono);color:var(--br
       else if (k === 'ArrowUp' || k === 'k') { sel = Math.max(0, sel - 1); paint(); e.preventDefault(); }
       else if (k === 'Enter' && sel >= 0 && it[sel]) { go(it[sel].href); e.preventDefault(); }
       else if (k === 'Escape') { sel = -1; paint(); }
+      else if (k === 'b') { say('背景：' + bg.next()); }
     });
     paint();
   })();
