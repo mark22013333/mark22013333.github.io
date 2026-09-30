@@ -8,12 +8,10 @@
       "desc": "整合 Notion 的 Claude Code 開發工作流，涵蓋 Bug 管理與功能開發。" },
     { "type": "app", "name": "VoiceType", "url": "https://github.com/mark22013333/VoiceType", "repo": "VoiceType",
       "desc": "macOS／Windows 語音轉文字，Whisper 離線辨識加 Claude 潤稿。" },
-    { "type": "app", "name": "ForgeView", "url": "https://github.com/mark22013333/ForgeView", "repo": "ForgeView",
-      "desc": "管理 OpenSpec／Crew 規格檔，內嵌 Claude Code 終端機。" },
-    { "type": "plugin", "name": "forge/", "url": "https://github.com/mark22013333/forge", "repo": "forge",
-      "desc": "開發者工具類 skill 的 Claude Code marketplace。" },
-    { "type": "plugin", "name": "statusline-kit/", "url": "https://github.com/mark22013333/statusline-kit", "repo": "statusline-kit",
-      "desc": "可自訂內容的 Claude Code 狀態列。" },
+    { "type": "app", "name": "SplitSwan", "url": "https://github.com/mark22013333/SplitSwan", "repo": "SplitSwan",
+      "desc": "macOS 狀態列的 FortiGate IPsec VPN 工具：strongSwan 前端，支援 split tunnel、多閘道輪替與自動重連。" },
+    { "type": "app", "name": "orca", "url": "https://github.com/mark22013333/orca", "repo": "orca",
+      "desc": "fork 自 stablyai/orca：同時指揮多個 coding agent 並行工作的 ADE，支援桌面、行動與遠端執行。" },
     { "type": "cli", "name": "treef", "url": "https://github.com/mark22013333/treef", "repo": "treef",
       "desc": "帶 emoji、顏色、檔案大小與 Git 狀態的目錄樹。" }
   ]
