@@ -40,6 +40,8 @@ pre.field b{font-weight:400;color:var(--field-hi)}
 main{position:relative;z-index:1;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.25fr);gap:14px;
   padding:18px clamp(12px,2vw,24px) calc(var(--status-h) + 18px + env(safe-area-inset-bottom,0px));max-width:1400px;margin:0 auto;min-height:100vh}
 .pane{border:1px solid var(--line);background:var(--pane);display:grid;grid-template-rows:auto 1fr;min-width:0;align-self:start}
+.stack{display:grid;gap:14px;align-content:start;align-self:start;min-width:0}
+[hidden]{display:none!important}
 .pane.active{border-color:var(--green)}
 .ptitle{font-size:12px;color:var(--dim);padding:3px 10px;border-bottom:1px solid var(--rule);display:flex;justify-content:space-between;gap:8px}
 .pane.active .ptitle{color:var(--green)}
@@ -66,6 +68,15 @@ h1{margin:4px 0 0;font:600 clamp(20px,2.4vw,26px)/1.3 var(--mono);color:var(--br
 .ll .d{grid-column:3;color:var(--soft);font-family:var(--sans);font-size:13.5px}
 .ll .u{grid-column:3;color:var(--dim);font-size:12px}
 .sel{background:var(--hover);box-shadow:inset 3px 0 0 var(--amber)}
+.stats{display:grid;grid-template-columns:7ch minmax(0,1fr);gap:3px 12px;margin:0}
+.stats dt{color:var(--dim)}
+.stats dd{margin:0;color:var(--soft)}
+.stats .s{color:var(--amber);font-variant-numeric:tabular-nums}
+.ser{display:grid;gap:2px 24px;grid-template-columns:repeat(auto-fill,minmax(min(100%,30ch),1fr))}
+.ser a{display:grid;grid-template-columns:4ch minmax(0,1fr);gap:10px;text-decoration:none;padding:4px 8px;margin:0 -8px}
+.ser a:hover{background:var(--hover)}
+.ser .s{color:var(--amber);text-align:right;font-variant-numeric:tabular-nums}
+.ser .n{color:var(--cyan)}
 
 /* tmux 狀態列 */
 .status{position:fixed;left:0;right:0;bottom:0;z-index:3;display:flex;justify-content:space-between;align-items:center;gap:12px;
@@ -96,6 +107,7 @@ h1{margin:4px 0 0;font:600 clamp(20px,2.4vw,26px)/1.3 var(--mono);color:var(--br
 <pre class="field" aria-hidden="true"></pre>
 
 <main>
+  <div class="stack" id="col0">
   <section class="pane" data-pane="0" aria-labelledby="p0">
     <div class="ptitle"><span id="p0">0: ~</span><span class="act">zsh</span></div>
     <div class="pbody">
@@ -105,7 +117,7 @@ h1{margin:4px 0 0;font:600 clamp(20px,2.4vw,26px)/1.3 var(--mono);color:var(--br
       </header>
       <p class="who">Java／Spring 後端工程師。下班時間寫部落格，也做一些自己每天會用的服務和 Claude Code 工具。</p>
       <div>
-        <div><span class="p">$</span> tail -n 3 blog/latest.json</div>
+        <div><span class="p">$</span> tail -n 10 blog/latest.json</div>
         <div class="posts" id="posts">
           <span class="dim">讀取最新文章…</span>
         </div>
@@ -114,6 +126,27 @@ h1{margin:4px 0 0;font:600 clamp(20px,2.4vw,26px)/1.3 var(--mono);color:var(--br
     </div>
   </section>
 
+  <section class="pane float" data-sub="0" data-path="~/blog" id="statpane" aria-labelledby="pst" hidden>
+    <div class="ptitle"><span id="pst">0: ~/blog</span><span class="act">zsh</span></div>
+    <div class="pbody">
+      <div>
+        <div><span class="p">$</span> blog --stats</div>
+        <dl class="stats" id="stats"></dl>
+      </div>
+    </div>
+  </section>
+  <section class="pane float" data-sub="0" data-path="~/blog/series" id="serpane" aria-labelledby="pse" hidden>
+    <div class="ptitle"><span id="pse">0: ~/blog/series</span><span class="act">zsh</span></div>
+    <div class="pbody">
+      <div>
+        <div><span class="p">$</span> ls ~/blog/series</div>
+        <div class="ser" id="series"></div>
+      </div>
+    </div>
+  </section>
+  </div>
+
+  <div class="stack" id="col1">
   <section class="pane active" data-pane="1" aria-labelledby="p1">
     <div class="ptitle"><span id="p1">1: ~/projects</span><span class="act">active</span></div>
     <div class="pbody">
@@ -122,6 +155,7 @@ h1{margin:4px 0 0;font:600 clamp(20px,2.4vw,26px)/1.3 var(--mono);color:var(--br
       <noscript><p>作品清單需要 JavaScript。也可以直接到 <a href="https://github.com/mark22013333">github.com/mark22013333</a> 看。</p></noscript>
     </div>
   </section>
+  </div>
 </main>
 
 <nav class="status" aria-label="視窗">
@@ -150,19 +184,80 @@ h1{margin:4px 0 0;font:600 clamp(20px,2.4vw,26px)/1.3 var(--mono);color:var(--br
   /* ---------- 最新文章：blog build 時產生的 latest.json ---------- */
   fetch('https://blog.longhopick.com/latest.json', { cache: 'no-cache' })
     .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
-    .then(function (posts) {
+    .then(function (data) {
+      // 舊格式是純陣列；2026-10-06 起改成 { posts, stats, series }
+      var d = Array.isArray(data) ? { posts: data } : data;
       var box = document.getElementById('posts');
       box.textContent = '';
-      posts.slice(0, 3).forEach(function (p) {
+      (d.posts || []).slice(0, 10).forEach(function (p) {
         var a = el('a', { href: p.url, 'data-nav': '' });
         a.appendChild(el('time', { datetime: p.date }, p.date));
         a.appendChild(document.createTextNode(p.title));
         box.appendChild(a);
       });
+      if (d.stats && d.series) blogPane(d.stats, d.series);
     })
     .catch(function () {
       document.getElementById('posts').innerHTML = '<span class="dim">暫時讀不到最新文章，直接前往部落格看。</span>';
     });
+
+  /* ---------- 部落格統計＋系列索引（同一份 latest.json 帶來） ---------- */
+  function blogPane(st, series) {
+    var dl = document.getElementById('stats');
+    function row(k, parts) {
+      dl.appendChild(el('dt', {}, k));
+      var dd = el('dd');
+      parts.forEach(function (p) {
+        dd.appendChild(typeof p === 'number' ? el('span', { 'class': 's' }, String(p)) : document.createTextNode(p));
+      });
+      dl.appendChild(dd);
+    }
+    row('posts', [st.total, ' 篇']);
+    if (st.since) {
+      var days = Math.floor((Date.now() - new Date(st.since + 'T00:00:00+08:00')) / 864e5);
+      row('since', [st.since + '（', days, ' 天）']);
+    }
+    row('30d', ['+', st.last30, ' 篇']);
+    var tags = [];
+    (st.topTags || []).forEach(function (t, i) { if (i) tags.push(' · '); tags.push(t.name + ' ', t.count); });
+    if (tags.length) row('tags', tags);
+
+    var box = document.getElementById('series');
+    series.forEach(function (s) {
+      var a = el('a', { href: s.url, 'data-nav': '' });
+      a.appendChild(el('span', { 'class': 's' }, String(s.count)));
+      var n = el('span', { 'class': 'n' }, s.name);
+      if (s.status === 'completed') n.appendChild(el('span', { 'class': 'dim' }, ' [done]'));
+      a.appendChild(n);
+      box.appendChild(a);
+    });
+    document.getElementById('statpane').hidden = false;
+    document.getElementById('serpane').hidden = false;
+    balance();
+  }
+
+  // 統計與系列兩個窗格各自放到當下比較矮的那一欄（左右欄高度會隨視窗寬度變，固定擺哪邊都會失衡）。
+  // 先把它們拿出來量兩欄的基本高度，再由大到小逐一放進較矮的一欄。單欄（≤760px）一律接在左欄後面。
+  // 窗格落在哪一欄，標題的視窗編號與鍵盤 0／1 的選取範圍就跟著哪一欄。
+  var repaint = function () {};
+  function balance() {
+    var fl = [document.getElementById('serpane'), document.getElementById('statpane')]
+      .filter(function (p) { return !p.hidden; });
+    if (!fl.length) return;
+    var cols = [document.getElementById('col0'), document.getElementById('col1')];
+    fl.forEach(function (p) { p.parentNode.removeChild(p); });
+    fl.forEach(function (p) {
+      var t = innerWidth <= 760 || cols[0].offsetHeight <= cols[1].offsetHeight ? 0 : 1;
+      cols[t].appendChild(p);
+      p.dataset.sub = String(t);
+      p.querySelector('.ptitle span').textContent = t + ': ' + p.dataset.path;
+    });
+    var st = document.getElementById('statpane'), se = document.getElementById('serpane');
+    if (st.parentNode === se.parentNode && st.nextElementSibling !== se) se.parentNode.insertBefore(st, se);
+    repaint();
+  }
+  var rt;
+  addEventListener('resize', function () { clearTimeout(rt); rt = setTimeout(balance, 150); });
 
   /* ---------- 作品清單：projects.json＋GitHub 即時星數 ---------- */
   fetch('projects.json')
@@ -194,6 +289,7 @@ h1{margin:4px 0 0;font:600 clamp(20px,2.4vw,26px)/1.3 var(--mono);color:var(--br
             .catch(function () {});
         }
       });
+      balance();
     });
 
   /* ---------- 背景字元場（可切換樣式，選擇記在 localStorage） ---------- */
@@ -272,9 +368,11 @@ h1{margin:4px 0 0;font:600 clamp(20px,2.4vw,26px)/1.3 var(--mono);color:var(--br
     var toast = document.querySelector('.toast');
     var URLS = { 2: 'https://blog.longhopick.com', 3: 'https://github.com/' + GH };
     var active = 1, sel = -1, tt;
-    function items() { return panes[active].querySelectorAll('a[data-nav]'); }
+    // 左欄的 ~/blog 窗格（data-sub="0"）屬於視窗 0：↑↓ 會從文章一路選到系列
+    function items() { return document.querySelectorAll('[data-pane="' + active + '"] a[data-nav], [data-sub="' + active + '"] a[data-nav]'); }
     function paint() {
       panes.forEach(function (p, i) { p.classList.toggle('active', i === active); });
+      document.querySelectorAll('[data-sub]').forEach(function (p) { p.classList.toggle('active', +p.dataset.sub === active); });
       wins.forEach(function (w) { w.classList.toggle('cur', +w.dataset.win === active); });
       document.querySelectorAll('.sel').forEach(function (e) { e.classList.remove('sel'); });
       var it = items();
@@ -305,6 +403,7 @@ h1{margin:4px 0 0;font:600 clamp(20px,2.4vw,26px)/1.3 var(--mono);color:var(--br
       else if (k === 'Escape') { sel = -1; paint(); }
       else if (k === 'b') { say('背景：' + bg.next()); }
     });
+    repaint = paint;
     paint();
   })();
 })();
