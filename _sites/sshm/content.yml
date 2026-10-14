@@ -106,7 +106,7 @@ sections:
     title: 讓 agent 連進 VM，正常使用時不碰密碼
     paragraphs:
       - '讓別的 AI agent（Claude Code、Codex 等）能連進 VM 查東西，而且<b>正常使用時不需要、也不會接觸密碼</b>：sshm 用已存的密碼登入一次，替每台機器裝上一把專用金鑰並寫好 ssh 別名，之後 agent 只用 <code>ssh &lt;別名&gt;</code> 連線。'
-      - '在 TUI 的機器清單選一台按 <kbd>Ctrl+O</kbd> 也能開通，已開通的再按一次是停用。'
+      - '在 TUI 的機器清單選一台按 <kbd>Ctrl+O</kbd> 也能開通，已開通的再按一次是停用。這和安裝步驟 3 在 zsh 提示列上叫出 sshm 的 <kbd>Ctrl+O</kbd> 是不同功能。'
     note: '<b>安全界線：</b>這個功能防的是 agent「誤開通」與「順手拿密碼來用」，<b>不是</b>防惡意繞過。agent 與 sshm 在同一個 OS 帳號下執行，技術上讀得到 <code>hosts.json</code> 裡的明碼密碼與 <code>~/.ssh/sshm/</code> 的私鑰。要防惡意的 agent，得讓它跑在另一個 OS 帳號、容器或 VM 裡，讀不到你的家目錄。'
     code:
       label: AI agent 相關指令
@@ -128,7 +128,7 @@ sections:
     title: 使用前請先知道（完整 8 條）
     cards:
       - title: 密碼以明碼保存
-        body: '存在 hosts.json 裡。連線時經環境變數交給 expect 腳本，不出現在行程參數中；但 expect 行程的初始環境在連線期間仍含密碼，同一使用者或 root 讀得到。'
+        body: '存在 hosts.json 裡。連線時經環境變數交給 expect 腳本，不出現在行程參數中；但 expect 行程的初始環境在連線期間仍含密碼，同一使用者或 root 讀得到。在 Orca 開新分頁時，<code>orca terminal create --command=…</code> 行程存活的短暫期間，其參數仍含密碼。'
       - title: 在 Orca 開新分頁時，密碼會出現在畫面上
         body: 連線指令（含密碼）是打進新分頁 shell 的文字，會顯示在新分頁畫面與 scrollback 裡。
       - title: 沒開 HIST_IGNORE_SPACE 時，連線指令會進 history
