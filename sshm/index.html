@@ -139,6 +139,7 @@ section{scroll-margin-top:56px}
 .feat li{margin:4px 0}
 @media (min-width:880px){
   .feat{grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:44px}
+  .feat.flip{grid-template-columns:minmax(0,7fr) minmax(0,5fr)}  /* 圖在左時也給圖寬欄 */
   .feat.flip .txt{order:2}
 }
 
@@ -225,7 +226,7 @@ footer p{margin:18px 0 0}
       <figure style="margin:0">
         <div class="term">
           <div class="bar"><i></i><i></i><i></i><span>sshm — 機器清單</span></div>
-          <img src="img/host-list.png" width="1600" height="479"
+          <img src="img/host-list.png" width="1120" height="632"
                alt="sshm 機器清單：依群組折疊，每台機器左側有顏色條，名稱下方是 user@host:port，已開通給 AI agent 的機器後面標 🤖 別名">
         </div>
         <figcaption class="cap">依群組折疊，每台機器左側有顏色條，名稱下方是 <code>user@host:port</code>，已開通給 AI agent 的機器後面標 🤖 別名。</figcaption>
@@ -255,7 +256,7 @@ footer p{margin:18px 0 0}
         </div>
         <div class="term">
           <div class="bar"><i></i><i></i><i></i><span>sshm — 搜尋「db」</span></div>
-          <img src="img/search.png" width="1600" height="241" loading="lazy"
+          <img src="img/search.png" width="1120" height="310" loading="lazy"
                alt="輸入「db」後只剩名稱或 user 含 db 的三台機器">
         </div>
       </article>
@@ -272,7 +273,7 @@ footer p{margin:18px 0 0}
         </div>
         <div class="term">
           <div class="bar"><i></i><i></i><i></i><span>sshm — Tunnel</span></div>
-          <img src="img/tunnel-page.png" width="1348" height="148" loading="lazy"
+          <img src="img/tunnel-page.png" width="1120" height="186" loading="lazy"
                alt="Tunnel 頁：「ACME PROD DB」亮綠色 ● 表示執行中，另外兩條是 ○ 已停止，每列後面是規則摘要">
         </div>
       </article>
@@ -289,7 +290,7 @@ footer p{margin:18px 0 0}
         </div>
         <div class="term">
           <div class="bar"><i></i><i></i><i></i><span>sshm import-iterm</span></div>
-          <img src="img/import-iterm.png" width="1268" height="278" loading="lazy"
+          <img src="img/import-iterm.png" width="1120" height="362" loading="lazy"
                alt="iTerm2 匯入預覽：可匯入的預設勾選，「無法匯入」的列出原因，與本批另一個 profile 重複的標「重複」且預設不勾">
         </div>
       </article>
@@ -307,7 +308,7 @@ footer p{margin:18px 0 0}
         </div>
         <div class="term">
           <div class="bar"><i></i><i></i><i></i><span>sshm — 關於</span></div>
-          <img src="img/about-page.png" width="894" height="600" loading="lazy"
+          <img src="img/about-page.png" width="1019" height="900" loading="lazy"
                alt="關於頁：目前版本與最新版本皆為 v0.4.0、更新狀態「已是最新版」，下面列出 hosts.json、agent 別名設定、金鑰目錄與執行檔的實際路徑">
         </div>
       </article>
@@ -372,7 +373,7 @@ source ~/.zshrc</pre>
           </ul>
           <div class="term">
             <div class="bar"><i></i><i></i><i></i><span>sshm add</span></div>
-            <img src="img/host-form.png" width="767" height="295" loading="lazy"
+            <img src="img/host-form.png" width="1000" height="384" loading="lazy"
                  alt="新增機器表單：名稱、群組、host、port、user、認證方式、密碼、顏色、額外 ssh 參數、自訂指令">
           </div>
           <p class="cap">必填：名稱、host、user；<kbd>Ctrl+S</kbd> 儲存、<kbd>Esc</kbd> 取消。</p>

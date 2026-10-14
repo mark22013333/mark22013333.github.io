@@ -139,6 +139,7 @@ section{scroll-margin-top:56px}
 .feat li{margin:4px 0}
 @media (min-width:880px){
   .feat{grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:44px}
+  .feat.flip{grid-template-columns:minmax(0,7fr) minmax(0,5fr)}  /* 圖在左時也給圖寬欄 */
   .feat.flip .txt{order:2}
 }
 
