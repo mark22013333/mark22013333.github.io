@@ -1,0 +1,334 @@
+<!doctype html>
+<html lang="zh-TW">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<!-- 本檔由 tools/build_sites.py 從 _sites/{{ slug }}/content.yml 產生，請勿直接修改 -->
+<title>{{ name }}</title>
+<meta name="description" content="{{ meta_description }}">
+<meta property="og:title" content="{{ name }}">
+<meta property="og:description" content="{{ tagline }}">
+<meta property="og:url" content="{{ page_url }}">
+<meta property="og:type" content="website">
+<meta property="og:image" content="{{ og_url }}">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Noto+Sans+TC:wght@400;500;700&display=swap">
+<style>
+/* ============================================================
+   專案主色：由 content.yml 的 accent 帶入，每個作品頁只差這一行。
+   其餘所有主色相關的顏色都由 --accent 以 color-mix 推導。
+   ============================================================ */
+:root{ --accent:{{ accent }}; }
+
+/* ---------- 外框（沿用入口網站，深淺色皆固定深色） ---------- */
+:root{
+  --frame-bg:#0e1318; --frame-line:#2a3a45; --frame-ink:#c9d1d9; --frame-dim:#6b7682;
+  --amber:#e6b450; --cyan:#7fbfd9; --green:#8fcf8f;
+  --mono:"JetBrains Mono","Noto Sans TC","Heiti TC","Microsoft JhengHei",ui-monospace,Menlo,monospace;
+  --sans:"Noto Sans TC","Heiti TC","Microsoft JhengHei",system-ui,sans-serif;
+
+  /* 內文（淺色） */
+  color-scheme:light;
+  --bg:#f6f7f9; --surface:#ffffff; --ink:#1b232b; --soft:#4a5560; --dim:#6b7682; --line:#dde2e7;
+  --code-bg:#0e1318; --code-ink:#c9d1d9;
+  /* 主色衍生：淺色底上把主色壓暗才夠對比 */
+  --accent-ink:color-mix(in oklab, var(--accent) 62%, #000);
+  --accent-soft:color-mix(in oklab, var(--accent) 12%, var(--bg));
+  --accent-line:color-mix(in oklab, var(--accent) 45%, var(--line));
+  --on-accent:#04121a;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --bg:#11171d; --surface:#161e25; --ink:#dfe5ea; --soft:#9aa6b2; --dim:#76828e; --line:#25323c;
+    --code-bg:#0b1014; --code-ink:#c9d1d9;
+    --accent-ink:color-mix(in oklab, var(--accent) 85%, #fff);
+    --accent-soft:color-mix(in oklab, var(--accent) 14%, var(--bg));
+    --accent-line:color-mix(in oklab, var(--accent) 40%, var(--line));
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --bg:#11171d; --surface:#161e25; --ink:#dfe5ea; --soft:#9aa6b2; --dim:#76828e; --line:#25323c;
+  --code-bg:#0b1014; --code-ink:#c9d1d9;
+  --accent-ink:color-mix(in oklab, var(--accent) 85%, #fff);
+  --accent-soft:color-mix(in oklab, var(--accent) 14%, var(--bg));
+  --accent-line:color-mix(in oklab, var(--accent) 40%, var(--line));
+}
+
+*{box-sizing:border-box}
+html{background:var(--bg);scroll-behavior:smooth}
+@media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.75 var(--sans);overflow-x:hidden}
+img{max-width:100%;height:auto;display:block}
+a{color:var(--accent-ink)}
+a:focus-visible,.btn:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+code,kbd{font-family:var(--mono);font-size:.88em}
+p code,li code{background:var(--accent-soft);padding:.1em .35em;border-radius:3px;overflow-wrap:anywhere}
+kbd{border:1px solid var(--line);border-bottom-width:2px;border-radius:4px;padding:0 .35em;background:var(--surface);white-space:nowrap}
+
+/* grid 子項預設 min-width:auto，會被 pre 的長行撐寬 → 手機水平捲動 */
+.hero-grid>*,.feat>*,.split>*,.install>*{min-width:0}
+.wrap{max-width:1120px;margin:0 auto;padding-inline:clamp(16px,4vw,32px)}
+
+/* ---------- 頂部終端機導覽列 ---------- */
+.topbar{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--frame-bg);border-bottom:1px solid var(--frame-line);
+  font:13px/1 var(--mono);color:var(--frame-ink)}
+.topbar .wrap{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:40px}
+.crumb{display:flex;align-items:center;gap:.55em;text-decoration:none;color:var(--frame-ink);white-space:nowrap;min-width:0}
+.crumb .p{color:var(--amber)}
+.crumb .home{color:var(--cyan)}
+.crumb .sep{color:var(--frame-dim)}
+.crumb .here{color:var(--accent);font-weight:600}
+.crumb:hover .home{text-decoration:underline}
+.topnav{display:flex;gap:16px}
+.topnav a{color:var(--frame-dim);text-decoration:none}
+.topnav a:hover{color:var(--frame-ink)}
+@media (max-width:520px){.topnav .opt{display:none}}
+
+/* ---------- 首屏 ---------- */
+.hero{padding-block:clamp(40px,7vw,88px) clamp(32px,5vw,56px);
+  background:radial-gradient(1200px 400px at 85% -10%, var(--accent-soft), transparent 70%)}
+.hero-grid{display:grid;gap:clamp(28px,4vw,48px)}
+.eyebrow{font:13px/1 var(--mono);color:var(--dim);margin:0 0 14px}
+.eyebrow b{color:var(--accent-ink);font-weight:600}
+.hero h1{margin:0;font:600 clamp(44px,8vw,76px)/1 var(--mono);letter-spacing:-.02em}
+.hero h1 .cur{display:inline-block;width:.5em;height:.9em;background:var(--accent);vertical-align:-.08em;margin-left:.08em;animation:blink 1.1s steps(1) infinite}
+@keyframes blink{50%{opacity:0}}
+@media (prefers-reduced-motion: reduce){.hero h1 .cur{animation:none}}
+.tagline{margin:18px 0 0;font-size:clamp(20px,2.6vw,26px);font-weight:500;line-height:1.45;max-width:24em}
+.lede{margin:14px 0 0;color:var(--soft);max-width:38em}
+.actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:26px}
+.btn{display:inline-flex;align-items:center;gap:.5em;font:600 15px/1 var(--sans);text-decoration:none;padding:13px 20px;border-radius:8px;border:1px solid transparent}
+.btn.primary{background:var(--accent);color:var(--on-accent)}
+.btn.primary:hover{background:color-mix(in oklab, var(--accent) 88%, #fff)}
+.btn.ghost{border-color:var(--line);color:var(--ink);background:var(--surface)}
+.btn.ghost:hover{border-color:var(--accent-line)}
+.btn svg{width:18px;height:18px;flex:none}
+.req{margin:14px 0 0;font:13px/1.6 var(--mono);color:var(--dim)}
+
+/* 終端機外框（截圖容器） */
+.term{border:1px solid var(--frame-line);border-radius:10px;overflow:hidden;background:#1d1d2d;
+  box-shadow:0 1px 0 rgba(255,255,255,.04) inset, 0 24px 60px -24px rgba(0,20,40,.45)}
+.term .bar{display:flex;align-items:center;gap:7px;padding:9px 12px;background:#15151f;border-bottom:1px solid #2a2a3a;font:12px/1 var(--mono);color:#7d8590}
+.term .bar i{width:11px;height:11px;border-radius:50%;background:#3a3a4a;flex:none}
+.term .bar span{margin-left:8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.term img{width:100%;aspect-ratio:1600/600;object-fit:cover;object-position:left top}
+.hero .term{border-color:var(--accent-line)}
+.cap{margin:10px 2px 0;font-size:13px;color:var(--dim)}
+
+/* ---------- 區塊共用 ---------- */
+section{scroll-margin-top:56px}
+.sec{padding-block:clamp(48px,7vw,88px);border-top:1px solid var(--line)}
+.sec-head{max-width:40em;margin-bottom:clamp(28px,4vw,44px)}
+.kicker{font:13px/1 var(--mono);color:var(--accent-ink);margin:0 0 10px}
+.sec h2{margin:0;font-size:clamp(26px,3.4vw,34px);line-height:1.3;font-weight:700}
+.sec-head p{margin:12px 0 0;color:var(--soft)}
+
+/* 功能區塊：文字＋截圖交錯 */
+.feat{display:grid;gap:22px;align-items:center;padding-block:clamp(20px,3vw,32px)}
+.feat + .feat{border-top:1px dashed var(--line)}
+.feat h3{margin:0;font-size:21px;line-height:1.4}
+.feat h3 .n{font:600 13px/1 var(--mono);color:var(--accent-ink);display:block;margin-bottom:8px}
+.feat p{margin:10px 0 0;color:var(--soft)}
+.feat ul{margin:12px 0 0;padding-left:1.2em;color:var(--soft)}
+.feat li{margin:4px 0}
+@media (min-width:880px){
+  .feat{grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:44px}
+  .feat.flip .txt{order:2}
+}
+
+/* 自由區塊 split：左文字、右程式碼或截圖（例：給 AI agent 使用） */
+.split{display:grid;gap:24px}
+@media (min-width:880px){.split{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:44px;align-items:start}}
+.split-p{color:var(--soft);margin:12px 0 0}
+.split-p b{color:var(--ink)}
+.note{border-left:3px solid var(--amber);background:color-mix(in oklab, var(--amber) 9%, var(--bg));padding:12px 16px;border-radius:0 6px 6px 0;color:var(--soft);font-size:15px;margin:16px 0 0}
+.note b{color:var(--ink)}
+
+/* 程式碼 */
+pre.code{margin:0;background:var(--code-bg);color:var(--code-ink);border:1px solid var(--frame-line);border-radius:10px;
+  padding:16px 18px;overflow-x:auto;font:13px/1.75 var(--mono);tab-size:2}
+pre.code .c{color:#6b7682}
+pre.code .p{color:var(--amber);user-select:none}
+pre.code .a{color:var(--accent)}
+
+/* 安裝 */
+.install{display:grid;gap:28px}
+@media (min-width:880px){.install{grid-template-columns:minmax(0,7fr) minmax(0,5fr);gap:44px;align-items:start}}
+.steps{margin:0;padding:0;list-style:none;display:grid;gap:14px;color:var(--soft)}
+.steps li{padding:14px 16px;border:1px solid var(--line);border-radius:8px;background:var(--surface)}
+.steps b{color:var(--ink)}
+.side h3{margin:0 0 10px;font-size:19px}
+.side ul{margin:0;padding-left:1.2em;color:var(--soft)}
+.side li{margin:6px 0}
+.side .term{margin-top:18px}
+
+/* 自由區塊 cards：卡片清單（例：已知限制） */
+.cards{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));margin:0;padding:0;list-style:none}
+.cards li{border:1px solid var(--line);border-radius:8px;padding:14px 16px;background:var(--surface);color:var(--soft);font-size:15px}
+.cards b{display:block;color:var(--ink);margin-bottom:4px}
+
+/* ---------- 頁尾：品牌記號＋連結列＋說明 ---------- */
+/* 品牌記號的色條由 content.yml 的 brand_bars 定義；沒有定義的專案只顯示名稱 */
+footer{margin-top:clamp(40px,6vw,72px);border-top:1px solid var(--line);padding-block:36px calc(48px + env(safe-area-inset-bottom,0px));font-size:13.5px;color:var(--dim)}
+footer .row{display:flex;flex-wrap:wrap;justify-content:space-between;gap:16px;align-items:center}
+footer .brand{font:800 22px/1 var(--sans);color:var(--ink);display:flex;align-items:center;gap:8px;letter-spacing:-.02em}
+footer nav{display:flex;flex-wrap:wrap;gap:18px}
+footer a{color:var(--soft);text-decoration:none}
+footer a:hover{color:var(--accent-ink)}
+footer p{margin:18px 0 0}
+.mark{display:inline-flex;gap:3px;align-items:stretch;height:.78em}
+.mark i{display:block;width:.11em;border-radius:1px}
+</style>
+</head>
+<body>
+
+<nav class="topbar" aria-label="返回入口網站">
+  <div class="wrap">
+    <a class="crumb" href="{{ portal_url }}" title="回到作品入口">
+      <span class="p">$</span><span class="home">~/portal</span><span class="sep">›</span><span class="here">{{ name }}</span>
+    </a>
+    <div class="topnav">
+{% for n in nav %}      <a{% if n.optional %} class="opt"{% endif %} href="#{{ n.id }}">{{ n.label }}</a>
+{% endfor %}    </div>
+  </div>
+</nav>
+
+<main>
+  <!-- 首屏 -->
+  <header class="hero">
+    <div class="wrap hero-grid">
+      <div>
+{% if eyebrow_html %}        <p class="eyebrow">{{ eyebrow_html|raw }}</p>
+{% endif %}        <h1>{{ name }}<span class="cur" aria-hidden="true"></span></h1>
+        <p class="tagline">{{ tagline }}</p>
+{% if lede %}        <p class="lede">{{ lede|raw }}</p>
+{% endif %}        <div class="actions">
+{% for b in buttons %}          <a class="btn {{ b.style }}" href="{{ b.url }}">
+            {{ b.icon_svg|raw }}
+            {{ b.label }}
+          </a>
+{% endfor %}        </div>
+{% if requirements %}        <p class="req">{{ requirements|raw }}</p>
+{% endif %}      </div>
+      <figure style="margin:0">
+        <div class="term">
+          <div class="bar"><i></i><i></i><i></i><span>{{ hero.bar }}</span></div>
+          <img src="{{ hero.src }}" width="{{ hero.width }}" height="{{ hero.height }}"
+               alt="{{ hero.alt }}">
+        </div>
+{% if hero.caption %}        <figcaption class="cap">{{ hero.caption|raw }}</figcaption>
+{% endif %}      </figure>
+    </div>
+  </header>
+
+{% for s in blocks %}{% if s.is_features %}
+  <!-- {{ s.comment }} -->
+  <section id="{{ s.id }}" class="sec">
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="kicker">{{ s.kicker }}</p>
+        <h2>{{ s.title|raw }}</h2>
+{% if s.intro %}        <p>{{ s.intro|raw }}</p>
+{% endif %}      </div>
+{% for f in s.items %}
+      <article class="feat{% if f.flip %} flip{% endif %}">
+        <div class="txt">
+          <h3><span class="n">{{ f.number }} · {{ f.label }}</span>{{ f.title|raw }}</h3>
+{% for p in f.paragraphs %}          <p>{{ p|raw }}</p>
+{% endfor %}{% if f.bullets %}          <ul>
+{% for li in f.bullets %}            <li>{{ li|raw }}</li>
+{% endfor %}          </ul>
+{% endif %}        </div>
+        <div class="term">
+          <div class="bar"><i></i><i></i><i></i><span>{{ f.image.bar }}</span></div>
+          <img src="{{ f.image.src }}" width="{{ f.image.width }}" height="{{ f.image.height }}" loading="lazy"
+               alt="{{ f.image.alt }}">
+        </div>
+      </article>
+{% endfor %}    </div>
+  </section>
+{% endif %}{% if s.is_split %}
+  <!-- {{ s.comment }} -->
+  <section id="{{ s.id }}" class="sec">
+    <div class="wrap split">
+      <div>
+        <p class="kicker">{{ s.kicker }}</p>
+        <h2>{{ s.title|raw }}</h2>
+{% for p in s.paragraphs %}        <p class="split-p">{{ p|raw }}</p>
+{% endfor %}{% if s.note %}        <p class="note">{{ s.note|raw }}</p>
+{% endif %}      </div>
+{% if s.code %}      <pre class="code" tabindex="0" aria-label="{{ s.code.label }}">{{ s.code.html|raw }}</pre>
+{% endif %}{% if s.image %}      <div class="term">
+        <div class="bar"><i></i><i></i><i></i><span>{{ s.image.bar }}</span></div>
+        <img src="{{ s.image.src }}" width="{{ s.image.width }}" height="{{ s.image.height }}" loading="lazy"
+             alt="{{ s.image.alt }}">
+      </div>
+{% endif %}    </div>
+  </section>
+{% endif %}{% if s.is_install %}
+  <!-- {{ s.comment }} -->
+  <section id="{{ s.id }}" class="sec">
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="kicker">{{ s.kicker }}</p>
+        <h2>{{ s.title|raw }}</h2>
+{% if s.intro %}        <p>{{ s.intro|raw }}</p>
+{% endif %}      </div>
+      <div class="install">
+        <div>
+{% if s.code %}          <pre class="code" tabindex="0" aria-label="{{ s.code.label }}">{{ s.code.html|raw }}</pre>
+{% endif %}{% if s.steps %}          <ul class="steps" style="margin-top:16px">
+{% for st in s.steps %}            <li>{% if st.title %}<b>{{ st.title|raw }}</b>{% endif %}{{ st.body|raw }}</li>
+{% endfor %}          </ul>
+{% endif %}        </div>
+{% if s.side %}        <div class="side">
+          <h3>{{ s.side.title|raw }}</h3>
+{% if s.side.items %}          <ul>
+{% for li in s.side.items %}            <li>{{ li|raw }}</li>
+{% endfor %}          </ul>
+{% endif %}{% if s.side.image %}          <div class="term">
+            <div class="bar"><i></i><i></i><i></i><span>{{ s.side.image.bar }}</span></div>
+            <img src="{{ s.side.image.src }}" width="{{ s.side.image.width }}" height="{{ s.side.image.height }}" loading="lazy"
+                 alt="{{ s.side.image.alt }}">
+          </div>
+{% endif %}{% if s.side.caption %}          <p class="cap">{{ s.side.caption|raw }}</p>
+{% endif %}        </div>
+{% endif %}      </div>
+    </div>
+  </section>
+{% endif %}{% if s.is_cards %}
+  <!-- {{ s.comment }} -->
+  <section id="{{ s.id }}" class="sec">
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="kicker">{{ s.kicker }}</p>
+        <h2>{{ s.title|raw }}</h2>
+{% if s.intro %}        <p>{{ s.intro|raw }}</p>
+{% endif %}      </div>
+      <ul class="cards">
+{% for c in s.cards %}        <li><b>{{ c.title|raw }}</b>{{ c.body|raw }}</li>
+{% endfor %}      </ul>
+    </div>
+  </section>
+{% endif %}{% endfor %}</main>
+
+<footer>
+  <div class="wrap">
+    <div class="row">
+      <span class="brand">{% if brand_bars %}<span class="mark" aria-hidden="true">{% for c in brand_bars %}<i style="background:{{ c }}"></i>{% endfor %}</span>{% endif %}{{ name }}</span>
+      <nav aria-label="頁尾連結">
+{% for l in footer_links %}        <a href="{{ l.url }}">{{ l.label }}</a>
+{% endfor %}      </nav>
+    </div>
+{% if footer_note %}    <p>{{ footer_note|raw }}</p>
+{% endif %}  </div>
+</footer>
+
+</body>
+</html>

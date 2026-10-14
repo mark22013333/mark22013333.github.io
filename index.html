@@ -268,7 +268,8 @@ h1{margin:4px 0 0;font:600 clamp(20px,2.4vw,26px)/1.3 var(--mono);color:var(--br
       data.projects.forEach(function (p) {
         var host = p.url.replace(/^https?:\/\//, '');
         var perm = p.type === 'service' ? 'lrwxr-xr-x' : /\/$/.test(p.name) ? 'drwxr-xr-x' : '-rwxr-xr-x';
-        var a = el('a', { href: p.url, 'data-nav': '' });
+        // 有介紹官網（site）的作品連到 /<site>/，其餘維持原本的 url
+        var a = el('a', { href: p.site ? '/' + p.site + '/' : p.url, 'data-nav': '' });
         a.appendChild(el('span', { 'class': 'perm' }, perm));
         var star = el('span', { 'class': 's' }, '-');
         a.appendChild(star);
