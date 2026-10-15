@@ -1,0 +1,232 @@
+# FilmaxWeb 作品介紹頁的內容。改完執行 python3 tools/build_sites.py filmaxweb 重新產生 /filmaxweb/。
+#
+# 字串欄位分兩種（同 sshm）：
+#   純文字：slug、name、tagline、各種 alt、bar、label、kicker、nav 標籤、url —— 自動 HTML 跳脫。
+#   行內 HTML：其餘說明文字（lede、intro、paragraphs、bullets、caption、note、body…）
+#           可以用 <code>、<kbd>、<b>；要顯示 < > & 本身請寫 &lt; &gt; &amp;。
+#
+# 截圖來源：_sites/filmaxweb/seed/ 底下的腳本（gen_media.py 產生假影片／相片／PDF、
+# run_demo.sh 起示範站、seed_meta.py 補虛構海報、shots.js 拍照）。全部是虛構資料。
+
+slug: filmaxweb
+name: FilmaxWeb
+tagline: 把放滿影片、相片與 PDF 的硬碟，變成在瀏覽器裡就能看的媒體庫。
+accent: '#f5c518'          # 取自介面 style.css 的 --accent（分頁高亮、播放鈕）
+github: https://github.com/mark22013333/FilmaxWeb
+
+eyebrow:
+  kind: 自架網站
+  meta: [Python, FastAPI, SQLite, ffmpeg]
+
+lede: '自動刮削片名與海報、遠端連線自動降畫質、字幕即時轉檔，全部跑在自己的機器上。片庫放在你自己設定的 FTP 伺服器上（片庫與服務同機時，ffmpeg 可以直接讀本機磁碟）；資料庫是單檔 SQLite，帳號可以選配放 MSSQL。'
+
+buttons:
+  - label: 安裝
+    url: '#install'
+    icon: download
+  - label: GitHub
+    url: https://github.com/mark22013333/FilmaxWeb
+    icon: github
+
+requirements: 需求：Python 3.10+ 與 ffmpeg；僅供管理你自己合法持有的影音檔案
+
+hero:
+  image: library.png
+  bar: FilmaxWeb — 媒體庫
+  alt: FilmaxWeb 首頁：上方是全部／電影／影集／相片／文件等分頁與搜尋框，下面是分類標籤與海報牆，影集卡片標出集數，有評分的海報右上角標出分數
+  caption: '首頁的海報牆。上方分頁切換影片、相片與文件，分類標籤與排序（最近加入、片名、年份、評分）可以再篩。'
+
+features:
+  id: features
+  nav: 功能
+  nav_optional: true
+  kicker: // 功能
+  title: 影片、字幕、相片、PDF，一個網站看完
+  intro: '後端是單一行程的 FastAPI 服務，前端不用框架、原生 JS。掃描會遞迴列舉片庫，影片、相片與 PDF 各自進自己的分頁。'
+  items:
+    - label: 影片
+      title: 自動辨識片名、年份與季集
+      paragraphs:
+        - '從檔名解析片名／年份／季集，一集一資料夾的影集也會併成同一個條目，再向 TMDB 抓海報與簡介。右圖的示範條目是虛構資料，中繼資料已手動修正過，所以出現「手動修正過」的提示。'
+      bullets:
+        - 'TMDB 沒抓對的，可以「手動指定 TMDB」或「改片名／年份」；手動修正過的條目，之後自動刮削不會再蓋掉它'
+        - '每個檔案標出這次是「直接播放」或「轉碼播放」，並列出解析度、編碼與片長'
+        - '沒設 <code>TMDB_API_KEY</code> 時掃描會跳過 TMDB 刮削，仍可用檔名瀏覽與播放'
+      image: item.png
+      bar: FilmaxWeb — 條目詳細
+      alt: 影集「示範影集」的詳細視窗：海報、評分、分類、簡介，下方是重新刮削、手動指定 TMDB、改片名／年份按鈕，以及第 1 季各集的檔案與「轉碼播放」標籤
+
+    - label: 播放器
+      title: 吃得下的直送原檔，吃不下的即時轉碼
+      paragraphs:
+        - 'mp4＋H.264＋AAC 這類瀏覽器吃得下的格式整檔直送；mkv、HEVC、AC3 等改走 HLS（即時轉碼，條件符合時改用不重新編碼的 remux，見下方「播放路徑」）。內嵌字幕即時轉成 WebVTT，開播時背景預抽整份，跳到中間也不必等。'
+      bullets:
+        - 右上角標出目前的畫質級別、實際解析度與「直接串流／即時轉碼」
+        - 字幕預設「自動選繁體中文」，依語言標籤與內容判斷
+        - '遠端連線時改用綁碼率的轉碼（<code>REMOTE_BITRATE_KBPS</code>：程式預設 2800，<code>.env.example</code> 附的值是 8000）'
+      image: player.png
+      bar: FilmaxWeb — 播放器
+      alt: 播放器播放 mkv 測試影片，畫面下方是內嵌字幕「字幕由內嵌軌即時轉成 WebVTT。」，右上角標示「自動 · 720p · 1280×720」與「即時轉碼」
+
+    - label: 相片
+      title: 燈箱看相片，刻意不讀 GPS
+      paragraphs:
+        - '相片牆點開是 PhotoSwipe 燈箱，按 <b>i</b> 打開側欄看檔案資訊與 EXIF 拍攝資訊。預覽用的是 1920px 的衍生圖，原始檔案不會被修改。'
+      bullets:
+        - 'EXIF 用白名單讀取，<b>不讀取也不顯示 GPS 座標</b>'
+        - 影片資料夾裡的封面圖（poster.jpg、與資料夾同名的圖）不會被收進相片庫
+        - 支援方格（分頁）與瀑布流（往下滑自動載入）兩種檢視
+      image: photo-view.png
+      bar: FilmaxWeb — 相片燈箱
+      alt: 相片燈箱顯示一張漸層與幾何圖形的示範相片，下方側欄列出修改時間、拍攝時間、相機「ACME Demo Cam 1」、ISO，以及「不讀取也不顯示 GPS 座標。原始檔案沒有被修改。」
+
+    - label: PDF
+      title: 內建 PDF 閱讀器
+      paragraphs:
+        - '用 PDF.js 的 legacy build 在頁面裡直接閱讀，支援大檔的分段讀取。文件牆用側欄樹狀導覽資料夾。'
+      bullets:
+        - 上一頁／下一頁、跳頁、縮放、「符合寬度」與「符合整頁」
+        - '「原檔」用瀏覽器內建的檢視器開啟'
+        - 'PDF.js 刻意用 legacy build：一般 build 會用到 Chromium 141 與 Safari 都沒有的 API'
+      image: reader.png
+      bar: FilmaxWeb — PDF 閱讀器
+      alt: PDF 閱讀器開著示範文件「ACME 操作指南」，上方工具列有返回、頁碼 1 / 2、縮放與「寬」「頁」「原檔」按鈕
+
+    - label: 後台
+      title: 參數線上改，即時生效的就即時生效
+      paragraphs:
+        - '後台有掃描控制、失敗清單、使用者審核、參數頁與診斷頁。設定有固定的優先序：<code>.env</code> &gt; 後台資料庫 &gt; 程式預設，沒有例外清單。'
+      bullets:
+        - '每一項標出生效方式（即時生效、存檔後套用、需重啟）與目前值的來源'
+        - '被 <code>.env</code> 蓋掉的後台設定會在參數頁標出來，不會自動刪'
+        - '連線資訊、綁定位址、密碼這類改錯會進不來的設定，只能在 <code>.env</code> 改，參數頁完全不會出現'
+      image: admin-params.png
+      bar: FilmaxWeb — 後台 · 系統參數
+      alt: 後台系統參數頁：說明解析順序是 .env／環境變數 > 這裡存的值 > 程式預設值，搜尋「畫質」後列出 TRANSCODE_CRF 等參數，標著「即時生效」與目前來源
+
+sections:
+  - type: split
+    id: playback
+    position: before_install
+    nav: 播放路徑
+    nav_optional: true
+    kicker: // 播放是怎麼決定的
+    title: 決定權在片源本身，以及你在區網還是遠端
+    paragraphs:
+      - '容器與編碼瀏覽器吃得下（mp4＋h264＋aac）就整檔直送。吃不下時，若是 h264、已經掃出 keyframe 邊界表、keyframe 間距小於分段長度，且這個檔案的上階沒有因 remux 出錯而下線，區網走上階 <b>remux</b>（<code>-c:v copy</code>，視訊位元組原封不動、只換容器）；遠端在分段可對齊時同時提供上階 remux 與下階轉碼，由播放器自己選；沒有邊界表就單階 HLS 即時轉碼。兩階 HLS 預設關閉（<code>HLS_TWO_RUNG</code>），要先讓邊界表掃完再開。'
+      - '上階的代價是碼率就是原檔的碼率，所以遠端多半選不到它。下階綁碼率，重編首選 NVENC 硬體編碼；預設的 <code>FFMPEG_HWACCEL=auto</code> 會實際試編一小段，硬體不在或驅動擋掉就自動退回 libx264。<code>.env.example</code> 附的畫質建議值是用 VMAF 量測後定的（程式內建的預設值比較保守：CRF 21、NVENC_CQ 28、veryfast、2800 kbps），過程寫在規格書 J 章。'
+    note: '<b>ffmpeg 讀檔優先走本機路徑。</b>片庫跟服務在同一台機器時，設 <code>LIBRARY_LOCAL_ROOTS</code> 讓 ffmpeg 直接讀磁碟；對應不到才回到「HTTP → FastAPI → FTP → 磁碟」那條路。'
+    code:
+      label: .env.example 的畫質建議值（README 範例；不是程式預設值）
+      highlight: [HLS_TWO_RUNG]
+      text: |-
+        FFMPEG_HWACCEL=nvenc          # 重編首選 NVENC：同碼率畫質贏 x264 veryfast 且快 1.5 倍
+        X264_PRESET=medium            # CPU 退路。同 CRF 下比 veryfast 多 2.1 VMAF，只多 9% 碼率
+        TRANSCODE_CRF=17              # CPU 編碼的畫質
+        NVENC_CQ=25                   # NVENC 有自己的尺，不要跟 CRF 共用一個數字
+        REMOTE_BITRATE_KBPS=8000      # 曲線轉折點，再往上加買不到畫質
+        HLS_TWO_RUNG=false            # 兩階 HLS（區網零轉碼）。要先讓邊界表掃完再開
+
+  - type: split
+    id: auth
+    position: before_install
+    nav: 登入
+    nav_optional: true
+    kicker: // 登入與權限
+    title: 單一密碼，或 Google 登入加管理員審核
+    paragraphs:
+      - '<code>AUTH_ENABLED=false</code> 時沒有登入驗證：區網內任何人都有管理員權限，外部連線直接回 403。打開後可以用單一密碼，或 Google 登入（OIDC＋PKCE）；新帳號預設要等管理員審核，<code>GOOGLE_ADMIN_EMAILS</code> 名單裡的人第一次登入就是管理員。'
+      - '資料夾可以標成「受限」，只給有授權的帳號看；沒授權的人看不到，回 404 而不是 403。'
+    note: '<b>兩個容易踩的點：</b><code>GOOGLE_ADMIN_EMAILS</code> 只是一份名單，不會建立帳號，帳號是那個人第一次登入時才建立並提升為管理員，所以設好之後啟動仍會說「還沒有任何管理員帳號」，去登入一次就好。密碼登入的 token 沒有 <code>uid</code>，認不出是誰，一律看不到受限資料夾；要用受限目錄就得走 Google 登入。'
+
+  - type: cards
+    id: exposure
+    position: after_install
+    kicker: // 對外開放前的檢查清單
+    title: 原本是設計在區網用的。放上公開網域前，以下 8 項都要確認
+    cards:
+      - title: 密碼
+        body: '<code>AUTH_PASSWORD</code> 換成夠長的隨機字串；要分享看片就另設 <code>VIEWER_PASSWORD</code>。'
+      - title: Google 登入
+        body: '用 <code>GOOGLE_ADMIN_EMAILS</code> 指定第一個管理員；<code>GOOGLE_AUTO_APPROVE</code> 維持 <code>false</code>。'
+      - title: 簽章金鑰
+        body: '設 <code>AUTH_SECRET</code>，或確認 <code>data/secret.key</code> 存在且權限收好。'
+      - title: Cookie
+        body: '<code>COOKIE_SECURE=true</code>。'
+      - title: 代理標頭
+        body: '前面真的有 cloudflared／nginx 才設 <code>TRUST_PROXY=true</code>。'
+      - title: 綁定位址
+        body: '<code>HOST=127.0.0.1</code>，只讓同機的 cloudflared 連得到，不要開 <code>0.0.0.0</code>。'
+      - title: 開發模式
+        body: '<code>DEV_RELOAD=false</code>。'
+      - title: API 文件
+        body: '考慮關掉 <code>/api/docs</code>。'
+
+  - type: cards
+    id: legal
+    position: after_install
+    nav: 使用聲明
+    nav_optional: true
+    kicker: // 使用聲明
+    title: 媒體庫管理工具，不提供、不散布、也不協助取得任何影音內容
+    intro: '所有播放的檔案都來自使用者自己設定的 FTP 伺服器或本機片庫。使用本專案即表示你同意，<b>不會</b>將它用於下列任何行為；你必須對所管理的每一個檔案擁有合法的持有與觀看權利，並對自己架設的服務負完全責任。'
+    cards:
+      - title: 不散布未取得權利的著作
+        body: 不散布或公開傳輸你不擁有合法權利的著作，包含但不限於電影、影集、動畫、音樂。
+      - title: 不規避技術保護措施
+        body: 不規避、破解任何技術保護措施（DRM）。
+      - title: 不經營盜版串流
+        body: 不經營任何形式的盜版串流服務，無論是否收費。
+      - title: 不未經授權存取他人系統
+        body: 不未經授權存取他人的 FTP 伺服器、資料庫或任何系統。
+      - title: 不違反當地法律
+        body: 不從事任何違反你所在地或伺服器所在地法律的行為。
+      - title: 依「現狀」提供
+        body: 不附帶任何明示或默示的擔保；作者與貢獻者不對使用或無法使用本軟體所生的損害負責，亦不對使用者的違法行為負責。
+
+install:
+  id: install
+  nav: 安裝
+  kicker: // 安裝
+  title: 五分鐘跑起來
+  intro: '需求：<b>Python 3.10+</b> 與 <b>ffmpeg</b>（Windows 建議 BtbN 的 n8.1 build）。專案附的批次檔以 Windows 為主。'
+  code:
+    label: Windows（專案附的批次檔）
+    text: |-
+      # 1. 建立 .venv、裝套件、裝 playwright（測試用）
+      安裝.bat
+
+      # 2. 編輯 .env，至少要填 FTP 連線資訊與 TMDB_API_KEY
+      #    （沒有 .env 的話，啟動.bat 會從 .env.example 複製一份再請你去填）
+
+      # 3. 起服務並自動開瀏覽器 → http://127.0.0.1:8080
+      啟動.bat
+
+      # 4. 後台 → 媒體庫 → 開始掃描
+  steps:
+    - title: 最少要填的四項：
+      body: '<code>FTP_HOST</code>、<code>FTP_USER</code>、<code>FTP_PASSWORD</code>、<code>TMDB_API_KEY</code>（去 themoviedb.org 免費申請）。<code>.env.example</code> 裡每一項都有註解。'
+    - title: 片庫跟服務在同一台機器
+      body: '的話，在 <code>.env</code> 加一行 <code>LIBRARY_LOCAL_ROOTS</code>，值寫成「FTP 前綴＝本機資料夾」（README 的例子是把 FTP 根目錄「/」對應到 <code>D:\1.FTP</code>），轉碼少繞三層。'
+    - title: macOS／Linux
+      body: '可以用 <code>./start.sh</code>：沒有 <code>.env</code> 時先複製一份範例並停下來讓你填，填好再執行一次，就會建立 <code>.venv</code>、安裝 <code>requirements.txt</code> 並啟動。'
+    - title: 測試：
+      body: '<code>跑測試.bat</code> 全部跑一遍，完整輸出在 <code>test-result.txt</code>；每一支都是獨立腳本，不需要 pytest，會自己開臨時資料庫、自己收尾；播放器的 JS 測試需要 node，沒有 node 會標 SKIP。'
+  side:
+    title: 單機 SQLite，幾個刻意的設計
+    items:
+      - '<b>單一行程、單一寫入者。</b>SQLite 用 WAL，寫入集中在 <code>db.py</code>，不必處理死鎖重試。'
+      - '<b>沒有外鍵。</b>刪除只有一個進入點 <code>purge(reason=...)</code>，連磁碟上的海報縮圖都在裡面一起刪；孤兒數量露在後台總覽。'
+      - '<b>時間點一律 epoch 整數秒，時間長度維持浮點。</b>續播位置若取整，每次繼續看都會往前跳最多一秒。'
+      - '帳號可以另外放 MSSQL（選配）；刻意不做「連不上就自動退回 SQLite」，避免兩份使用者資料各說各話。'
+
+footer_links:
+  - label: GitHub
+    url: https://github.com/mark22013333/FilmaxWeb
+  - label: 規格書
+    url: https://github.com/mark22013333/FilmaxWeb/blob/main/docs/規格需求書.md
+  - label: 回作品集
+    url: https://mark22013333.github.io/
+footer_note: 把硬碟變成瀏覽器裡的媒體庫。本頁截圖全部使用虛構的展示資料。
+
+en: null
