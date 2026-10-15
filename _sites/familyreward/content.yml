@@ -1,0 +1,217 @@
+# FamilyReward（家庭任務集點樂園）作品介紹頁的內容。改完執行 python3 tools/build_sites.py familyreward。
+# 欄位說明同 _sites/sshm/content.yml 開頭註解。
+# 截圖：_sites/familyreward/seed/seed.py 在暫存目錄建全新 SQLite 並灌虛構資料（範例家庭：小明、小美），
+#       seed.py serve 起本機服務，再用 seed/shoot.js 截圖；絕不連線上服務。
+
+slug: familyreward
+name: 家庭任務集點樂園
+tagline: 給家裡用的兒童任務集點與獎勵系統。
+accent: '#118AB2'          # 取自介面 static/css/variables.css 的 --color-blue（家長後台按鈕色）
+brand_bars: ['#FFD166', '#06D6A0', '#118AB2', '#EF476F', '#9B5DE5']   # variables.css 基礎色盤
+github: https://github.com/mark22013333/FamilyReward
+
+eyebrow:
+  kind: 網頁服務
+  meta: [Windows 自架, Python, Flask, SQLite]
+
+lede: '家長安排每天要做的事，小孩完成後送出申請，<b>家長確認後才拿到星星</b>；星星累積起來可以兌換禮物。用瀏覽器開，手機、平板、桌機都可以。核心不是監督或懲罰，而是鼓勵、習慣、參與、成就感，所以介面上不會出現「你今天沒有完成」「你失敗了」這類文案。'
+
+buttons:
+  - label: 自架安裝
+    url: '#install'
+    icon: download
+  - label: GitHub
+    url: https://github.com/mark22013333/FamilyReward
+    icon: github
+
+requirements: 自架需求：Windows 10／11、Python 3.10 以上（建議 3.12+）；不需要 Node.js、Docker 或資料庫伺服器
+
+hero:
+  image: admin-dashboard.png
+  bar: 家庭任務集點樂園 — 家長後台首頁
+  alt: 家長後台首頁：今天有 3 個待確認任務、1 個待確認禮物；小明完成 2 / 5、今天取得 +3、目前 86 點，小美完成 0 / 5、目前 80 點
+  caption: '家長一打開後台就看到今天有幾件事等著確認，以及每個小孩今天完成幾項、拿到幾顆星星、目前有幾點。'
+
+features:
+  id: features
+  nav: 功能
+  nav_optional: true
+  kicker: // 功能
+  title: 從今天的任務，到換到禮物
+  intro: '小孩這邊有今天的任務、集點卡、行事曆、禮物兌換、點數紀錄與成就徽章；家長這邊建立小孩／任務／禮物、審核任務與兌換、手動調整點數，也能看稽核紀錄與備份。'
+  items:
+    - label: 集點卡
+      title: 小孩自己登入，看得到星星與集點卡
+      paragraphs:
+        - '小孩不用記帳號密碼：首頁選自己的頭像，再輸入 4 位數字 PIN 就進來了。「今天」頁最上面是目前有幾顆星星，下面是集點卡。'
+      bullets:
+        - 預設 10 顆星星集滿一張，家長可以在後台改成 1 ~ 100
+        - 集點卡依「歷史累積取得的星星」計算，<b>換禮物之後，已完成的集點卡不會倒退</b>
+        - 超過 20 點一張時，星星會自動換成進度條
+      image: child-today.png
+      bar: 小明 — 我的星星與集點卡
+      alt: 小明的今天頁：目前有 86 顆星星；集點卡點亮 6 格（6 / 10），寫著再 4 顆星星就完成一張、已經完成 9 張集點卡、歷史總共取得 96 顆
+
+    - label: 今天的任務
+      title: 每天要做的事，變成看得見的清單
+      paragraphs:
+        - '任務由家長建立，可以設定「每天」「每週一次」「自訂星期」或「只做一次」，並指定給哪幾個小孩。小孩打開「今天」就看到今天的清單與進度。'
+      bullets:
+        - '做完按「我完成了！」，任務改成「等爸爸媽媽確認」——<b>不會</b>馬上拿到星星'
+        - 家長確認後顯示「完成」與拿到的星星數
+        - 標「必做」的是家長設定的必做任務
+      image: child-tasks.png
+      bar: 小明 — 今天的任務
+      alt: 今日進度 2 / 5、40%，有 2 個任務正在等爸爸媽媽確認；刷牙、寫功課已完成，整理玩具、洗澡等爸爸媽媽確認，閱讀 20 分鐘還可以按「我完成了！」
+
+    - label: 家長確認
+      title: 家長按「完成」才入帳
+      paragraphs:
+        - '小孩送出的任務都集中在後台的「待確認」。按「完成」就加上星星、送出慶祝通知；按「還要再努力一下」可以附一句話退回，退回<b>不會</b>產生任何點數，小孩可以再送一次。'
+      bullets:
+        - 手滑連按兩次「完成」也只會加一次星星（程式檢查加上資料庫限制，兩層保護）
+        - 每次批准、退回都寫進稽核紀錄
+      image: admin-approvals.png
+      bar: 家長後台 — 待確認任務
+      alt: 待確認任務：小明的「整理玩具」可以獲得 +2、「洗澡」可以獲得 +1，每張卡片有「完成」按鈕、選填的留言欄與「還要再努力一下」
+
+    - label: 忘記按也沒關係
+      title: 3 天內可以補送出
+      paragraphs:
+        - '小孩常常當天忘記按。首頁會列出「前幾天還沒完成的」任務，標明是哪一天；行事曆點進那一天也可以直接補按。'
+      bullets:
+        - 補送出的任務一樣要家長確認，稽核紀錄會標明是補送的（例如「補送 09/07 的任務」）
+        - '超過 3 天就不能自己補，請家長用「⭐ 點數 → 手動調整」處理'
+      image: child-makeup.png
+      bar: 小明 — 前幾天還沒完成的
+      alt: 前幾天還沒完成的：昨天（10/14）的「洗澡」與「閱讀 20 分鐘」，各有一個「我有做！補送出」按鈕
+
+    - label: 換禮物
+      title: 星星存夠了，就挑一個禮物
+      paragraphs:
+        - '禮物由家長建立，設定需要幾顆星星，也可以限制數量。小孩按「我要這個！」只是提出申請，<b>此時不扣星星</b>；家長確認的那一刻才重新計算餘額與庫存，再扣點。'
+      bullets:
+        - 星星不夠時，家長確認會被拒絕並顯示還差幾顆
+        - 數量留空代表不限次數；設 2 代表最多兌換兩次
+        - 家長確認後可以再標記「已送達」
+      image: child-rewards.png
+      bar: 小美 — 我的禮物
+      alt: 小美目前有 80 顆星星；吃冰淇淋、選今晚看的電影、小積木組（還剩 1 個）都可以按「我要這個！」，玩遊戲 30 分鐘正在等爸爸媽媽確認
+
+    - label: 行事曆
+      title: 一個月做了什麼，一眼看完
+      paragraphs:
+        - '每一天顯示完成幾個任務、拿到幾顆星星；點一下某一天就看得到那天的明細。'
+      image: child-calendar.png
+      bar: 小明 — 行事曆
+      alt: 2026 年 10 月行事曆，大部分日子是 5/5、+8 星星，今天 15 號是 2/5、+3 星星
+
+    - label: 獎狀
+      title: 可以列印、貼在冰箱上的獎狀
+      paragraphs:
+        - '小孩在「我的紀錄 → 我的獎狀」、家長在「匯出」都能打開。按 <kbd>Ctrl</kbd>+<kbd>P</kbd>，目的地選「另存為 PDF」就能存檔，或直接印出來；手機也可以。'
+      bullets:
+        - 內容：這個月得到幾顆星星、集點卡、連續達成天數（連續滿 3 天才顯示）、已解鎖的成就、最常完成的任務，以及家長簽名欄
+        - 刻意不做「下載 PDF」按鈕：伺服器端產生 PDF 需要 Chromium（703 MB），而且實測 emoji 會變成空白
+      image: child-certificate.png
+      bar: 小明 — 本月小星星獎狀
+      alt: 本月小星星獎狀：熊貓頭像、小明、2026 年 10 月，這個月得到 96 顆星星，這個月完成了 60 個任務、有 13 天都在努力
+
+sections:
+  - type: split
+    id: ledger
+    position: before_install
+    nav: 點數規則
+    nav_optional: true
+    kicker: // 點數規則
+    title: 星星不是錢，但照記帳的規矩來
+    paragraphs:
+      - '每一筆加點、扣點都是一筆紀錄，不能重複、不能憑空消失、不能偷偷改歷史，而且一定有來源與原因。目前的星星永遠由這些紀錄即時算出來。'
+      - '系統分開兩個數字：<b>目前餘額</b>拿來換禮物，換了就會減少；<b>歷史累積</b>拿來算集點卡，換禮物不會減少。所以不會發生「換了一個禮物，已完成的集點卡就倒退」——那感覺就像努力被拿走了。'
+      - '任務或禮物之後改名，過去的紀錄仍然顯示當時的名稱。'
+    note: '兌換時，家長按「確認兌換」的那一刻會在同一個交易裡重新檢查餘額與庫存，不相信畫面上的舊數字；點數不足就拒絕，餘額不會變成負的（預設不允許負數，可由設定調整）。'
+    image: admin-redemptions.png
+    bar: 家長後台 — 待確認的兌換
+    alt: 待確認的兌換：小美申請「玩遊戲 30 分鐘」，需要 10 顆、目前 80 顆，下方有「確認兌換」、選填留言與「這次先不換」
+
+  - type: cards
+    id: data
+    position: before_install
+    nav: 備份與匯出
+    nav_optional: true
+    kicker: // 資料保管
+    title: 資料放在自己家裡的電腦
+    cards:
+      - title: 備份
+        body: '雙擊 <code>backup.bat</code>，或在後台按「立即備份」。使用 SQLite 官方的 Backup API，系統使用中也能取得一致的快照。超過 7 天沒備份，後台會提醒（天數可設定）。'
+      - title: 還原
+        body: '雙擊 <code>restore.bat</code>：系統還在執行就拒絕、列出備份讓你選、要求輸入 <code>yes</code> 確認，並且<b>先把目前的資料庫備份成 <code>pre-restore-*</code></b> 才覆蓋。'
+      - title: 匯出 CSV／ZIP
+        body: '後台「匯出」可依月份下載點數紀錄、任務完成明細、兌換紀錄三種 CSV（UTF-8 含 BOM，Excel 直接開不亂碼），或一次打包成 ZIP。'
+      - title: 匯出不等於備份
+        body: 'CSV／ZIP 人看得懂，但<b>不能</b>拿來還原系統，也不含帳號密碼與設定。要防資料遺失請用備份。'
+
+  - type: cards
+    id: limits
+    position: after_install
+    kicker: // 已知限制
+    title: 使用前請先知道（完整 9 條）
+    cards:
+      - title: 單一家庭、單一管理者角色
+        body: 只有一種管理者權限，沒有「爸爸」「媽媽」分開的帳號權限差異，也沒有多家庭隔離。
+      - title: Cloudflare Tunnel 未經實際憑證驗證
+        body: 設定檔範本、啟動流程、失敗處理與 PID 管理都已完成並測試過（含「找不到執行檔」「設定檔不存在」「啟動後立刻結束」三種失敗情境），但在沒有實際 Tunnel Credentials 的情況下，無法驗證外部網域真的可以連線，需要自己申請 Tunnel 後實測。
+      - title: 登入失敗次數記在記憶體中
+        body: 重新啟動就歸零。家庭系統夠用，但不是分散式方案。
+      - title: 沒有音效
+        body: '<code>ui.sound_enabled</code> 預設 <code>false</code>，第一版沒有實作音效播放。'
+      - title: 成就只有四個
+        body: '第一步、小小努力家、連續達人、百點高手。資料表與解鎖機制已完整，要新增成就需要在 <code>achievement_service.py</code> 補判斷規則。'
+      - title: 行事曆是自行實作，非 FullCalendar
+        body: 只需要「一個月 + 每天幾個數字」，自行實作更小更快，也不依賴 CDN 連不連得上；月視圖與點日期看明細都有。
+      - title: 在 Python 3.10 開發驗證
+        body: 程式碼相容 3.10 以上，並在 3.10.11 完成全部測試；在 3.12 上應可直接執行，但未在 3.12 上實測。
+      - title: 沒有免安裝的 Python
+        body: '<code>start.bat</code> 已預留 <code>runtime\python.exe</code> 的優先偵測邏輯，但沒有實際打包免安裝的 Python runtime。'
+      - title: 備份沒有自動排程
+        body: '需要手動執行 <code>backup.bat</code> 或從後台按「立即備份」；超過設定天數會提醒，但不會自動備份。想自動化可以用 Windows 工作排程器定時執行 <code>backup.bat</code>。'
+
+install:
+  id: install
+  nav: 自架
+  kicker: // 自架
+  title: 放在家裡的 Windows 電腦，雙擊就跑
+  intro: '需求：Windows 10／11、Python 3.10 以上（建議 3.12+；安裝時勾選 <code>Add Python to PATH</code>）、約 200 MB 磁碟空間。把專案放到固定位置（例如 <code>C:\family-reward\</code>），先在該目錄執行下面兩行：複製出 <code>.env</code>，並產生一段隨機金鑰。'
+  code:
+    label: 第一次安裝（命令提示字元）
+    text: |-
+      copy .env.example .env
+      python -c "import secrets; print(secrets.token_urlsafe(48))"
+  steps:
+    - title: 先編輯 .env，再第一次執行 start.bat：
+      body: '打開 <code>.env</code>，至少改掉 <code>FLASK_SECRET_KEY</code>（填上一行指令產生的隨機字串）與 <code>ADMIN_INITIAL_PASSWORD</code>（你要用的初始管理員密碼）。<b>這一步一定要在第一次執行 <code>start.bat</code> 之前做</b>：<code>ADMIN_INITIAL_PASSWORD</code> 只在第一次建立帳號時生效，帳號建立之後改它不會套用到既有帳號。<code>.env</code> 含密碼，已加入 <code>.gitignore</code>，禁止提交 Git。'
+    - title: 改好 .env 之後，雙擊 start.bat：
+      body: '第一次會自動建立 <code>.venv</code>、安裝套件、建立資料庫與管理員帳號，再以 Waitress 啟動網站，需要幾分鐘。之後開 <code>http://127.0.0.1:8080</code>（port 可在 <code>config\config.yaml</code> 改）。'
+    - title: 停止用 stop.bat，
+      body: '它只關閉本系統記錄在 <code>run\web.pid</code> 的行程，不會誤殺其他 Python 程式。想開機自動啟動，把 <code>start.bat</code> 的捷徑放進 <code>shell:startup</code>。'
+    - title: 想讓家人在外面也能連：
+      body: '用 Cloudflare Tunnel，不需要在路由器開 Port Forwarding；先執行 <code>cloudflare-setup.bat</code> 檢查狀態（只檢查，不改 Cloudflare 設定）。Tunnel 啟動失敗時，本機服務照常運作。'
+  side:
+    title: 安裝好之後
+    items:
+      - '家長後台帳號預設是 <code>admin</code>，密碼是 <code>.env</code> 的初始密碼；登入後會一直提醒你改密碼，直到改掉為止。'
+      - '在後台建立小孩（Emoji 頭像、PIN 預設 4 位數，位數可用 <code>security.child_pin_length</code> 設定）、任務與禮物。PIN 以 Hash 儲存，忘記只能由家長重設。'
+      - '一張集點卡幾點，在「⚙️ 設定 → 🎯 集點卡」改（1 ~ 100 點），立即生效、不用重啟。'
+    image: admin-settings-card.png
+    bar: 家長後台 — 設定 › 集點卡
+    alt: 集點卡設定：目前 10 點集滿一張，下方說明改變點數會重新計算已完成的張數，並列出小明、小美改設定後會變成幾張
+    caption: '儲存前會先列出每個小孩的張數會怎麼變；超過 20 點時，小朋友畫面上的星星會自動換成進度條。改回原本的數字，張數就會回來。'
+
+footer_links:
+  - label: GitHub
+    url: https://github.com/mark22013333/FamilyReward
+  - label: 回作品集
+    url: https://mark22013333.github.io/
+footer_note: 給家裡用的兒童任務集點與獎勵系統。本頁截圖全部使用虛構的展示資料。
+
+en: null

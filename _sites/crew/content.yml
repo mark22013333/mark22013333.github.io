@@ -1,0 +1,212 @@
+# crew 作品介紹頁的內容。改完執行 python3 tools/build_sites.py crew 重新產生 /crew/。
+#
+# 字串欄位分兩種：
+#   純文字：slug、name、tagline、各種 alt、bar（截圖視窗標題）、label、kicker、nav 標籤、url
+#           會自動做 HTML 跳脫，直接寫文字即可。
+#   行內 HTML：其餘說明文字（lede、intro、paragraphs、bullets、caption、note、body…）
+#           可以用 <code>、<kbd>、<b>；要顯示 < > & 本身請寫 &lt; &gt; &amp;。
+# code 欄位是純文字，產生器自動上色：以「$ 」開頭的行加提示字元，「#」開頭的行
+# 或指令後空兩格以上再接「#」的部分當註解，highlight 列出的字串用主色。
+#
+# 本頁所有圖片都是依 crew 原始碼重繪的示意圖（mock: true），原始檔在 _sites/crew/mock/，
+# 執行 node _sites/crew/mock/render.js 可重繪（終端機三張再跑 tools/trim_shots.py）。
+
+slug: crew
+name: CREW
+tagline: 整合 Notion 的 Bug 修復與功能開發工作流 plugin，Claude Code 與 Codex 共用。
+accent: '#2fb37a'          # 專案沒有自己的介面色；取 Notion 任務類型「💬 功能要求」選項的 green 系，調亮以符合按鈕深色字
+github: https://github.com/mark22013333/crew
+
+eyebrow:
+  kind: Claude Code／Codex plugin
+  meta: [Notion, Python, MIT]
+
+lede: '用 <code>.spec/</code>、deterministic state 與 Human approval gate 管理 Bug 修復與功能開發的生命週期。需求、架構、UAT 由人決定；分析、規劃、實作與 review 交給模型；Git、schema、state transition、build/test、lint 交給程式驗證。'
+
+buttons:
+  - label: 安裝
+    url: '#install'
+    icon: download
+  - label: GitHub
+    url: https://github.com/mark22013333/crew
+    icon: github
+
+requirements: 需求：Git、Python 3、已安裝 CREW 的 Claude Code 或 Codex；Notion 流程另需 Notion
+
+hero:
+  image: lifecycle.png
+  mock: true
+  bar: CREW — Feature 與 Bug 流程
+  alt: 流程圖：Feature 由 /plan-start 經 /plan spec、需求核准、/plan db、/plan arch、架構核准、/plan-build、/plan-security、/plan-verify、/plan-review 到 /plan-close 與 Human UAT；Bug 由 /bug-start 經 /bug-investigate、/bug-fix 到 /bug-close 與 Human UAT
+  caption: '橘色虛線框是人類決策：需求核准、架構核准、UAT。machine verify／review 不能自動等同人類接受；UAT 拒絕時 Feature 回到 build、Bug 回到 fix。'
+
+features:
+  id: features
+  nav: 功能
+  nav_optional: true
+  kicker: // 功能
+  title: 先確認需求，再建任務；中斷了照狀態檔接著做
+  intro: 'Bug 主流程：<code>/bug-start</code> → <code>/bug-investigate</code> → <code>/bug-fix</code> → <code>/bug-close</code>。Feature 主流程：<code>/plan-start</code> → <code>/plan</code> → <code>/plan-build</code> → <code>/plan-security</code> → <code>/plan-verify</code> → <code>/plan-review</code> → <code>/plan-close</code>。'
+  items:
+    - label: Intake Refinement
+      title: 動手前先確認「要做什麼」
+      paragraphs:
+        - '<code>/plan-start</code> 與 <code>/bug-start</code> 會先把原始需求交給唯讀的 Intake Refiner 整理成短標題與描述，列出已知限制與歧義，由人明確確認後才建立任何東西。使用者不需要手動呼叫 Refiner，它不是 Slash Skill。'
+      bullets:
+        - 確認前不建 Notion 頁面、不建 <code>.spec</code>、不初始化 state、不動 Git branch；選「取消」就零 side effect
+        - 只有不回答就可能改變需求方向時才提問，最多 3 個問題
+        - '確認後、寫入任何地方前，疑似 password、token、API key、private key、Cookie 的內容必須先由人提供遮蔽版本'
+        - Host 不能委派時，主 Agent inline 執行同一份唯讀 contract，人類確認不能省略
+      image: intake-confirm.png
+      mock: true
+      bar: /plan-start — Intake 確認
+      alt: /plan-start 顯示原始需求、精煉後的標題與描述、已知限制、非阻塞歧義，以及確認、修改補充、使用原始需求、取消四個選項
+
+    - label: /plan-start
+      title: 一個指令建好 Notion、.spec 與分支
+      paragraphs:
+        - '確認後，<code>/plan-start</code> 在 Notion 建立任務頁、建立 <code>.spec/{slug}/</code>（<code>plan.md</code> 骨架＋<code>state.json</code>），並可從專案設定的 PROD 分支開出 <code>feature/{slug}</code> 或 <code>hotfix/{slug}</code>。'
+      bullets:
+        - 回傳前跑 S1–S7 退出驗證：Notion 欄位用讀回頁面確認、本地狀態用 script 判定，不信任 Agent 自己的記憶
+        - 'Notion API 失敗時仍建立本地 <code>.spec/{slug}/</code>，之後用 <code>/plan-sync</code> 補建'
+        - 負責人用 Git 提交 email 比對 Notion 使用者自動填入，比對不到只提示、不阻擋
+      image: plan-start-done.png
+      mock: true
+      bar: /plan-start — 任務已建立
+      alt: /plan-start 完成畫面：列出 Notion 頁面、本地任務目錄、Git branch、類型，S1 到 S7 退出驗證全部打勾，以及後續可用的指令
+
+    - label: Notion 頁面
+      title: 每個任務頁都是同一個結構
+      paragraphs:
+        - 'Feature 頁面固定 5 個區塊：需求描述、技術規格、資料庫設計、程式碼清單、開發日誌。<code>/plan-sync</code>（中途）與 <code>/plan-close</code>（結案）以區塊標題為契約，把 <code>plan.md</code> 與 <code>deploy.sql</code> 寫進對應區塊。'
+      bullets:
+        - '「原始需求」與「確認後任務描述」建立時寫入，之後的同步只更新它們後面的內容'
+        - '<code>deploy.sql</code> 全文寫進「遷移 SQL」，是唯一的 SQL 事實來源'
+        - '<code>/bug-setup</code> 可從零建立專案資料庫、任務追蹤工具、Bug 知識庫；功能設計庫由 <code>/plan-setup</code> 建立'
+      image: notion-feature.png
+      mock: true
+      bar: Notion — 任務追蹤工具
+      alt: 剛建立的 Feature 頁面：屬性有任務類型「💬 功能要求」、狀態進行中、優先順序中、難度中、開發階段需求分析、專案資料庫、負責人、修復分支；內文已填原始需求與確認後任務描述，其餘區塊只有標題
+
+    - label: 斷點續跑
+      title: 中斷之後，下一步由狀態檔算出來
+      paragraphs:
+        - '每個任務唯一的流程狀態是 <code>.spec/{slug}/state.json</code>，唯一寫者是 <code>crew-state.py</code>。<code>/plan-next</code> 從 state 計算下一步，中斷後不需要靠模型回憶流程進度。'
+      bullets:
+        - 'Claude Code 的 SessionStart hook 會讀當前 repo 的 <code>.spec/*/state.json</code>，提示未完成工作與下一步；不修改產品檔案、不需要網路，錯誤時不阻擋 session'
+        - '工作做到一半中斷時，下一步會是同一個指令加 <code>--resume</code>，先續跑未完成的工作單元'
+        - '<code>/plan-next</code> 照實轉述 script 的答案，不自行推理流程'
+      image: resume.png
+      mock: true
+      bar: SessionStart hook ＋ /plan-next
+      alt: SessionStart hook 以 additionalContext 交給模型的內容（不保證原樣顯示在畫面上）列出 2 個未結案任務與停滯天數；執行 /plan-next 後顯示目前在 build 階段，下一步是 /plan-build --resume，理由是中斷於 2/4 角色
+
+    - label: Bug 流程
+      title: 從通報到經驗教訓，寫在同一頁
+      paragraphs:
+        - '<code>/bug-start</code> 在 Notion 建立 Bug 條目與最小的 <code>state.json</code>，不建 <code>plan.md</code> 也不開新分支。頁面固定有問題描述、調查過程、根因分析、修復方案、驗證、經驗教訓。'
+      bullets:
+        - '<code>/bug-investigate</code> 假說驅動調查，根因確認後才能進 <code>/bug-fix</code>'
+        - '<code>/bug-fix</code> 修復並做回歸驗證，兩者都可 <code>--resume</code>'
+        - '<code>/bug-close</code> 不把 build／test 等 machine evidence 當成使用者接受修復；人明確接受後才結案，拒絕就回到 <code>/bug-fix</code>'
+      image: notion-bug.png
+      mock: true
+      bar: Notion — Bug 條目
+      alt: /bug-start 建立後的 Bug 頁面：任務類型「🐞 錯誤」、優先順序高、環境正式、修復分支 main；內文有原始通報、確認後問題描述與發生時間，調查過程已自動寫入初始環境快照（最近 5 筆 commit、環境狀態、歷史參考、歷史學習），下面是根因分析、修復方案、驗證勾選清單、經驗教訓
+
+# 自由區塊：type 為 split（左文字、右程式碼或截圖）或 cards（卡片清單）。
+# position: before_install（預設）或 after_install。
+sections:
+  - type: split
+    id: portable
+    position: before_install
+    nav: 跨 Host
+    nav_optional: true
+    kicker: // Claude Code 與 Codex
+    title: 同一套流程，不綁單一 AI Host
+    paragraphs:
+      - 'Skill 描述的是「需要什麼能力」，例如委派、平行、tool probe、詢問使用者，而不是某一家的工具名稱。Host 沒有 multi-agent、平行 delegation 或 per-worker model 選擇時，會降級成 inline／sequential 執行，不會因此破壞流程正確性。'
+      - 'Workflow 先選能力 profile，再由 Host adapter 對映實際模型。正式產品程式碼只有 <code>/plan-build</code> 與 <code>/bug-fix</code> 兩條流程可以修改；其他 Skill 只能修改規格、報告、state／metadata 或外部系統紀錄。'
+    code:
+      label: 一個任務的本地檔案與模型 profile
+      highlight: [state.json, crew-state.py]
+      text: |-
+        .spec/order-csv-export/
+          plan.md      # 目標與範圍、驗收條件、決策紀錄、取捨與風險、指路、檢查報告摘要
+          state.json   # 唯一流程狀態，只由 crew-state.py 寫入
+          deploy.sql   # DB 階段才產生
+
+        # Model profile
+        NONE      # Git、grep、schema validation、build/test
+        FAST      # repository search、證據蒐集、log 摘要
+        STANDARD  # 一般需求分析、review、debugging
+        DEEP      # architecture、DB schema、security、複雜根因
+
+  - type: cards
+    id: limits
+    position: after_install
+    kicker: // 使用前請先知道
+    title: 界線與限制
+    cards:
+      - title: UAT 一定由人決定
+        body: machine verify／review 不能自動等同人類接受，Feature 與 Bug 都要由人明確決定是否結案。
+      - title: /plan-run 的連跑模式不是無人值守
+        body: '「同 session 一次審查連跑」在本對話連跑，session 結束即暫停；時限從授權簽發起算，上限 4 小時，暫停或重開 session 不會延長。'
+      - title: 連跑停在 Build Done
+        body: '停在 Build Done（<code>--until arch</code> 時停在規劃完成 <code>completed_plan</code>）。不自動執行正式部署、Git push／merge、Security／Verify／Review 或 Human UAT；<code>git commit</code> 固定不允許。'
+      - title: Review Once 只支援 Feature
+        body: 不支援 Bug Workflow；預設仍是逐階段人工核准的 Interactive 流程。
+      - title: trusted-host 模式有門檻
+        body: '只有能提供受保護簽章端與 worker 隔離的 Host 才適用；一般 <code>claude -p</code>／<code>codex exec</code> 不符合。'
+      - title: CREW Cockpit 只在 Claude Code
+        body: '唯讀的任務儀表板需 Claude Code ≥ 2.1.289；Codex 核心流程仍完整支援，但沒有 Mod UI。'
+
+install:
+  id: install
+  nav: 安裝
+  kicker: // 安裝
+  title: 從 marketplace 安裝兩個 plugin
+  intro: '<code>bug-workflow</code> 管 Bug、<code>feature-workflow</code> 管功能開發，只需要其中一個也可以只裝一個。'
+  code:
+    label: 安裝指令
+    text: |-
+      # Claude Code
+      claude plugin install notion
+
+      claude plugin marketplace add mark22013333/crew
+      claude plugin install bug-workflow
+      claude plugin install feature-workflow
+
+      # Codex
+      codex plugin marketplace add mark22013333/crew
+      codex plugin add bug-workflow@crew
+      codex plugin add feature-workflow@crew
+      codex plugin list
+  steps:
+    - title: Claude Code：
+      body: '安裝後重啟 Claude Code，再執行 <code>/crew-init</code>，或依序執行 <code>/bug-setup</code>、<code>/plan-setup</code>、<code>/project-add</code>。'
+    - title: Codex：
+      body: '上述流程已用 Codex CLI 0.158.0 做過真實 marketplace add＋plugin install smoke，安裝後兩個 plugin 皆應顯示 <code>installed, enabled</code>。'
+    - title: 更新：
+      body: '執行 <code>/crew-upgrade</code>（<code>--check</code> 只檢查），完成後開新 session，避免目前 session 仍載入舊 Skill。<code>/crew-upgrade</code> 由 <code>bug-workflow</code> 提供；只裝 <code>feature-workflow</code> 時，改用 README 的 Host 手動更新指令。'
+  side:
+    title: 首次設定
+    items:
+      - '準備專案指令：<code>AGENTS.md</code> 或 <code>CLAUDE.md</code>（Claude Code 可用 <code>/init</code> 建立）。兩者都存在時都可讀；有實質衝突時會把衝突列為歧義。'
+      - '<code>/bug-setup</code>、<code>/plan-setup</code> 建立 CREW 設定，存放位置依序為 <code>CREW_CONFIG_HOME</code>、<code>$XDG_CONFIG_HOME/crew</code>、<code>~/.config/crew</code>。'
+      - '<code>/project-add</code> 註冊專案；自訂或非標準技術棧才需要 <code>/plan-stack</code>。'
+      - '不確定環境是否完整，可跑 <code>/crew-doctor</code> 健診。'
+
+footer_links:
+  - label: GitHub
+    url: https://github.com/mark22013333/crew
+  - label: CHANGELOG
+    url: https://github.com/mark22013333/crew/blob/main/CHANGELOG.md
+  - label: Releases
+    url: https://github.com/mark22013333/crew/releases
+  - label: 回作品集
+    url: https://mark22013333.github.io/
+footer_note: 整合 Notion 的 Bug 修復與功能開發工作流 plugin。本頁截圖使用虛構的展示資料，標示『介面示意』者為依原始碼重繪。
+
+# 預留英文版欄位（尚未實作語言切換，產生器目前忽略）
+en: null

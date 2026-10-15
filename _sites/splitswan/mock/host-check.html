@@ -1,0 +1,65 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>SplitSwan 某台公司主機連不上（示意）</title>
+<!-- 依 Sources/MainView.swift SettingsTab 的「通道網段」卡片（216–259 行）、底部固定列（293–306 行）
+     與 Sources/HostCheckPanel.swift（31–49 行、109–172 行的完成狀態）重繪：
+     按「檢查並加入」後，主機 IP 不在網段內 → 已加入並重新連線 → 路由走 utun、連接埠可連線。
+     結果字串取自 HostCheck.swift addedSummary()（100–102 行）與 HostCheckPanel.swift 117／119／135 行；
+     底部訊息取自 MainView.swift 509 行。網段、主機、IP 為虛構。設定頁捲到「通道網段」卡片處。 -->
+<link rel="stylesheet" href="mac.css">
+<style>
+  .scroll { display: flex; flex-direction: column; gap: 18px; }
+  .hc { display: flex; flex-direction: column; gap: 10px; padding-top: 4px; }
+  .hc .row .field { flex: 1; color: var(--text); }
+  .res { display: flex; flex-direction: column; gap: 6px; }
+  .res .mono { font-size: 13px; }
+  .disc { font-size: 13px; display: flex; align-items: center; gap: 6px; }
+</style>
+<div id="shot">
+<div class="window">
+  <div class="titlebar"><div class="lights"><i></i><i></i><i></i></div>SplitSwan</div>
+  <div class="body">
+    <div class="tabs"><div class="seg"><span>連線</span><span class="on">設定</span><span>環境檢查</span><span>關於</span></div></div>
+    <div class="tabbox">
+      <div class="scroll">
+        <div>
+          <div class="card-title">通道網段</div>
+          <div class="card">
+            <div class="callout sec">只有這些目的地會走 VPN，其他流量（Teams、Google Meet、一般上網）走原本的網路。<b>一行一個</b>；單一主機寫成 <code>IP/32</code>。<b>不要填 0.0.0.0/0</b>，全部流量走 VPN 會讓外網 DNS 失效。</div>
+            <div class="editor">10.0.0.0/24<br>10.20.0.0/16<br>198.51.100.5/32<br>10.30.1.25/32</div>
+            <div class="row">
+              <span class="btn">匯入設定檔…</span>
+              <span class="btn">匯出加密設定檔…</span>
+              <span class="btn">從公司設定還原</span>
+            </div>
+            <div class="callout sec">公司設定：範例公司 VPN（~/.config/splitswan/company.env）</div>
+            <div class="hc">
+              <div class="callout" style="font-weight:500">某台公司主機連不上？</div>
+              <div class="row" style="gap:8px">
+                <span class="field">intranet.example.com:8443</span>
+                <span class="btn primary">檢查並加入</span>
+                <span class="btn">只檢查</span>
+              </div>
+              <div class="caption sec">「檢查並加入」會查出主機的 IP，不在通道網段內的直接加入並重新連線（目前連線會中斷約數秒），再檢查是否走 VPN；「只檢查」不改設定。有填連接埠會一併測試能否連線。</div>
+              <div class="res">
+                <div class="ok mono"><svg class="icon" viewBox="0 0 20 20"><circle cx="10" cy="10" r="9" fill="currentColor"/><path d="M10 5.5v9M5.5 10h9" stroke="#fff" stroke-width="2" stroke-linecap="round"/></svg> 已加入：10.30.1.25/32</div>
+                <div class="ok mono"><svg class="icon" viewBox="0 0 20 20"><circle cx="10" cy="10" r="9" fill="currentColor"/><path d="m6 10.3 2.7 2.7L14 7.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg> 10.30.1.25 路由：utun4（有走 VPN）</div>
+                <div class="ok mono"><svg class="icon" viewBox="0 0 20 20"><circle cx="10" cy="10" r="9" fill="currentColor"/><path d="m6 10.3 2.7 2.7L14 7.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg> 10.30.1.25 連接埠 8443：可連線</div>
+                <div class="callout sec">已走 VPN，連接埠也能連線。</div>
+                <div class="row"><span class="btn">複製結果</span><span class="btn">再檢查一次</span></div>
+              </div>
+            </div>
+            <div class="disc"><svg class="icon" viewBox="0 0 20 20"><path d="m7.5 5 5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>手動排查步驟</div>
+          </div>
+        </div>
+      </div>
+      <div class="footer">
+        <span class="callout ok"><svg class="icon" viewBox="0 0 20 20"><circle cx="10" cy="10" r="9" fill="currentColor"/><path d="m6 10.3 2.7 2.7L14 7.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg> 已加入 10.30.1.25/32</span>
+        <span class="spacer"></span>
+        <span class="btn">還原</span>
+        <span class="btn primary">儲存</span>
+      </div>
+    </div>
+  </div>
+</div>
+</div>

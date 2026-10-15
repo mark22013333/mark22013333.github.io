@@ -1,0 +1,15 @@
+#!/bin/sh
+# 作品介紹官網的 pre-commit hook：_sites/ 的內容與 repo 內的產出不一致時擋下提交。
+# 安裝方式（擇一）：
+#   cp tools/pre-commit .git/hooks/pre-commit && chmod +x .git/hooks/pre-commit
+#   git config core.hooksPath tools   （會改用 tools/ 底下所有 hook）
+#
+# 注意：比對的是「工作區」的檔案，不是暫存區；請把產生後的檔案一起 git add。
+
+root=$(git rev-parse --show-toplevel) || exit 1
+
+if ! python3 "$root/tools/build_sites.py" --check; then
+  echo "" >&2
+  echo "pre-commit：作品介紹頁的產出已過期。請執行 python3 tools/build_sites.py，git add 產出後再提交。" >&2
+  exit 1
+fi

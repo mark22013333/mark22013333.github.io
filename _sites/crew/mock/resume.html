@@ -1,0 +1,17 @@
+<!-- 示意：開新 session 時 SessionStart hook 注入的未結案任務摘要，以及 /plan-next 的回答。
+     摘要行格式依 plugins/feature-workflow/scripts/crew-state.py 的 brief_lines()（[CREW] N 個未結案任務／
+     • slug（type｜phase done/total label｜停滯 N 天）→ /plan-next slug），依停滯天數由多到少排序；
+     /plan-next 格式依 skills/plan-next/SKILL.md「4. 輸出格式」，下一步與理由取自 crew-state.py
+     _compute_next_rule() 的工作單元續跑分支（"{skill} 中斷於 {done}/{total}{label}，先續跑未完成的工作單元"）。
+     注意：hook 輸出是以 additionalContext 交給 Host，第一段畫成文字只為說明內容。任務名稱、分支皆為虛構。 -->
+<meta charset="utf-8"><link rel="stylesheet" href="mock.css">
+<div id="shot" class="term"><span class="dim"># 開新 session：SessionStart hook（crew-state.py session-brief）提供的內容</span>
+[CREW] 2 個未結案任務
+• login-redirect-loop（bug｜investigate｜停滯 2 天）→ <span class="bl">/plan-next login-redirect-loop</span>
+• order-csv-export（feature｜build 2/4 角色｜停滯 0 天）→ <span class="bl">/plan-next order-csv-export</span>
+
+<span class="prompt">&gt;</span> /plan-next order-csv-export
+
+會員訂單匯出 CSV（order-csv-export）｜🌿 feature/order-csv-export｜📂 階段：build
+💡 下一步：<span class="gr">/plan-build --resume</span>
+理由：<span class="sub">plan-build 中斷於 2/4角色，先續跑未完成的工作單元</span></div>

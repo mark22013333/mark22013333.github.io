@@ -1,0 +1,464 @@
+<!doctype html>
+<html lang="zh-TW">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<!-- 本檔由 tools/build_sites.py 從 _sites/filmaxweb/content.yml 產生，請勿直接修改 -->
+<title>FilmaxWeb</title>
+<meta name="description" content="FilmaxWeb：把放滿影片、相片與 PDF 的硬碟，變成在瀏覽器裡就能看的媒體庫。">
+<meta property="og:title" content="FilmaxWeb">
+<meta property="og:description" content="把放滿影片、相片與 PDF 的硬碟，變成在瀏覽器裡就能看的媒體庫。">
+<meta property="og:url" content="https://mark22013333.github.io/filmaxweb/">
+<meta property="og:type" content="website">
+<meta property="og:image" content="https://mark22013333.github.io/filmaxweb/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Noto+Sans+TC:wght@400;500;700&display=swap">
+<style>
+/* ============================================================
+   專案主色：由 content.yml 的 accent 帶入，每個作品頁只差這一行。
+   其餘所有主色相關的顏色都由 --accent 以 color-mix 推導。
+   ============================================================ */
+:root{ --accent:#f5c518; }
+
+/* ---------- 外框（沿用入口網站，深淺色皆固定深色） ---------- */
+:root{
+  --frame-bg:#0e1318; --frame-line:#2a3a45; --frame-ink:#c9d1d9; --frame-dim:#6b7682;
+  --amber:#e6b450; --cyan:#7fbfd9; --green:#8fcf8f;
+  --mono:"JetBrains Mono","Noto Sans TC","Heiti TC","Microsoft JhengHei",ui-monospace,Menlo,monospace;
+  --sans:"Noto Sans TC","Heiti TC","Microsoft JhengHei",system-ui,sans-serif;
+
+  /* 內文（淺色） */
+  color-scheme:light;
+  --bg:#f6f7f9; --surface:#ffffff; --ink:#1b232b; --soft:#4a5560; --dim:#6b7682; --line:#dde2e7;
+  --code-bg:#0e1318; --code-ink:#c9d1d9;
+  /* 主色衍生：淺色底上把主色壓暗才夠對比 */
+  --accent-ink:color-mix(in oklab, var(--accent) 62%, #000);
+  --accent-soft:color-mix(in oklab, var(--accent) 12%, var(--bg));
+  --accent-line:color-mix(in oklab, var(--accent) 45%, var(--line));
+  --on-accent:#04121a;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --bg:#11171d; --surface:#161e25; --ink:#dfe5ea; --soft:#9aa6b2; --dim:#76828e; --line:#25323c;
+    --code-bg:#0b1014; --code-ink:#c9d1d9;
+    --accent-ink:color-mix(in oklab, var(--accent) 85%, #fff);
+    --accent-soft:color-mix(in oklab, var(--accent) 14%, var(--bg));
+    --accent-line:color-mix(in oklab, var(--accent) 40%, var(--line));
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --bg:#11171d; --surface:#161e25; --ink:#dfe5ea; --soft:#9aa6b2; --dim:#76828e; --line:#25323c;
+  --code-bg:#0b1014; --code-ink:#c9d1d9;
+  --accent-ink:color-mix(in oklab, var(--accent) 85%, #fff);
+  --accent-soft:color-mix(in oklab, var(--accent) 14%, var(--bg));
+  --accent-line:color-mix(in oklab, var(--accent) 40%, var(--line));
+}
+
+*{box-sizing:border-box}
+html{background:var(--bg);scroll-behavior:smooth}
+@media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.75 var(--sans);overflow-x:hidden}
+img{max-width:100%;height:auto;display:block}
+a{color:var(--accent-ink)}
+a:focus-visible,.btn:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+code,kbd{font-family:var(--mono);font-size:.88em}
+p code,li code{background:var(--accent-soft);padding:.1em .35em;border-radius:3px;overflow-wrap:anywhere}
+kbd{border:1px solid var(--line);border-bottom-width:2px;border-radius:4px;padding:0 .35em;background:var(--surface);white-space:nowrap}
+
+/* grid 子項預設 min-width:auto，會被 pre 的長行撐寬 → 手機水平捲動 */
+.hero-grid>*,.feat>*,.split>*,.install>*{min-width:0}
+.wrap{max-width:1120px;margin:0 auto;padding-inline:clamp(16px,4vw,32px)}
+
+/* ---------- 頂部終端機導覽列 ---------- */
+.topbar{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--frame-bg);border-bottom:1px solid var(--frame-line);
+  font:13px/1 var(--mono);color:var(--frame-ink)}
+.topbar .wrap{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:40px}
+.crumb{display:flex;align-items:center;gap:.55em;text-decoration:none;color:var(--frame-ink);white-space:nowrap;min-width:0}
+.crumb .p{color:var(--amber)}
+.crumb .home{color:var(--cyan)}
+.crumb .sep{color:var(--frame-dim)}
+.crumb .here{color:var(--accent);font-weight:600}
+.crumb:hover .home{text-decoration:underline}
+.topnav{display:flex;gap:16px}
+.topnav a{color:var(--frame-dim);text-decoration:none}
+.topnav a:hover{color:var(--frame-ink)}
+@media (max-width:520px){.topnav .opt{display:none}}
+
+/* ---------- 首屏 ---------- */
+.hero{padding-block:clamp(40px,7vw,88px) clamp(32px,5vw,56px);
+  background:radial-gradient(1200px 400px at 85% -10%, var(--accent-soft), transparent 70%)}
+.hero-grid{display:grid;gap:clamp(28px,4vw,48px)}
+.eyebrow{font:13px/1.5 var(--mono);color:var(--dim);margin:0 0 14px}
+.eyebrow b{color:var(--accent-ink);font-weight:600}
+.hero h1{margin:0;font:600 clamp(30px,8vw,76px)/1.1 var(--mono);letter-spacing:-.02em}
+.hero h1 .cur{display:inline-block;width:.5em;height:.9em;background:var(--accent);vertical-align:-.08em;margin-left:.08em;animation:blink 1.1s steps(1) infinite}
+@keyframes blink{50%{opacity:0}}
+@media (prefers-reduced-motion: reduce){.hero h1 .cur{animation:none}}
+.tagline{margin:18px 0 0;font-size:clamp(20px,2.6vw,26px);font-weight:500;line-height:1.45;max-width:24em}
+.lede{margin:14px 0 0;color:var(--soft);max-width:38em}
+.actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:26px}
+.btn{display:inline-flex;align-items:center;gap:.5em;font:600 15px/1 var(--sans);text-decoration:none;padding:13px 20px;border-radius:8px;border:1px solid transparent}
+.btn.primary{background:var(--accent);color:var(--on-accent)}
+.btn.primary:hover{background:color-mix(in oklab, var(--accent) 88%, #fff)}
+.btn.ghost{border-color:var(--line);color:var(--ink);background:var(--surface)}
+.btn.ghost:hover{border-color:var(--accent-line)}
+.btn svg{width:18px;height:18px;flex:none}
+.req{margin:14px 0 0;font:13px/1.6 var(--mono);color:var(--dim)}
+
+/* 終端機外框（截圖容器） */
+.term{border:1px solid var(--frame-line);border-radius:10px;overflow:hidden;background:#1d1d2d;
+  box-shadow:0 1px 0 rgba(255,255,255,.04) inset, 0 24px 60px -24px rgba(0,20,40,.45)}
+.term .bar{display:flex;align-items:center;gap:7px;padding:9px 12px;background:#15151f;border-bottom:1px solid #2a2a3a;font:12px/1 var(--mono);color:#7d8590}
+.term .bar i{width:11px;height:11px;border-radius:50%;background:#3a3a4a;flex:none}
+.term .bar span{margin-left:8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.term .bar .mock{margin-left:auto;flex:none;font-style:normal;font-size:11px;color:#e6b450;border:1px solid #5a4a20;border-radius:4px;padding:2px 6px}
+.term img{width:100%;height:auto}  /* 依原圖比例完整顯示；空白邊請先用 tools/trim_shots.py 裁掉 */
+.hero .term{border-color:var(--accent-line)}
+.cap{margin:10px 2px 0;font-size:13px;color:var(--dim)}
+
+/* ---------- 區塊共用 ---------- */
+section{scroll-margin-top:56px}
+.sec{padding-block:clamp(48px,7vw,88px);border-top:1px solid var(--line)}
+.sec-head{max-width:40em;margin-bottom:clamp(28px,4vw,44px)}
+.kicker{font:13px/1 var(--mono);color:var(--accent-ink);margin:0 0 10px}
+.sec h2{margin:0;font-size:clamp(26px,3.4vw,34px);line-height:1.3;font-weight:700}
+.sec-head p{margin:12px 0 0;color:var(--soft)}
+
+/* 功能區塊：文字＋截圖交錯 */
+.feat{display:grid;gap:22px;align-items:center;padding-block:clamp(20px,3vw,32px)}
+.feat + .feat{border-top:1px dashed var(--line)}
+.feat h3{margin:0;font-size:21px;line-height:1.4}
+.feat h3 .n{font:600 13px/1 var(--mono);color:var(--accent-ink);display:block;margin-bottom:8px}
+.feat p{margin:10px 0 0;color:var(--soft)}
+.feat ul{margin:12px 0 0;padding-left:1.2em;color:var(--soft)}
+.feat li{margin:4px 0}
+@media (min-width:880px){
+  .feat{grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:44px}
+  .feat.flip{grid-template-columns:minmax(0,7fr) minmax(0,5fr)}  /* 圖在左時也給圖寬欄 */
+  .feat.flip .txt{order:2}
+}
+
+/* 自由區塊 split：左文字、右程式碼或截圖（例：給 AI agent 使用） */
+.split{display:grid;gap:24px}
+@media (min-width:880px){.split{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:44px;align-items:start}}
+.split-p{color:var(--soft);margin:12px 0 0}
+.split-p b{color:var(--ink)}
+.note{border-left:3px solid var(--amber);background:color-mix(in oklab, var(--amber) 9%, var(--bg));padding:12px 16px;border-radius:0 6px 6px 0;color:var(--soft);font-size:15px;margin:16px 0 0}
+.note b{color:var(--ink)}
+
+/* 程式碼 */
+pre.code{margin:0;background:var(--code-bg);color:var(--code-ink);border:1px solid var(--frame-line);border-radius:10px;
+  padding:16px 18px;overflow-x:auto;font:13px/1.75 var(--mono);tab-size:2}
+pre.code .c{color:#6b7682}
+pre.code .p{color:var(--amber);user-select:none}
+pre.code .a{color:var(--accent)}
+
+/* 安裝 */
+.install{display:grid;gap:28px}
+@media (min-width:880px){.install{grid-template-columns:minmax(0,7fr) minmax(0,5fr);gap:44px;align-items:start}}
+.steps{margin:0;padding:0;list-style:none;display:grid;gap:14px;color:var(--soft)}
+.steps li{padding:14px 16px;border:1px solid var(--line);border-radius:8px;background:var(--surface)}
+.steps b{color:var(--ink)}
+.side h3{margin:0 0 10px;font-size:19px}
+.side ul{margin:0;padding-left:1.2em;color:var(--soft)}
+.side li{margin:6px 0}
+.side .term{margin-top:18px}
+
+/* 自由區塊 cards：卡片清單（例：已知限制） */
+.cards{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));margin:0;padding:0;list-style:none}
+.cards li{border:1px solid var(--line);border-radius:8px;padding:14px 16px;background:var(--surface);color:var(--soft);font-size:15px}
+.cards .ct{display:block;font-weight:700;color:var(--ink);margin-bottom:4px}  /* 卡片標題；內文的 <b> 維持行內粗體 */
+
+/* ---------- 頁尾：品牌記號＋連結列＋說明 ---------- */
+/* 品牌記號的色條由 content.yml 的 brand_bars 定義；沒有定義的專案只顯示名稱 */
+footer{margin-top:clamp(40px,6vw,72px);border-top:1px solid var(--line);padding-block:36px calc(48px + env(safe-area-inset-bottom,0px));font-size:13.5px;color:var(--dim)}
+footer .row{display:flex;flex-wrap:wrap;justify-content:space-between;gap:16px;align-items:center}
+footer .brand{font:800 22px/1 var(--sans);color:var(--ink);display:flex;align-items:center;gap:8px;letter-spacing:-.02em}
+footer nav{display:flex;flex-wrap:wrap;gap:18px}
+footer a{color:var(--soft);text-decoration:none}
+footer a:hover{color:var(--accent-ink)}
+footer p{margin:18px 0 0}
+.mark{display:inline-flex;gap:3px;align-items:stretch;height:.78em}
+.mark i{display:block;width:.11em;border-radius:1px}
+</style>
+</head>
+<body>
+
+<nav class="topbar" aria-label="返回入口網站">
+  <div class="wrap">
+    <a class="crumb" href="https://mark22013333.github.io/" title="回到作品入口">
+      <span class="p">$</span><span class="home">~/portal</span><span class="sep">›</span><span class="here">FilmaxWeb</span>
+    </a>
+    <div class="topnav">
+      <a class="opt" href="#features">功能</a>
+      <a class="opt" href="#playback">播放路徑</a>
+      <a class="opt" href="#auth">登入</a>
+      <a href="#install">安裝</a>
+      <a class="opt" href="#legal">使用聲明</a>
+    </div>
+  </div>
+</nav>
+
+<main>
+  <!-- 首屏 -->
+  <header class="hero">
+    <div class="wrap hero-grid">
+      <div>
+        <p class="eyebrow"><b>自架網站</b> · Python · FastAPI · SQLite · ffmpeg</p>
+        <h1>FilmaxWeb<span class="cur" aria-hidden="true"></span></h1>
+        <p class="tagline">把放滿影片、相片與 PDF 的硬碟，變成在瀏覽器裡就能看的媒體庫。</p>
+        <p class="lede">自動刮削片名與海報、遠端連線自動降畫質、字幕即時轉檔，全部跑在自己的機器上。片庫放在你自己設定的 FTP 伺服器上（片庫與服務同機時，ffmpeg 可以直接讀本機磁碟）；資料庫是單檔 SQLite，帳號可以選配放 MSSQL。</p>
+        <div class="actions">
+          <a class="btn primary" href="#install">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg>
+            安裝
+          </a>
+          <a class="btn ghost" href="https://github.com/mark22013333/FilmaxWeb">
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5a11.5 11.5 0 0 0-3.64 22.41c.58.1.79-.25.79-.56v-2c-3.2.7-3.88-1.37-3.88-1.37-.52-1.33-1.28-1.69-1.28-1.69-1.05-.71.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.55-.29-5.24-1.28-5.24-5.69 0-1.26.45-2.29 1.19-3.09-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.17 1.18a11 11 0 0 1 5.77 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.8 1.19 1.83 1.19 3.09 0 4.42-2.69 5.39-5.26 5.68.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.8.56A11.5 11.5 0 0 0 12 .5Z"/></svg>
+            GitHub
+          </a>
+        </div>
+        <p class="req">需求：Python 3.10+ 與 ffmpeg；僅供管理你自己合法持有的影音檔案</p>
+      </div>
+      <figure style="margin:0">
+        <div class="term">
+          <div class="bar"><i></i><i></i><i></i><span>FilmaxWeb — 媒體庫</span></div>
+          <img src="img/library.png" width="1200" height="962"
+               alt="FilmaxWeb 首頁：搜尋框與掃描媒體庫、管理後台按鈕，下面是分類標籤、排序選單與海報牆，影集卡片標出集數，有評分的海報右上角標出分數">
+        </div>
+        <figcaption class="cap">首頁的海報牆（截圖省略最上方的類型分頁列）。影片、相片與文件各有自己的分頁，分類標籤與排序（最近加入、片名、年份、評分）可以再篩。</figcaption>
+      </figure>
+    </div>
+  </header>
+
+
+  <!-- 功能 -->
+  <section id="features" class="sec">
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="kicker">// 功能</p>
+        <h2>影片、字幕、相片、PDF，一個網站看完</h2>
+        <p>後端是單一行程的 FastAPI 服務，前端不用框架、原生 JS。掃描會遞迴列舉片庫，影片、相片與 PDF 各自進自己的分頁。</p>
+      </div>
+
+      <article class="feat">
+        <div class="txt">
+          <h3><span class="n">01 · 影片</span>自動辨識片名、年份與季集</h3>
+          <p>從檔名解析片名／年份／季集，一集一資料夾的影集也會併成同一個條目，再向 TMDB 抓海報與簡介。右圖的示範條目是虛構資料，中繼資料已手動修正過，所以出現「手動修正過」的提示。</p>
+          <ul>
+            <li>TMDB 沒抓對的，可以「手動指定 TMDB」或「改片名／年份」；手動修正過的條目，之後自動刮削不會再蓋掉它</li>
+            <li>每個檔案標出這次是「直接播放」或「轉碼播放」，並列出解析度、編碼與片長</li>
+            <li>沒設 <code>TMDB_API_KEY</code> 時掃描會跳過 TMDB 刮削，仍可用檔名瀏覽與播放</li>
+          </ul>
+        </div>
+        <div class="term">
+          <div class="bar"><i></i><i></i><i></i><span>FilmaxWeb — 條目詳細</span></div>
+          <img src="img/item.png" width="1200" height="1240" loading="lazy"
+               alt="影集「示範影集」的詳細視窗：海報、評分、分類、簡介，下方是重新刮削、手動指定 TMDB、改片名／年份按鈕，以及第 1 季各集的檔案與「轉碼播放」標籤">
+        </div>
+      </article>
+
+      <article class="feat flip">
+        <div class="txt">
+          <h3><span class="n">02 · 播放器</span>吃得下的直送原檔，吃不下的即時轉碼</h3>
+          <p>mp4＋H.264＋AAC 這類瀏覽器吃得下的格式整檔直送；mkv、HEVC、AC3 等改走 HLS（即時轉碼，條件符合時改用不重新編碼的 remux，見下方「播放路徑」）。內嵌字幕即時轉成 WebVTT，開播時背景預抽整份，跳到中間也不必等。</p>
+          <ul>
+            <li>右上角標出目前的畫質級別、實際解析度與「直接串流／即時轉碼」</li>
+            <li>字幕預設「自動選繁體中文」，依語言標籤與內容判斷</li>
+            <li>遠端連線時改用綁碼率的轉碼（<code>REMOTE_BITRATE_KBPS</code>：程式預設 2800，<code>.env.example</code> 附的值是 8000）</li>
+          </ul>
+        </div>
+        <div class="term">
+          <div class="bar"><i></i><i></i><i></i><span>FilmaxWeb — 播放器</span></div>
+          <img src="img/player.png" width="1200" height="800" loading="lazy"
+               alt="播放器播放 mkv 測試影片，畫面下方是內嵌字幕「字幕由內嵌軌即時轉成 WebVTT。」，右上角標示「自動 · 720p · 1280×720」與「即時轉碼」">
+        </div>
+      </article>
+
+      <article class="feat">
+        <div class="txt">
+          <h3><span class="n">03 · 相片</span>燈箱看相片，刻意不讀 GPS</h3>
+          <p>相片牆點開是 PhotoSwipe 燈箱，按 <b>i</b> 打開側欄看檔案資訊與 EXIF 拍攝資訊。預覽用的是 1920px 的衍生圖，原始檔案不會被修改。</p>
+          <ul>
+            <li>EXIF 用白名單讀取，<b>不讀取也不顯示 GPS 座標</b></li>
+            <li>影片資料夾裡的封面圖（poster.jpg、與資料夾同名的圖）不會被收進相片庫</li>
+            <li>支援方格（分頁）與瀑布流（往下滑自動載入）兩種檢視</li>
+          </ul>
+        </div>
+        <div class="term">
+          <div class="bar"><i></i><i></i><i></i><span>FilmaxWeb — 相片燈箱</span></div>
+          <img src="img/photo-view.png" width="1200" height="1280" loading="lazy"
+               alt="相片燈箱顯示一張漸層與幾何圖形的示範相片，下方側欄列出修改時間、拍攝時間、相機「ACME Demo Cam 1」、ISO，以及「不讀取也不顯示 GPS 座標。原始檔案沒有被修改。」">
+        </div>
+      </article>
+
+      <article class="feat flip">
+        <div class="txt">
+          <h3><span class="n">04 · PDF</span>內建 PDF 閱讀器</h3>
+          <p>用 PDF.js 的 legacy build 在頁面裡直接閱讀，支援大檔的分段讀取。文件牆用側欄樹狀導覽資料夾。</p>
+          <ul>
+            <li>上一頁／下一頁、跳頁、縮放、「符合寬度」與「符合整頁」</li>
+            <li>「原檔」用瀏覽器內建的檢視器開啟</li>
+            <li>PDF.js 刻意用 legacy build：一般 build 會用到 Chromium 141 與 Safari 都沒有的 API</li>
+          </ul>
+        </div>
+        <div class="term">
+          <div class="bar"><i></i><i></i><i></i><span>FilmaxWeb — PDF 閱讀器</span></div>
+          <img src="img/reader.png" width="1200" height="1040" loading="lazy"
+               alt="PDF 閱讀器開著示範文件「ACME 操作指南」，上方工具列有返回、頁碼 1 / 2、縮放與「寬」「頁」「原檔」按鈕">
+        </div>
+      </article>
+
+      <article class="feat">
+        <div class="txt">
+          <h3><span class="n">05 · 後台</span>參數線上改，即時生效的就即時生效</h3>
+          <p>後台有掃描控制、失敗清單、使用者審核、參數頁與診斷頁。設定有固定的優先序：<code>.env</code> &gt; 後台資料庫 &gt; 程式預設，沒有例外清單。</p>
+          <ul>
+            <li>每一項標出生效方式（即時生效、存檔後套用、需重啟）與目前值的來源</li>
+            <li>被 <code>.env</code> 蓋掉的後台設定會在參數頁標出來，不會自動刪</li>
+            <li>連線資訊、綁定位址、密碼這類改錯會進不來的設定，只能在 <code>.env</code> 改，參數頁完全不會出現</li>
+          </ul>
+        </div>
+        <div class="term">
+          <div class="bar"><i></i><i></i><i></i><span>FilmaxWeb — 後台 · 系統參數</span></div>
+          <img src="img/admin-params.png" width="1200" height="1120" loading="lazy"
+               alt="後台系統參數頁：說明解析順序是 .env／環境變數 &gt; 這裡存的值 &gt; 程式預設值，搜尋「畫質」後列出 TRANSCODE_CRF 等參數，標著「即時生效」與目前來源">
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <!-- 播放是怎麼決定的 -->
+  <section id="playback" class="sec">
+    <div class="wrap split">
+      <div>
+        <p class="kicker">// 播放是怎麼決定的</p>
+        <h2>決定權在片源本身，以及你在區網還是遠端</h2>
+        <p class="split-p">容器與編碼瀏覽器吃得下（mp4＋h264＋aac）就整檔直送。吃不下時，若是 h264、已經掃出 keyframe 邊界表、keyframe 間距小於分段長度，且這個檔案的上階沒有因 remux 出錯而下線，區網走上階 <b>remux</b>（<code>-c:v copy</code>，視訊位元組原封不動、只換容器）；遠端在分段可對齊時同時提供上階 remux 與下階轉碼，由播放器自己選；沒有邊界表就單階 HLS 即時轉碼。兩階 HLS 預設關閉（<code>HLS_TWO_RUNG</code>），要先讓邊界表掃完再開。</p>
+        <p class="split-p">上階的代價是碼率就是原檔的碼率，所以遠端多半選不到它。下階綁碼率，重編首選 NVENC 硬體編碼；預設的 <code>FFMPEG_HWACCEL=auto</code> 會實際試編一小段，硬體不在或驅動擋掉就自動退回 libx264。<code>.env.example</code> 附的畫質建議值是用 VMAF 量測後定的（程式內建的預設值比較保守：CRF 21、NVENC_CQ 28、veryfast、2800 kbps），過程寫在規格書 J 章。</p>
+        <p class="note"><b>ffmpeg 讀檔優先走本機路徑。</b>片庫跟服務在同一台機器時，設 <code>LIBRARY_LOCAL_ROOTS</code> 讓 ffmpeg 直接讀磁碟；對應不到才回到「HTTP → FastAPI → FTP → 磁碟」那條路。</p>
+      </div>
+      <pre class="code" tabindex="0" aria-label=".env.example 的畫質建議值（README 範例；不是程式預設值）">FFMPEG_HWACCEL=nvenc          <span class="c"># 重編首選 NVENC：同碼率畫質贏 x264 veryfast 且快 1.5 倍</span>
+X264_PRESET=medium            <span class="c"># CPU 退路。同 CRF 下比 veryfast 多 2.1 VMAF，只多 9% 碼率</span>
+TRANSCODE_CRF=17              <span class="c"># CPU 編碼的畫質</span>
+NVENC_CQ=25                   <span class="c"># NVENC 有自己的尺，不要跟 CRF 共用一個數字</span>
+REMOTE_BITRATE_KBPS=8000      <span class="c"># 曲線轉折點，再往上加買不到畫質</span>
+<span class="a">HLS_TWO_RUNG</span>=false            <span class="c"># 兩階 HLS（區網零轉碼）。要先讓邊界表掃完再開</span></pre>
+    </div>
+  </section>
+
+  <!-- 登入與權限 -->
+  <section id="auth" class="sec">
+    <div class="wrap split">
+      <div>
+        <p class="kicker">// 登入與權限</p>
+        <h2>單一密碼，或 Google 登入加管理員審核</h2>
+        <p class="split-p"><code>AUTH_ENABLED=false</code> 時沒有登入驗證：區網內任何人都有管理員權限，外部連線直接回 403。打開後可以用單一密碼，或 Google 登入（OIDC＋PKCE）；新帳號預設要等管理員審核，<code>GOOGLE_ADMIN_EMAILS</code> 名單裡的人第一次登入就是管理員。</p>
+        <p class="split-p">資料夾可以標成「受限」，只給有授權的帳號看；沒授權的人看不到，回 404 而不是 403。</p>
+        <p class="note"><b>兩個容易踩的點：</b><code>GOOGLE_ADMIN_EMAILS</code> 只是一份名單，不會建立帳號，帳號是那個人第一次登入時才建立並提升為管理員，所以設好之後啟動仍會說「還沒有任何管理員帳號」，去登入一次就好。密碼登入的 token 沒有 <code>uid</code>，認不出是誰，一律看不到受限資料夾；要用受限目錄就得走 Google 登入。</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 安裝 -->
+  <section id="install" class="sec">
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="kicker">// 安裝</p>
+        <h2>五分鐘跑起來</h2>
+        <p>需求：<b>Python 3.10+</b> 與 <b>ffmpeg</b>（Windows 建議 BtbN 的 n8.1 build）。專案附的批次檔以 Windows 為主。</p>
+      </div>
+      <div class="install">
+        <div>
+          <pre class="code" tabindex="0" aria-label="Windows（專案附的批次檔）"><span class="c"># 1. 建立 .venv、裝套件、裝 playwright（測試用）</span>
+安裝.bat
+
+<span class="c"># 2. 編輯 .env，至少要填 FTP 連線資訊與 TMDB_API_KEY</span>
+<span class="c">#    （沒有 .env 的話，啟動.bat 會從 .env.example 複製一份再請你去填）</span>
+
+<span class="c"># 3. 起服務並自動開瀏覽器 → http://127.0.0.1:8080</span>
+啟動.bat
+
+<span class="c"># 4. 後台 → 媒體庫 → 開始掃描</span></pre>
+          <ul class="steps" style="margin-top:16px">
+            <li><b>最少要填的四項：</b><code>FTP_HOST</code>、<code>FTP_USER</code>、<code>FTP_PASSWORD</code>、<code>TMDB_API_KEY</code>（去 themoviedb.org 免費申請）。<code>.env.example</code> 裡每一項都有註解。</li>
+            <li><b>片庫跟服務在同一台機器</b>的話，在 <code>.env</code> 加一行 <code>LIBRARY_LOCAL_ROOTS</code>，值寫成「FTP 前綴＝本機資料夾」（README 的例子是把 FTP 根目錄「/」對應到 <code>D:\1.FTP</code>），轉碼少繞三層。</li>
+            <li><b>macOS／Linux</b>可以用 <code>./start.sh</code>：沒有 <code>.env</code> 時先複製一份範例並停下來讓你填，填好再執行一次，就會建立 <code>.venv</code>、安裝 <code>requirements.txt</code> 並啟動。</li>
+            <li><b>測試：</b><code>跑測試.bat</code> 全部跑一遍，完整輸出在 <code>test-result.txt</code>；每一支都是獨立腳本，不需要 pytest，會自己開臨時資料庫、自己收尾；播放器的 JS 測試需要 node，沒有 node 會標 SKIP。</li>
+          </ul>
+        </div>
+        <div class="side">
+          <h3>單機 SQLite，幾個刻意的設計</h3>
+          <ul>
+            <li><b>單一行程、單一寫入者。</b>SQLite 用 WAL，寫入集中在 <code>db.py</code>，不必處理死鎖重試。</li>
+            <li><b>沒有外鍵。</b>刪除只有一個進入點 <code>purge(reason=...)</code>，連磁碟上的海報縮圖都在裡面一起刪；孤兒數量露在後台總覽。</li>
+            <li><b>時間點一律 epoch 整數秒，時間長度維持浮點。</b>續播位置若取整，每次繼續看都會往前跳最多一秒。</li>
+            <li>帳號可以另外放 MSSQL（選配）；刻意不做「連不上就自動退回 SQLite」，避免兩份使用者資料各說各話。</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 對外開放前的檢查清單 -->
+  <section id="exposure" class="sec">
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="kicker">// 對外開放前的檢查清單</p>
+        <h2>原本是設計在區網用的。放上公開網域前，以下 8 項都要確認</h2>
+      </div>
+      <ul class="cards">
+        <li><b class="ct">密碼</b><code>AUTH_PASSWORD</code> 換成夠長的隨機字串；要分享看片就另設 <code>VIEWER_PASSWORD</code>。</li>
+        <li><b class="ct">Google 登入</b>用 <code>GOOGLE_ADMIN_EMAILS</code> 指定第一個管理員；<code>GOOGLE_AUTO_APPROVE</code> 維持 <code>false</code>。</li>
+        <li><b class="ct">簽章金鑰</b>設 <code>AUTH_SECRET</code>，或確認 <code>data/secret.key</code> 存在且權限收好。</li>
+        <li><b class="ct">Cookie</b><code>COOKIE_SECURE=true</code>。</li>
+        <li><b class="ct">代理標頭</b>前面真的有 cloudflared／nginx 才設 <code>TRUST_PROXY=true</code>。</li>
+        <li><b class="ct">綁定位址</b><code>HOST=127.0.0.1</code>，只讓同機的 cloudflared 連得到，不要開 <code>0.0.0.0</code>。</li>
+        <li><b class="ct">開發模式</b><code>DEV_RELOAD=false</code>。</li>
+        <li><b class="ct">API 文件</b>考慮關掉 <code>/api/docs</code>。</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- 使用聲明 -->
+  <section id="legal" class="sec">
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="kicker">// 使用聲明</p>
+        <h2>媒體庫管理工具，不提供、不散布、也不協助取得任何影音內容</h2>
+        <p>所有播放的檔案都來自使用者自己設定的 FTP 伺服器或本機片庫。使用本專案即表示你同意，<b>不會</b>將它用於下列任何行為；你必須對所管理的每一個檔案擁有合法的持有與觀看權利，並對自己架設的服務負完全責任。</p>
+      </div>
+      <ul class="cards">
+        <li><b class="ct">不散布未取得權利的著作</b>不散布或公開傳輸你不擁有合法權利的著作，包含但不限於電影、影集、動畫、音樂。</li>
+        <li><b class="ct">不規避技術保護措施</b>不規避、破解任何技術保護措施（DRM）。</li>
+        <li><b class="ct">不經營盜版串流</b>不經營任何形式的盜版串流服務，無論是否收費。</li>
+        <li><b class="ct">不未經授權存取他人系統</b>不未經授權存取他人的 FTP 伺服器、資料庫或任何系統。</li>
+        <li><b class="ct">不違反當地法律</b>不從事任何違反你所在地或伺服器所在地法律的行為。</li>
+        <li><b class="ct">依「現狀」提供</b>不附帶任何明示或默示的擔保；作者與貢獻者不對使用或無法使用本軟體所生的損害負責，亦不對使用者的違法行為負責。</li>
+      </ul>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="row">
+      <span class="brand">FilmaxWeb</span>
+      <nav aria-label="頁尾連結">
+        <a href="https://github.com/mark22013333/FilmaxWeb">GitHub</a>
+        <a href="https://github.com/mark22013333/FilmaxWeb/blob/main/docs/規格需求書.md">規格書</a>
+        <a href="https://mark22013333.github.io/">回作品集</a>
+      </nav>
+    </div>
+    <p>把硬碟變成瀏覽器裡的媒體庫。本頁截圖全部使用虛構的展示資料。</p>
+  </div>
+</footer>
+
+</body>
+</html>

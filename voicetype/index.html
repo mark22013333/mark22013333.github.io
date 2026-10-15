@@ -1,0 +1,442 @@
+<!doctype html>
+<html lang="zh-TW">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<!-- 本檔由 tools/build_sites.py 從 _sites/voicetype/content.yml 產生，請勿直接修改 -->
+<title>VoiceType</title>
+<meta name="description" content="VoiceType：macOS／Windows 語音轉文字桌面 App，離線辨識加 AI 潤稿。">
+<meta property="og:title" content="VoiceType">
+<meta property="og:description" content="macOS／Windows 語音轉文字桌面 App，離線辨識加 AI 潤稿。">
+<meta property="og:url" content="https://mark22013333.github.io/voicetype/">
+<meta property="og:type" content="website">
+<meta property="og:image" content="https://mark22013333.github.io/voicetype/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Noto+Sans+TC:wght@400;500;700&display=swap">
+<style>
+/* ============================================================
+   專案主色：由 content.yml 的 accent 帶入，每個作品頁只差這一行。
+   其餘所有主色相關的顏色都由 --accent 以 color-mix 推導。
+   ============================================================ */
+:root{ --accent:#1f88c0; }
+
+/* ---------- 外框（沿用入口網站，深淺色皆固定深色） ---------- */
+:root{
+  --frame-bg:#0e1318; --frame-line:#2a3a45; --frame-ink:#c9d1d9; --frame-dim:#6b7682;
+  --amber:#e6b450; --cyan:#7fbfd9; --green:#8fcf8f;
+  --mono:"JetBrains Mono","Noto Sans TC","Heiti TC","Microsoft JhengHei",ui-monospace,Menlo,monospace;
+  --sans:"Noto Sans TC","Heiti TC","Microsoft JhengHei",system-ui,sans-serif;
+
+  /* 內文（淺色） */
+  color-scheme:light;
+  --bg:#f6f7f9; --surface:#ffffff; --ink:#1b232b; --soft:#4a5560; --dim:#6b7682; --line:#dde2e7;
+  --code-bg:#0e1318; --code-ink:#c9d1d9;
+  /* 主色衍生：淺色底上把主色壓暗才夠對比 */
+  --accent-ink:color-mix(in oklab, var(--accent) 62%, #000);
+  --accent-soft:color-mix(in oklab, var(--accent) 12%, var(--bg));
+  --accent-line:color-mix(in oklab, var(--accent) 45%, var(--line));
+  --on-accent:#04121a;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --bg:#11171d; --surface:#161e25; --ink:#dfe5ea; --soft:#9aa6b2; --dim:#76828e; --line:#25323c;
+    --code-bg:#0b1014; --code-ink:#c9d1d9;
+    --accent-ink:color-mix(in oklab, var(--accent) 85%, #fff);
+    --accent-soft:color-mix(in oklab, var(--accent) 14%, var(--bg));
+    --accent-line:color-mix(in oklab, var(--accent) 40%, var(--line));
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --bg:#11171d; --surface:#161e25; --ink:#dfe5ea; --soft:#9aa6b2; --dim:#76828e; --line:#25323c;
+  --code-bg:#0b1014; --code-ink:#c9d1d9;
+  --accent-ink:color-mix(in oklab, var(--accent) 85%, #fff);
+  --accent-soft:color-mix(in oklab, var(--accent) 14%, var(--bg));
+  --accent-line:color-mix(in oklab, var(--accent) 40%, var(--line));
+}
+
+*{box-sizing:border-box}
+html{background:var(--bg);scroll-behavior:smooth}
+@media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.75 var(--sans);overflow-x:hidden}
+img{max-width:100%;height:auto;display:block}
+a{color:var(--accent-ink)}
+a:focus-visible,.btn:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+code,kbd{font-family:var(--mono);font-size:.88em}
+p code,li code{background:var(--accent-soft);padding:.1em .35em;border-radius:3px;overflow-wrap:anywhere}
+kbd{border:1px solid var(--line);border-bottom-width:2px;border-radius:4px;padding:0 .35em;background:var(--surface);white-space:nowrap}
+
+/* grid 子項預設 min-width:auto，會被 pre 的長行撐寬 → 手機水平捲動 */
+.hero-grid>*,.feat>*,.split>*,.install>*{min-width:0}
+.wrap{max-width:1120px;margin:0 auto;padding-inline:clamp(16px,4vw,32px)}
+
+/* ---------- 頂部終端機導覽列 ---------- */
+.topbar{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--frame-bg);border-bottom:1px solid var(--frame-line);
+  font:13px/1 var(--mono);color:var(--frame-ink)}
+.topbar .wrap{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:40px}
+.crumb{display:flex;align-items:center;gap:.55em;text-decoration:none;color:var(--frame-ink);white-space:nowrap;min-width:0}
+.crumb .p{color:var(--amber)}
+.crumb .home{color:var(--cyan)}
+.crumb .sep{color:var(--frame-dim)}
+.crumb .here{color:var(--accent);font-weight:600}
+.crumb:hover .home{text-decoration:underline}
+.topnav{display:flex;gap:16px}
+.topnav a{color:var(--frame-dim);text-decoration:none}
+.topnav a:hover{color:var(--frame-ink)}
+@media (max-width:520px){.topnav .opt{display:none}}
+
+/* ---------- 首屏 ---------- */
+.hero{padding-block:clamp(40px,7vw,88px) clamp(32px,5vw,56px);
+  background:radial-gradient(1200px 400px at 85% -10%, var(--accent-soft), transparent 70%)}
+.hero-grid{display:grid;gap:clamp(28px,4vw,48px)}
+.eyebrow{font:13px/1.5 var(--mono);color:var(--dim);margin:0 0 14px}
+.eyebrow b{color:var(--accent-ink);font-weight:600}
+.hero h1{margin:0;font:600 clamp(30px,8vw,76px)/1.1 var(--mono);letter-spacing:-.02em}
+.hero h1 .cur{display:inline-block;width:.5em;height:.9em;background:var(--accent);vertical-align:-.08em;margin-left:.08em;animation:blink 1.1s steps(1) infinite}
+@keyframes blink{50%{opacity:0}}
+@media (prefers-reduced-motion: reduce){.hero h1 .cur{animation:none}}
+.tagline{margin:18px 0 0;font-size:clamp(20px,2.6vw,26px);font-weight:500;line-height:1.45;max-width:24em}
+.lede{margin:14px 0 0;color:var(--soft);max-width:38em}
+.actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:26px}
+.btn{display:inline-flex;align-items:center;gap:.5em;font:600 15px/1 var(--sans);text-decoration:none;padding:13px 20px;border-radius:8px;border:1px solid transparent}
+.btn.primary{background:var(--accent);color:var(--on-accent)}
+.btn.primary:hover{background:color-mix(in oklab, var(--accent) 88%, #fff)}
+.btn.ghost{border-color:var(--line);color:var(--ink);background:var(--surface)}
+.btn.ghost:hover{border-color:var(--accent-line)}
+.btn svg{width:18px;height:18px;flex:none}
+.req{margin:14px 0 0;font:13px/1.6 var(--mono);color:var(--dim)}
+
+/* 終端機外框（截圖容器） */
+.term{border:1px solid var(--frame-line);border-radius:10px;overflow:hidden;background:#1d1d2d;
+  box-shadow:0 1px 0 rgba(255,255,255,.04) inset, 0 24px 60px -24px rgba(0,20,40,.45)}
+.term .bar{display:flex;align-items:center;gap:7px;padding:9px 12px;background:#15151f;border-bottom:1px solid #2a2a3a;font:12px/1 var(--mono);color:#7d8590}
+.term .bar i{width:11px;height:11px;border-radius:50%;background:#3a3a4a;flex:none}
+.term .bar span{margin-left:8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.term .bar .mock{margin-left:auto;flex:none;font-style:normal;font-size:11px;color:#e6b450;border:1px solid #5a4a20;border-radius:4px;padding:2px 6px}
+.term img{width:100%;height:auto}  /* 依原圖比例完整顯示；空白邊請先用 tools/trim_shots.py 裁掉 */
+.hero .term{border-color:var(--accent-line)}
+.cap{margin:10px 2px 0;font-size:13px;color:var(--dim)}
+
+/* ---------- 區塊共用 ---------- */
+section{scroll-margin-top:56px}
+.sec{padding-block:clamp(48px,7vw,88px);border-top:1px solid var(--line)}
+.sec-head{max-width:40em;margin-bottom:clamp(28px,4vw,44px)}
+.kicker{font:13px/1 var(--mono);color:var(--accent-ink);margin:0 0 10px}
+.sec h2{margin:0;font-size:clamp(26px,3.4vw,34px);line-height:1.3;font-weight:700}
+.sec-head p{margin:12px 0 0;color:var(--soft)}
+
+/* 功能區塊：文字＋截圖交錯 */
+.feat{display:grid;gap:22px;align-items:center;padding-block:clamp(20px,3vw,32px)}
+.feat + .feat{border-top:1px dashed var(--line)}
+.feat h3{margin:0;font-size:21px;line-height:1.4}
+.feat h3 .n{font:600 13px/1 var(--mono);color:var(--accent-ink);display:block;margin-bottom:8px}
+.feat p{margin:10px 0 0;color:var(--soft)}
+.feat ul{margin:12px 0 0;padding-left:1.2em;color:var(--soft)}
+.feat li{margin:4px 0}
+@media (min-width:880px){
+  .feat{grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:44px}
+  .feat.flip{grid-template-columns:minmax(0,7fr) minmax(0,5fr)}  /* 圖在左時也給圖寬欄 */
+  .feat.flip .txt{order:2}
+}
+
+/* 自由區塊 split：左文字、右程式碼或截圖（例：給 AI agent 使用） */
+.split{display:grid;gap:24px}
+@media (min-width:880px){.split{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:44px;align-items:start}}
+.split-p{color:var(--soft);margin:12px 0 0}
+.split-p b{color:var(--ink)}
+.note{border-left:3px solid var(--amber);background:color-mix(in oklab, var(--amber) 9%, var(--bg));padding:12px 16px;border-radius:0 6px 6px 0;color:var(--soft);font-size:15px;margin:16px 0 0}
+.note b{color:var(--ink)}
+
+/* 程式碼 */
+pre.code{margin:0;background:var(--code-bg);color:var(--code-ink);border:1px solid var(--frame-line);border-radius:10px;
+  padding:16px 18px;overflow-x:auto;font:13px/1.75 var(--mono);tab-size:2}
+pre.code .c{color:#6b7682}
+pre.code .p{color:var(--amber);user-select:none}
+pre.code .a{color:var(--accent)}
+
+/* 安裝 */
+.install{display:grid;gap:28px}
+@media (min-width:880px){.install{grid-template-columns:minmax(0,7fr) minmax(0,5fr);gap:44px;align-items:start}}
+.steps{margin:0;padding:0;list-style:none;display:grid;gap:14px;color:var(--soft)}
+.steps li{padding:14px 16px;border:1px solid var(--line);border-radius:8px;background:var(--surface)}
+.steps b{color:var(--ink)}
+.side h3{margin:0 0 10px;font-size:19px}
+.side ul{margin:0;padding-left:1.2em;color:var(--soft)}
+.side li{margin:6px 0}
+.side .term{margin-top:18px}
+
+/* 自由區塊 cards：卡片清單（例：已知限制） */
+.cards{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));margin:0;padding:0;list-style:none}
+.cards li{border:1px solid var(--line);border-radius:8px;padding:14px 16px;background:var(--surface);color:var(--soft);font-size:15px}
+.cards .ct{display:block;font-weight:700;color:var(--ink);margin-bottom:4px}  /* 卡片標題；內文的 <b> 維持行內粗體 */
+
+/* ---------- 頁尾：品牌記號＋連結列＋說明 ---------- */
+/* 品牌記號的色條由 content.yml 的 brand_bars 定義；沒有定義的專案只顯示名稱 */
+footer{margin-top:clamp(40px,6vw,72px);border-top:1px solid var(--line);padding-block:36px calc(48px + env(safe-area-inset-bottom,0px));font-size:13.5px;color:var(--dim)}
+footer .row{display:flex;flex-wrap:wrap;justify-content:space-between;gap:16px;align-items:center}
+footer .brand{font:800 22px/1 var(--sans);color:var(--ink);display:flex;align-items:center;gap:8px;letter-spacing:-.02em}
+footer nav{display:flex;flex-wrap:wrap;gap:18px}
+footer a{color:var(--soft);text-decoration:none}
+footer a:hover{color:var(--accent-ink)}
+footer p{margin:18px 0 0}
+.mark{display:inline-flex;gap:3px;align-items:stretch;height:.78em}
+.mark i{display:block;width:.11em;border-radius:1px}
+</style>
+</head>
+<body>
+
+<nav class="topbar" aria-label="返回入口網站">
+  <div class="wrap">
+    <a class="crumb" href="https://mark22013333.github.io/" title="回到作品入口">
+      <span class="p">$</span><span class="home">~/portal</span><span class="sep">›</span><span class="here">VoiceType</span>
+    </a>
+    <div class="topnav">
+      <a class="opt" href="#features">功能</a>
+      <a class="opt" href="#providers">LLM Provider</a>
+      <a href="#install">安裝</a>
+    </div>
+  </div>
+</nav>
+
+<main>
+  <!-- 首屏 -->
+  <header class="hero">
+    <div class="wrap hero-grid">
+      <div>
+        <p class="eyebrow"><b>桌面 App</b> · macOS · Windows · Tauri v2</p>
+        <h1>VoiceType<span class="cur" aria-hidden="true"></span></h1>
+        <p class="tagline">macOS／Windows 語音轉文字桌面 App，離線辨識加 AI 潤稿。</p>
+        <p class="lede">按全域熱鍵（macOS 預設 <kbd>Cmd+Shift+O</kbd>）開始錄音，語音辨識預設在本機完成。停止後可以交給 AI 依「潤稿風格」整理成會議紀錄、任務清單、郵件草稿等書面文字，結果預設直接貼到游標所在位置。不錄音時也能貼上文字直接潤稿。</p>
+        <div class="actions">
+          <a class="btn primary" href="https://github.com/mark22013333/VoiceType/releases/latest">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg>
+            下載
+          </a>
+          <a class="btn ghost" href="https://github.com/mark22013333/VoiceType">
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5a11.5 11.5 0 0 0-3.64 22.41c.58.1.79-.25.79-.56v-2c-3.2.7-3.88-1.37-3.88-1.37-.52-1.33-1.28-1.69-1.28-1.69-1.05-.71.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.55-.29-5.24-1.28-5.24-5.69 0-1.26.45-2.29 1.19-3.09-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.17 1.18a11 11 0 0 1 5.77 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.8 1.19 1.83 1.19 3.09 0 4.42-2.69 5.39-5.26 5.68.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.8.56A11.5 11.5 0 0 0 12 .5Z"/></svg>
+            GitHub
+          </a>
+        </div>
+        <p class="req">需求：macOS 10.15 以上（Apple Silicon）或 Windows 10 以上（x64）；AI 潤稿預設使用 Claude Code CLI，也可改用其他 LLM Provider</p>
+      </div>
+      <figure style="margin:0">
+        <div class="term">
+          <div class="bar"><i></i><i></i><i></i><span>VoiceType — 錄音完成</span></div>
+          <img src="img/meeting.png" width="1520" height="834"
+               alt="VoiceType 工具列顯示錄音 01:12 已完成並提示「已貼上」，下方展開面板列出帶時間的逐字稿，再往下是 AI 整理結果">
+        </div>
+        <figcaption class="cap">一場 72 秒的錄音停止後，AI 依「會議紀錄」風格整理，結果自動貼到游標位置（工具列提示「已貼上」）；展開面板保留逐字稿與整理結果。</figcaption>
+      </figure>
+    </div>
+  </header>
+
+
+  <!-- 功能 -->
+  <section id="features" class="sec">
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="kicker">// 功能</p>
+        <h2>錄音、辨識、潤稿都在一條工具列上</h2>
+        <p>平常只是一條常駐工具列，不佔螢幕空間；停止錄音後才展開面板顯示逐字稿與結果。</p>
+      </div>
+
+      <article class="feat">
+        <div class="txt">
+          <h3><span class="n">01 · 錄音</span>錄音中就看得到辨識文字</h3>
+          <p>按全域熱鍵或工具列的 <code>REC</code> 開始錄音。錄音中工具列顯示計時、目前的辨識模式與模型、音量波形，以及最新一段辨識出來的文字。</p>
+          <ul>
+            <li>熱鍵預設 macOS <kbd>Cmd+Shift+O</kbd>、Windows <kbd>Ctrl+Shift+O</kbd>，可在「設定 → 快捷鍵」更換</li>
+            <li>觸發方式可選「按一下開始／再按一下停止」或「按住錄音／放開停止」</li>
+            <li><code>⏸</code> 按鈕暫停、<code>STOP</code> 停止</li>
+            <li>工具列寬度可以拖曳調整</li>
+          </ul>
+        </div>
+        <div class="term">
+          <div class="bar"><i></i><i></i><i></i><span>VoiceType — 錄音中</span></div>
+          <img src="img/recording.png" width="1520" height="112" loading="lazy"
+               alt="錄音中的工具列：紅色計時 01:12、「會議 · MediaTek Breeze-ASR-25」辨識模式標籤、音量波形、最新一段辨識文字，右側是暫停與 STOP 按鈕">
+        </div>
+      </article>
+
+      <article class="feat flip">
+        <div class="txt">
+          <h3><span class="n">02 · 自動潤稿</span>停止錄音後自動整理（需先開啟）</h3>
+          <p>停錄後是否送 AI 潤稿，由「設定 → 錄音」的兩個開關決定，<b>兩者預設都是關閉</b>：沒開的話，結果就是原始逐字稿。</p>
+          <ul>
+            <li>日常即時聽寫：每次定稿後自動 AI 潤稿，不受秒數門檻限制</li>
+            <li>會議／離線錄音：停止後自動 AI 潤稿；低於門檻秒數（預設 60 秒）的錄音直接輸出原文，不呼叫 LLM</li>
+            <li>逐字稿超過 5000 字會自動分段整理</li>
+            <li>沒開自動潤稿時，也可以在展開面板按「AI 整理」手動送出</li>
+          </ul>
+        </div>
+        <div class="term">
+          <div class="bar"><i></i><i></i><i></i><span>VoiceType — AI 整理結果</span></div>
+          <img src="img/meeting-result.png" width="1520" height="834" loading="lazy"
+               alt="「會議紀錄」風格的整理結果：標題「版本發布確認會議」，下分「發布準備」「待處理事項」兩段條列，下方有「複製結果」按鈕">
+        </div>
+      </article>
+
+      <article class="feat">
+        <div class="txt">
+          <h3><span class="n">03 · 潤稿風格</span>8 種內建風格，也能自訂</h3>
+          <p>潤稿風格決定 AI 整理的口氣與格式，不會改變原始逐字稿、辨識模型或 LLM Provider。</p>
+          <ul>
+            <li>內建：日常自然（預設）、會議紀錄、任務清單、郵件草稿、簡短訊息、正式語氣、輕鬆語氣、提示詞最佳化</li>
+            <li>可以新增自訂風格，或從內建風格複製後修改</li>
+            <li>每種風格的 prompt 都能檢視（清單只顯示前幾行）</li>
+          </ul>
+        </div>
+        <div class="term">
+          <div class="bar"><i></i><i></i><i></i><span>VoiceType 設定 — 潤稿風格</span></div>
+          <img src="img/settings-styles.png" width="1360" height="1600" loading="lazy"
+               alt="設定視窗的潤稿風格頁：日常自然、會議紀錄、任務清單三張卡片，列出說明與 prompt 開頭，右上角有「新增自訂風格」按鈕">
+        </div>
+      </article>
+
+      <article class="feat flip">
+        <div class="txt">
+          <h3><span class="n">04 · 輸出方式</span>結果直接貼到游標位置</h3>
+          <p>預設會把結果寫進剪貼簿、模擬 <kbd>Cmd+V</kbd>／<kbd>Ctrl+V</kbd> 貼到目前游標所在位置；原本剪貼簿若是文字，貼上後會還原。也可以在「設定 → 一般 → 辨識結果輸出」改成「只複製到剪貼簿」。</p>
+          <ul>
+            <li>macOS 上自動貼上需要「輔助使用」權限；貼上失敗時工具列會顯示錯誤與「開啟權限設定」按鈕，結果仍可在展開面板複製</li>
+            <li>原本剪貼簿若是圖片、檔案或空白，不會還原，結果會留在剪貼簿（不會另外提示）；文字還原失敗時工具列會提示</li>
+            <li>AI 潤稿的 LLM Provider 與模型也在「一般」頁設定；用 Claude CLI 時可選 Haiku／Sonnet／Opus，不指定則由 Claude CLI 自動選擇</li>
+          </ul>
+        </div>
+        <div class="term">
+          <div class="bar"><i></i><i></i><i></i><span>VoiceType 設定 — 一般</span></div>
+          <img src="img/settings-general.png" width="1360" height="1520" loading="lazy"
+               alt="設定視窗的一般頁：AI 潤稿模型區塊顯示 Provider 為 Claude CLI（訂閱）、Haiku／Sonnet／Opus 三個選項，下方「辨識結果輸出」選的是「複製到剪貼簿並自動貼上」">
+        </div>
+      </article>
+
+      <article class="feat">
+        <div class="txt">
+          <h3><span class="n">05 · TYPE 模式</span>不錄音也能潤稿</h3>
+          <p>按工具列的 <code>TYPE</code>，直接貼上文字進行 AI 潤稿，套用目前的潤稿風格與模型設定。下圖用的是「簡短訊息」風格；潤稿完成後同樣依「辨識結果輸出」設定自動貼上。</p>
+          <ul>
+            <li>輸入框右下角即時顯示字數</li>
+            <li>超過 500 字會提醒「文字量較大，AI 處理可能產生較高費用」</li>
+          </ul>
+        </div>
+        <div class="term">
+          <div class="bar"><i></i><i></i><i></i><span>VoiceType — TYPE 模式</span></div>
+          <img src="img/type-mode.png" width="1200" height="760" loading="lazy"
+               alt="TYPE 模式：輸入框是一段口語文字，按「潤稿」後下方顯示整理成一句話的訊息，工具列提示「已貼上」">
+        </div>
+      </article>
+
+      <article class="feat flip">
+        <div class="txt">
+          <h3><span class="n">06 · 本機辨識</span>語音辨識預設在本機完成</h3>
+          <p>辨識引擎跑在本機：Whisper（whisper.cpp），以及 SenseVoice、Paraformer 等 sherpa-onnx 模型。模型在「設定 → 模型管理」下載，每個模型標出大小、品質、速度與適用情境。</p>
+          <ul>
+            <li>也可以在模型管理頁連線到外部的 ASR 伺服器（選用），連上後辨識改由該伺服器處理</li>
+            <li>「日常即時聽寫」：純麥克風錄音時可改用專用的中英串流模型，說話時立即顯示文字；會議模式仍用高品質模型</li>
+            <li>辨識前做高通濾波＋RNNoise 降噪（兩者一起在「設定 → 錄音」的降噪開關控制）</li>
+            <li>錄音檔（<code>.wav</code>）和逐字稿（<code>.txt</code>）存在可自訂的目錄，展開面板的「開啟檔案位置」可直接打開</li>
+          </ul>
+        </div>
+        <div class="term">
+          <div class="bar"><i></i><i></i><i></i><span>VoiceType 設定 — 模型管理</span></div>
+          <img src="img/settings-models.png" width="1360" height="1800" loading="lazy"
+               alt="設定視窗的模型管理頁：上方「日常即時聽寫」區列出三個串流模型，下方語音辨識模型目前使用 MediaTek Breeze-ASR-25（台灣中英混合），標示 Whisper 與推薦">
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <!-- AI 潤稿用哪個模型 -->
+  <section id="providers" class="sec">
+    <div class="wrap split">
+      <div>
+        <p class="kicker">// AI 潤稿用哪個模型</p>
+        <h2>預設 Claude CLI，也可以換別家</h2>
+        <p class="split-p">AI 潤稿可以選 5 種 LLM Provider，在「設定 → LLM Provider」切換。Provider、模型、輸出方式都是全域設定，切換潤稿風格不會改變它們。</p>
+        <p class="split-p">用免費額度的 Provider 錄音超過 10 分鐘時，工具列會提醒長逐字稿可能受速率或輸入長度限制；部分整理失敗時，失敗段以原文保留。</p>
+      </div>
+      <pre class="code" tabindex="0" aria-label="可選的 LLM Provider（App 內顯示名稱與計費說明）">Claude CLI（訂閱）        走 Claude.ai 訂閱（OAuth）   <span class="c"># 預設</span>
+Antigravity CLI（訂閱）   走 Google AI 訂閱
+Google Gemini             免費 tier（15 RPM / 1500 RPD）
+Groq（Llama / Mixtral）   免費 tier（限額但持續）
+Ollama（本機）            本機，完全免費</pre>
+    </div>
+  </section>
+
+  <!-- 安裝 -->
+  <section id="install" class="sec">
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="kicker">// 安裝</p>
+        <h2>從 Releases 下載安裝檔</h2>
+        <p>前往 GitHub Releases 下載最新版本：macOS（Apple Silicon）是 <code>VoiceType_x.x.x_aarch64.dmg</code>，Windows（x64）是 <code>VoiceType_x.x.x_x64-setup.exe</code>。</p>
+      </div>
+      <div class="install">
+        <div>
+          <pre class="code" tabindex="0" aria-label="macOS 首次開啟前（每次更新後也要再執行一次）"><span class="c"># 把 VoiceType 拖入 Applications 資料夾後，在終端機執行：</span>
+<span class="p">$ </span>xattr -cr /Applications/VoiceType.app</pre>
+          <ul class="steps" style="margin-top:16px">
+            <li><b>macOS：</b>下載 <code>.dmg</code>，開啟後將 VoiceType 拖入 Applications 資料夾，再執行上面的指令。</li>
+            <li><b>Windows：</b>Edge 若顯示「不常下載」，在下載項目旁的選單依序選「保留」→「顯示更多」→「仍要保留」；執行安裝程式時若 SmartScreen 顯示「Windows 已保護您的電腦」，選「其他資訊」→「仍要執行」。</li>
+            <li><b>仍然閃退時，</b>到 <code>%APPDATA%\com.voicetype.app\logs\</code> 取得 <code>bootstrap.log</code> 與最新的當機記錄，到 GitHub Issues 回報。</li>
+          </ul>
+        </div>
+        <div class="side">
+          <h3>第一次開啟之後</h3>
+          <ul>
+            <li>工具列提示「尚未載入語音模型」時，到「設定 → 模型管理」下載一個模型。</li>
+            <li>想要停錄後自動潤稿，到「設定 → 錄音」開啟對應的開關。</li>
+            <li>在「設定 → 一般」確認 Claude CLI 路徑（會自動偵測）與 LLM Provider；改用其他 Provider 到「設定 → LLM Provider」。</li>
+            <li>macOS 上全域熱鍵與自動貼上需要「輔助使用」權限，工具列會提示並提供開啟設定的按鈕。</li>
+          </ul>
+          <div class="term">
+            <div class="bar"><i></i><i></i><i></i><span>VoiceType 設定 — 錄音</span></div>
+            <img src="img/settings-recording.png" width="1036" height="840" loading="lazy"
+                 alt="設定視窗的錄音頁：「日常即時聽寫」的每次定稿後自動 AI 潤稿未勾選；「會議／離線錄音」的停止後自動 AI 潤稿已勾選，門檻 60 秒">
+          </div>
+          <p class="cap">截圖中「會議／離線錄音」的自動潤稿是手動開啟後的狀態；兩個開關的預設都是關閉。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 使用前須知 -->
+  <section id="notes" class="sec">
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="kicker">// 使用前須知</p>
+        <h2>安裝與使用前請先知道</h2>
+      </div>
+      <ul class="cards">
+        <li><b class="ct">macOS 版尚未取得 Apple 開發者簽名</b>macOS 會顯示「已損毀，無法打開」。這不是檔案損壞，而是 Gatekeeper 的限制；首次開啟前執行 <code>xattr -cr /Applications/VoiceType.app</code>，<b>每次更新版本後需要重新執行一次。</b></li>
+        <li><b class="ct">Windows 安裝檔尚未使用付費的程式碼簽章憑證</b>發行者會顯示為「不明」，SmartScreen 也可能把新版標示為不常下載。這不代表檔案已損壞；請只從 GitHub Releases 下載，來源不明的檔案請取消安裝。</li>
+        <li><b class="ct">Windows／VMware 啟動後可能閃退</b>尤其在 VMware 的 Windows 11 虛擬機器內，可能是 WebView2 與虛擬顯示卡的硬體加速相容性問題。執行 <code>setx VOICETYPE_SOFTWARE_RENDERING 1</code> 後重新啟動即改用軟體繪圖；改回執行 <code>setx VOICETYPE_SOFTWARE_RENDERING 0</code>。</li>
+        <li><b class="ct">停錄後自動潤稿預設是關閉的</b>要在「設定 → 錄音」開啟。會議／離線錄音另有秒數門檻（預設 60 秒），低於門檻直接輸出原文。</li>
+        <li><b class="ct">自動貼上會暫時佔用剪貼簿</b>原本剪貼簿若是文字，貼上後會還原（還原失敗時工具列會提示）；若是圖片、檔案或空白則不會還原，結果會留在剪貼簿。macOS 上需要「輔助使用」權限，否則貼上會失敗（結果仍可在展開面板複製）。</li>
+        <li><b class="ct">macOS 版只提供 Apple Silicon</b>Releases 上的 macOS 安裝檔是 <code>aarch64</code> 版；Windows 為 x64。</li>
+      </ul>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="row">
+      <span class="brand"><span class="mark" aria-hidden="true"><i style="background:#d94438"></i><i style="background:#1f88c0"></i><i style="background:#1f9d57"></i></span>VoiceType</span>
+      <nav aria-label="頁尾連結">
+        <a href="https://github.com/mark22013333/VoiceType">GitHub</a>
+        <a href="https://github.com/mark22013333/VoiceType/releases/latest">最新釋出版</a>
+        <a href="https://mark22013333.github.io/">回作品集</a>
+      </nav>
+    </div>
+    <p>macOS／Windows 語音轉文字桌面 App。本頁截圖全部使用虛構的展示資料。</p>
+  </div>
+</footer>
+
+</body>
+</html>

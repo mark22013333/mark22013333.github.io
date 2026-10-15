@@ -1,0 +1,268 @@
+{
+  "_說明": "ChatPulse 介紹頁截圖用的虛構展示資料。人名、Space、對話全部是編的；seed.py 寫進 SQLite，shoot.cjs 在瀏覽器端用來回應需要 Google Chat 的端點。",
+  "viewer": {
+    "google_user_id": "users/100000000000000000001",
+    "email": "xiaoming@example.com",
+    "display_name": "小明"
+  },
+  "people": {
+    "users/100000000000000000002": "阿華",
+    "users/100000000000000000003": "小美",
+    "users/100000000000000000004": "志明",
+    "users/100000000000000000005": "怡君"
+  },
+  "spaces": [
+    {
+      "id": "spaces/DEMO0002",
+      "displayName": "範例專案群組",
+      "type": "SPACE",
+      "members": 8,
+      "active_hours_ago": 0.4
+    },
+    {
+      "id": "spaces/DEMO0001",
+      "displayName": "示範頻道",
+      "type": "SPACE",
+      "members": 24,
+      "active_hours_ago": 1.5
+    },
+    {
+      "id": "spaces/DEMO0003",
+      "displayName": "ACME 維運值班",
+      "type": "SPACE",
+      "members": 6,
+      "active_hours_ago": 3
+    },
+    {
+      "id": "spaces/DEMO0004",
+      "displayName": "前端小組",
+      "type": "GROUP_CHAT",
+      "members": 4,
+      "active_hours_ago": 5
+    },
+    {
+      "id": "spaces/DEMO0005",
+      "displayName": "阿華",
+      "type": "DIRECT_MESSAGE",
+      "members": 2,
+      "active_hours_ago": 7,
+      "renamable": true,
+      "nameSource": "dm_peer"
+    },
+    {
+      "id": "spaces/DEMO0006",
+      "displayName": "週會紀錄",
+      "type": "SPACE",
+      "members": 15,
+      "active_hours_ago": 26
+    },
+    {
+      "id": "spaces/DEMO0007",
+      "displayName": "範例客戶對接窗口",
+      "type": "SPACE",
+      "members": 5,
+      "active_hours_ago": 50
+    },
+    {
+      "id": "spaces/DEMO0008",
+      "displayName": "小美",
+      "type": "DIRECT_MESSAGE",
+      "members": 2,
+      "active_hours_ago": 75,
+      "renamable": true,
+      "nameSource": "dm_peer"
+    }
+  ],
+  "messages": {
+    "spaces/DEMO0002": [
+      {
+        "sender": "阿華",
+        "sender_id": "users/100000000000000000002",
+        "minutes_ago": 150,
+        "thread": "t1",
+        "text": "staging 的範例專案 v2.3 部署完了，大家可以開始測"
+      },
+      {
+        "sender": "小美",
+        "sender_id": "users/100000000000000000003",
+        "minutes_ago": 138,
+        "thread": "t1",
+        "text": "匯出報表那頁會轉圈很久，最後跳 504"
+      },
+      {
+        "sender": "阿華",
+        "sender_id": "users/100000000000000000002",
+        "minutes_ago": 131,
+        "thread": "t1",
+        "text": "我看 log 是查詢超過 30 秒被 gateway 切掉，資料量大的那個租戶才會"
+      },
+      {
+        "sender": "志明",
+        "sender_id": "users/100000000000000000004",
+        "minutes_ago": 120,
+        "thread": "t1",
+        "text": "先試過把 gateway timeout 拉到 60 秒，一樣會掛，所以不是設定問題"
+      },
+      {
+        "sender": "小美",
+        "sender_id": "users/100000000000000000003",
+        "minutes_ago": 96,
+        "thread": "t1",
+        "text": "那改成背景產檔、做完再通知？"
+      },
+      {
+        "sender": "阿華",
+        "sender_id": "users/100000000000000000002",
+        "minutes_ago": 90,
+        "thread": "t1",
+        "text": "可以，我傾向這樣。但要先確認排程機有沒有空間放暫存檔"
+      },
+      {
+        "sender": "志明",
+        "sender_id": "users/100000000000000000004",
+        "minutes_ago": 40,
+        "thread": "t2",
+        "text": "@小明 排程機那台的磁碟你之前有看過嗎？週五前要決定要不要擴"
+      },
+      {
+        "sender": "怡君",
+        "sender_id": "users/100000000000000000005",
+        "minutes_ago": 25,
+        "thread": "t3",
+        "text": "週四 demo 的投影片我放在共用資料夾了"
+      }
+    ]
+  },
+  "mentions": [
+    {
+      "key": "m1",
+      "space_id": "spaces/DEMO0002",
+      "space_name": "範例專案群組",
+      "thread": "t2",
+      "sender": "users/100000000000000000004",
+      "sender_display": "志明",
+      "minutes_ago": 40,
+      "state": "pending",
+      "text": "@小明 排程機那台的磁碟你之前有看過嗎？週五前要決定要不要擴"
+    },
+    {
+      "key": "m2",
+      "space_id": "spaces/DEMO0005",
+      "space_name": "阿華",
+      "thread": "t9",
+      "sender": "users/100000000000000000002",
+      "sender_display": "阿華",
+      "minutes_ago": 190,
+      "state": "pending",
+      "text": "@小明 下午的 code review 你方便嗎？想請你看一下匯出改背景產檔那個 PR"
+    },
+    {
+      "key": "m3",
+      "space_id": "spaces/DEMO0001",
+      "space_name": "示範頻道",
+      "thread": "t5",
+      "sender": "users/100000000000000000005",
+      "sender_display": "怡君",
+      "minutes_ago": 300,
+      "state": "pending",
+      "text": "@小明 新人上手文件的「本機環境」那段可以幫忙補一下嗎？"
+    },
+    {
+      "key": "m4",
+      "space_id": "spaces/DEMO0003",
+      "space_name": "ACME 維運值班",
+      "thread": "t6",
+      "sender": "users/100000000000000000003",
+      "sender_display": "小美",
+      "minutes_ago": 1500,
+      "state": "resolved",
+      "text": "@小明 昨晚的告警已經恢復了，麻煩確認一下"
+    },
+    {
+      "key": "m5",
+      "space_id": "spaces/DEMO0006",
+      "space_name": "週會紀錄",
+      "thread": "t7",
+      "sender": "users/100000000000000000004",
+      "sender_display": "志明",
+      "minutes_ago": 2900,
+      "state": "resolved",
+      "text": "@小明 這週的進度你補一下"
+    }
+  ],
+  "summaries": [
+    {
+      "space_id": "spaces/DEMO0001",
+      "space_name": "示範頻道",
+      "style": "general",
+      "message_count": 50,
+      "content_md": "### 📌 核心討論主題與脈絡\n- 新人上手文件要改版：怡君整理了目前缺的段落，「本機環境」與「權限申請」兩段還沒有人寫。\n- 測試環境的帳號改成每人一組，舊的共用帳號下週停用。\n\n### 🤝 共識與重要決議\n- 共用測試帳號下週一停用，之後一律用個人帳號。\n- 上手文件放在共用資料夾，改版完成前不另發連結。\n\n### 🎯 待辦事項與追蹤 (Action Items)\n• [怡君] 整理上手文件缺少的段落清單\n• [小明] 補「本機環境」那一段\n• [志明] 寄送個人測試帳號給每位成員"
+    },
+    {
+      "space_id": "spaces/DEMO0002",
+      "space_name": "範例專案群組",
+      "style": "technical",
+      "message_count": 8,
+      "content_md": "### 🔧 技術問題與症狀\n- staging 的範例專案 v2.3：匯出報表頁面轉圈後回 `504`。\n- 只有資料量大的租戶會發生；log 顯示查詢超過 30 秒被 gateway 切斷。\n\n### 🧪 已排除的假設與排查過程\n- 志明把 gateway timeout 拉到 60 秒，仍然失敗 → 排除「只是 timeout 設太短」。\n\n### 🛠️ 技術方案與取捨\n- 小美提議改成背景產檔、完成後通知；阿華傾向採用。\n- 代價：需要排程機有空間放暫存檔，目前尚未確認。\n\n### ⚠️ 未解的技術問題\n- 排程機磁碟空間是否足夠，對話中沒有數據。\n\n### 🎯 待辦事項與追蹤 (Action Items)\n• [小明] 確認排程機磁碟空間，週五前決定是否擴充\n• [阿華] 開背景產檔的 PR"
+    }
+  ],
+  "draft": {
+    "mention_key": "m1",
+    "content_md": "### 🧭 脈絡分析\n- **發生什麼事**：匯出報表在 staging 回 504，討論串傾向改成背景產檔；志明要確認排程機的磁碟能不能放暫存檔，週五前要決定是否擴充。\n- **關鍵決策**：方向是背景產檔、做完再通知（阿華同意）。\n- **未解問題**：對話中沒有排程機目前的磁碟用量數據，回話不要自己編數字。\n- **脈絡涵蓋**：這個討論串只有這 1 則；另讀了同一聊天室其他討論串的 6 則當背景，沒有看到關於磁碟用量的討論。\n- **程式碼佐證**：未查程式碼\n\n### ✍️ 建議回話\n我之前沒有仔細看過那台的磁碟。今天下班前我登進去看目前用量，再估一下背景產檔每天會吃掉多少，週四前回你要不要擴。",
+    "generation_config": {
+      "provider": "claude_cli",
+      "model": "claude-cli:opus",
+      "sepia": false,
+      "meta": {
+        "type": "meta",
+        "mention_id": null,
+        "space": "範例專案群組",
+        "thread_message_count": 7,
+        "context": {
+          "mode": "thread_thin",
+          "message_count": 7,
+          "anchor_count": 1,
+          "coverage": "full",
+          "time_range": {
+            "start": null,
+            "end": null
+          },
+          "blocks": [
+            {
+              "kind": "thread",
+              "label": "該討論串的完整對話（共 1 則）",
+              "count": 1
+            },
+            {
+              "kind": "cross_thread",
+              "label": "⚠️ 同一聊天室其他討論串的近期訊息（共 6 則）",
+              "count": 6
+            }
+          ]
+        },
+        "answering": [],
+        "reference_spaces": [],
+        "code_refs": [],
+        "code_skipped": [],
+        "provider": "claude_cli",
+        "model": "claude-cli:opus",
+        "image_count": 0,
+        "images_skipped": [],
+        "reply": {
+          "sepia": false
+        }
+      }
+    },
+    "_說明": "generation_config 的形狀照 dashboard/api/server.py:3284-3292（現行版本：平鋪的 provider／model／回話設定＋整份 meta）。meta.mention_id、answering、context.time_range 由 seed.py 依實際寫入的值補上。"
+  },
+  "collector": {
+    "polled_minutes_ago": 1,
+    "stats": {
+      "new_mentions": 1,
+      "spaces_polled": 3,
+      "spaces_total": 8,
+      "elapsed_seconds": 0.8,
+      "api_calls": 4
+    }
+  }
+}

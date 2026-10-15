@@ -1,0 +1,198 @@
+# sshm 作品介紹頁的內容。改完執行 python3 tools/build_sites.py 重新產生 /sshm/。
+#
+# 字串欄位分兩種：
+#   純文字：slug、name、tagline、各種 alt、bar（截圖視窗標題）、label、kicker、nav 標籤、url
+#           會自動做 HTML 跳脫，直接寫文字即可。
+#   行內 HTML：其餘說明文字（lede、intro、paragraphs、bullets、caption、note、body…）
+#           可以用 <code>、<kbd>、<b>；要顯示 < > & 本身請寫 &lt; &gt; &amp;。
+# code 欄位是純文字，產生器自動上色：以「$ 」開頭的行加提示字元，「#」開頭的行
+# 或指令後空兩格以上再接「#」的部分當註解，highlight 列出的字串用主色。
+
+slug: sshm
+name: sshm
+tagline: macOS 上的 SSH 機器管理 TUI。
+accent: '#00afff'          # 取自 TUI 分頁列「機器」高亮色
+brand_bars: ['#e5484d', '#2f7fe0', '#2fb35a', '#f08c2e', '#f2c94c']   # 選填；省略則頁尾只顯示名稱
+github: https://github.com/mark22013333/sshm   # footer_links 省略時，預設頁尾＝GitHub＋回作品集
+
+eyebrow:
+  kind: TUI 工具
+  meta: [macOS, Go]
+
+lede: '按 <kbd>Enter</kbd> 在目前的 terminal 原地連線；在 Orca 裡按 <kbd>Shift+Enter</kbd> 會開新分頁連線。另外可以管理 SSH 轉送（Tunnel 頁）、把機器開通給 AI agent 用專用金鑰連線，並在「關於」頁一鍵更新到最新版。'
+
+buttons:
+  - label: 安裝
+    url: '#install'
+    icon: download
+  - label: GitHub
+    url: https://github.com/mark22013333/sshm
+    icon: github
+
+requirements: 需求：macOS（Apple Silicon 或 Intel）
+
+hero:
+  image: host-list.png
+  bar: sshm — 機器清單
+  alt: sshm 機器清單：依群組折疊，每台機器左側有顏色條，名稱下方是 user@host:port，已開通給 AI agent 的機器後面標 🤖 別名
+  caption: '依群組折疊，每台機器左側有顏色條，名稱下方是 <code>user@host:port</code>，已開通給 AI agent 的機器後面標 🤖 別名。'
+
+features:
+  id: features
+  nav: 功能
+  nav_optional: true
+  kicker: // 功能
+  title: 連線、轉送、更新在同一個 TUI，匯入一行指令
+  intro: '按 <kbd>Tab</kbd> 在「機器」→「Tunnel」→「關於」三頁之間輪流切換。'
+  items:
+    - label: 搜尋
+      title: 打字就過濾
+      paragraphs:
+        - 開啟後游標就在搜尋框，直接打字即可過濾，比對名稱、host、user、群組（不分大小寫）。
+      bullets:
+        - '<code>sshm acme</code> 開清單並預填搜尋字'
+        - '<kbd>Enter</kbd> 在目前的 terminal 原地連線'
+        - '<kbd>Esc</kbd> 清空搜尋，再按一次離開'
+      image: search.png
+      bar: sshm — 搜尋「db」
+      alt: 輸入「db」後只剩名稱或 user 含 db 的三台機器
+
+    - label: Tunnel 頁
+      title: 管理 SSH 轉送
+      paragraphs:
+        - '管理 SSH 轉送（<code>-L</code>／<code>-R</code>／<code>-D</code>）。每列顯示狀態燈、名稱、機器名稱與規則摘要（例 <code>L 13306→127.0.0.1:3306</code>、<code>D 1080</code>）。'
+      bullets:
+        - ● 執行中、○ 已停止、◌ 無法確認
+        - '<kbd>Enter</kbd> 啟動／停止，<kbd>Ctrl+G</kbd> 前往分頁'
+        - 啟動與停止需要在 Orca 的 terminal 中執行；其他終端機裡 Tunnel 頁為唯讀
+      image: tunnel-page.png
+      bar: sshm — Tunnel
+      alt: Tunnel 頁：「ACME PROD DB」亮綠色 ● 表示執行中，另外兩條是 ○ 已停止，每列後面是規則摘要
+
+    - label: 從 iTerm2 匯入
+      title: 舊的連線設定一次搬過來
+      paragraphs:
+        - 'iTerm2 若是用 <code>login.exp &lt;port&gt; &lt;user&gt; &lt;host&gt; &lt;password&gt;</code> 登入，<code>sshm import-iterm</code> 一次匯入。'
+      bullets:
+        - 先進預覽畫面：預設全選
+        - 已有相同 host＋port＋user 的標「重複」、預設不勾
+        - 讀取過程不寫任何暫存檔
+      image: import-iterm.png
+      bar: sshm import-iterm
+      alt: iTerm2 匯入預覽：可匯入的預設勾選，「無法匯入」的列出原因，與本批另一個 profile 重複的標「重複」且預設不勾
+
+    - label: 關於頁與更新
+      title: 在 TUI 裡按 U 更新
+      paragraphs:
+        - '「關於」頁列出目前版本、GitHub 上的最新版本、檔案位置與快捷鍵一覽。有新版時，機器頁的狀態列會提示到「關於」按 <kbd>U</kbd> 更新。'
+      bullets:
+        - 'SHA-256 相符才解出 <code>sshm</code>：只能確認下載過程沒有損壞或被截斷，<b>無法</b>防止 Release 本身或 GitHub 帳號被竄改；目前沒有簽章驗證'
+        - 下載中斷、校驗不符或任何一步失敗，原執行檔都不會被改動
+        - 一天最多查一次，查詢失敗不會顯示任何訊息
+        - 開發版、執行檔目錄沒有寫入權限、或不是 macOS 時不自動更新，「關於」頁會改列手動做法
+      image: about-page.png
+      bar: sshm — 關於
+      alt: 關於頁：目前版本與最新版本皆為 v0.4.0、更新狀態「已是最新版」，下面列出 hosts.json、agent 別名設定、金鑰目錄與執行檔的實際路徑
+
+# 自由區塊：type 為 split（左文字、右程式碼或截圖）或 cards（卡片清單）。
+# position: before_install（預設）或 after_install。
+sections:
+  - type: split
+    id: agent
+    position: before_install
+    nav: AI agent
+    nav_optional: true
+    kicker: // 給 AI agent 使用
+    title: 讓 agent 連進 VM，正常使用時不碰密碼
+    paragraphs:
+      - '讓別的 AI agent（Claude Code、Codex 等）能連進 VM 查東西，而且<b>正常使用時不需要、也不會接觸密碼</b>：sshm 用已存的密碼登入一次，替每台機器裝上一把專用金鑰並寫好 ssh 別名，之後 agent 只用 <code>ssh &lt;別名&gt;</code> 連線。'
+      - '在 TUI 的機器清單選一台按 <kbd>Ctrl+O</kbd> 也能開通，已開通的再按一次是停用。這和安裝步驟 3 在 zsh 提示列上叫出 sshm 的 <kbd>Ctrl+O</kbd> 是不同功能。'
+    note: '<b>安全界線：</b>這個功能防的是 agent「誤開通」與「順手拿密碼來用」，<b>不是</b>防惡意繞過。agent 與 sshm 在同一個 OS 帳號下執行，技術上讀得到 <code>hosts.json</code> 裡的明碼密碼與 <code>~/.ssh/sshm/</code> 的私鑰。要防惡意的 agent，得讓它跑在另一個 OS 帳號、容器或 VM 裡，讀不到你的家目錄。'
+    code:
+      label: AI agent 相關指令
+      highlight: [sshm-prod-vm]
+      text: |-
+        $ sshm agent enable 範例客戶-PROD-VM   # 開通（列出要做的事，按 y 才執行）
+        $ sshm agent list                      # 已開通的機器
+        $ sshm agent list --json               # 給 agent 讀的格式（不含密碼）
+        $ sshm agent disable 範例客戶-PROD-VM  # 停用（按 y 才執行）
+        $ sshm agent guide                     # 印出給 agent 指引檔的說明
+
+        # 之後 agent 只需要：
+        $ ssh sshm-prod-vm '<指令>'
+
+  - type: cards
+    id: limits
+    position: after_install
+    kicker: // 已知限制
+    title: 使用前請先知道（完整 8 條）
+    cards:
+      - title: 密碼以明碼保存
+        body: '存在 hosts.json 裡。連線時經環境變數交給 expect 腳本，不出現在行程參數中；但 expect 行程的初始環境在連線期間仍含密碼，同一使用者或 root 讀得到。在 Orca 開新分頁時，<code>orca terminal create --command=…</code> 行程存活的短暫期間，其參數仍含密碼。'
+      - title: 在 Orca 開新分頁時，密碼會出現在畫面上
+        body: 連線指令（含密碼）是打進新分頁 shell 的文字，會顯示在新分頁畫面與 scrollback 裡。
+      - title: 沒開 HIST_IGNORE_SPACE 時，連線指令會進 history
+        body: '連線指令（含密碼）會寫進 shell history；分頁若是 bash，要另外設定 <code>HISTCONTROL=ignorespace</code>。'
+      - title: Orca 可能把 scrollback 存到磁碟
+        body: 依 Orca 原始碼推論，未實測；密碼可能因此留在磁碟上。
+      - title: AI agent 的金鑰沒有 passphrase
+        body: '任何能讀 <code>~/.ssh/sshm/</code> 的程式都能用它登入已開通的機器，請只開通需要的機器，用完就停用。'
+      - title: 金鑰已登入後仍可能送出密碼（機率極低）
+        body: 若已用金鑰登入，而遠端在登入時窗（20 秒）內、你按任何鍵之前，印出指名本次 user@host 的密碼提示，sshm 仍會送出密碼。
+      - title: 密碼不能含 emoji 等非 BMP 字元
+        body: macOS 內建的 expect 是 Tcl 8.5，非 BMP 字元會被重複編碼，導致密碼錯誤。中文等 BMP 字元正常。
+      - title: 新分頁的 shell 要是 POSIX 相容的 shell
+        body: '連線指令用 POSIX 單引號規則跳脫；fish 對單引號內的 <code>\</code> 解讀不同，密碼或參數含 <code>\</code>、<code>&#39;</code> 時可能出錯。'
+
+install:
+  id: install
+  nav: 安裝
+  kicker: // 安裝
+  title: 一行 curl 裝好
+  intro: '需求：macOS（Apple Silicon 或 Intel）。密碼登入會用到 macOS 內建的 <code>/usr/bin/expect</code> 與 <code>ssh</code>，不用另外安裝。'
+  code:
+    label: 安裝指令
+    text: |-
+      # 1. 安裝（一行，自動判斷 Apple Silicon／Intel）
+      mkdir -p ~/.local/bin && curl -fsSL "https://github.com/mark22013333/sshm/releases/latest/download/sshm_darwin_$(uname -m | sed s/x86_64/amd64/).tar.gz" | tar xz -C ~/.local/bin sshm
+
+      # 2. 把安裝目錄加進 PATH，並讓行首帶空白的指令不進 history
+      echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.zshrc
+      echo 'setopt HIST_IGNORE_SPACE' >> ~/.zshrc
+
+      # 3. （選用）在 zsh 提示列按 Ctrl+O 叫出 sshm
+      sshm zsh-widget >> ~/.zshrc
+
+      # 4. 重新載入
+      source ~/.zshrc
+  steps:
+    - title: 確認版本：
+      body: '<code>sshm --version</code>。升級可在 TUI 的「關於」頁按 <kbd>U</kbd>，或重跑步驟 1。'
+    - title: 請用上面的 curl 安裝。
+      body: '若改用瀏覽器下載壓縮檔，macOS 會因執行檔未經 Apple 簽章而擋下，需要先執行 <code>xattr -d com.apple.quarantine sshm</code>。'
+    - title: 已安裝 Go 1.24 以上
+      body: '的話，也可以用 <code>go install github.com/mark22013333/sshm@latest</code>（裝到 <code>~/go/bin</code>）。'
+  side:
+    title: 加入機器（三種方式擇一）
+    items:
+      - '<code>sshm add</code> 逐台新增。'
+      - 'iTerm2 用 <code>login.exp</code> 登入的，<code>sshm import-iterm</code> 一次匯入。'
+      - '由別人匯出清單給你：對方執行 <code>sshm export sshm-share.json</code>（預設<b>不含密碼</b>），你執行 <code>sshm import sshm-share.json</code>，再於編輯畫面補上自己的密碼。分享清單時請不要加 <code>--with-passwords</code>，匯出檔中的密碼是明碼。'
+    image: host-form.png
+    bar: sshm add
+    alt: 新增機器表單：名稱、群組、host、port、user、認證方式、密碼、顏色、額外 ssh 參數、自訂指令
+    caption: '必填：名稱、host、user；<kbd>Ctrl+S</kbd> 儲存、<kbd>Esc</kbd> 取消。'
+
+footer_links:
+  - label: GitHub
+    url: https://github.com/mark22013333/sshm
+  - label: CHANGELOG
+    url: https://github.com/mark22013333/sshm/blob/main/CHANGELOG.md
+  - label: 最新釋出版
+    url: https://github.com/mark22013333/sshm/releases/latest
+  - label: 回作品集
+    url: https://mark22013333.github.io/
+footer_note: macOS 上的 SSH 機器管理 TUI。本頁截圖全部使用虛構的展示資料。
+
+# 預留英文版欄位（尚未實作語言切換，產生器目前忽略）
+en: null

@@ -1,0 +1,28 @@
+<!-- 示意：/plan-start 完成時的回傳結果。
+     文字格式依 plugins/feature-workflow/skills/plan-start/SKILL.md「10. 回傳結果」；
+     S1–S7 項目名稱依同檔「9. 退出驗證」。專案名、人名、分支名、URL 皆為虛構。 -->
+<meta charset="utf-8"><link rel="stylesheet" href="mock.css">
+<div id="shot" class="term"><span class="b">任務已建立！</span>
+
+📋 Notion 頁面：<span class="bl">https://www.notion.so/example/order-csv-export</span>
+📁 本地任務：.spec/order-csv-export/（plan.md + state.json）
+🔀 Git branch：<span class="tl">feature/order-csv-export</span>
+📊 類型：Feature
+
+退出驗證結果：
+  ✅ S1 Notion 頁面已建立
+  ✅ S2 專案資料庫：ACME 商城
+  ✅ S3 修復分支：feature/order-csv-export
+  ✅ S4 開發階段：需求分析
+  ✅ S5 負責人：小明
+  ✅ S6 plan.md 骨架六節齊全
+  ✅ S7 state.json 驗證通過（phase=start）
+  結論：<span class="gr">7 項全部通過</span>
+
+後續可使用：
+  • <span class="bl">/plan</span>                  <span class="sub">— 完整規劃（spec → db → arch 三個 pass 寫進 plan.md）</span>
+  • <span class="bl">/plan spec|db|arch</span>     <span class="sub">— 只跑其中一個 pass</span>
+  • <span class="bl">/plan-build</span>            <span class="sub">— 多角色協作產生程式碼</span>
+  • <span class="bl">/plan-next</span>             <span class="sub">— 不確定下一步時問它</span>
+  • <span class="bl">/plan-status</span>           <span class="sub">— 查看所有任務狀態</span>
+  • <span class="bl">/plan-close</span>            <span class="sub">— 結案並同步 Notion</span></div>

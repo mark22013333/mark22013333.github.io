@@ -1,0 +1,434 @@
+<!doctype html>
+<html lang="zh-TW">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<!-- 本檔由 tools/build_sites.py 從 _sites/crew/content.yml 產生，請勿直接修改 -->
+<title>CREW</title>
+<meta name="description" content="CREW：整合 Notion 的 Bug 修復與功能開發工作流 plugin，Claude Code 與 Codex 共用。">
+<meta property="og:title" content="CREW">
+<meta property="og:description" content="整合 Notion 的 Bug 修復與功能開發工作流 plugin，Claude Code 與 Codex 共用。">
+<meta property="og:url" content="https://mark22013333.github.io/crew/">
+<meta property="og:type" content="website">
+<meta property="og:image" content="https://mark22013333.github.io/crew/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Noto+Sans+TC:wght@400;500;700&display=swap">
+<style>
+/* ============================================================
+   專案主色：由 content.yml 的 accent 帶入，每個作品頁只差這一行。
+   其餘所有主色相關的顏色都由 --accent 以 color-mix 推導。
+   ============================================================ */
+:root{ --accent:#2fb37a; }
+
+/* ---------- 外框（沿用入口網站，深淺色皆固定深色） ---------- */
+:root{
+  --frame-bg:#0e1318; --frame-line:#2a3a45; --frame-ink:#c9d1d9; --frame-dim:#6b7682;
+  --amber:#e6b450; --cyan:#7fbfd9; --green:#8fcf8f;
+  --mono:"JetBrains Mono","Noto Sans TC","Heiti TC","Microsoft JhengHei",ui-monospace,Menlo,monospace;
+  --sans:"Noto Sans TC","Heiti TC","Microsoft JhengHei",system-ui,sans-serif;
+
+  /* 內文（淺色） */
+  color-scheme:light;
+  --bg:#f6f7f9; --surface:#ffffff; --ink:#1b232b; --soft:#4a5560; --dim:#6b7682; --line:#dde2e7;
+  --code-bg:#0e1318; --code-ink:#c9d1d9;
+  /* 主色衍生：淺色底上把主色壓暗才夠對比 */
+  --accent-ink:color-mix(in oklab, var(--accent) 62%, #000);
+  --accent-soft:color-mix(in oklab, var(--accent) 12%, var(--bg));
+  --accent-line:color-mix(in oklab, var(--accent) 45%, var(--line));
+  --on-accent:#04121a;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --bg:#11171d; --surface:#161e25; --ink:#dfe5ea; --soft:#9aa6b2; --dim:#76828e; --line:#25323c;
+    --code-bg:#0b1014; --code-ink:#c9d1d9;
+    --accent-ink:color-mix(in oklab, var(--accent) 85%, #fff);
+    --accent-soft:color-mix(in oklab, var(--accent) 14%, var(--bg));
+    --accent-line:color-mix(in oklab, var(--accent) 40%, var(--line));
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --bg:#11171d; --surface:#161e25; --ink:#dfe5ea; --soft:#9aa6b2; --dim:#76828e; --line:#25323c;
+  --code-bg:#0b1014; --code-ink:#c9d1d9;
+  --accent-ink:color-mix(in oklab, var(--accent) 85%, #fff);
+  --accent-soft:color-mix(in oklab, var(--accent) 14%, var(--bg));
+  --accent-line:color-mix(in oklab, var(--accent) 40%, var(--line));
+}
+
+*{box-sizing:border-box}
+html{background:var(--bg);scroll-behavior:smooth}
+@media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.75 var(--sans);overflow-x:hidden}
+img{max-width:100%;height:auto;display:block}
+a{color:var(--accent-ink)}
+a:focus-visible,.btn:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+code,kbd{font-family:var(--mono);font-size:.88em}
+p code,li code{background:var(--accent-soft);padding:.1em .35em;border-radius:3px;overflow-wrap:anywhere}
+kbd{border:1px solid var(--line);border-bottom-width:2px;border-radius:4px;padding:0 .35em;background:var(--surface);white-space:nowrap}
+
+/* grid 子項預設 min-width:auto，會被 pre 的長行撐寬 → 手機水平捲動 */
+.hero-grid>*,.feat>*,.split>*,.install>*{min-width:0}
+.wrap{max-width:1120px;margin:0 auto;padding-inline:clamp(16px,4vw,32px)}
+
+/* ---------- 頂部終端機導覽列 ---------- */
+.topbar{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--frame-bg);border-bottom:1px solid var(--frame-line);
+  font:13px/1 var(--mono);color:var(--frame-ink)}
+.topbar .wrap{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:40px}
+.crumb{display:flex;align-items:center;gap:.55em;text-decoration:none;color:var(--frame-ink);white-space:nowrap;min-width:0}
+.crumb .p{color:var(--amber)}
+.crumb .home{color:var(--cyan)}
+.crumb .sep{color:var(--frame-dim)}
+.crumb .here{color:var(--accent);font-weight:600}
+.crumb:hover .home{text-decoration:underline}
+.topnav{display:flex;gap:16px}
+.topnav a{color:var(--frame-dim);text-decoration:none}
+.topnav a:hover{color:var(--frame-ink)}
+@media (max-width:520px){.topnav .opt{display:none}}
+
+/* ---------- 首屏 ---------- */
+.hero{padding-block:clamp(40px,7vw,88px) clamp(32px,5vw,56px);
+  background:radial-gradient(1200px 400px at 85% -10%, var(--accent-soft), transparent 70%)}
+.hero-grid{display:grid;gap:clamp(28px,4vw,48px)}
+.eyebrow{font:13px/1.5 var(--mono);color:var(--dim);margin:0 0 14px}
+.eyebrow b{color:var(--accent-ink);font-weight:600}
+.hero h1{margin:0;font:600 clamp(30px,8vw,76px)/1.1 var(--mono);letter-spacing:-.02em}
+.hero h1 .cur{display:inline-block;width:.5em;height:.9em;background:var(--accent);vertical-align:-.08em;margin-left:.08em;animation:blink 1.1s steps(1) infinite}
+@keyframes blink{50%{opacity:0}}
+@media (prefers-reduced-motion: reduce){.hero h1 .cur{animation:none}}
+.tagline{margin:18px 0 0;font-size:clamp(20px,2.6vw,26px);font-weight:500;line-height:1.45;max-width:24em}
+.lede{margin:14px 0 0;color:var(--soft);max-width:38em}
+.actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:26px}
+.btn{display:inline-flex;align-items:center;gap:.5em;font:600 15px/1 var(--sans);text-decoration:none;padding:13px 20px;border-radius:8px;border:1px solid transparent}
+.btn.primary{background:var(--accent);color:var(--on-accent)}
+.btn.primary:hover{background:color-mix(in oklab, var(--accent) 88%, #fff)}
+.btn.ghost{border-color:var(--line);color:var(--ink);background:var(--surface)}
+.btn.ghost:hover{border-color:var(--accent-line)}
+.btn svg{width:18px;height:18px;flex:none}
+.req{margin:14px 0 0;font:13px/1.6 var(--mono);color:var(--dim)}
+
+/* 終端機外框（截圖容器） */
+.term{border:1px solid var(--frame-line);border-radius:10px;overflow:hidden;background:#1d1d2d;
+  box-shadow:0 1px 0 rgba(255,255,255,.04) inset, 0 24px 60px -24px rgba(0,20,40,.45)}
+.term .bar{display:flex;align-items:center;gap:7px;padding:9px 12px;background:#15151f;border-bottom:1px solid #2a2a3a;font:12px/1 var(--mono);color:#7d8590}
+.term .bar i{width:11px;height:11px;border-radius:50%;background:#3a3a4a;flex:none}
+.term .bar span{margin-left:8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.term .bar .mock{margin-left:auto;flex:none;font-style:normal;font-size:11px;color:#e6b450;border:1px solid #5a4a20;border-radius:4px;padding:2px 6px}
+.term img{width:100%;height:auto}  /* 依原圖比例完整顯示；空白邊請先用 tools/trim_shots.py 裁掉 */
+.hero .term{border-color:var(--accent-line)}
+.cap{margin:10px 2px 0;font-size:13px;color:var(--dim)}
+
+/* ---------- 區塊共用 ---------- */
+section{scroll-margin-top:56px}
+.sec{padding-block:clamp(48px,7vw,88px);border-top:1px solid var(--line)}
+.sec-head{max-width:40em;margin-bottom:clamp(28px,4vw,44px)}
+.kicker{font:13px/1 var(--mono);color:var(--accent-ink);margin:0 0 10px}
+.sec h2{margin:0;font-size:clamp(26px,3.4vw,34px);line-height:1.3;font-weight:700}
+.sec-head p{margin:12px 0 0;color:var(--soft)}
+
+/* 功能區塊：文字＋截圖交錯 */
+.feat{display:grid;gap:22px;align-items:center;padding-block:clamp(20px,3vw,32px)}
+.feat + .feat{border-top:1px dashed var(--line)}
+.feat h3{margin:0;font-size:21px;line-height:1.4}
+.feat h3 .n{font:600 13px/1 var(--mono);color:var(--accent-ink);display:block;margin-bottom:8px}
+.feat p{margin:10px 0 0;color:var(--soft)}
+.feat ul{margin:12px 0 0;padding-left:1.2em;color:var(--soft)}
+.feat li{margin:4px 0}
+@media (min-width:880px){
+  .feat{grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:44px}
+  .feat.flip{grid-template-columns:minmax(0,7fr) minmax(0,5fr)}  /* 圖在左時也給圖寬欄 */
+  .feat.flip .txt{order:2}
+}
+
+/* 自由區塊 split：左文字、右程式碼或截圖（例：給 AI agent 使用） */
+.split{display:grid;gap:24px}
+@media (min-width:880px){.split{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:44px;align-items:start}}
+.split-p{color:var(--soft);margin:12px 0 0}
+.split-p b{color:var(--ink)}
+.note{border-left:3px solid var(--amber);background:color-mix(in oklab, var(--amber) 9%, var(--bg));padding:12px 16px;border-radius:0 6px 6px 0;color:var(--soft);font-size:15px;margin:16px 0 0}
+.note b{color:var(--ink)}
+
+/* 程式碼 */
+pre.code{margin:0;background:var(--code-bg);color:var(--code-ink);border:1px solid var(--frame-line);border-radius:10px;
+  padding:16px 18px;overflow-x:auto;font:13px/1.75 var(--mono);tab-size:2}
+pre.code .c{color:#6b7682}
+pre.code .p{color:var(--amber);user-select:none}
+pre.code .a{color:var(--accent)}
+
+/* 安裝 */
+.install{display:grid;gap:28px}
+@media (min-width:880px){.install{grid-template-columns:minmax(0,7fr) minmax(0,5fr);gap:44px;align-items:start}}
+.steps{margin:0;padding:0;list-style:none;display:grid;gap:14px;color:var(--soft)}
+.steps li{padding:14px 16px;border:1px solid var(--line);border-radius:8px;background:var(--surface)}
+.steps b{color:var(--ink)}
+.side h3{margin:0 0 10px;font-size:19px}
+.side ul{margin:0;padding-left:1.2em;color:var(--soft)}
+.side li{margin:6px 0}
+.side .term{margin-top:18px}
+
+/* 自由區塊 cards：卡片清單（例：已知限制） */
+.cards{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));margin:0;padding:0;list-style:none}
+.cards li{border:1px solid var(--line);border-radius:8px;padding:14px 16px;background:var(--surface);color:var(--soft);font-size:15px}
+.cards .ct{display:block;font-weight:700;color:var(--ink);margin-bottom:4px}  /* 卡片標題；內文的 <b> 維持行內粗體 */
+
+/* ---------- 頁尾：品牌記號＋連結列＋說明 ---------- */
+/* 品牌記號的色條由 content.yml 的 brand_bars 定義；沒有定義的專案只顯示名稱 */
+footer{margin-top:clamp(40px,6vw,72px);border-top:1px solid var(--line);padding-block:36px calc(48px + env(safe-area-inset-bottom,0px));font-size:13.5px;color:var(--dim)}
+footer .row{display:flex;flex-wrap:wrap;justify-content:space-between;gap:16px;align-items:center}
+footer .brand{font:800 22px/1 var(--sans);color:var(--ink);display:flex;align-items:center;gap:8px;letter-spacing:-.02em}
+footer nav{display:flex;flex-wrap:wrap;gap:18px}
+footer a{color:var(--soft);text-decoration:none}
+footer a:hover{color:var(--accent-ink)}
+footer p{margin:18px 0 0}
+.mark{display:inline-flex;gap:3px;align-items:stretch;height:.78em}
+.mark i{display:block;width:.11em;border-radius:1px}
+</style>
+</head>
+<body>
+
+<nav class="topbar" aria-label="返回入口網站">
+  <div class="wrap">
+    <a class="crumb" href="https://mark22013333.github.io/" title="回到作品入口">
+      <span class="p">$</span><span class="home">~/portal</span><span class="sep">›</span><span class="here">CREW</span>
+    </a>
+    <div class="topnav">
+      <a class="opt" href="#features">功能</a>
+      <a class="opt" href="#portable">跨 Host</a>
+      <a href="#install">安裝</a>
+    </div>
+  </div>
+</nav>
+
+<main>
+  <!-- 首屏 -->
+  <header class="hero">
+    <div class="wrap hero-grid">
+      <div>
+        <p class="eyebrow"><b>Claude Code／Codex plugin</b> · Notion · Python · MIT</p>
+        <h1>CREW<span class="cur" aria-hidden="true"></span></h1>
+        <p class="tagline">整合 Notion 的 Bug 修復與功能開發工作流 plugin，Claude Code 與 Codex 共用。</p>
+        <p class="lede">用 <code>.spec/</code>、deterministic state 與 Human approval gate 管理 Bug 修復與功能開發的生命週期。需求、架構、UAT 由人決定；分析、規劃、實作與 review 交給模型；Git、schema、state transition、build/test、lint 交給程式驗證。</p>
+        <div class="actions">
+          <a class="btn primary" href="#install">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg>
+            安裝
+          </a>
+          <a class="btn ghost" href="https://github.com/mark22013333/crew">
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5a11.5 11.5 0 0 0-3.64 22.41c.58.1.79-.25.79-.56v-2c-3.2.7-3.88-1.37-3.88-1.37-.52-1.33-1.28-1.69-1.28-1.69-1.05-.71.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.55-.29-5.24-1.28-5.24-5.69 0-1.26.45-2.29 1.19-3.09-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.17 1.18a11 11 0 0 1 5.77 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.8 1.19 1.83 1.19 3.09 0 4.42-2.69 5.39-5.26 5.68.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.8.56A11.5 11.5 0 0 0 12 .5Z"/></svg>
+            GitHub
+          </a>
+        </div>
+        <p class="req">需求：Git、Python 3、已安裝 CREW 的 Claude Code 或 Codex；Notion 流程另需 Notion</p>
+      </div>
+      <figure style="margin:0">
+        <div class="term">
+          <div class="bar"><i></i><i></i><i></i><span>CREW — Feature 與 Bug 流程</span><em class="mock">介面示意（依原始碼重繪）</em></div>
+          <img src="img/lifecycle.png" width="1120" height="672"
+               alt="流程圖：Feature 由 /plan-start 經 /plan spec、需求核准、/plan db、/plan arch、架構核准、/plan-build、/plan-security、/plan-verify、/plan-review 到 /plan-close 與 Human UAT；Bug 由 /bug-start 經 /bug-investigate、/bug-fix 到 /bug-close 與 Human UAT">
+        </div>
+        <figcaption class="cap">橘色虛線框是人類決策：需求核准、架構核准、UAT。machine verify／review 不能自動等同人類接受；UAT 拒絕時 Feature 回到 build、Bug 回到 fix。</figcaption>
+      </figure>
+    </div>
+  </header>
+
+
+  <!-- 功能 -->
+  <section id="features" class="sec">
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="kicker">// 功能</p>
+        <h2>先確認需求，再建任務；中斷了照狀態檔接著做</h2>
+        <p>Bug 主流程：<code>/bug-start</code> → <code>/bug-investigate</code> → <code>/bug-fix</code> → <code>/bug-close</code>。Feature 主流程：<code>/plan-start</code> → <code>/plan</code> → <code>/plan-build</code> → <code>/plan-security</code> → <code>/plan-verify</code> → <code>/plan-review</code> → <code>/plan-close</code>。</p>
+      </div>
+
+      <article class="feat">
+        <div class="txt">
+          <h3><span class="n">01 · Intake Refinement</span>動手前先確認「要做什麼」</h3>
+          <p><code>/plan-start</code> 與 <code>/bug-start</code> 會先把原始需求交給唯讀的 Intake Refiner 整理成短標題與描述，列出已知限制與歧義，由人明確確認後才建立任何東西。使用者不需要手動呼叫 Refiner，它不是 Slash Skill。</p>
+          <ul>
+            <li>確認前不建 Notion 頁面、不建 <code>.spec</code>、不初始化 state、不動 Git branch；選「取消」就零 side effect</li>
+            <li>只有不回答就可能改變需求方向時才提問，最多 3 個問題</li>
+            <li>確認後、寫入任何地方前，疑似 password、token、API key、private key、Cookie 的內容必須先由人提供遮蔽版本</li>
+            <li>Host 不能委派時，主 Agent inline 執行同一份唯讀 contract，人類確認不能省略</li>
+          </ul>
+        </div>
+        <div class="term">
+          <div class="bar"><i></i><i></i><i></i><span>/plan-start — Intake 確認</span><em class="mock">介面示意（依原始碼重繪）</em></div>
+          <img src="img/intake-confirm.png" width="826" height="583" loading="lazy"
+               alt="/plan-start 顯示原始需求、精煉後的標題與描述、已知限制、非阻塞歧義，以及確認、修改補充、使用原始需求、取消四個選項">
+        </div>
+      </article>
+
+      <article class="feat flip">
+        <div class="txt">
+          <h3><span class="n">02 · /plan-start</span>一個指令建好 Notion、.spec 與分支</h3>
+          <p>確認後，<code>/plan-start</code> 在 Notion 建立任務頁、建立 <code>.spec/{slug}/</code>（<code>plan.md</code> 骨架＋<code>state.json</code>），並可從專案設定的 PROD 分支開出 <code>feature/{slug}</code> 或 <code>hotfix/{slug}</code>。</p>
+          <ul>
+            <li>回傳前跑 S1–S7 退出驗證：Notion 欄位用讀回頁面確認、本地狀態用 script 判定，不信任 Agent 自己的記憶</li>
+            <li>Notion API 失敗時仍建立本地 <code>.spec/{slug}/</code>，之後用 <code>/plan-sync</code> 補建</li>
+            <li>負責人用 Git 提交 email 比對 Notion 使用者自動填入，比對不到只提示、不阻擋</li>
+          </ul>
+        </div>
+        <div class="term">
+          <div class="bar"><i></i><i></i><i></i><span>/plan-start — 任務已建立</span><em class="mock">介面示意（依原始碼重繪）</em></div>
+          <img src="img/plan-start-done.png" width="952" height="728" loading="lazy"
+               alt="/plan-start 完成畫面：列出 Notion 頁面、本地任務目錄、Git branch、類型，S1 到 S7 退出驗證全部打勾，以及後續可用的指令">
+        </div>
+      </article>
+
+      <article class="feat">
+        <div class="txt">
+          <h3><span class="n">03 · Notion 頁面</span>每個任務頁都是同一個結構</h3>
+          <p>Feature 頁面固定 5 個區塊：需求描述、技術規格、資料庫設計、程式碼清單、開發日誌。<code>/plan-sync</code>（中途）與 <code>/plan-close</code>（結案）以區塊標題為契約，把 <code>plan.md</code> 與 <code>deploy.sql</code> 寫進對應區塊。</p>
+          <ul>
+            <li>「原始需求」與「確認後任務描述」建立時寫入，之後的同步只更新它們後面的內容</li>
+            <li><code>deploy.sql</code> 全文寫進「遷移 SQL」，是唯一的 SQL 事實來源</li>
+            <li><code>/bug-setup</code> 可從零建立專案資料庫、任務追蹤工具、Bug 知識庫；功能設計庫由 <code>/plan-setup</code> 建立</li>
+          </ul>
+        </div>
+        <div class="term">
+          <div class="bar"><i></i><i></i><i></i><span>Notion — 任務追蹤工具</span><em class="mock">介面示意（依原始碼重繪）</em></div>
+          <img src="img/notion-feature.png" width="1120" height="1654" loading="lazy"
+               alt="剛建立的 Feature 頁面：屬性有任務類型「💬 功能要求」、狀態進行中、優先順序中、難度中、開發階段需求分析、專案資料庫、負責人、修復分支；內文已填原始需求與確認後任務描述，其餘區塊只有標題">
+        </div>
+      </article>
+
+      <article class="feat flip">
+        <div class="txt">
+          <h3><span class="n">04 · 斷點續跑</span>中斷之後，下一步由狀態檔算出來</h3>
+          <p>每個任務唯一的流程狀態是 <code>.spec/{slug}/state.json</code>，唯一寫者是 <code>crew-state.py</code>。<code>/plan-next</code> 從 state 計算下一步，中斷後不需要靠模型回憶流程進度。</p>
+          <ul>
+            <li>Claude Code 的 SessionStart hook 會讀當前 repo 的 <code>.spec/*/state.json</code>，提示未完成工作與下一步；不修改產品檔案、不需要網路，錯誤時不阻擋 session</li>
+            <li>工作做到一半中斷時，下一步會是同一個指令加 <code>--resume</code>，先續跑未完成的工作單元</li>
+            <li><code>/plan-next</code> 照實轉述 script 的答案，不自行推理流程</li>
+          </ul>
+        </div>
+        <div class="term">
+          <div class="bar"><i></i><i></i><i></i><span>SessionStart hook ＋ /plan-next</span><em class="mock">介面示意（依原始碼重繪）</em></div>
+          <img src="img/resume.png" width="1027" height="322" loading="lazy"
+               alt="SessionStart hook 以 additionalContext 交給模型的內容（不保證原樣顯示在畫面上）列出 2 個未結案任務與停滯天數；執行 /plan-next 後顯示目前在 build 階段，下一步是 /plan-build --resume，理由是中斷於 2/4 角色">
+        </div>
+      </article>
+
+      <article class="feat">
+        <div class="txt">
+          <h3><span class="n">05 · Bug 流程</span>從通報到經驗教訓，寫在同一頁</h3>
+          <p><code>/bug-start</code> 在 Notion 建立 Bug 條目與最小的 <code>state.json</code>，不建 <code>plan.md</code> 也不開新分支。頁面固定有問題描述、調查過程、根因分析、修復方案、驗證、經驗教訓。</p>
+          <ul>
+            <li><code>/bug-investigate</code> 假說驅動調查，根因確認後才能進 <code>/bug-fix</code></li>
+            <li><code>/bug-fix</code> 修復並做回歸驗證，兩者都可 <code>--resume</code></li>
+            <li><code>/bug-close</code> 不把 build／test 等 machine evidence 當成使用者接受修復；人明確接受後才結案，拒絕就回到 <code>/bug-fix</code></li>
+          </ul>
+        </div>
+        <div class="term">
+          <div class="bar"><i></i><i></i><i></i><span>Notion — Bug 條目</span><em class="mock">介面示意（依原始碼重繪）</em></div>
+          <img src="img/notion-bug.png" width="1120" height="2670" loading="lazy"
+               alt="/bug-start 建立後的 Bug 頁面：任務類型「🐞 錯誤」、優先順序高、環境正式、修復分支 main；內文有原始通報、確認後問題描述與發生時間，調查過程已自動寫入初始環境快照（最近 5 筆 commit、環境狀態、歷史參考、歷史學習），下面是根因分析、修復方案、驗證勾選清單、經驗教訓">
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <!-- Claude Code 與 Codex -->
+  <section id="portable" class="sec">
+    <div class="wrap split">
+      <div>
+        <p class="kicker">// Claude Code 與 Codex</p>
+        <h2>同一套流程，不綁單一 AI Host</h2>
+        <p class="split-p">Skill 描述的是「需要什麼能力」，例如委派、平行、tool probe、詢問使用者，而不是某一家的工具名稱。Host 沒有 multi-agent、平行 delegation 或 per-worker model 選擇時，會降級成 inline／sequential 執行，不會因此破壞流程正確性。</p>
+        <p class="split-p">Workflow 先選能力 profile，再由 Host adapter 對映實際模型。正式產品程式碼只有 <code>/plan-build</code> 與 <code>/bug-fix</code> 兩條流程可以修改；其他 Skill 只能修改規格、報告、state／metadata 或外部系統紀錄。</p>
+      </div>
+      <pre class="code" tabindex="0" aria-label="一個任務的本地檔案與模型 profile">.spec/order-csv-export/
+  plan.md      <span class="c"># 目標與範圍、驗收條件、決策紀錄、取捨與風險、指路、檢查報告摘要</span>
+  <span class="a">state.json</span>   <span class="c"># 唯一流程狀態，只由 crew-state.py 寫入</span>
+  deploy.sql   <span class="c"># DB 階段才產生</span>
+
+<span class="c"># Model profile</span>
+NONE      <span class="c"># Git、grep、schema validation、build/test</span>
+FAST      <span class="c"># repository search、證據蒐集、log 摘要</span>
+STANDARD  <span class="c"># 一般需求分析、review、debugging</span>
+DEEP      <span class="c"># architecture、DB schema、security、複雜根因</span></pre>
+    </div>
+  </section>
+
+  <!-- 安裝 -->
+  <section id="install" class="sec">
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="kicker">// 安裝</p>
+        <h2>從 marketplace 安裝兩個 plugin</h2>
+        <p><code>bug-workflow</code> 管 Bug、<code>feature-workflow</code> 管功能開發，只需要其中一個也可以只裝一個。</p>
+      </div>
+      <div class="install">
+        <div>
+          <pre class="code" tabindex="0" aria-label="安裝指令"><span class="c"># Claude Code</span>
+claude plugin install notion
+
+claude plugin marketplace add mark22013333/crew
+claude plugin install bug-workflow
+claude plugin install feature-workflow
+
+<span class="c"># Codex</span>
+codex plugin marketplace add mark22013333/crew
+codex plugin add bug-workflow@crew
+codex plugin add feature-workflow@crew
+codex plugin list</pre>
+          <ul class="steps" style="margin-top:16px">
+            <li><b>Claude Code：</b>安裝後重啟 Claude Code，再執行 <code>/crew-init</code>，或依序執行 <code>/bug-setup</code>、<code>/plan-setup</code>、<code>/project-add</code>。</li>
+            <li><b>Codex：</b>上述流程已用 Codex CLI 0.158.0 做過真實 marketplace add＋plugin install smoke，安裝後兩個 plugin 皆應顯示 <code>installed, enabled</code>。</li>
+            <li><b>更新：</b>執行 <code>/crew-upgrade</code>（<code>--check</code> 只檢查），完成後開新 session，避免目前 session 仍載入舊 Skill。<code>/crew-upgrade</code> 由 <code>bug-workflow</code> 提供；只裝 <code>feature-workflow</code> 時，改用 README 的 Host 手動更新指令。</li>
+          </ul>
+        </div>
+        <div class="side">
+          <h3>首次設定</h3>
+          <ul>
+            <li>準備專案指令：<code>AGENTS.md</code> 或 <code>CLAUDE.md</code>（Claude Code 可用 <code>/init</code> 建立）。兩者都存在時都可讀；有實質衝突時會把衝突列為歧義。</li>
+            <li><code>/bug-setup</code>、<code>/plan-setup</code> 建立 CREW 設定，存放位置依序為 <code>CREW_CONFIG_HOME</code>、<code>$XDG_CONFIG_HOME/crew</code>、<code>~/.config/crew</code>。</li>
+            <li><code>/project-add</code> 註冊專案；自訂或非標準技術棧才需要 <code>/plan-stack</code>。</li>
+            <li>不確定環境是否完整，可跑 <code>/crew-doctor</code> 健診。</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 使用前請先知道 -->
+  <section id="limits" class="sec">
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="kicker">// 使用前請先知道</p>
+        <h2>界線與限制</h2>
+      </div>
+      <ul class="cards">
+        <li><b class="ct">UAT 一定由人決定</b>machine verify／review 不能自動等同人類接受，Feature 與 Bug 都要由人明確決定是否結案。</li>
+        <li><b class="ct">/plan-run 的連跑模式不是無人值守</b>「同 session 一次審查連跑」在本對話連跑，session 結束即暫停；時限從授權簽發起算，上限 4 小時，暫停或重開 session 不會延長。</li>
+        <li><b class="ct">連跑停在 Build Done</b>停在 Build Done（<code>--until arch</code> 時停在規劃完成 <code>completed_plan</code>）。不自動執行正式部署、Git push／merge、Security／Verify／Review 或 Human UAT；<code>git commit</code> 固定不允許。</li>
+        <li><b class="ct">Review Once 只支援 Feature</b>不支援 Bug Workflow；預設仍是逐階段人工核准的 Interactive 流程。</li>
+        <li><b class="ct">trusted-host 模式有門檻</b>只有能提供受保護簽章端與 worker 隔離的 Host 才適用；一般 <code>claude -p</code>／<code>codex exec</code> 不符合。</li>
+        <li><b class="ct">CREW Cockpit 只在 Claude Code</b>唯讀的任務儀表板需 Claude Code ≥ 2.1.289；Codex 核心流程仍完整支援，但沒有 Mod UI。</li>
+      </ul>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="row">
+      <span class="brand">CREW</span>
+      <nav aria-label="頁尾連結">
+        <a href="https://github.com/mark22013333/crew">GitHub</a>
+        <a href="https://github.com/mark22013333/crew/blob/main/CHANGELOG.md">CHANGELOG</a>
+        <a href="https://github.com/mark22013333/crew/releases">Releases</a>
+        <a href="https://mark22013333.github.io/">回作品集</a>
+      </nav>
+    </div>
+    <p>整合 Notion 的 Bug 修復與功能開發工作流 plugin。本頁截圖使用虛構的展示資料，標示『介面示意』者為依原始碼重繪。</p>
+  </div>
+</footer>
+
+</body>
+</html>

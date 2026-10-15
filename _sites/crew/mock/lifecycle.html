@@ -1,0 +1,42 @@
+<!-- 示意：Feature 與 Bug 的指令順序與 Human gate。
+     依 README.md「Feature lifecycle」「Bug lifecycle」兩張 mermaid 圖、「Human gates」一節，
+     以及「Bug Workflow」「Feature Workflow」兩節的主流程一行
+     （raw issue → /bug-start → /bug-investigate → /bug-fix → /bug-close；
+       raw request → /plan-start → /plan → /plan-build → /plan-security → /plan-verify → /plan-review → /plan-close）。 -->
+<meta charset="utf-8"><link rel="stylesheet" href="mock.css">
+<div id="shot" class="flow">
+  <div class="lane">
+    <h4>Feature 流程 <span>start → spec → db → arch → build → security → verify → review → close</span></h4>
+    <div class="row">
+      <div class="n"><code>/plan-start</code><small>Intake＋Human 確認</small></div><span class="a">→</span>
+      <div class="n"><code>/plan spec</code><small>目標・驗收條件</small></div><span class="a">→</span>
+      <div class="g">需求核准</div><span class="a">→</span>
+      <div class="n"><code>/plan db</code><small>deploy.sql</small></div><span class="a">→</span>
+      <div class="n"><code>/plan arch</code><small>架構決策</small></div><span class="a">→</span>
+      <div class="g">架構核准</div><span class="a">→</span>
+    </div>
+    <div class="row">
+      <div class="n"><code>/plan-build</code><small>產生程式碼</small></div><span class="a">→</span>
+      <div class="n"><code>/plan-security</code><small>安全審查</small></div><span class="a">→</span>
+      <div class="n"><code>/plan-verify</code><small>驗收證據</small></div><span class="a">→</span>
+      <div class="n"><code>/plan-review</code><small>程式碼審查</small></div><span class="a">→</span>
+    </div>
+    <div class="row">
+      <div class="n"><code>/plan-close</code><small>結案同步</small></div><span class="a">→</span>
+      <div class="g">Human UAT</div>
+    </div>
+    <div class="loop">↺ 需求或架構未核准 → 回到該 pass 修改　↺ UAT 拒絕 → 回到 build</div>
+  </div>
+  <div class="lane">
+    <h4>Bug 流程 <span>start → investigate → fix → close</span></h4>
+    <div class="row">
+      <div class="n"><code>/bug-start</code><small>Intake＋Human 確認</small></div><span class="a">→</span>
+      <div class="n"><code>/bug-investigate</code><small>證據・假說・根因</small></div><span class="a">→</span>
+      <div class="n"><code>/bug-fix</code><small>修復・回歸測試</small></div><span class="a">→</span>
+      <div class="n"><code>/bug-close</code><small>結案・同步知識</small></div><span class="a">→</span>
+      <div class="g">Human UAT</div>
+    </div>
+    <div class="loop">↺ 根因未確認 → 繼續 investigate　↺ UAT 拒絕 → 回到 fix</div>
+  </div>
+  <div class="legend"><span><i style="border:1.5px solid #2fb37a;background:#effaf4"></i>CREW 指令</span><span><i style="border:1.5px dashed #d9730d;background:#fff6ee;border-radius:8px"></i>人類決策（Human gate）</span></div>
+</div>
