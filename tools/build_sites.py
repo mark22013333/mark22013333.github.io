@@ -32,7 +32,7 @@ try:
 except ImportError:
     sys.exit("缺少 PyYAML：python3 -m pip install --user pyyaml")
 try:
-    from PIL import Image
+    from PIL import Image, ImageDraw, ImageFont
 except ImportError:
     sys.exit("缺少 Pillow：python3 -m pip install --user pillow")
 
@@ -43,6 +43,10 @@ PROJECTS_JSON = os.path.join(ROOT, "projects.json")
 
 PORTAL_URL = "https://mark22013333.github.io/"
 OG_SIZE = (1200, 630)
+# OG 圖上「介面示意」標註用的中文字型（依序找第一個存在的）
+OG_FONTS = ["/System/Library/Fonts/STHeiti Medium.ttc", "/System/Library/Fonts/Hiragino Sans GB.ttc",
+            "/usr/share/fonts/opentype/noto/NotoSansCJK-Bold.ttc"]
+OG_MOCK_LABEL = "介面示意（依原始碼重繪）"
 
 ICONS = {
     "download": '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg>',
@@ -341,15 +345,34 @@ def build_context(slug, c):
     return ctx, used
 
 
-def make_og(src, dst):
-    """等比放大到蓋滿 1200×630，再從左上裁切（與頁面 object-position:left top 一致）。"""
+def make_og(src, dst, mock=False):
+    """等比放大到蓋滿 1200×630，再從左上裁切。
+
+    mock=True（主圖是重繪示意圖）時在右下角加上標註，分享出去也看得出不是實際截圖。
+    """
     with Image.open(src) as im:
         im = im.convert("RGB")
         w, h = im.size
         scale = max(OG_SIZE[0] / w, OG_SIZE[1] / h)
         nw, nh = round(w * scale), round(h * scale)
         im = im.resize((nw, nh), Image.LANCZOS).crop((0, 0) + OG_SIZE)
+        if mock:
+            _draw_mock_label(im)
         im.save(dst, "PNG")
+
+
+def _draw_mock_label(im):
+    font_path = next((f for f in OG_FONTS if os.path.isfile(f)), None)
+    if not font_path:
+        raise SiteError("找不到可畫中文標註的字型（OG_FONTS），無法產生示意圖的 OG 圖")
+    font = ImageFont.truetype(font_path, 30)
+    d = ImageDraw.Draw(im)
+    l, t, r, b = d.textbbox((0, 0), OG_MOCK_LABEL, font=font)
+    pad_x, pad_y, margin = 20, 12, 28
+    w, h = r - l + pad_x * 2, b - t + pad_y * 2
+    x0, y0 = OG_SIZE[0] - margin - w, OG_SIZE[1] - margin - h
+    d.rounded_rectangle((x0, y0, x0 + w, y0 + h), radius=10, fill=(20, 20, 28), outline=(230, 180, 80), width=3)
+    d.text((x0 + pad_x - l, y0 + pad_y - t), OG_MOCK_LABEL, font=font, fill=(230, 180, 80))
 
 
 def build_site(slug, out_root, template):
@@ -364,7 +387,7 @@ def build_site(slug, out_root, template):
     os.makedirs(os.path.join(dst, "img"), exist_ok=True)
     for name in sorted(set(used)):
         shutil.copyfile(os.path.join(SITES, slug, "img", name), os.path.join(dst, "img", name))
-    make_og(ctx["hero"]["path"], os.path.join(dst, "og.png"))
+    make_og(ctx["hero"]["path"], os.path.join(dst, "og.png"), mock=ctx["hero"]["mock"])
     with open(os.path.join(dst, "index.html"), "w", encoding="utf-8", newline="\n") as fh:
         fh.write(page)
     return ctx["tagline"]

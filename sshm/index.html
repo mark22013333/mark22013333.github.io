@@ -173,7 +173,7 @@ pre.code .a{color:var(--accent)}
 /* 自由區塊 cards：卡片清單（例：已知限制） */
 .cards{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));margin:0;padding:0;list-style:none}
 .cards li{border:1px solid var(--line);border-radius:8px;padding:14px 16px;background:var(--surface);color:var(--soft);font-size:15px}
-.cards b{display:block;color:var(--ink);margin-bottom:4px}
+.cards .ct{display:block;font-weight:700;color:var(--ink);margin-bottom:4px}  /* 卡片標題；內文的 <b> 維持行內粗體 */
 
 /* ---------- 頁尾：品牌記號＋連結列＋說明 ---------- */
 /* 品牌記號的色條由 content.yml 的 brand_bars 定義；沒有定義的專案只顯示名稱 */
@@ -391,14 +391,14 @@ source ~/.zshrc</pre>
         <h2>使用前請先知道（完整 8 條）</h2>
       </div>
       <ul class="cards">
-        <li><b>密碼以明碼保存</b>存在 hosts.json 裡。連線時經環境變數交給 expect 腳本，不出現在行程參數中；但 expect 行程的初始環境在連線期間仍含密碼，同一使用者或 root 讀得到。在 Orca 開新分頁時，<code>orca terminal create --command=…</code> 行程存活的短暫期間，其參數仍含密碼。</li>
-        <li><b>在 Orca 開新分頁時，密碼會出現在畫面上</b>連線指令（含密碼）是打進新分頁 shell 的文字，會顯示在新分頁畫面與 scrollback 裡。</li>
-        <li><b>沒開 HIST_IGNORE_SPACE 時，連線指令會進 history</b>連線指令（含密碼）會寫進 shell history；分頁若是 bash，要另外設定 <code>HISTCONTROL=ignorespace</code>。</li>
-        <li><b>Orca 可能把 scrollback 存到磁碟</b>依 Orca 原始碼推論，未實測；密碼可能因此留在磁碟上。</li>
-        <li><b>AI agent 的金鑰沒有 passphrase</b>任何能讀 <code>~/.ssh/sshm/</code> 的程式都能用它登入已開通的機器，請只開通需要的機器，用完就停用。</li>
-        <li><b>金鑰已登入後仍可能送出密碼（機率極低）</b>若已用金鑰登入，而遠端在登入時窗（20 秒）內、你按任何鍵之前，印出指名本次 user@host 的密碼提示，sshm 仍會送出密碼。</li>
-        <li><b>密碼不能含 emoji 等非 BMP 字元</b>macOS 內建的 expect 是 Tcl 8.5，非 BMP 字元會被重複編碼，導致密碼錯誤。中文等 BMP 字元正常。</li>
-        <li><b>新分頁的 shell 要是 POSIX 相容的 shell</b>連線指令用 POSIX 單引號規則跳脫；fish 對單引號內的 <code>\</code> 解讀不同，密碼或參數含 <code>\</code>、<code>&#39;</code> 時可能出錯。</li>
+        <li><b class="ct">密碼以明碼保存</b>存在 hosts.json 裡。連線時經環境變數交給 expect 腳本，不出現在行程參數中；但 expect 行程的初始環境在連線期間仍含密碼，同一使用者或 root 讀得到。在 Orca 開新分頁時，<code>orca terminal create --command=…</code> 行程存活的短暫期間，其參數仍含密碼。</li>
+        <li><b class="ct">在 Orca 開新分頁時，密碼會出現在畫面上</b>連線指令（含密碼）是打進新分頁 shell 的文字，會顯示在新分頁畫面與 scrollback 裡。</li>
+        <li><b class="ct">沒開 HIST_IGNORE_SPACE 時，連線指令會進 history</b>連線指令（含密碼）會寫進 shell history；分頁若是 bash，要另外設定 <code>HISTCONTROL=ignorespace</code>。</li>
+        <li><b class="ct">Orca 可能把 scrollback 存到磁碟</b>依 Orca 原始碼推論，未實測；密碼可能因此留在磁碟上。</li>
+        <li><b class="ct">AI agent 的金鑰沒有 passphrase</b>任何能讀 <code>~/.ssh/sshm/</code> 的程式都能用它登入已開通的機器，請只開通需要的機器，用完就停用。</li>
+        <li><b class="ct">金鑰已登入後仍可能送出密碼（機率極低）</b>若已用金鑰登入，而遠端在登入時窗（20 秒）內、你按任何鍵之前，印出指名本次 user@host 的密碼提示，sshm 仍會送出密碼。</li>
+        <li><b class="ct">密碼不能含 emoji 等非 BMP 字元</b>macOS 內建的 expect 是 Tcl 8.5，非 BMP 字元會被重複編碼，導致密碼錯誤。中文等 BMP 字元正常。</li>
+        <li><b class="ct">新分頁的 shell 要是 POSIX 相容的 shell</b>連線指令用 POSIX 單引號規則跳脫；fish 對單引號內的 <code>\</code> 解讀不同，密碼或參數含 <code>\</code>、<code>&#39;</code> 時可能出錯。</li>
       </ul>
     </div>
   </section>

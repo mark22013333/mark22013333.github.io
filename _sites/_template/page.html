@@ -173,7 +173,7 @@ pre.code .a{color:var(--accent)}
 /* 自由區塊 cards：卡片清單（例：已知限制） */
 .cards{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));margin:0;padding:0;list-style:none}
 .cards li{border:1px solid var(--line);border-radius:8px;padding:14px 16px;background:var(--surface);color:var(--soft);font-size:15px}
-.cards b{display:block;color:var(--ink);margin-bottom:4px}
+.cards .ct{display:block;font-weight:700;color:var(--ink);margin-bottom:4px}  /* 卡片標題；內文的 <b> 維持行內粗體 */
 
 /* ---------- 頁尾：品牌記號＋連結列＋說明 ---------- */
 /* 品牌記號的色條由 content.yml 的 brand_bars 定義；沒有定義的專案只顯示名稱 */
@@ -314,7 +314,7 @@ footer p{margin:18px 0 0}
 {% if s.intro %}        <p>{{ s.intro|raw }}</p>
 {% endif %}      </div>
       <ul class="cards">
-{% for c in s.cards %}        <li><b>{{ c.title|raw }}</b>{{ c.body|raw }}</li>
+{% for c in s.cards %}        <li><b class="ct">{{ c.title|raw }}</b>{{ c.body|raw }}</li>
 {% endfor %}      </ul>
     </div>
   </section>
