@@ -1,0 +1,67 @@
+<!-- 示意：/bug-start 剛建立的 Bug 頁面（Notion「任務追蹤工具」資料庫的一筆）。
+     屬性依 plugins/bug-workflow/skills/bug-start/SKILL.md「5. 建立／沿用 Notion 條目」的 Properties 表
+     （bug-start 不建新分支，修復分支填執行時的當前分支，見同檔 5.5 的 CURRENT_BRANCH），選項顏色依 plugins/bug-workflow/references/db-templates.md；
+     內文依同檔「6. 填入頁面模板」；「調查過程」末尾的「[HH:mm] 初始環境快照」依同檔「7. 初始證據收集」寫入格式
+     與 plugins/bug-workflow/references/evidence-collection.md「共用 Notion 寫入格式」（commit hash 與訊息、歷史參考、歷史學習皆為虛構）。
+     其餘只有原始通報、確認後問題描述、發生時間有值；
+     「實際行為」依該節說明可用確認後描述中明確的症狀預填。內容全為虛構。 -->
+<meta charset="utf-8"><link rel="stylesheet" href="mock.css">
+<div id="shot" class="notion">
+  <div class="crumbs">ACME 工作區 / 任務追蹤工具</div>
+  <h1>登入後被導回登入頁</h1>
+  <div class="props">
+    <div class="k"><i>≡</i>任務類型</div><div class="v"><span class="tag t-orange">🐞 錯誤</span></div>
+    <div class="k"><i>◎</i>狀態</div><div class="v"><span class="tag t-status">進行中</span></div>
+    <div class="k"><i>▾</i>優先順序</div><div class="v"><span class="tag t-red">高</span></div>
+    <div class="k"><i>▾</i>環境</div><div class="v"><span class="tag t-red">正式</span></div>
+    <div class="k"><i>↗</i>專案資料庫</div><div class="v"><span class="rel">ACME 商城</span></div>
+    <div class="k"><i>☺</i>負責人</div><div class="v"><span class="person"><b>明</b>小明</span></div>
+    <div class="k"><i>≡</i>修復分支</div><div class="v">main</div>
+  </div>
+  <hr>
+  <h2>🔴 問題描述</h2>
+  <h3>原始通報</h3>
+  <p>正式站有會員說登入完又跳回登入頁，一直循環</p>
+  <h3>確認後問題描述</h3>
+  <p>正式環境部分會員登入成功後被導回登入頁，形成循環，無法進入會員中心。</p>
+  <ul>
+    <li><b>通報來源</b>：</li>
+    <li><b>發生時間</b>：2026-10-15 09:42</li>
+    <li><b>重現步驟</b>：<ol style="margin:0;padding-left:18px"><li>...</li><li>...</li></ol></li>
+    <li><b>預期行為</b>：</li>
+    <li><b>實際行為</b>：登入成功後被導回登入頁，形成循環</li>
+    <li><b>錯誤截圖</b>：</li>
+  </ul>
+  <hr>
+  <h2>🔍 調查過程</h2>
+  <h3>關鍵 Log</h3>
+  <h3>相關 SQL 查詢</h3>
+  <h3>初步判斷</h3>
+  <h3>[09:43] 初始環境快照</h3>
+  <p><b>最近 5 筆 commit</b>：</p>
+  <ul>
+    <li><span class="mono">a1b2c3d</span> fix: 調整會員登入後的導向路徑</li>
+    <li><span class="mono">e4f5a6b</span> feat: 會員中心新增訂單篩選</li>
+    <li><span class="mono">c7d8e9f</span> chore: 更新 session 逾時設定</li>
+    <li><span class="mono">0a1b2c3</span> refactor: 拆分登入驗證服務</li>
+    <li><span class="mono">4d5e6f7</span> docs: 補充部署說明</li>
+  </ul>
+  <p><b>環境狀態</b>：</p>
+  <ul><li>分支：main</li><li>未提交變更：0 個檔案</li></ul>
+  <p><b>歷史參考</b>：</p>
+  <ul><li>[2026-08-02] 登出後仍可進入會員中心 — 根因：快取未清除 session</li></ul>
+  <p><b>歷史學習</b>：</p>
+  <ul><li>登入導向問題先檢查 session cookie 的 domain 設定（confidence 7/10，2026-08-02）</li></ul>
+  <hr>
+  <h2>🧠 根因分析</h2>
+  <ul><li><b>問題根因</b>：</li><li><b>問題檔案</b>：</li><li><b>問題程式碼</b>：</li></ul>
+  <hr>
+  <h2>✅ 修復方案</h2>
+  <ul><li><b>修改檔案清單</b>：</li><li><b>修改說明</b>：</li><li><b>修改後程式碼</b>：</li><li><b>修復 Commit</b>：</li><li><b>修復分支</b>：</li></ul>
+  <hr>
+  <h2>🧪 驗證</h2>
+  <ul class="cb"><li>本地測試通過</li><li>UAT 驗證通過</li><li>正式環境確認</li><li>通報者確認問題已解決</li></ul>
+  <hr>
+  <h2>📝 經驗教訓</h2>
+  <ul><li><b>學到什麼</b>：</li><li><b>如何預防</b>：</li></ul>
+</div>

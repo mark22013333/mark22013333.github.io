@@ -1,0 +1,44 @@
+<!-- 示意：/plan-start 剛建立的 Feature 頁面（Notion「任務追蹤工具」資料庫的一筆）。
+     屬性依 plugins/feature-workflow/skills/plan-start/SKILL.md「6. 建立 Notion 條目／Feature 類型」（另加 Step 8 寫入的「修復分支」），
+     選項顏色依 plugins/bug-workflow/references/db-templates.md「B. 任務追蹤工具」；
+     內文 5 個區塊標題依 plugins/feature-workflow/references/notion-page-template.md「模板內容」。
+     剛建立時只有「原始需求」「確認後任務描述」有內容，其餘由 /plan-sync、/plan-close 之後寫入。內容全為虛構。 -->
+<meta charset="utf-8"><link rel="stylesheet" href="mock.css">
+<div id="shot" class="notion">
+  <div class="crumbs">ACME 工作區 / 任務追蹤工具</div>
+  <h1>會員訂單匯出 CSV</h1>
+  <div class="props">
+    <div class="k"><i>≡</i>任務類型</div><div class="v"><span class="tag t-green">💬 功能要求</span></div>
+    <div class="k"><i>◎</i>狀態</div><div class="v"><span class="tag t-status">進行中</span></div>
+    <div class="k"><i>▾</i>優先順序</div><div class="v"><span class="tag t-yellow">中</span></div>
+    <div class="k"><i>▾</i>難度</div><div class="v"><span class="tag t-yellow">中</span></div>
+    <div class="k"><i>▾</i>開發階段</div><div class="v"><span class="tag t-blue">需求分析</span></div>
+    <div class="k"><i>↗</i>專案資料庫</div><div class="v"><span class="rel">ACME 商城</span></div>
+    <div class="k"><i>☺</i>負責人</div><div class="v"><span class="person"><b>明</b>小明</span></div>
+    <div class="k"><i>≡</i>修復分支</div><div class="v">feature/order-csv-export</div>
+  </div>
+  <hr>
+  <h2>📋 需求描述</h2>
+  <h3>原始需求</h3>
+  <p>會員中心要能把近 30 天的訂單匯出成 CSV，客服常被要求幫會員撈</p>
+  <h3>確認後任務描述</h3>
+  <p>在會員中心新增「匯出近 30 天訂單」，下載為 CSV 檔，讓會員自行取得訂單紀錄，減少客服代為查詢。</p>
+  <h3>目標與範圍</h3>
+  <h3>驗收條件</h3>
+  <hr>
+  <h2>📐 技術規格</h2>
+  <h3>決策紀錄（為什麼這樣做、否決了什麼）</h3>
+  <h3>已知取捨與風險</h3>
+  <h3>指路（程式碼錨點）</h3>
+  <hr>
+  <h2>🗄️ 資料庫設計</h2>
+  <h3>遷移 SQL</h3>
+  <hr>
+  <h2>📁 程式碼清單</h2>
+  <h3>變更檔案（git diff）</h3>
+  <h3>分層變更摘要</h3>
+  <hr>
+  <h2>📝 開發日誌</h2>
+  <h3>檢查報告摘要</h3>
+  <h3>[2026-10-15] 開始開發</h3>
+</div>

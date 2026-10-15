@@ -1,0 +1,67 @@
+/* crew 介紹頁示意圖共用樣式。
+   終端機：配色比照 sshm 截圖用的 Catppuccin Mocha、字級 20、寬 1120（deviceScaleFactor 1）。
+   Notion／流程圖：CSS 寬 560，以 deviceScaleFactor 2 輸出成 1120 寬。 */
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;background:#fff}
+
+/* ---------- 終端機 ---------- */
+.term{width:1120px;padding:16px 18px;background:#1e1e2e;color:#cdd6f4;
+  font:20px/1.45 "Hack Nerd Font Mono","Heiti TC","STHeiti",monospace;white-space:pre}
+.term .dim{color:#7f849c}
+.term .sub{color:#a6adc8}
+.term .b{font-weight:700;color:#f5f7ff}
+.term .bl{color:#89b4fa}
+.term .gr{color:#a6e3a1}
+.term .ye{color:#f9e2af}
+.term .pe{color:#fab387}
+.term .mv{color:#cba6f7}
+.term .tl{color:#94e2d5}
+.term .prompt{color:#cba6f7;font-weight:700}
+
+/* ---------- Notion 頁面 ---------- */
+.notion{width:560px;padding:26px 30px 24px;background:#fff;color:#37352f;
+  font:12px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI","Heiti TC","STHeiti",sans-serif}
+.notion .crumbs{font-size:10.5px;color:#9b9a97;margin-bottom:14px}
+.notion h1{font-size:24px;line-height:1.25;margin:0 0 14px;font-weight:700}
+.notion .props{display:grid;grid-template-columns:118px 1fr;row-gap:2px;margin-bottom:14px;font-size:11.5px}
+.notion .props .k{color:#9b9a97;display:flex;align-items:center;gap:6px}
+.notion .props .k i{font-style:normal;width:14px;text-align:center;font-size:10px;color:#a3a29e}
+.notion .props .v{min-height:20px;display:flex;align-items:center;gap:5px;flex-wrap:wrap}
+.notion .props .v.empty{color:#c7c6c4}
+.notion .tag{display:inline-block;padding:0 6px;border-radius:3px;font-size:11px;line-height:18px}
+.t-green{background:#dbeddb;color:#1c3829}.t-yellow{background:#fdecc8;color:#402c1b}
+.t-red{background:#ffe2dd;color:#5d1715}.t-blue{background:#d3e5ef;color:#183347}
+.t-orange{background:#fadec9;color:#49290e}.t-status{background:#d3e5ef;color:#183347;border-radius:9px}
+.t-status::before{content:"";display:inline-block;width:6px;height:6px;border-radius:50%;background:#337ea9;margin-right:5px;vertical-align:1px}
+.notion .rel{text-decoration:underline;text-decoration-color:#d3d1cb;text-underline-offset:2px}
+.notion .rel::before{content:"↗ ";color:#9b9a97;text-decoration:none}
+.notion .person{display:inline-flex;align-items:center;gap:5px}
+.notion .person b{width:16px;height:16px;border-radius:50%;background:#e8a87c;color:#fff;font-size:9px;display:inline-grid;place-items:center;font-weight:600}
+.notion .mono{font-family:"SFMono-Regular",Menlo,monospace;font-size:10.5px;background:#f1f1ef;color:#eb5757;padding:0 4px;border-radius:3px}
+.notion hr{border:0;border-top:1px solid #e9e9e7;margin:7px 0}
+.notion h2{font-size:15px;margin:8px 0 2px;font-weight:700}
+.notion h3{font-size:12.5px;margin:4px 0 0;font-weight:600;line-height:1.45}
+.notion p{margin:2px 0}
+.notion .ph{color:#c7c6c4;margin:2px 0}
+.notion ul{margin:2px 0;padding-left:18px}
+.notion li{margin:0;line-height:1.45}
+.notion .cb{list-style:none;padding-left:2px}
+.notion .cb li::before{content:"";display:inline-block;width:11px;height:11px;border:1.5px solid #37352f;border-radius:2px;margin-right:7px;vertical-align:-1px}
+
+/* ---------- 流程圖 ---------- */
+.flow{width:640px;padding:18px 18px 16px;background:#fbfbfa;color:#2b2b2b;
+  font:11px/1.35 -apple-system,BlinkMacSystemFont,"Heiti TC","STHeiti",sans-serif}
+.flow .lane{border:1px solid #e3e2de;border-radius:8px;background:#fff;padding:10px 10px 12px;margin-bottom:12px}
+.flow .lane:last-of-type{margin-bottom:8px}
+.flow .lane h4{margin:0 0 9px;font-size:11.5px;display:flex;justify-content:space-between;align-items:baseline}
+.flow .lane h4 span{font-weight:400;color:#8a8984;font:9.5px/1 "SFMono-Regular",Menlo,monospace}
+.flow .row{display:flex;align-items:center;flex-wrap:nowrap;gap:0}
+.flow .row + .row{margin-top:9px}
+.flow .n{border:1.5px solid #2fb37a;border-radius:6px;padding:5px 7px;background:#effaf4;text-align:center;white-space:nowrap}
+.flow .n code{font:600 10.5px/1.2 "SFMono-Regular",Menlo,monospace;color:#156b45;display:block}
+.flow .n small{display:block;color:#5f6b64;font-size:9.5px;margin-top:2px}
+.flow .g{border:1.5px dashed #d9730d;background:#fff6ee;border-radius:12px;padding:4px 7px;color:#8a4a07;font-size:9.5px;font-weight:600;white-space:nowrap;text-align:center}
+.flow .a{color:#a3a29e;padding:0 4px;font-size:12px}
+.flow .loop{margin-top:7px;font-size:9.5px;color:#8a4a07}
+.flow .legend{display:flex;gap:14px;font-size:9.5px;color:#6b6a66;align-items:center}
+.flow .legend i{display:inline-block;width:18px;height:11px;border-radius:4px;vertical-align:-2px;margin-right:4px}
