@@ -17,9 +17,9 @@ eyebrow:
 lede: '家長安排每天要做的事，小孩完成後送出申請，<b>家長確認後才拿到星星</b>；星星累積起來可以兌換禮物。用瀏覽器開，手機、平板、桌機都可以。核心不是監督或懲罰，而是鼓勵、習慣、參與、成就感，所以介面上不會出現「你今天沒有完成」「你失敗了」這類文案。'
 
 buttons:
-  - label: 立即使用
-    url: https://familyreward.longhopick.com
-    icon: external
+  - label: 自架安裝
+    url: '#install'
+    icon: download
   - label: GitHub
     url: https://github.com/mark22013333/FamilyReward
     icon: github

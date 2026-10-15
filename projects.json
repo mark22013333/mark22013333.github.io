@@ -2,8 +2,8 @@
   "projects": [
     { "type": "service", "name": "倒垃圾了嗎？", "url": "https://trashtrackt.longhopick.com", "repo": "trash-track",
       "desc": "輸入台灣地址，查今天有沒有垃圾車、附近的清運停靠點。" },
-    { "type": "service", "name": "家庭任務集點樂園", "url": "https://familyreward.longhopick.com", "repo": "FamilyReward",
-      "desc": "家庭任務集點與獎勵系統。" },
+    { "type": "app", "name": "家庭任務集點樂園", "url": "https://github.com/mark22013333/FamilyReward", "repo": "FamilyReward", "site": "familyreward",
+      "desc": "給家裡用的兒童任務集點與獎勵系統。" },
     { "type": "plugin", "name": "crew/", "url": "https://github.com/mark22013333/crew", "repo": "crew", "site": "crew",
       "desc": "整合 Notion 的 Bug 修復與功能開發工作流 plugin，Claude Code 與 Codex 共用。" },
     { "type": "app", "name": "VoiceType", "url": "https://github.com/mark22013333/VoiceType", "repo": "VoiceType", "site": "voicetype",
