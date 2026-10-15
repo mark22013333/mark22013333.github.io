@@ -1,0 +1,196 @@
+# VoiceType 作品介紹頁的內容。改完執行 python3 tools/build_sites.py voicetype 重新產生 /voicetype/。
+# 欄位說明見 _sites/sshm/content.yml 開頭註解。
+# 內容與截圖以 v0.8.5（Releases 最新版，也就是「下載」按鈕給的版本）的程式行為為準。
+# 截圖：mock/serve.mjs 用 App 真實的 Svelte 前端起 vite（Tauri API 換成回傳虛構資料的 mock），
+#       mock/shoot.cjs 用 headless chromium 截圖（deviceScaleFactor 2），再跑 tools/trim_shots.py 裁邊。
+
+slug: voicetype
+name: VoiceType
+tagline: macOS／Windows 語音轉文字桌面 App，離線辨識加 AI 潤稿。
+accent: '#1f88c0'          # 取自 App 預設 Light 主題的資訊色（錄音中「會議 · 模型名」標籤）
+brand_bars: ['#d94438', '#1f88c0', '#1f9d57']   # Light 主題的語意色：錄音／資訊／完成
+
+eyebrow:
+  kind: 桌面 App
+  meta: [macOS, Windows, Tauri v2]
+
+lede: '按全域熱鍵（macOS 預設 <kbd>Cmd+Shift+O</kbd>）開始錄音，語音辨識預設在本機完成。停止後可以交給 AI 依「潤稿風格」整理成會議紀錄、任務清單、郵件草稿等書面文字，結果預設直接貼到游標所在位置。不錄音時也能貼上文字直接潤稿。'
+
+buttons:
+  - label: 下載
+    url: https://github.com/mark22013333/VoiceType/releases/latest
+    icon: download
+  - label: GitHub
+    url: https://github.com/mark22013333/VoiceType
+    icon: github
+
+requirements: 需求：macOS 10.15 以上（Apple Silicon）或 Windows 10 以上（x64）；AI 潤稿預設使用 Claude Code CLI，也可改用其他 LLM Provider
+
+hero:
+  image: meeting.png
+  bar: VoiceType — 錄音完成
+  alt: VoiceType 工具列顯示錄音 01:12 已完成並提示「已貼上」，下方展開面板列出帶時間的逐字稿，再往下是 AI 整理結果
+  caption: '一場 72 秒的錄音停止後，AI 依「會議紀錄」風格整理，結果自動貼到游標位置（工具列提示「已貼上」）；展開面板保留逐字稿與整理結果。'
+
+features:
+  id: features
+  nav: 功能
+  nav_optional: true
+  kicker: // 功能
+  title: 錄音、辨識、潤稿都在一條工具列上
+  intro: '平常只是一條常駐工具列，不佔螢幕空間；停止錄音後才展開面板顯示逐字稿與結果。'
+  items:
+    - label: 錄音
+      title: 錄音中就看得到辨識文字
+      paragraphs:
+        - '按全域熱鍵或工具列的 <code>REC</code> 開始錄音。錄音中工具列顯示計時、目前的辨識模式與模型、音量波形，以及最新一段辨識出來的文字。'
+      bullets:
+        - '熱鍵預設 macOS <kbd>Cmd+Shift+O</kbd>、Windows <kbd>Ctrl+Shift+O</kbd>，可在「設定 → 快捷鍵」更換'
+        - 觸發方式可選「按一下開始／再按一下停止」或「按住錄音／放開停止」
+        - '<code>⏸</code> 按鈕暫停、<code>STOP</code> 停止'
+        - 工具列寬度可以拖曳調整
+      image: recording.png
+      bar: VoiceType — 錄音中
+      alt: 錄音中的工具列：紅色計時 01:12、「會議 · MediaTek Breeze-ASR-25」辨識模式標籤、音量波形、最新一段辨識文字，右側是暫停與 STOP 按鈕
+
+    - label: 自動潤稿
+      title: 停止錄音後自動整理（需先開啟）
+      paragraphs:
+        - '停錄後是否送 AI 潤稿，由「設定 → 錄音」的兩個開關決定，<b>兩者預設都是關閉</b>：沒開的話，結果就是原始逐字稿。'
+      bullets:
+        - 日常即時聽寫：每次定稿後自動 AI 潤稿，不受秒數門檻限制
+        - 會議／離線錄音：停止後自動 AI 潤稿；低於門檻秒數（預設 60 秒）的錄音直接輸出原文，不呼叫 LLM
+        - 逐字稿超過 5000 字會自動分段整理
+        - 沒開自動潤稿時，也可以在展開面板按「AI 整理」手動送出
+      image: meeting-result.png
+      bar: VoiceType — AI 整理結果
+      alt: 「會議紀錄」風格的整理結果：標題「版本發布確認會議」，下分「發布準備」「待處理事項」兩段條列，下方有「複製結果」按鈕
+
+    - label: 潤稿風格
+      title: 8 種內建風格，也能自訂
+      paragraphs:
+        - '潤稿風格決定 AI 整理的口氣與格式，不會改變原始逐字稿、辨識模型或 LLM Provider。'
+      bullets:
+        - 內建：日常自然（預設）、會議紀錄、任務清單、郵件草稿、簡短訊息、正式語氣、輕鬆語氣、提示詞最佳化
+        - 可以新增自訂風格，或從內建風格複製後修改
+        - 每種風格的 prompt 都能檢視（清單只顯示前幾行）
+      image: settings-styles.png
+      bar: VoiceType 設定 — 潤稿風格
+      alt: 設定視窗的潤稿風格頁：日常自然、會議紀錄、任務清單三張卡片，列出說明與 prompt 開頭，右上角有「新增自訂風格」按鈕
+
+    - label: 輸出方式
+      title: 結果直接貼到游標位置
+      paragraphs:
+        - '預設會把結果寫進剪貼簿、模擬 <kbd>Cmd+V</kbd>／<kbd>Ctrl+V</kbd> 貼到目前游標所在位置；原本剪貼簿若是文字，貼上後會還原。也可以在「設定 → 一般 → 辨識結果輸出」改成「只複製到剪貼簿」。'
+      bullets:
+        - macOS 上自動貼上需要「輔助使用」權限；貼上失敗時工具列會顯示錯誤與「開啟權限設定」按鈕，結果仍可在展開面板複製
+        - 原本剪貼簿若是圖片、檔案或空白，不會還原，結果會留在剪貼簿（不會另外提示）；文字還原失敗時工具列會提示
+        - 'AI 潤稿的 LLM Provider 與模型也在「一般」頁設定；用 Claude CLI 時可選 Haiku／Sonnet／Opus，不指定則由 Claude CLI 自動選擇'
+      image: settings-general.png
+      bar: VoiceType 設定 — 一般
+      alt: 設定視窗的一般頁：AI 潤稿模型區塊顯示 Provider 為 Claude CLI（訂閱）、Haiku／Sonnet／Opus 三個選項，下方「辨識結果輸出」選的是「複製到剪貼簿並自動貼上」
+
+    - label: TYPE 模式
+      title: 不錄音也能潤稿
+      paragraphs:
+        - '按工具列的 <code>TYPE</code>，直接貼上文字進行 AI 潤稿，套用目前的潤稿風格與模型設定。下圖用的是「簡短訊息」風格；潤稿完成後同樣依「辨識結果輸出」設定自動貼上。'
+      bullets:
+        - 輸入框右下角即時顯示字數
+        - 超過 500 字會提醒「文字量較大，AI 處理可能產生較高費用」
+      image: type-mode.png
+      bar: VoiceType — TYPE 模式
+      alt: TYPE 模式：輸入框是一段口語文字，按「潤稿」後下方顯示整理成一句話的訊息，工具列提示「已貼上」
+
+    - label: 本機辨識
+      title: 語音辨識預設在本機完成
+      paragraphs:
+        - '辨識引擎跑在本機：Whisper（whisper.cpp），以及 SenseVoice、Paraformer 等 sherpa-onnx 模型。模型在「設定 → 模型管理」下載，每個模型標出大小、品質、速度與適用情境。'
+      bullets:
+        - 也可以在模型管理頁連線到外部的 ASR 伺服器（選用），連上後辨識改由該伺服器處理
+        - '「日常即時聽寫」：純麥克風錄音時可改用專用的中英串流模型，說話時立即顯示文字；會議模式仍用高品質模型'
+        - 辨識前做高通濾波＋RNNoise 降噪（兩者一起在「設定 → 錄音」的降噪開關控制）
+        - '錄音檔（<code>.wav</code>）和逐字稿（<code>.txt</code>）存在可自訂的目錄，展開面板的「開啟檔案位置」可直接打開'
+      image: settings-models.png
+      bar: VoiceType 設定 — 模型管理
+      alt: 設定視窗的模型管理頁：上方「日常即時聽寫」區列出三個串流模型，下方語音辨識模型目前使用 MediaTek Breeze-ASR-25（台灣中英混合），標示 Whisper 與推薦
+
+sections:
+  - type: split
+    id: providers
+    position: before_install
+    nav: LLM Provider
+    nav_optional: true
+    kicker: // AI 潤稿用哪個模型
+    title: 預設 Claude CLI，也可以換別家
+    paragraphs:
+      - 'AI 潤稿可以選 5 種 LLM Provider，在「設定 → LLM Provider」切換。Provider、模型、輸出方式都是全域設定，切換潤稿風格不會改變它們。'
+      - '用免費額度的 Provider 錄音超過 10 分鐘時，工具列會提醒長逐字稿可能受速率或輸入長度限制；部分整理失敗時，失敗段以原文保留。'
+    cards: []
+    code:
+      label: 可選的 LLM Provider（App 內顯示名稱與計費說明）
+      text: |-
+        Claude CLI（訂閱）        走 Claude.ai 訂閱（OAuth）   # 預設
+        Antigravity CLI（訂閱）   走 Google AI 訂閱
+        Google Gemini             免費 tier（15 RPM / 1500 RPD）
+        Groq（Llama / Mixtral）   免費 tier（限額但持續）
+        Ollama（本機）            本機，完全免費
+
+  - type: cards
+    id: notes
+    position: after_install
+    kicker: // 使用前須知
+    title: 安裝與使用前請先知道
+    cards:
+      - title: macOS 版尚未取得 Apple 開發者簽名
+        body: 'macOS 會顯示「已損毀，無法打開」。這不是檔案損壞，而是 Gatekeeper 的限制；首次開啟前執行 <code>xattr -cr /Applications/VoiceType.app</code>，<b>每次更新版本後需要重新執行一次。</b>'
+      - title: Windows 安裝檔尚未使用付費的程式碼簽章憑證
+        body: '發行者會顯示為「不明」，SmartScreen 也可能把新版標示為不常下載。這不代表檔案已損壞；請只從 GitHub Releases 下載，來源不明的檔案請取消安裝。'
+      - title: Windows／VMware 啟動後可能閃退
+        body: '尤其在 VMware 的 Windows 11 虛擬機器內，可能是 WebView2 與虛擬顯示卡的硬體加速相容性問題。執行 <code>setx VOICETYPE_SOFTWARE_RENDERING 1</code> 後重新啟動即改用軟體繪圖；改回執行 <code>setx VOICETYPE_SOFTWARE_RENDERING 0</code>。'
+      - title: 停錄後自動潤稿預設是關閉的
+        body: '要在「設定 → 錄音」開啟。會議／離線錄音另有秒數門檻（預設 60 秒），低於門檻直接輸出原文。'
+      - title: 自動貼上會暫時佔用剪貼簿
+        body: '原本剪貼簿若是文字，貼上後會還原（還原失敗時工具列會提示）；若是圖片、檔案或空白則不會還原，結果會留在剪貼簿。macOS 上需要「輔助使用」權限，否則貼上會失敗（結果仍可在展開面板複製）。'
+      - title: macOS 版只提供 Apple Silicon
+        body: 'Releases 上的 macOS 安裝檔是 <code>aarch64</code> 版；Windows 為 x64。'
+
+install:
+  id: install
+  nav: 安裝
+  kicker: // 安裝
+  title: 從 Releases 下載安裝檔
+  intro: '前往 GitHub Releases 下載最新版本：macOS（Apple Silicon）是 <code>VoiceType_x.x.x_aarch64.dmg</code>，Windows（x64）是 <code>VoiceType_x.x.x_x64-setup.exe</code>。'
+  code:
+    label: macOS 首次開啟前（每次更新後也要再執行一次）
+    text: |-
+      # 把 VoiceType 拖入 Applications 資料夾後，在終端機執行：
+      $ xattr -cr /Applications/VoiceType.app
+  steps:
+    - title: macOS：
+      body: '下載 <code>.dmg</code>，開啟後將 VoiceType 拖入 Applications 資料夾，再執行上面的指令。'
+    - title: Windows：
+      body: 'Edge 若顯示「不常下載」，在下載項目旁的選單依序選「保留」→「顯示更多」→「仍要保留」；執行安裝程式時若 SmartScreen 顯示「Windows 已保護您的電腦」，選「其他資訊」→「仍要執行」。'
+    - title: 仍然閃退時，
+      body: '到 <code>%APPDATA%\com.voicetype.app\logs\</code> 取得 <code>bootstrap.log</code> 與最新的當機記錄，到 GitHub Issues 回報。'
+  side:
+    title: 第一次開啟之後
+    items:
+      - '工具列提示「尚未載入語音模型」時，到「設定 → 模型管理」下載一個模型。'
+      - '想要停錄後自動潤稿，到「設定 → 錄音」開啟對應的開關。'
+      - '在「設定 → 一般」確認 Claude CLI 路徑（會自動偵測）與 LLM Provider；改用其他 Provider 到「設定 → LLM Provider」。'
+      - 'macOS 上全域熱鍵與自動貼上需要「輔助使用」權限，工具列會提示並提供開啟設定的按鈕。'
+    image: settings-recording.png
+    bar: VoiceType 設定 — 錄音
+    alt: 設定視窗的錄音頁：「日常即時聽寫」的每次定稿後自動 AI 潤稿未勾選；「會議／離線錄音」的停止後自動 AI 潤稿已勾選，門檻 60 秒
+    caption: '截圖中「會議／離線錄音」的自動潤稿是手動開啟後的狀態；兩個開關的預設都是關閉。'
+
+footer_links:
+  - label: GitHub
+    url: https://github.com/mark22013333/VoiceType
+  - label: 最新釋出版
+    url: https://github.com/mark22013333/VoiceType/releases/latest
+  - label: 回作品集
+    url: https://mark22013333.github.io/
+footer_note: macOS／Windows 語音轉文字桌面 App。本頁截圖全部使用虛構的展示資料。
+
+en: null
