@@ -1,0 +1,64 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>SplitSwan 連線頁（示意）</title>
+<!-- 依 Sources/MainView.swift ConnectionTab（48–157 行）與 LogPanel（533–598 行）重繪：已連線狀態、連線紀錄展開並勾選「只看 App 動作」。
+     紀錄文字取自 VPNController.swift 684／704／710 行的 note()，失敗原因取自 62 行。閘道、虛擬 IP 皆為虛構。 -->
+<link rel="stylesheet" href="mac.css">
+<style>
+  .conn { display: flex; flex-direction: column; align-items: center; gap: 18px; padding-top: 10px; }
+  .status { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+  .actions { width: 320px; }
+  .actions .btn { width: 100%; }
+  .log { width: 100%; margin-top: 18px; display: flex; flex-direction: column; gap: 8px; }
+  .log-head { display: flex; align-items: center; gap: 8px; }
+  .chk { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; }
+  .chk b { width: 13px; height: 13px; border-radius: 3px; background: var(--accent); color: #fff; font-size: 10px; display: inline-flex; align-items: center; justify-content: center; }
+  .logbox { height: 220px; background: #fff; border-radius: 8px; border: 1px solid rgba(110,110,115,.3); padding: 8px;
+    font-family: var(--mono); font-size: 11px; line-height: 1.6; color: var(--accent); }
+</style>
+<div id="shot">
+<div class="window">
+  <div class="titlebar"><div class="lights"><i></i><i></i><i></i></div>SplitSwan</div>
+  <div class="body">
+    <div class="tabs"><div class="seg"><span class="on">連線</span><span>設定</span><span>環境檢查</span><span>關於</span></div></div>
+    <div class="tabbox">
+      <div class="conn">
+        <!-- 盾牌鎖樣式「已連線」：lock.shield.fill，64pt，綠色 -->
+        <svg class="ok" width="64" height="72" viewBox="0 0 64 72" aria-hidden="true">
+          <path fill="currentColor" d="M32 2 6 12v20c0 17 11 30 26 38 15-8 26-21 26-38V12L32 2Z"/>
+          <rect x="21" y="33" width="22" height="17" rx="3" fill="#f5f5f5"/>
+          <path d="M25 33v-5a7 7 0 0 1 14 0v5" fill="none" stroke="#f5f5f5" stroke-width="4"/>
+        </svg>
+        <div class="status">
+          <div class="title2">已連線：VPN2</div>
+          <div class="callout sec">虛擬 IP：10.0.8.15</div>
+          <div class="callout sec" style="font-variant-numeric: tabular-nums">已連線 01:24:37</div>
+        </div>
+        <div class="actions">
+          <span class="btn lg danger">
+            <svg class="icon" viewBox="0 0 20 20"><circle cx="10" cy="10" r="8.2" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="m7 7 6 6m0-6-6 6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+            斷線
+          </span>
+        </div>
+        <div class="log">
+          <div class="log-head">
+            <span class="callout" style="font-weight:500; color:var(--accent)">
+              <svg class="icon" viewBox="0 0 20 20"><path d="m5 7.5 5 5 5-5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              連線紀錄（86）
+            </span>
+            <span class="spacer"></span>
+            <span class="chk"><b>✓</b>只看 App 動作</span>
+            <span class="btn sm">拷貝</span>
+            <span class="btn sm">清除</span>
+          </div>
+          <div class="logbox">
+            <div>08:58:40  開始連線（手動）：依序嘗試 VPN1 → VPN2 → VPN3</div>
+            <div>08:59:00  VPN1 連線失敗：閘道沒有回應或連不到</div>
+            <div>08:59:04  VPN2 已連線</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>

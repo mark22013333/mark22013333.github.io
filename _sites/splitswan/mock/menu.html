@@ -1,0 +1,57 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>SplitSwan 狀態列選單（示意）</title>
+<!-- 依 Sources/main.swift buildMenu()（161–194 行）與 renderMenu()（207–235 行）重繪：未連線狀態。
+     項目順序、文字、快捷鍵照原始碼；閘道後的最近狀態格式取自 GatewayHistory.swift detail()（168–175 行），
+     「外掛」根項目取自 PluginMenu.swift 98 行。閘道位址為文件保留位址（虛構）。
+     未連線時「斷線」項目顯示為「停止連線」且停用（main.swift 233–234 行）。 -->
+<link rel="stylesheet" href="mac.css">
+<style>
+  .desk { width: 520px; height: 340px; border-radius: 12px; overflow: hidden; position: relative;
+    background: linear-gradient(160deg, #6a8fd6 0%, #9db7e8 45%, #d9c7e6 100%);
+    box-shadow: 0 0 0 0.5px rgba(0,0,0,.2), 0 14px 34px rgba(0,0,0,.2); }
+  .menubar { height: 26px; background: rgba(246,246,246,.72); backdrop-filter: blur(20px);
+    display: flex; align-items: center; justify-content: flex-end; padding: 0 10px; }
+  .sicon { height: 22px; padding: 0 8px; border-radius: 5px; background: rgba(0,0,0,.14); display: flex; align-items: center; }
+  .menu { position: absolute; top: 30px; right: 10px; width: 400px; background: rgba(240,240,242,.94);
+    border-radius: 10px; padding: 5px; box-shadow: 0 0 0 0.5px rgba(0,0,0,.22), 0 12px 30px rgba(0,0,0,.25);
+    font-size: 14px; }
+  .mi { display: flex; align-items: center; height: 24px; padding: 0 10px; border-radius: 5px; }
+  .mi .k { margin-left: auto; color: #8a8a8e; font-size: 13px; padding-left: 16px; }
+  .mi.dis { color: #a5a5aa; }
+  .mi.dis .k { color: #c2c2c6; }
+  .mi.hl { background: #2f7cf6; color: #fff; }
+  .mi.hl .k { color: rgba(255,255,255,.85); }
+  .mi .d { color: #8a8a8e; }
+  .mi.hl .d { color: rgba(255,255,255,.85); }
+  .sep { height: 1px; background: rgba(0,0,0,.1); margin: 5px 10px; }
+</style>
+<div id="shot">
+<div class="desk">
+  <div class="menubar">
+    <!-- 盾牌鎖樣式「未連線」：空心盾牌（lock.shield） -->
+    <span class="sicon">
+      <svg width="16" height="18" viewBox="0 0 16 18" aria-hidden="true">
+        <path d="M8 1 2 3.4v4.8c0 4 2.6 7.1 6 8.8 3.4-1.7 6-4.8 6-8.8V3.4L8 1Z" fill="none" stroke="#1d1d1f" stroke-width="1.4" stroke-linejoin="round"/>
+        <rect x="5.3" y="8" width="5.4" height="4.2" rx=".8" fill="#1d1d1f"/>
+        <path d="M6.3 8V6.6a1.7 1.7 0 0 1 3.4 0V8" fill="none" stroke="#1d1d1f" stroke-width="1.1"/>
+      </svg>
+    </span>
+  </div>
+  <div class="menu">
+    <div class="mi dis">未連線</div>
+    <div class="sep"></div>
+    <div class="mi hl">連線（自動輪替）<span class="k">⌘C</span></div>
+    <div class="mi">連線 VPN1（203.0.113.10） · 上次 3.2 秒連上</div>
+    <div class="mi">連線 VPN2（203.0.113.20） · 上次 4.1 秒連上</div>
+    <div class="mi">連線 VPN3（203.0.113.30） · 最近 2 次失敗</div>
+    <div class="mi dis">停止連線<span class="k">⌘D</span></div>
+    <div class="sep"></div>
+    <div class="mi">開啟 SplitSwan 視窗…<span class="k">⌘O</span></div>
+    <div class="mi">查看連線紀錄…<span class="k">⌘L</span></div>
+    <div class="mi">外掛<span class="k">›</span></div>
+    <div class="sep"></div>
+    <div class="mi">結束 SplitSwan<span class="k">⌘Q</span></div>
+  </div>
+</div>
+</div>

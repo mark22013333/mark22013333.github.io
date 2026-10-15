@@ -1,0 +1,287 @@
+# SplitSwan 作品介紹頁的內容。改完執行 python3 tools/build_sites.py splitswan 重新產生 /splitswan/。
+# 欄位說明見 _sites/sshm/content.yml 開頭的註解。
+#
+# 截圖來源：
+#   menu.png、connection.png、host-check.png、environment.png
+#       依原始碼重繪的示意圖（mock: true），HTML 原始檔在 mock/，重跑：
+#       node _sites/splitswan/mock/render.js <playwright 模組路徑> <chromium 執行檔路徑>
+#       資料一律虛構（閘道用 203.0.113.x 文件保留位址、內網用 10.x）。
+#   menubar-icons.png   repo 內 docs/menubar-icons.png 原檔（README 引用的圖示樣式一覽，非重繪）
+
+slug: splitswan
+name: SplitSwan
+tagline: macOS 狀態列的 FortiGate IPsec VPN 工具：strongSwan 前端，支援 split tunnel、多閘道輪替與自動重連。
+accent: '#3385fa'          # 取自 App 圖示漸層起點（tools/make-icon.swift：0.20, 0.52, 0.98）
+github: https://github.com/mark22013333/SplitSwan
+
+eyebrow:
+  kind: 狀態列 App
+  meta: [macOS 14+, Apple Silicon, Swift, Windows 版 beta]
+
+lede: '用開源的 strongSwan 連 <b>FortiGate IPsec VPN</b>（IKEv2、PSK＋EAP 帳密、Mode Config），可以用來取代 FortiClient。只有指定網段走 VPN，Teams、Google Meet、一般上網都走原本的網路；三台閘道自動輪替，睡眠喚醒、切換網路、通道失聯後自動接回。'
+
+buttons:
+  - label: 下載
+    url: https://github.com/mark22013333/SplitSwan/releases/latest
+    icon: download
+  - label: GitHub
+    url: https://github.com/mark22013333/SplitSwan
+    icon: github
+
+requirements: 需求：Apple Silicon Mac、macOS 14 以上、Homebrew（Intel Mac 不支援）
+
+hero:
+  image: menu.png
+  mock: true
+  bar: SplitSwan — 狀態列選單
+  alt: 狀態列選單（未連線）：連線（自動輪替）、連線 VPN1／VPN2／VPN3 各附最近狀態、停止連線、開啟視窗、查看連線紀錄、外掛、結束
+  caption: '點狀態列圖示可以直接連線、斷線，或指定連 VPN1／VPN2／VPN3。每台閘道後面會顯示最近狀態，例如「上次 3.2 秒連上」「最近 3 次失敗」。'
+
+features:
+  id: features
+  nav: 功能
+  nav_optional: true
+  kicker: // 功能
+  title: 狀態列一鍵連線，主視窗四個分頁
+  intro: '主視窗有「連線」「設定」「環境檢查」「關於」四個分頁。關掉視窗 App 會繼續在狀態列執行；要完全結束，從狀態列選「結束 SplitSwan」。'
+  items:
+    - label: 連線與自動輪替
+      title: 先試最近連得上、連得快的那台
+      paragraphs:
+        - '按「連線（自動輪替）」依過去的連線紀錄排序：10 分鐘內失敗過的閘道排最後，上次成功的排第一，其餘依成功率與連線速度。連不上就換下一台。'
+      bullets:
+        - '<b>自動重連</b>：睡眠喚醒、切換網路、通道失聯後自動接回；按「斷線」後就不會再自動連線'
+        - '<b>斷線通知</b>：非預期中斷超過 30 秒時發 macOS 通知，恢復時再通知一次；手動斷線、睡眠喚醒後 30 秒內自動接回的情況不會通知'
+        - '連不上時「連線」頁直接寫出原因，例如「帳號、密碼或預先共用金鑰（PSK）錯誤」「閘道沒有回應或連不到」'
+        - '下方「連線紀錄」可展開，顯示 strongSwan 的協商過程與 App 的動作，可拷貝給管理者'
+      image: connection.png
+      mock: true
+      bar: SplitSwan — 連線
+      alt: 連線頁：綠色實心盾牌、已連線：VPN2、虛擬 IP 與已連線時間、斷線按鈕；下方連線紀錄只看 App 動作，列出 VPN1 連線失敗後改連 VPN2 成功
+
+    - label: 某台主機連不上
+      title: 輸入網址，檢查並加入網段
+      paragraphs:
+        - '多半是那台主機不在通道網段裡，流量沒有走 VPN。在「設定」頁「通道網段」卡片下方輸入主機網域、IP、<code>主機:連接埠</code>或整段網址，按「檢查並加入」。'
+      bullets:
+        - '用系統 DNS 查出 IPv4，不在通道網段內的直接以 <code>IP/32</code> 加入並儲存；已連線時接著斷線重連（目前連線會中斷幾秒）'
+        - '重連後檢查每個 IP 的路由是否走 <code>utun</code>，有填連接埠會一併測試 TCP 能否連線'
+        - '加入的是公網 IP 時以橘色警告提醒（可能是 DNS 沒走公司端）'
+        - '只想看看、不想改設定時按「只檢查」；走 VPN 了還是不通，按「複製結果」傳給管理者'
+      image: host-check.png
+      mock: true
+      bar: SplitSwan — 設定 › 通道網段
+      alt: 設定頁通道網段卡片：輸入 intranet.example.com:8443 後已加入 10.30.1.25/32，路由走 utun4、連接埠 8443 可連線
+
+    - label: 環境檢查與診斷報告
+      title: 照紅燈由上往下按「安裝」
+      paragraphs:
+        - '第一次打開時 App 會開在「環境檢查」分頁，缺的元件可以一鍵安裝：strongSwan 在背景執行 <code>brew install strongswan</code>（約 1 分鐘）；系統元件會跳出 macOS 管理員密碼視窗。'
+      bullets:
+        - '新版 App 更新了系統元件時，會顯示「需要更新」，按「更新」並輸入電腦密碼即可'
+        - '「產生診斷報告」約數秒後在桌面產生 <code>SplitSwan-診斷-&lt;時間&gt;.txt</code>，不會中斷連線'
+        - '報告不含密碼與 PSK，但含閘道位址與通道網段，只傳給管理者'
+      image: environment.png
+      mock: true
+      bar: SplitSwan — 環境檢查
+      alt: 環境檢查頁：strongSwan 已安裝；系統元件、免密碼執行權限、連線設定、預設共享金鑰與密碼為紅燈並附安裝或前往設定按鈕；FortiClient 未執行
+
+    - label: 狀態列圖示
+      title: 8 種樣式，四種狀態一眼分辨
+      paragraphs:
+        - '預設樣式：空心盾牌＝未連線、實心盾牌＝已連線、循環箭頭＝連線中、驚嘆號盾牌＝環境沒設好。「設定」頁的「狀態列圖示」有 8 種樣式可選，也可以設定已連線時顯示綠色。'
+      bullets:
+        - 盾牌鎖、盾牌勾、鎖頭、鑰匙、網路、通道、節點、VPN 字樣
+        - 每組由左到右：未連線、已連線、連線中、異常
+      image: menubar-icons.png
+      bar: 狀態列圖示樣式
+      alt: 8 種狀態列圖示樣式在淺色與深色選單列上的未連線、已連線、連線中、異常四種狀態
+
+sections:
+  - type: cards
+    id: compare
+    position: before_install
+    nav: 與 FortiClient
+    nav_optional: true
+    kicker: // 跟 FortiClient 有什麼不同
+    title: 只有公司網段走 VPN
+    intro: '視訊會議的改善是依架構推論：通話流量不再經過 VPN 與公司閘道。實際效果還要看各自的網路環境。'
+    cards:
+      - title: 哪些流量走 VPN
+        body: 'FortiClient 是全部（上網、視訊會議都繞去公司）；SplitSwan 只有公司設定檔列出的網段。'
+      - title: Teams／Google Meet
+        body: 'FortiClient 下視訊要先繞到公司再出去，延遲高、容易不穩；SplitSwan 直接走本機網路，不經過 VPN。'
+      - title: 多台閘道
+        body: 'FortiClient 手動切換；SplitSwan 自動輪替。'
+      - title: 為什麼要列出網段？
+        body: 'FortiClient 其實也不知道公司網段，而是把全部流量都送進 VPN，交給公司閘道轉出去。SplitSwan 只讓公司網段走 VPN，所以要列出網段。'
+
+  - type: split
+    id: company
+    position: before_install
+    nav: 公司設定檔
+    nav_optional: true
+    kicker: // 公司設定檔（管理者）
+    title: 閘道與網段放在設定檔，原始碼不含任何公司位址
+    paragraphs:
+      - '建議在自己已經設定好的 App 上，到「設定」頁按「<b>匯出加密設定檔…</b>」：內容是閘道、通道網段、預設共享金鑰（PSK），<b>不含</b>你個人的帳號密碼。匯出時自訂一組密碼（至少 8 個字元），檔案用 AES-256-GCM 加密，金鑰由密碼經 PBKDF2-SHA256（600,000 次）衍生；檔案被修改過就解不開。'
+      - '<b>把檔案與密碼分開傳送</b>（例：檔案用 email、密碼用 Teams 口頭告知）。同事按「匯入設定檔…」選取檔案、輸入密碼，App 會列出閘道與網段讓他確認，按「套用」才寫入。'
+      - '也可以用明文的 <code>company.env</code>：透過公司內部管道<b>私下</b>傳給同事，同事在「設定」頁按「匯入設定檔…」選取檔案，App 驗證格式後複製到 <code>~/.config/splitswan/company.env</code>（權限 600）。'
+    note: '<b>加密只保密，不證明來源：</b>有人可以自己做一份 <code>.splitswan</code>，把閘道換成他的主機，再連同密碼騙你匯入，你的 VPN 帳號密碼就會送過去。所以匯入時 App 會列出閘道與網段要你確認；<b>只匯入管理者親自給的檔案</b>，並核對閘道位址。'
+    code:
+      label: company.env 範本（config/company.env.example）
+      text: |-
+        SPLITSWAN_PRESET_NAME="我的公司"                              # 顯示在設定頁（選填）
+        SPLITSWAN_GATEWAYS="203.0.113.10,203.0.113.20,203.0.113.30"   # 最多 3 台，逗號分隔
+        SPLITSWAN_REMOTE_TS="10.0.0.0/24,198.51.100.5/32"             # 要走 VPN 的網段；單一主機寫 IP/32
+
+  - type: split
+    id: plugins
+    position: before_install
+    nav: 外掛
+    nav_optional: true
+    kicker: // 外掛
+    title: 把與 VPN 無關的小工具放進狀態列選單
+    paragraphs:
+      - '打卡提醒、會議倒數、CI 狀態這類腳本可以顯示在狀態列選單裡、必要時發通知。<b>預設關閉</b>，到「設定」頁的「外掛」區塊開啟；關閉時不建立任何計時器、不掃描資料夾，等於沒有這個功能。'
+      - '外掛放在 <code>~/.config/splitswan/plugins/</code>，檔名格式同 SwiftBar（<code>punch-reminder.1m.sh</code>），輸出格式是 SwiftBar 的子集，另外擴充 <code>notify=true</code> 發通知。每次限時 10 秒，逾時只會結束外掛本身，外掛另外啟動、而且忽略 SIGTERM 的子程序可能留在背景；最多 10 個外掛，輸出當成不受信任的資料處理。'
+      - 'repo 附一個打卡提醒範例（<code>config/plugins/punch-reminder.1m.sh.example</code>）：可讀政府行政機關辦公日曆表判斷放假日，也可以用覆寫檔標記特休或加班。'
+    note: '<b>外掛以你本人的身分執行。</b>它能讀到你的 VPN 帳號密碼與 PSK（<code>secrets.conf</code>）、能透過輔助程式連線或斷線，也能存取你帳號下的所有檔案。<b>只安裝你信任、而且看得懂內容的腳本</b>；不要把網路上下載的腳本直接放進外掛資料夾。'
+    code:
+      label: 外掛輸出格式（SwiftBar 的子集）
+      text: |-
+        標題
+        ---
+        一般項目
+        有顏色的項目 | color=red
+        開網頁 | href=https://example.com/punch
+        有子選單
+        --子項目
+        ---
+        提醒 | notify=true notify_id=reminder-1 href=https://example.com/punch
+
+  - type: cards
+    id: windows
+    position: after_install
+    nav: Windows 版
+    nav_optional: true
+    kicker: // Windows 版（beta）
+    title: 托盤 App，透過 WSL2 裡的 strongSwan 連線
+    intro: 'Windows 版是通知區域（托盤）App，背後用 WSL2 裡的 Linux strongSwan 連公司的 FortiGate，再由 Windows 路由把公司網段導進去。這是實驗版：連線引擎已在真機上測過可用，但托盤 App 的畫面還沒在 Windows 真機上完整驗證過。下載請到 Releases 找 <code>SplitSwan-Windows-x.y.z.zip</code>。'
+    cards:
+      - title: 需求
+        body: 'x64 的 Windows 11，或 Windows 10 2004（組建 19041）以上；BIOS 已開啟虛擬化。ARM64 Windows 不支援。首次設定要能連到 GitHub（安裝 WSL）與 releases.ubuntu.com（下載 Ubuntu，約 370 MB）。必須用本身就是系統管理員的帳號登入，每次啟動都會跳 UAC 提權（要改路由與 DNS 規則）。'
+      - title: 首次設定精靈
+        body: '依序做系統檢查、安裝 WSL、下載並匯入 Ubuntu 24.04（約 370 MB，比對官方 SHA256）、安裝 strongSwan、VPN 設定、測試連線，不需要開終端機。'
+      - title: 與 Mac 版共用設定檔
+        body: '匯入同事從 Mac 版匯出的 <code>.splitswan</code>；閘道自動輪替的排序規則同 Mac 版。密碼與 PSK 用 Windows 帳號加密（DPAPI）。'
+      - title: 和 Mac 版的差異
+        body: '不會開機自動啟動、不能匯出 <code>.splitswan</code>、不支援 IPv6；自動重連預設關閉。只支援 WSL 預設的 NAT 網路模式，內網網段不能跟 WSL 的 NAT 網段重疊。'
+      - title: 尚未在真機驗證
+        body: '首次設定精靈（WSL 安裝、重開機續接、下載匯入、UAC）與桌面／開始選單捷徑還沒在 Windows 真機上實測。公司端點防護或 Hyper-V 防火牆可能擋 WSL 轉發，只能實測。'
+      - title: 一鍵更新
+        body: '下載後用 App 內建的公鑰驗證 Ed25519 簽章，並檢查內容與版本（防止被換成舊版），任一步失敗就還原；更新時 VPN 不會中斷。需要能寫入 exe 所在的資料夾，否則改用「前往下載」手動更新；0.1.1 以前的版本要先手動更新一次到 0.1.2。'
+
+  - type: cards
+    id: security
+    position: after_install
+    nav: 安全
+    nav_optional: true
+    kicker: // 安全
+    title: 權限、密碼與已知的安全界線
+    intro: 'App 本身不碰 root 權限，需要 root 的動作都集中在 root 擁有的輔助程式 <code>/usr/local/libexec/splitswan-helper</code>，它只接受 <code>status</code>、<code>up</code>、<code>down</code>、<code>reload</code> 等固定幾種參數，其他一律拒絕。'
+    cards:
+      - title: PSK 與密碼只存一個地方
+        body: '存在 <code>/opt/homebrew/etc/swanctl/conf.d/secrets.conf</code>（權限 600）；公司位址只存在 <code>~/.config/splitswan/company.env</code>（權限 600），兩者都不在 repo 裡。'
+      - title: 加密設定檔取決於匯出密碼
+        body: 請用不容易猜到的密碼，並與檔案分開傳送。
+      - title: 加密只保密，不證明來源
+        body: '惡意的 <code>.splitswan</code> 可能把閘道換成別人的主機。匯入時 App 會列出閘道與網段要你確認；只匯入管理者親自給的檔案，並核對閘道位址。'
+      - title: 匯入內容一律嚴格驗證
+        body: '閘道最多 3 台、只接受 IP／網域字元、網段逐筆檢查、拒絕 <code>/0</code> 與控制字元；<code>company.env</code> 由驗證後的值重新產生，值用單引號包住，被 shell <code>source</code> 時不會執行任何內容。'
+      - title: 設定頁不顯示已存的密碼
+        body: 欄位留空代表沿用原本的值。帳號、閘道、網段只接受固定字元；密碼與 PSK 會跳脫雙引號與反斜線。
+      - title: 診斷報告會遮蔽密碼與 PSK
+        body: '先用規則把 secret、password、PSK、EAP 等欄位的值換成 <code>***</code>，再把 6 個字元以上的實際密碼與 PSK 精確取代。報告檔權限 600，但含閘道位址與通道網段，只傳給管理者。'
+      - title: charon log 本機其他帳號讀得到
+        body: '等級固定為 1（基本控制訊息），不含金鑰；但 log 檔權限 644，本機其他帳號也能讀到連線過程與閘道位址。'
+      - title: 免密碼 sudo 只放行輔助程式
+        body: '輔助程式是 root 擁有，一般使用者改不了。外掛以使用者身分執行、絕不經過 sudo 或輔助程式。'
+      - title: 已知限制：Homebrew 目錄可被一般使用者寫入
+        body: 'Homebrew 安裝的 <code>charon</code>、<code>swanctl</code> 放在一般使用者可寫入的 <code>/opt/homebrew</code> 底下，被替換的話仍然能透過輔助程式取得 root。<code>/opt/homebrew/etc/strongswan.d/</code> 同樣可由一般使用者寫入，有心人可以改掉 filelog 路徑，讓以 root 執行的 charon 寫入任意檔案。改用每次輸入密碼也有同樣的風險，差別只在於需要使用者當下在場輸入。'
+
+  - type: cards
+    id: issues
+    position: after_install
+    kicker: // 已知問題
+    title: 使用前請先知道（完整 3 條）
+    cards:
+      - title: 全流量模式（0.0.0.0/0）下 DNS 失敗（未解決）
+        body: '連線本身正常，但 macOS 系統解析失敗、外網會全斷。strongSwan 把 DNS 加到 Wi-Fi（<code>en0</code>）的設定裡，FortiClient 則是綁在自己的 VPN 介面上；綁在 <code>en0</code> 為什麼會失敗還沒查清楚。請不要把通道網段改成 <code>0.0.0.0/0</code>。'
+      - title: 登入時自動啟動是否會跳視窗（待確認）
+        body: 'App 用 Apple Event 判斷是不是登入時啟動，這對 <code>SMAppService</code> 註冊的登入項目是否有效還沒實測。就算跳出來，關掉視窗即可。'
+      - title: 路由沒走 VPN（已有自動處置，成因未查證）
+        body: 'strongSwan 長時間執行後，曾觀察到 charon 把遠端網段的路由裝到 <code>en0</code> 而不是 <code>utun</code>，公司主機全部連不上。輔助程式連上後會用 <code>route -n get</code> 檢查，任一網段沒走 <code>utun</code> 就斷線、重啟 strongSwan 再連同一台，只做一次（IPv6、位址範圍、<code>/0</code>，以及與本機網路直接相連網段重疊的會略過）。這個自動處置需要新版系統元件。'
+
+  - type: split
+    id: uninstall
+    position: after_install
+    kicker: // 解除安裝
+    title: 移除 App、輔助程式與設定
+    paragraphs:
+      - '如果開過「登入時自動啟動」，先在設定頁關掉，或到「系統設定 → 一般 → 登入項目」移除。'
+      - '最後確認 <code>/opt/homebrew/etc/swanctl</code> 是否還在；裡面有密碼檔，不需要的話手動刪除。'
+    code:
+      label: 解除安裝指令
+      text: |-
+        $ sudo rm /etc/sudoers.d/splitswan /usr/local/libexec/splitswan-helper
+        $ rm -f /opt/homebrew/etc/strongswan.d/splitswan.conf
+        $ sudo rm -r /var/log/splitswan
+        $ rm -r /Applications/SplitSwan.app ~/.config/splitswan
+        $ brew uninstall strongswan
+
+install:
+  id: install
+  nav: 安裝
+  kicker: // 安裝
+  title: 下載 dmg，拖進「應用程式」
+  intro: '先跟管理者拿兩樣東西：<b>加密設定檔</b>（<code>.splitswan</code>）與它的<b>匯入密碼</b>。另外準備好你自己的 VPN 帳號密碼，並安裝 <a href="https://brew.sh">Homebrew</a>。'
+  code:
+    label: 第一次打開被擋時
+    text: |-
+      # App 沒有經過 Apple 公證（只有 ad-hoc 簽章），只有第一次會被擋。
+      # 到「系統設定 → 隱私權與安全性」按「仍要打開」，或在終端機執行：
+      $ xattr -dr com.apple.quarantine /Applications/SplitSwan.app
+  steps:
+    - title: 下載：
+      body: '到 Releases 下載 <code>SplitSwan-&lt;版本&gt;.dmg</code>（不要下載 <code>SplitSwan-Windows-…</code> 開頭的檔案），把 SplitSwan 拖進「應用程式」資料夾。之後的一鍵更新需要 App 放在這裡。'
+    - title: 環境檢查：
+      body: 'App 會開在「環境檢查」分頁，照紅燈由上往下逐項按「安裝」。'
+    - title: 匯入公司設定：
+      body: '「設定」分頁按「匯入設定檔…」，選取 <code>.splitswan</code> 並輸入匯入密碼。閘道、網段與 PSK 會自動帶入，請核對閘道位址後再套用。'
+    - title: 填帳號密碼：
+      body: '填入你自己的使用者名稱與密碼，按「儲存」。'
+    - title: 連線：
+      body: '<b>先把 FortiClient 斷線</b>（兩個同時連會衝突），回「連線」分頁按「連線（自動輪替）」。狀態列圖示變成實心盾牌就是連上了。'
+    - title: 建議順手做：
+      body: '「設定」頁打開「登入時自動啟動」；第一次斷線超過 30 秒時會詢問是否允許通知，請按「允許」。'
+  side:
+    title: 之後更新
+    items:
+      - '<b>1.7.0 以後</b>：「關於」頁按「檢查更新」，有新版本時按「下載並安裝」。App 會下載、驗證發布者的數位簽章，再取代目前的 App 並重新開啟，VPN 連線不會中斷；簽章不符就不安裝。'
+      - '勾選「每天自動檢查更新」（預設不勾選）會每天檢查一次，有新版本時顯示在狀態列選單，但不會自動安裝。'
+      - '<b>1.6.x 以前</b>：沒有一鍵更新，請手動下載安裝一次 1.7.0 以後的版本，設定會保留。'
+      - '新版有更新系統元件時，「環境檢查」會顯示「需要更新」，按「更新」並輸入電腦密碼即可。'
+
+footer_links:
+  - label: GitHub
+    url: https://github.com/mark22013333/SplitSwan
+  - label: 最新釋出版
+    url: https://github.com/mark22013333/SplitSwan/releases/latest
+  - label: Windows 版說明
+    url: https://github.com/mark22013333/SplitSwan/blob/main/windows/README.md
+  - label: 回作品集
+    url: https://mark22013333.github.io/
+footer_note: macOS 狀態列的 FortiGate IPsec VPN 工具。本頁截圖使用虛構的展示資料，標示『介面示意』者為依原始碼重繪。
+
+en: null

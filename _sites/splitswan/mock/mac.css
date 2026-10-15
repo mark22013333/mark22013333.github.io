@@ -1,0 +1,66 @@
+/* SplitSwan 介面示意圖共用樣式：依 Sources/MainView.swift、main.swift 的版面重繪 macOS 淺色外觀。
+   不是實際截圖；字串一律照原始碼，資料為虛構。 */
+:root {
+  --font: -apple-system, "SF Pro Text", "Helvetica Neue", "Heiti TC", "Microsoft JhengHei", sans-serif;
+  --mono: "SF Mono", Menlo, Monaco, monospace;
+  --text: #1d1d1f;
+  --secondary: #6e6e73;
+  --accent: #0a64d8;
+  --green: #28a745;
+  --orange: #e8890c;
+  --red: #e5322d;
+  --card: rgba(120, 120, 128, 0.08);
+  --line: rgba(0, 0, 0, 0.12);
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; background: #e9ebef; font-family: var(--font); color: var(--text); -webkit-font-smoothing: antialiased; }
+body { padding: 24px; }
+#shot { display: inline-block; padding: 16px 22px 30px; }
+
+/* 視窗外框 */
+.window { width: 600px; background: #ececec; border-radius: 12px; overflow: hidden;
+  box-shadow: 0 0 0 0.5px rgba(0,0,0,.25), 0 18px 40px rgba(0,0,0,.22); }
+.titlebar { height: 30px; display: flex; align-items: center; justify-content: center; position: relative;
+  font-size: 13px; font-weight: 600; color: #4a4a4f; background: #e6e6e6; border-bottom: 0.5px solid #cfcfcf; }
+.lights { position: absolute; left: 12px; top: 9px; display: flex; gap: 8px; }
+.lights i { width: 12px; height: 12px; border-radius: 50%; display: block; }
+.lights i:nth-child(1) { background: #ff5f57; } .lights i:nth-child(2) { background: #febc2e; } .lights i:nth-child(3) { background: #28c840; }
+.body { padding: 16px; }
+
+/* TabView：上方分段控制項＋內容框 */
+.tabs { display: flex; justify-content: center; position: relative; z-index: 1; margin-bottom: -12px; }
+.seg { display: inline-flex; background: #e0e0e0; border-radius: 7px; padding: 2px; box-shadow: inset 0 0 0 0.5px rgba(0,0,0,.12); }
+.seg span { font-size: 13px; padding: 4px 14px; border-radius: 5px; color: #333; }
+.seg span.on { background: #fff; box-shadow: 0 1px 2px rgba(0,0,0,.18); font-weight: 500; }
+.tabbox { background: #f5f5f5; border: 0.5px solid #d0d0d0; border-radius: 8px; padding: 28px 18px 18px; }
+
+/* 文字 */
+.title2 { font-size: 22px; font-weight: 600; }
+.callout { font-size: 13px; }
+.caption { font-size: 11px; }
+.sec { color: var(--secondary); }
+.headline { font-size: 13px; font-weight: 700; }
+code, .mono { font-family: var(--mono); }
+
+/* 按鈕 */
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; font-size: 13px; padding: 5px 12px;
+  background: #fff; border-radius: 6px; box-shadow: 0 0 0 0.5px rgba(0,0,0,.2), 0 1px 1px rgba(0,0,0,.08); color: var(--text); white-space: nowrap; }
+.btn.lg { padding: 8px 14px; font-size: 14px; }
+.btn.sm { padding: 2px 8px; font-size: 11px; }
+.btn.primary { background: linear-gradient(#2b8af7, #0a6be6); color: #fff; box-shadow: 0 0 0 0.5px rgba(0,0,0,.15); }
+.btn.danger { color: var(--red); }
+.btn.dim { color: #b3b3b3; }
+.link { color: var(--accent); font-size: 13px; }
+
+/* 卡片（SettingsCard） */
+.card-title { font-size: 13px; font-weight: 700; margin: 0 0 12px; }
+.card { background: var(--card); border-radius: 10px; padding: 14px; display: flex; flex-direction: column; gap: 12px; }
+.field { background: #fff; border-radius: 5px; box-shadow: 0 0 0 0.5px rgba(0,0,0,.25); padding: 4px 8px; font-size: 14px; }
+.editor { background: #fff; border-radius: 8px; border: 1px solid rgba(110,110,115,.35); padding: 8px; font-family: var(--mono); font-size: 14px; line-height: 1.45; min-height: 150px; }
+.row { display: flex; align-items: center; gap: 10px; }
+.icon { width: 1em; height: 1em; display: inline-block; vertical-align: -0.15em; flex: none; }
+.ok { color: var(--green); } .warn { color: var(--orange); } .fail { color: var(--red); }
+
+/* 底部固定列 */
+.footer { border-top: 1px solid var(--line); margin-top: 10px; padding-top: 10px; display: flex; align-items: center; gap: 10px; }
+.spacer { flex: 1; }
