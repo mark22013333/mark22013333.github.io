@@ -1,0 +1,444 @@
+<!doctype html>
+<html lang="zh-TW">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<!-- 本檔由 tools/build_sites.py 從 _sites/chatpulse/content.yml 產生，請勿直接修改 -->
+<title>ChatPulse</title>
+<meta name="description" content="ChatPulse：Google Chat 的摘要與 Mention 收件匣，用你本人的身分讀寫。">
+<meta property="og:title" content="ChatPulse">
+<meta property="og:description" content="Google Chat 的摘要與 Mention 收件匣，用你本人的身分讀寫。">
+<meta property="og:url" content="https://mark22013333.github.io/chatpulse/">
+<meta property="og:type" content="website">
+<meta property="og:image" content="https://mark22013333.github.io/chatpulse/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Noto+Sans+TC:wght@400;500;700&display=swap">
+<style>
+/* ============================================================
+   專案主色：由 content.yml 的 accent 帶入，每個作品頁只差這一行。
+   其餘所有主色相關的顏色都由 --accent 以 color-mix 推導。
+   ============================================================ */
+:root{ --accent:#2762c4; }
+
+/* ---------- 外框（沿用入口網站，深淺色皆固定深色） ---------- */
+:root{
+  --frame-bg:#0e1318; --frame-line:#2a3a45; --frame-ink:#c9d1d9; --frame-dim:#6b7682;
+  --amber:#e6b450; --cyan:#7fbfd9; --green:#8fcf8f;
+  --mono:"JetBrains Mono","Noto Sans TC","Heiti TC","Microsoft JhengHei",ui-monospace,Menlo,monospace;
+  --sans:"Noto Sans TC","Heiti TC","Microsoft JhengHei",system-ui,sans-serif;
+
+  /* 內文（淺色） */
+  color-scheme:light;
+  --bg:#f6f7f9; --surface:#ffffff; --ink:#1b232b; --soft:#4a5560; --dim:#6b7682; --line:#dde2e7;
+  --code-bg:#0e1318; --code-ink:#c9d1d9;
+  /* 主色衍生：淺色底上把主色壓暗才夠對比 */
+  --accent-ink:color-mix(in oklab, var(--accent) 62%, #000);
+  --accent-soft:color-mix(in oklab, var(--accent) 12%, var(--bg));
+  --accent-line:color-mix(in oklab, var(--accent) 45%, var(--line));
+  --on-accent:#04121a;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --bg:#11171d; --surface:#161e25; --ink:#dfe5ea; --soft:#9aa6b2; --dim:#76828e; --line:#25323c;
+    --code-bg:#0b1014; --code-ink:#c9d1d9;
+    --accent-ink:color-mix(in oklab, var(--accent) 85%, #fff);
+    --accent-soft:color-mix(in oklab, var(--accent) 14%, var(--bg));
+    --accent-line:color-mix(in oklab, var(--accent) 40%, var(--line));
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --bg:#11171d; --surface:#161e25; --ink:#dfe5ea; --soft:#9aa6b2; --dim:#76828e; --line:#25323c;
+  --code-bg:#0b1014; --code-ink:#c9d1d9;
+  --accent-ink:color-mix(in oklab, var(--accent) 85%, #fff);
+  --accent-soft:color-mix(in oklab, var(--accent) 14%, var(--bg));
+  --accent-line:color-mix(in oklab, var(--accent) 40%, var(--line));
+}
+
+*{box-sizing:border-box}
+html{background:var(--bg);scroll-behavior:smooth}
+@media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.75 var(--sans);overflow-x:hidden}
+img{max-width:100%;height:auto;display:block}
+a{color:var(--accent-ink)}
+a:focus-visible,.btn:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+code,kbd{font-family:var(--mono);font-size:.88em}
+p code,li code{background:var(--accent-soft);padding:.1em .35em;border-radius:3px;overflow-wrap:anywhere}
+kbd{border:1px solid var(--line);border-bottom-width:2px;border-radius:4px;padding:0 .35em;background:var(--surface);white-space:nowrap}
+
+/* grid 子項預設 min-width:auto，會被 pre 的長行撐寬 → 手機水平捲動 */
+.hero-grid>*,.feat>*,.split>*,.install>*{min-width:0}
+.wrap{max-width:1120px;margin:0 auto;padding-inline:clamp(16px,4vw,32px)}
+
+/* ---------- 頂部終端機導覽列 ---------- */
+.topbar{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--frame-bg);border-bottom:1px solid var(--frame-line);
+  font:13px/1 var(--mono);color:var(--frame-ink)}
+.topbar .wrap{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:40px}
+.crumb{display:flex;align-items:center;gap:.55em;text-decoration:none;color:var(--frame-ink);white-space:nowrap;min-width:0}
+.crumb .p{color:var(--amber)}
+.crumb .home{color:var(--cyan)}
+.crumb .sep{color:var(--frame-dim)}
+.crumb .here{color:var(--accent);font-weight:600}
+.crumb:hover .home{text-decoration:underline}
+.topnav{display:flex;gap:16px}
+.topnav a{color:var(--frame-dim);text-decoration:none}
+.topnav a:hover{color:var(--frame-ink)}
+@media (max-width:520px){.topnav .opt{display:none}}
+
+/* ---------- 首屏 ---------- */
+.hero{padding-block:clamp(40px,7vw,88px) clamp(32px,5vw,56px);
+  background:radial-gradient(1200px 400px at 85% -10%, var(--accent-soft), transparent 70%)}
+.hero-grid{display:grid;gap:clamp(28px,4vw,48px)}
+.eyebrow{font:13px/1 var(--mono);color:var(--dim);margin:0 0 14px}
+.eyebrow b{color:var(--accent-ink);font-weight:600}
+.hero h1{margin:0;font:600 clamp(44px,8vw,76px)/1 var(--mono);letter-spacing:-.02em}
+.hero h1 .cur{display:inline-block;width:.5em;height:.9em;background:var(--accent);vertical-align:-.08em;margin-left:.08em;animation:blink 1.1s steps(1) infinite}
+@keyframes blink{50%{opacity:0}}
+@media (prefers-reduced-motion: reduce){.hero h1 .cur{animation:none}}
+.tagline{margin:18px 0 0;font-size:clamp(20px,2.6vw,26px);font-weight:500;line-height:1.45;max-width:24em}
+.lede{margin:14px 0 0;color:var(--soft);max-width:38em}
+.actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:26px}
+.btn{display:inline-flex;align-items:center;gap:.5em;font:600 15px/1 var(--sans);text-decoration:none;padding:13px 20px;border-radius:8px;border:1px solid transparent}
+.btn.primary{background:var(--accent);color:var(--on-accent)}
+.btn.primary:hover{background:color-mix(in oklab, var(--accent) 88%, #fff)}
+.btn.ghost{border-color:var(--line);color:var(--ink);background:var(--surface)}
+.btn.ghost:hover{border-color:var(--accent-line)}
+.btn svg{width:18px;height:18px;flex:none}
+.req{margin:14px 0 0;font:13px/1.6 var(--mono);color:var(--dim)}
+
+/* 終端機外框（截圖容器） */
+.term{border:1px solid var(--frame-line);border-radius:10px;overflow:hidden;background:#1d1d2d;
+  box-shadow:0 1px 0 rgba(255,255,255,.04) inset, 0 24px 60px -24px rgba(0,20,40,.45)}
+.term .bar{display:flex;align-items:center;gap:7px;padding:9px 12px;background:#15151f;border-bottom:1px solid #2a2a3a;font:12px/1 var(--mono);color:#7d8590}
+.term .bar i{width:11px;height:11px;border-radius:50%;background:#3a3a4a;flex:none}
+.term .bar span{margin-left:8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.term .bar .mock{margin-left:auto;flex:none;font-style:normal;font-size:11px;color:#e6b450;border:1px solid #5a4a20;border-radius:4px;padding:2px 6px}
+.term img{width:100%;height:auto}  /* 依原圖比例完整顯示；空白邊請先用 tools/trim_shots.py 裁掉 */
+.hero .term{border-color:var(--accent-line)}
+.cap{margin:10px 2px 0;font-size:13px;color:var(--dim)}
+
+/* ---------- 區塊共用 ---------- */
+section{scroll-margin-top:56px}
+.sec{padding-block:clamp(48px,7vw,88px);border-top:1px solid var(--line)}
+.sec-head{max-width:40em;margin-bottom:clamp(28px,4vw,44px)}
+.kicker{font:13px/1 var(--mono);color:var(--accent-ink);margin:0 0 10px}
+.sec h2{margin:0;font-size:clamp(26px,3.4vw,34px);line-height:1.3;font-weight:700}
+.sec-head p{margin:12px 0 0;color:var(--soft)}
+
+/* 功能區塊：文字＋截圖交錯 */
+.feat{display:grid;gap:22px;align-items:center;padding-block:clamp(20px,3vw,32px)}
+.feat + .feat{border-top:1px dashed var(--line)}
+.feat h3{margin:0;font-size:21px;line-height:1.4}
+.feat h3 .n{font:600 13px/1 var(--mono);color:var(--accent-ink);display:block;margin-bottom:8px}
+.feat p{margin:10px 0 0;color:var(--soft)}
+.feat ul{margin:12px 0 0;padding-left:1.2em;color:var(--soft)}
+.feat li{margin:4px 0}
+@media (min-width:880px){
+  .feat{grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:44px}
+  .feat.flip{grid-template-columns:minmax(0,7fr) minmax(0,5fr)}  /* 圖在左時也給圖寬欄 */
+  .feat.flip .txt{order:2}
+}
+
+/* 自由區塊 split：左文字、右程式碼或截圖（例：給 AI agent 使用） */
+.split{display:grid;gap:24px}
+@media (min-width:880px){.split{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:44px;align-items:start}}
+.split-p{color:var(--soft);margin:12px 0 0}
+.split-p b{color:var(--ink)}
+.note{border-left:3px solid var(--amber);background:color-mix(in oklab, var(--amber) 9%, var(--bg));padding:12px 16px;border-radius:0 6px 6px 0;color:var(--soft);font-size:15px;margin:16px 0 0}
+.note b{color:var(--ink)}
+
+/* 程式碼 */
+pre.code{margin:0;background:var(--code-bg);color:var(--code-ink);border:1px solid var(--frame-line);border-radius:10px;
+  padding:16px 18px;overflow-x:auto;font:13px/1.75 var(--mono);tab-size:2}
+pre.code .c{color:#6b7682}
+pre.code .p{color:var(--amber);user-select:none}
+pre.code .a{color:var(--accent)}
+
+/* 安裝 */
+.install{display:grid;gap:28px}
+@media (min-width:880px){.install{grid-template-columns:minmax(0,7fr) minmax(0,5fr);gap:44px;align-items:start}}
+.steps{margin:0;padding:0;list-style:none;display:grid;gap:14px;color:var(--soft)}
+.steps li{padding:14px 16px;border:1px solid var(--line);border-radius:8px;background:var(--surface)}
+.steps b{color:var(--ink)}
+.side h3{margin:0 0 10px;font-size:19px}
+.side ul{margin:0;padding-left:1.2em;color:var(--soft)}
+.side li{margin:6px 0}
+.side .term{margin-top:18px}
+
+/* 自由區塊 cards：卡片清單（例：已知限制） */
+.cards{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));margin:0;padding:0;list-style:none}
+.cards li{border:1px solid var(--line);border-radius:8px;padding:14px 16px;background:var(--surface);color:var(--soft);font-size:15px}
+.cards .ct{display:block;font-weight:700;color:var(--ink);margin-bottom:4px}  /* 卡片標題；內文的 <b> 維持行內粗體 */
+
+/* ---------- 頁尾：品牌記號＋連結列＋說明 ---------- */
+/* 品牌記號的色條由 content.yml 的 brand_bars 定義；沒有定義的專案只顯示名稱 */
+footer{margin-top:clamp(40px,6vw,72px);border-top:1px solid var(--line);padding-block:36px calc(48px + env(safe-area-inset-bottom,0px));font-size:13.5px;color:var(--dim)}
+footer .row{display:flex;flex-wrap:wrap;justify-content:space-between;gap:16px;align-items:center}
+footer .brand{font:800 22px/1 var(--sans);color:var(--ink);display:flex;align-items:center;gap:8px;letter-spacing:-.02em}
+footer nav{display:flex;flex-wrap:wrap;gap:18px}
+footer a{color:var(--soft);text-decoration:none}
+footer a:hover{color:var(--accent-ink)}
+footer p{margin:18px 0 0}
+.mark{display:inline-flex;gap:3px;align-items:stretch;height:.78em}
+.mark i{display:block;width:.11em;border-radius:1px}
+</style>
+</head>
+<body>
+
+<nav class="topbar" aria-label="返回入口網站">
+  <div class="wrap">
+    <a class="crumb" href="https://mark22013333.github.io/" title="回到作品入口">
+      <span class="p">$</span><span class="home">~/portal</span><span class="sep">›</span><span class="here">ChatPulse</span>
+    </a>
+    <div class="topnav">
+      <a class="opt" href="#features">功能</a>
+      <a class="opt" href="#mcp">MCP</a>
+      <a href="#install">安裝</a>
+      <a class="opt" href="#limits">資料邊界</a>
+    </div>
+  </div>
+</nav>
+
+<main>
+  <!-- 首屏 -->
+  <header class="hero">
+    <div class="wrap hero-grid">
+      <div>
+        <p class="eyebrow"><b>Web 儀表板＋MCP</b> · Python 3.12 · FastAPI · React</p>
+        <h1>ChatPulse<span class="cur" aria-hidden="true"></span></h1>
+        <p class="tagline">Google Chat 的摘要與 Mention 收件匣，用你本人的身分讀寫。</p>
+        <p class="lede">查閱自己加入的 Space、產出結構化 Summary，並在被人 @ 時取得一份可修改的 Draft Reply。讀寫 Google Chat 一律使用<b>你本人的 OAuth 憑證</b>，不註冊 Chat App、不用機器人身分發話。儀表板與 CLI 的送出動作都需要二次確認；MCP 入口的送出由 Claude 端的工具權限把關。</p>
+        <div class="actions">
+          <a class="btn primary" href="#install">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg>
+            安裝
+          </a>
+          <a class="btn ghost" href="https://github.com/mark22013333/ChatPulse">
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5a11.5 11.5 0 0 0-3.64 22.41c.58.1.79-.25.79-.56v-2c-3.2.7-3.88-1.37-3.88-1.37-.52-1.33-1.28-1.69-1.28-1.69-1.05-.71.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.55-.29-5.24-1.28-5.24-5.69 0-1.26.45-2.29 1.19-3.09-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.17 1.18a11 11 0 0 1 5.77 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.8 1.19 1.83 1.19 3.09 0 4.42-2.69 5.39-5.26 5.68.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.8.56A11.5 11.5 0 0 0 12 .5Z"/></svg>
+            GitHub
+          </a>
+        </div>
+        <p class="req">需求：Python 3.12（引導會自動建立環境）、Google OAuth 的 client_secret.json；摘要與 Draft Reply 另需本機登入的 Claude Code，或 Gemini API key</p>
+      </div>
+      <figure style="margin:0">
+        <div class="term">
+          <div class="bar"><i></i><i></i><i></i><span>ChatPulse — 摘要工作台</span></div>
+          <img src="img/spaces.png" width="1800" height="1164"
+               alt="摘要工作台的 Space 清單：每列是一個 Space 的名稱、類型（群組、多人對話、私訊）、最後活動時間、待處理 Mention 數，以及 Summary 是否已是最新">
+        </div>
+        <figcaption class="cap">摘要工作台的 Space 清單：可搜尋名稱、依類型篩選，表格列出最後活動、待處理 Mention 數，以及你自己的 Summary 是否已是最新。清單有 5 分鐘快取，按「強制刷新」重抓。</figcaption>
+      </figure>
+    </div>
+  </header>
+
+
+  <!-- 功能 -->
+  <section id="features" class="sec">
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="kicker">// 功能</p>
+        <h2>摘要、收件匣、草稿，同一個儀表板</h2>
+        <p>執行 <code>./chatpulse.sh web</code> 後開啟 <code>http://localhost:8000</code>，在畫面上選「匯入既有憑證」或「使用 Google 登入」。</p>
+      </div>
+
+      <article class="feat">
+        <div class="txt">
+          <h3><span class="n">01 · 單群摘要</span>三種風格，章節結構各不相同</h3>
+          <p>選一個 Space、抓最近 N 則（1~1000，預設 50），Summary 以 SSE 逐字串流產出。三種風格（通用／技術細節／只要待辦）輸出的章節結構不同，不是同一份 prompt 多加一句「寫技術一點」。</p>
+          <ul>
+            <li>技術細節風格多出「已排除的假設與排查過程」，讓接手的人不必重做白工</li>
+            <li>Action Items 從摘要抓出來變成可勾選清單，可複製為 Markdown</li>
+            <li>推播回 Chat 以你本人身分送出，需要二次確認</li>
+            <li>Summary 只屬於產生它的人，其他 Viewer 看不到</li>
+          </ul>
+        </div>
+        <div class="term">
+          <div class="bar"><i></i><i></i><i></i><span>ChatPulse — 歷史 Summary</span></div>
+          <img src="img/summary.png" width="1536" height="1104" loading="lazy"
+               alt="「範例專案群組」的歷史 Summary，技術細節風格，分為技術問題與症狀、已排除的假設與排查過程、技術方案與取捨、未解的技術問題、待辦事項五個章節">
+        </div>
+      </article>
+
+      <article class="feat flip">
+        <div class="txt">
+          <h3><span class="n">02 · Mention 收件匣</span>跨所有 Space 找出誰 @ 了你</h3>
+          <p>背景採集器逐群輪詢（預設每 45 秒一輪），把 @ 你的訊息收進收件匣，分成待處理與已處理兩種狀態。</p>
+          <ul>
+            <li>資料庫只存識別資訊（哪個 Space、誰、什麼時候），訊息內容每次顯示時才向 Google Chat 取</li>
+            <li>在 Chat 被編輯或刪除的訊息，不會顯示過期內容</li>
+            <li>點一則就能在右側直接產生 Draft Reply</li>
+          </ul>
+        </div>
+        <div class="term">
+          <div class="bar"><i></i><i></i><i></i><span>ChatPulse — Mention 收件匣</span></div>
+          <img src="img/inbox.png" width="1800" height="1184" loading="lazy"
+               alt="Mention 收件匣：左側是三則待處理的 @，右側打開其中一則，下方是草稿設定與「產生 Draft Reply」按鈕">
+        </div>
+      </article>
+
+      <article class="feat">
+        <div class="txt">
+          <h3><span class="n">03 · Draft Reply</span>先寫脈絡分析，再給建議回話</h3>
+          <p>針對一則 @ 產生草稿，串流輸出「脈絡分析」與「建議回話」兩段。改完後以你本人的身分回到原討論串。</p>
+          <ul>
+            <li>可勾選 1~N 個 Reference Space 補充脈絡，預設一個都不勾</li>
+            <li>脈絡分析一定要寫「脈絡涵蓋」：實際看到哪個範圍、有沒有缺口</li>
+            <li>參考專案：登錄本機 git repo 並指定哪個分支是正式、哪個是 UAT，草稿就能引用實際程式碼，並標明是哪個環境的哪個 commit</li>
+            <li>草稿與產生當下的證據（脈絡範圍、參考來源、生成與回話設定）一起存下來，重新整理或隔天再開都讀得回，畫面會標明是先前存的草稿</li>
+          </ul>
+        </div>
+        <div class="term">
+          <div class="bar"><i></i><i></i><i></i><span>ChatPulse — Draft Reply</span></div>
+          <img src="img/draft.png" width="1264" height="1186" loading="lazy"
+               alt="已存下的草稿被讀回：上方是志明的提問，中間提示「這是先前存下來的草稿，證據欄是產生當下記錄的完整內容」，下方是脈絡分析的五個欄位">
+        </div>
+      </article>
+
+      <article class="feat flip">
+        <div class="txt">
+          <h3><span class="n">04 · 回覆設定</span>語氣、Persona、提示詞、潤稿</h3>
+          <p>產草稿前可以逐次選這四項，<b>全部選填</b>，一個都不選就跟這個功能不存在時完全一樣。四項都只影響〈建議回話〉，〈脈絡分析〉不受影響；也可以在設定頁存成預設值。</p>
+          <ul>
+            <li>Reply Tone：8 種語氣（自然直接、專業正式、工程師協作、委婉柔和…與自訂），和摘要的三種風格是不同的東西</li>
+            <li>Persona：一組個人寫作風格，不是角色扮演，回話永遠以你本人的身分送出。從公開 GitHub repo 匯入時會釘住當下的 commit SHA，原文先淨化、只有結構化的風格資訊會進 prompt</li>
+            <li>Sepia 潤稿：讓回話讀起來不像機器寫的，<b>預設關閉</b>。只做最小幅度修訂，改壞事實會被擋下並退回未潤稿的版本</li>
+          </ul>
+        </div>
+        <div class="term">
+          <div class="bar"><i></i><i></i><i></i><span>ChatPulse — 設定</span></div>
+          <img src="img/reply-settings.png" width="1800" height="1274" loading="lazy"
+               alt="設定頁的「我的預設值」：口氣、Persona、自訂提示三個欄位，以及「使用 Sepia 潤稿」勾選框">
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <!-- 第二個入口 -->
+  <section id="mcp" class="sec">
+    <div class="wrap split">
+      <div>
+        <p class="kicker">// 第二個入口</p>
+        <h2>在 Claude 對話裡直接用</h2>
+        <p class="split-p">Web 儀表板與 MCP server 是同一套後端能力的兩個入口，不是替代關係。MCP 入口能列 Space、抓訊息、產生摘要、發送訊息；Mention 收件匣與 Draft Reply 只在儀表板。</p>
+        <p class="split-p"><b>MCP 的送出沒有 ChatPulse 這一層的確認</b>：<code>send_chat_message</code>（以及 <code>summarize_chat_space</code> 帶推播參數時）只在工具說明裡請模型先向你確認，實際攔不攔取決於 Claude 端的工具權限設定。</p>
+        <p class="split-p">也可以從命令列摘要單一 Space。<b>不加 <code>--post</code> 就不會推播</b>，加了也會再要求一次確認。</p>
+      </div>
+      <pre class="code" tabindex="0" aria-label="MCP 與 CLI"><span class="c"># 註冊 MCP 入口（或 ./chatpulse.sh mcp）</span>
+<span class="p">$ </span>./scripts/install-claude.sh
+
+<span class="c"># MCP 工具</span>
+<span class="c"># list_chat_spaces / fetch_chat_messages</span>
+<span class="c"># summarize_chat_space / send_chat_message</span>
+<span class="c"># list_ai_providers</span>
+
+<span class="c"># 最近 50 則，只在終端輸出</span>
+<span class="p">$ </span>./scripts/run_summary.sh "示範頻道"
+<span class="p">$ </span>./scripts/run_summary.sh "示範頻道" 100 --style technical
+<span class="c"># 推播回群組，會再確認一次</span>
+<span class="p">$ </span>./scripts/run_summary.sh "示範頻道" 50 <span class="a">--post</span></pre>
+    </div>
+  </section>
+
+  <!-- AI 供應商 -->
+  <section id="providers" class="sec">
+    <div class="wrap split">
+      <div>
+        <p class="kicker">// AI 供應商</p>
+        <h2>預設用本機的 Claude Code</h2>
+        <p class="split-p">摘要與 Draft Reply 的 AI 供應商可以切換，預設 <code>claude</code>（目前解析為本機 Claude Code CLI，吃現有訂閱、零額外設定）。另一條路是設 <code>GOOGLE_API_KEY</code> 走 Gemini。只讀 Space 與訊息不需要 AI 供應商。</p>
+        <p class="split-p">儀表板的下拉選單、CLI 的 <code>--provider</code>、MCP 的 <code>provider</code> 參數接受同一組值：<code>claude</code>、<code>auto</code>、<code>claude_cli</code>、<code>gemini</code>。</p>
+        <p class="note"><b>Claude Code CLI 的成本：</b>它預設會載入自己的 system prompt、CLAUDE.md 與全部工具定義（實測一個 2-token 的 prompt 也會寫入 19,085 token 的快取）。ChatPulse 固定停用工具與 MCP、改用自己的 system prompt，實測降到接近 0。</p>
+      </div>
+      <pre class="code" tabindex="0" aria-label="指定供應商"><span class="c"># 目前有哪些可用</span>
+<span class="p">$ </span>curl -s localhost:8000/api/v1/providers
+<span class="p">$ </span>./scripts/run_summary.sh --list-providers
+
+<span class="c"># 伺服器預設</span>
+<span class="p">$ </span>export <span class="a">CHATPULSE_AI_PROVIDER</span>=claude_cli
+<span class="c"># 單次覆寫</span>
+<span class="p">$ </span>./scripts/run_summary.sh "示範頻道" 50 --provider gemini</pre>
+    </div>
+  </section>
+
+  <!-- 安裝 -->
+  <section id="install" class="sec">
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="kicker">// 安裝</p>
+        <h2>一個指令走完引導</h2>
+        <p>互動式引導，每一步都有說明，可重複執行，已完成的步驟會自動跳過。依序處理 Python 環境 → 憑證檢查 → Google 授權 → 選擇入口並安裝。</p>
+      </div>
+      <div class="install">
+        <div>
+          <pre class="code" tabindex="0" aria-label="macOS / Linux">git clone https://github.com/mark22013333/ChatPulse.git
+cd ChatPulse
+
+<span class="c"># client_secret.json 不在版控裡，要自己放進 config/</span>
+mkdir -p config
+
+<span class="c"># 完整引導（Windows：雙擊 chatpulse.bat）</span>
+./chatpulse.sh
+
+<span class="c"># 裝好之後，日常只要這一行</span>
+./chatpulse.sh web      <span class="c"># 啟動儀表板 → http://localhost:8000</span></pre>
+          <ul class="steps" style="margin-top:16px">
+            <li><b>不用裝 Node.js。</b>儀表板畫面（React 19 ＋ Vite 的建置產物）已隨專案進版控；只有改前端原始碼時才需要。</li>
+            <li><b>Windows 安裝 Python 時</b>務必勾選「Add python.exe to PATH」，而且不要把專案放在 OneDrive 同步資料夾裡（SQLite 的檔案鎖在同步資料夾或網路磁碟上會失敗）。</li>
+            <li><b>檢查安裝狀態：</b><code>./chatpulse.sh check</code> 逐項報告 Python 環境與套件、<code>client_secret.json</code>、Google 授權範圍、可用的 AI 供應商、Sepia 潤稿規則與儀表板畫面，不通過的項目會印出下一步該做什麼。</li>
+          </ul>
+        </div>
+        <div class="side">
+          <h3>子命令</h3>
+          <ul>
+            <li><code>web</code>：啟動儀表板，日常最常用</li>
+            <li><code>check</code>：檢查安裝狀態，不動任何東西</li>
+            <li><code>auth</code>：重新做 Google 授權（換帳號時）</li>
+            <li><code>mcp</code>：重新註冊 Claude Code 的 MCP 入口</li>
+            <li>Sepia 潤稿規則已 vendored 進 repo，不用另外安裝任何 skill 或 API key</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 資料處理邊界與已知限制 -->
+  <section id="limits" class="sec">
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="kicker">// 資料處理邊界與已知限制</p>
+        <h2>團隊共用前請先讀</h2>
+        <p>前四條是 <code>SPECIFICATION.md</code> 第十節寫明、已經做出的決定（README 的「資料處理邊界」摘要了其中幾條），理由與代價都在那一節。</p>
+      </div>
+      <ul class="cards">
+        <li><b class="ct">沒有 Space 排除清單</b>所有你有權讀取的 Space，對話內容都可以被送去 AI 產生摘要與草稿，<b>包含公部門與金融客戶專案群組</b>。這些對話會離開公司環境、送到所選的 AI 供應商；以個人 API key 呼叫時，資料處理條款與公司的 Google Workspace 合約不是同一份。</li>
+        <li><b class="ct">摘要與草稿以明文存在本機 90 天</b>對話全文不落地，但產生出來的摘要與草稿會以明文存在本機 SQLite 中 90 天。過期資料是在儀表板啟動時清除的，長時間不重啟就會存放得更久。</li>
+        <li><b class="ct">訊息裡的圖片也會送給 AI</b>截圖是無定向的畫面捕捉，可能夾帶 scrollback 裡的 token 或其他客戶名稱；模型還可能把截圖裡的憑證或個資轉寫進摘要，跟著摘要明文存 90 天。全面關閉用 <code>CHATPULSE_IMAGES=0</code>；只排除特定聊天室用 <code>CHATPULSE_IMAGE_EXCLUDED_SPACES</code>。</li>
+        <li><b class="ct">參考專案會把原始碼片段送給 AI</b>只限你自己登錄的 repo（不是自動掃描）。片段本身不落地，但草稿裡的程式碼會跟著草稿存 90 天。<code>.env</code> 之類的路徑整份跳過、片段內的金鑰會遮蔽，但那是 best-effort。全面關閉：<code>CHATPULSE_CODE=0</code>。</li>
+        <li><b class="ct">Gemini 免費層每天只有 20 次請求</b><code>gemini-3.6-flash</code> 免費層 2026-09-05 實測每天 20 次；這是改成可切換供應商的直接原因。</li>
+        <li><b class="ct">config/ 裡有一份明文的 Google refresh token</b>安裝引導的 Google 授權、MCP 與 CLI 入口用的是 <code>config/google_chat_token.json</code>，裡面是<b>明文的 refresh token</b>，等於這個 Google 帳號的 Chat 讀寫授權。程式只把權限收成 0600，Windows 沒有這種權限位元、連這一步都做不到。<b>不要複製、分享這個檔，也不要放進同步資料夾或版控。</b></li>
+        <li><b class="ct">儀表板的 token 加密，金鑰預設與資料庫同目錄</b>儀表板把 token 以本機金鑰加密存進 SQLite（從上面那個檔匯入）；金鑰檔預設是 <code>data/token.key</code>（0600），與資料庫同目錄但不同檔。要更嚴格可用 <code>CHATPULSE_KEY_FILE</code> 指到別的位置。</li>
+      </ul>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="row">
+      <span class="brand">ChatPulse</span>
+      <nav aria-label="頁尾連結">
+        <a href="https://github.com/mark22013333/ChatPulse">GitHub</a>
+        <a href="https://mark22013333.github.io/">回作品集</a>
+      </nav>
+    </div>
+    <p>Google Chat 的摘要與 Mention 收件匣。本頁截圖全部使用虛構的展示資料。</p>
+  </div>
+</footer>
+
+</body>
+</html>

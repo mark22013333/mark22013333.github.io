@@ -1,0 +1,215 @@
+# ChatPulse 作品介紹頁的內容。改完執行 python3 tools/build_sites.py chatpulse 重新產生 /chatpulse/。
+# 欄位說明見 _sites/sshm/content.yml 開頭的註解。
+#
+# 截圖重拍：sh _sites/chatpulse/seed/serve.sh <ChatPulse clone> <venv python> <工作目錄> <port>
+#           再跑 _sites/chatpulse/seed/shoot.cjs（用法寫在該檔開頭）。
+#   後端是真實的 ChatPulse，資料庫是全新的 SQLite，內容全部來自 seed/fixture.json（虛構）。
+#   Space 清單、訊息內容、Mention 的訊息文字在正式程式裡一律即時向 Google Chat 取、不落地，
+#   截圖時改由瀏覽器端用 fixture 回應這三個端點；其餘畫面資料都由真實後端讀資料庫回傳。
+
+slug: chatpulse
+name: ChatPulse
+tagline: Google Chat 的摘要與 Mention 收件匣，用你本人的身分讀寫。
+accent: '#2762c4'          # 取自儀表板淺色主題的 accent（dashboard/frontend/src/index.css 的 --signal）
+github: https://github.com/mark22013333/ChatPulse
+
+eyebrow:
+  kind: Web 儀表板＋MCP
+  meta: [Python 3.12, FastAPI, React]
+
+lede: '查閱自己加入的 Space、產出結構化 Summary，並在被人 @ 時取得一份可修改的 Draft Reply。讀寫 Google Chat 一律使用<b>你本人的 OAuth 憑證</b>，不註冊 Chat App、不用機器人身分發話。儀表板與 CLI 的送出動作都需要二次確認；MCP 入口的送出由 Claude 端的工具權限把關。'
+
+buttons:
+  - label: 安裝
+    url: '#install'
+    icon: download
+  - label: GitHub
+    url: https://github.com/mark22013333/ChatPulse
+    icon: github
+
+requirements: 需求：Python 3.12（引導會自動建立環境）、Google OAuth 的 client_secret.json；摘要與 Draft Reply 另需本機登入的 Claude Code，或 Gemini API key
+
+hero:
+  image: spaces.png
+  bar: ChatPulse — 摘要工作台
+  alt: 摘要工作台的 Space 清單：每列是一個 Space 的名稱、類型（群組、多人對話、私訊）、最後活動時間、待處理 Mention 數，以及 Summary 是否已是最新
+  caption: '摘要工作台的 Space 清單：可搜尋名稱、依類型篩選，表格列出最後活動、待處理 Mention 數，以及你自己的 Summary 是否已是最新。清單有 5 分鐘快取，按「強制刷新」重抓。'
+
+features:
+  id: features
+  nav: 功能
+  nav_optional: true
+  kicker: // 功能
+  title: 摘要、收件匣、草稿，同一個儀表板
+  intro: '執行 <code>./chatpulse.sh web</code> 後開啟 <code>http://localhost:8000</code>，在畫面上選「匯入既有憑證」或「使用 Google 登入」。'
+  items:
+    - label: 單群摘要
+      title: 三種風格，章節結構各不相同
+      paragraphs:
+        - '選一個 Space、抓最近 N 則（1~1000，預設 50），Summary 以 SSE 逐字串流產出。三種風格（通用／技術細節／只要待辦）輸出的章節結構不同，不是同一份 prompt 多加一句「寫技術一點」。'
+      bullets:
+        - '技術細節風格多出「已排除的假設與排查過程」，讓接手的人不必重做白工'
+        - 'Action Items 從摘要抓出來變成可勾選清單，可複製為 Markdown'
+        - '推播回 Chat 以你本人身分送出，需要二次確認'
+        - 'Summary 只屬於產生它的人，其他 Viewer 看不到'
+      image: summary.png
+      bar: ChatPulse — 歷史 Summary
+      alt: 「範例專案群組」的歷史 Summary，技術細節風格，分為技術問題與症狀、已排除的假設與排查過程、技術方案與取捨、未解的技術問題、待辦事項五個章節
+
+    - label: Mention 收件匣
+      title: 跨所有 Space 找出誰 @ 了你
+      paragraphs:
+        - '背景採集器逐群輪詢（預設每 45 秒一輪），把 @ 你的訊息收進收件匣，分成待處理與已處理兩種狀態。'
+      bullets:
+        - '資料庫只存識別資訊（哪個 Space、誰、什麼時候），訊息內容每次顯示時才向 Google Chat 取'
+        - '在 Chat 被編輯或刪除的訊息，不會顯示過期內容'
+        - '點一則就能在右側直接產生 Draft Reply'
+      image: inbox.png
+      bar: ChatPulse — Mention 收件匣
+      alt: Mention 收件匣：左側是三則待處理的 @，右側打開其中一則，下方是草稿設定與「產生 Draft Reply」按鈕
+
+    - label: Draft Reply
+      title: 先寫脈絡分析，再給建議回話
+      paragraphs:
+        - '針對一則 @ 產生草稿，串流輸出「脈絡分析」與「建議回話」兩段。改完後以你本人的身分回到原討論串。'
+      bullets:
+        - '可勾選 1~N 個 Reference Space 補充脈絡，預設一個都不勾'
+        - '脈絡分析一定要寫「脈絡涵蓋」：實際看到哪個範圍、有沒有缺口'
+        - '參考專案：登錄本機 git repo 並指定哪個分支是正式、哪個是 UAT，草稿就能引用實際程式碼，並標明是哪個環境的哪個 commit'
+        - '草稿與產生當下的證據（脈絡範圍、參考來源、生成與回話設定）一起存下來，重新整理或隔天再開都讀得回，畫面會標明是先前存的草稿'
+      image: draft.png
+      bar: ChatPulse — Draft Reply
+      alt: 已存下的草稿被讀回：上方是志明的提問，中間提示「這是先前存下來的草稿，證據欄是產生當下記錄的完整內容」，下方是脈絡分析的五個欄位
+
+    - label: 回覆設定
+      title: 語氣、Persona、提示詞、潤稿
+      paragraphs:
+        - '產草稿前可以逐次選這四項，<b>全部選填</b>，一個都不選就跟這個功能不存在時完全一樣。四項都只影響〈建議回話〉，〈脈絡分析〉不受影響；也可以在設定頁存成預設值。'
+      bullets:
+        - 'Reply Tone：8 種語氣（自然直接、專業正式、工程師協作、委婉柔和…與自訂），和摘要的三種風格是不同的東西'
+        - 'Persona：一組個人寫作風格，不是角色扮演，回話永遠以你本人的身分送出。從公開 GitHub repo 匯入時會釘住當下的 commit SHA，原文先淨化、只有結構化的風格資訊會進 prompt'
+        - 'Sepia 潤稿：讓回話讀起來不像機器寫的，<b>預設關閉</b>。只做最小幅度修訂，改壞事實會被擋下並退回未潤稿的版本'
+      image: reply-settings.png
+      bar: ChatPulse — 設定
+      alt: 設定頁的「我的預設值」：口氣、Persona、自訂提示三個欄位，以及「使用 Sepia 潤稿」勾選框
+
+sections:
+  - type: split
+    id: mcp
+    position: before_install
+    nav: MCP
+    nav_optional: true
+    kicker: // 第二個入口
+    title: 在 Claude 對話裡直接用
+    paragraphs:
+      - 'Web 儀表板與 MCP server 是同一套後端能力的兩個入口，不是替代關係。MCP 入口能列 Space、抓訊息、產生摘要、發送訊息；Mention 收件匣與 Draft Reply 只在儀表板。'
+      - '<b>MCP 的送出沒有 ChatPulse 這一層的確認</b>：<code>send_chat_message</code>（以及 <code>summarize_chat_space</code> 帶推播參數時）只在工具說明裡請模型先向你確認，實際攔不攔取決於 Claude 端的工具權限設定。'
+      - '也可以從命令列摘要單一 Space。<b>不加 <code>--post</code> 就不會推播</b>，加了也會再要求一次確認。'
+    code:
+      label: MCP 與 CLI
+      highlight: [--post]
+      text: |-
+        # 註冊 MCP 入口（或 ./chatpulse.sh mcp）
+        $ ./scripts/install-claude.sh
+
+        # MCP 工具
+        # list_chat_spaces / fetch_chat_messages
+        # summarize_chat_space / send_chat_message
+        # list_ai_providers
+
+        # 最近 50 則，只在終端輸出
+        $ ./scripts/run_summary.sh "示範頻道"
+        $ ./scripts/run_summary.sh "示範頻道" 100 --style technical
+        # 推播回群組，會再確認一次
+        $ ./scripts/run_summary.sh "示範頻道" 50 --post
+
+  - type: split
+    id: providers
+    position: before_install
+    kicker: // AI 供應商
+    title: 預設用本機的 Claude Code
+    paragraphs:
+      - '摘要與 Draft Reply 的 AI 供應商可以切換，預設 <code>claude</code>（目前解析為本機 Claude Code CLI，吃現有訂閱、零額外設定）。另一條路是設 <code>GOOGLE_API_KEY</code> 走 Gemini。只讀 Space 與訊息不需要 AI 供應商。'
+      - '儀表板的下拉選單、CLI 的 <code>--provider</code>、MCP 的 <code>provider</code> 參數接受同一組值：<code>claude</code>、<code>auto</code>、<code>claude_cli</code>、<code>gemini</code>。'
+    note: '<b>Claude Code CLI 的成本：</b>它預設會載入自己的 system prompt、CLAUDE.md 與全部工具定義（實測一個 2-token 的 prompt 也會寫入 19,085 token 的快取）。ChatPulse 固定停用工具與 MCP、改用自己的 system prompt，實測降到接近 0。'
+    code:
+      label: 指定供應商
+      highlight: [CHATPULSE_AI_PROVIDER]
+      text: |-
+        # 目前有哪些可用
+        $ curl -s localhost:8000/api/v1/providers
+        $ ./scripts/run_summary.sh --list-providers
+
+        # 伺服器預設
+        $ export CHATPULSE_AI_PROVIDER=claude_cli
+        # 單次覆寫
+        $ ./scripts/run_summary.sh "示範頻道" 50 --provider gemini
+
+  - type: cards
+    id: limits
+    position: after_install
+    nav: 資料邊界
+    nav_optional: true
+    kicker: // 資料處理邊界與已知限制
+    title: 團隊共用前請先讀
+    intro: '前四條是 <code>SPECIFICATION.md</code> 第十節寫明、已經做出的決定（README 的「資料處理邊界」摘要了其中幾條），理由與代價都在那一節。'
+    cards:
+      - title: 沒有 Space 排除清單
+        body: '所有你有權讀取的 Space，對話內容都可以被送去 AI 產生摘要與草稿，<b>包含公部門與金融客戶專案群組</b>。這些對話會離開公司環境、送到所選的 AI 供應商；以個人 API key 呼叫時，資料處理條款與公司的 Google Workspace 合約不是同一份。'
+      - title: 摘要與草稿以明文存在本機 90 天
+        body: '對話全文不落地，但產生出來的摘要與草稿會以明文存在本機 SQLite 中 90 天。過期資料是在儀表板啟動時清除的，長時間不重啟就會存放得更久。'
+      - title: 訊息裡的圖片也會送給 AI
+        body: '截圖是無定向的畫面捕捉，可能夾帶 scrollback 裡的 token 或其他客戶名稱；模型還可能把截圖裡的憑證或個資轉寫進摘要，跟著摘要明文存 90 天。全面關閉用 <code>CHATPULSE_IMAGES=0</code>；只排除特定聊天室用 <code>CHATPULSE_IMAGE_EXCLUDED_SPACES</code>。'
+      - title: 參考專案會把原始碼片段送給 AI
+        body: '只限你自己登錄的 repo（不是自動掃描）。片段本身不落地，但草稿裡的程式碼會跟著草稿存 90 天。<code>.env</code> 之類的路徑整份跳過、片段內的金鑰會遮蔽，但那是 best-effort。全面關閉：<code>CHATPULSE_CODE=0</code>。'
+      - title: Gemini 免費層每天只有 20 次請求
+        body: '<code>gemini-3.6-flash</code> 免費層 2026-09-05 實測每天 20 次；這是改成可切換供應商的直接原因。'
+      - title: config/ 裡有一份明文的 Google refresh token
+        body: '安裝引導的 Google 授權、MCP 與 CLI 入口用的是 <code>config/google_chat_token.json</code>，裡面是<b>明文的 refresh token</b>，等於這個 Google 帳號的 Chat 讀寫授權。程式只把權限收成 0600，Windows 沒有這種權限位元、連這一步都做不到。<b>不要複製、分享這個檔，也不要放進同步資料夾或版控。</b>'
+      - title: 儀表板的 token 加密，金鑰預設與資料庫同目錄
+        body: '儀表板把 token 以本機金鑰加密存進 SQLite（從上面那個檔匯入）；金鑰檔預設是 <code>data/token.key</code>（0600），與資料庫同目錄但不同檔。要更嚴格可用 <code>CHATPULSE_KEY_FILE</code> 指到別的位置。'
+
+install:
+  id: install
+  nav: 安裝
+  kicker: // 安裝
+  title: 一個指令走完引導
+  intro: '互動式引導，每一步都有說明，可重複執行，已完成的步驟會自動跳過。依序處理 Python 環境 → 憑證檢查 → Google 授權 → 選擇入口並安裝。'
+  code:
+    label: macOS / Linux
+    text: |-
+      git clone https://github.com/mark22013333/ChatPulse.git
+      cd ChatPulse
+
+      # client_secret.json 不在版控裡，要自己放進 config/
+      mkdir -p config
+
+      # 完整引導（Windows：雙擊 chatpulse.bat）
+      ./chatpulse.sh
+
+      # 裝好之後，日常只要這一行
+      ./chatpulse.sh web      # 啟動儀表板 → http://localhost:8000
+  steps:
+    - title: 不用裝 Node.js。
+      body: '儀表板畫面（React 19 ＋ Vite 的建置產物）已隨專案進版控；只有改前端原始碼時才需要。'
+    - title: Windows 安裝 Python 時
+      body: '務必勾選「Add python.exe to PATH」，而且不要把專案放在 OneDrive 同步資料夾裡（SQLite 的檔案鎖在同步資料夾或網路磁碟上會失敗）。'
+    - title: 檢查安裝狀態：
+      body: '<code>./chatpulse.sh check</code> 逐項報告 Python 環境與套件、<code>client_secret.json</code>、Google 授權範圍、可用的 AI 供應商、Sepia 潤稿規則與儀表板畫面，不通過的項目會印出下一步該做什麼。'
+  side:
+    title: 子命令
+    items:
+      - '<code>web</code>：啟動儀表板，日常最常用'
+      - '<code>check</code>：檢查安裝狀態，不動任何東西'
+      - '<code>auth</code>：重新做 Google 授權（換帳號時）'
+      - '<code>mcp</code>：重新註冊 Claude Code 的 MCP 入口'
+      - 'Sepia 潤稿規則已 vendored 進 repo，不用另外安裝任何 skill 或 API key'
+
+footer_links:
+  - label: GitHub
+    url: https://github.com/mark22013333/ChatPulse
+  - label: 回作品集
+    url: https://mark22013333.github.io/
+footer_note: Google Chat 的摘要與 Mention 收件匣。本頁截圖全部使用虛構的展示資料。
+
+en: null
