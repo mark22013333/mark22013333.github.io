@@ -1,0 +1,390 @@
+<!doctype html>
+<html lang="zh-TW">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<!-- 本檔由 tools/build_sites.py 從 _sites/treef/content.yml 產生，請勿直接修改 -->
+<title>treef</title>
+<meta name="description" content="treef：帶 emoji、顏色、檔案大小與 Git 狀態的目錄樹。">
+<meta property="og:title" content="treef">
+<meta property="og:description" content="帶 emoji、顏色、檔案大小與 Git 狀態的目錄樹。">
+<meta property="og:url" content="https://mark22013333.github.io/treef/">
+<meta property="og:type" content="website">
+<meta property="og:image" content="https://mark22013333.github.io/treef/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Noto+Sans+TC:wght@400;500;700&display=swap">
+<style>
+/* ============================================================
+   專案主色：由 content.yml 的 accent 帶入，每個作品頁只差這一行。
+   其餘所有主色相關的顏色都由 --accent 以 color-mix 推導。
+   ============================================================ */
+:root{ --accent:#89b4fa; }
+
+/* ---------- 外框（沿用入口網站，深淺色皆固定深色） ---------- */
+:root{
+  --frame-bg:#0e1318; --frame-line:#2a3a45; --frame-ink:#c9d1d9; --frame-dim:#6b7682;
+  --amber:#e6b450; --cyan:#7fbfd9; --green:#8fcf8f;
+  --mono:"JetBrains Mono","Noto Sans TC","Heiti TC","Microsoft JhengHei",ui-monospace,Menlo,monospace;
+  --sans:"Noto Sans TC","Heiti TC","Microsoft JhengHei",system-ui,sans-serif;
+
+  /* 內文（淺色） */
+  color-scheme:light;
+  --bg:#f6f7f9; --surface:#ffffff; --ink:#1b232b; --soft:#4a5560; --dim:#6b7682; --line:#dde2e7;
+  --code-bg:#0e1318; --code-ink:#c9d1d9;
+  /* 主色衍生：淺色底上把主色壓暗才夠對比 */
+  --accent-ink:color-mix(in oklab, var(--accent) 62%, #000);
+  --accent-soft:color-mix(in oklab, var(--accent) 12%, var(--bg));
+  --accent-line:color-mix(in oklab, var(--accent) 45%, var(--line));
+  --on-accent:#04121a;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --bg:#11171d; --surface:#161e25; --ink:#dfe5ea; --soft:#9aa6b2; --dim:#76828e; --line:#25323c;
+    --code-bg:#0b1014; --code-ink:#c9d1d9;
+    --accent-ink:color-mix(in oklab, var(--accent) 85%, #fff);
+    --accent-soft:color-mix(in oklab, var(--accent) 14%, var(--bg));
+    --accent-line:color-mix(in oklab, var(--accent) 40%, var(--line));
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --bg:#11171d; --surface:#161e25; --ink:#dfe5ea; --soft:#9aa6b2; --dim:#76828e; --line:#25323c;
+  --code-bg:#0b1014; --code-ink:#c9d1d9;
+  --accent-ink:color-mix(in oklab, var(--accent) 85%, #fff);
+  --accent-soft:color-mix(in oklab, var(--accent) 14%, var(--bg));
+  --accent-line:color-mix(in oklab, var(--accent) 40%, var(--line));
+}
+
+*{box-sizing:border-box}
+html{background:var(--bg);scroll-behavior:smooth}
+@media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.75 var(--sans);overflow-x:hidden}
+img{max-width:100%;height:auto;display:block}
+a{color:var(--accent-ink)}
+a:focus-visible,.btn:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+code,kbd{font-family:var(--mono);font-size:.88em}
+p code,li code{background:var(--accent-soft);padding:.1em .35em;border-radius:3px;overflow-wrap:anywhere}
+kbd{border:1px solid var(--line);border-bottom-width:2px;border-radius:4px;padding:0 .35em;background:var(--surface);white-space:nowrap}
+
+/* grid 子項預設 min-width:auto，會被 pre 的長行撐寬 → 手機水平捲動 */
+.hero-grid>*,.feat>*,.split>*,.install>*{min-width:0}
+.wrap{max-width:1120px;margin:0 auto;padding-inline:clamp(16px,4vw,32px)}
+
+/* ---------- 頂部終端機導覽列 ---------- */
+.topbar{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--frame-bg);border-bottom:1px solid var(--frame-line);
+  font:13px/1 var(--mono);color:var(--frame-ink)}
+.topbar .wrap{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:40px}
+.crumb{display:flex;align-items:center;gap:.55em;text-decoration:none;color:var(--frame-ink);white-space:nowrap;min-width:0}
+.crumb .p{color:var(--amber)}
+.crumb .home{color:var(--cyan)}
+.crumb .sep{color:var(--frame-dim)}
+.crumb .here{color:var(--accent);font-weight:600}
+.crumb:hover .home{text-decoration:underline}
+.topnav{display:flex;gap:16px}
+.topnav a{color:var(--frame-dim);text-decoration:none}
+.topnav a:hover{color:var(--frame-ink)}
+@media (max-width:520px){.topnav .opt{display:none}}
+
+/* ---------- 首屏 ---------- */
+.hero{padding-block:clamp(40px,7vw,88px) clamp(32px,5vw,56px);
+  background:radial-gradient(1200px 400px at 85% -10%, var(--accent-soft), transparent 70%)}
+.hero-grid{display:grid;gap:clamp(28px,4vw,48px)}
+.eyebrow{font:13px/1 var(--mono);color:var(--dim);margin:0 0 14px}
+.eyebrow b{color:var(--accent-ink);font-weight:600}
+.hero h1{margin:0;font:600 clamp(44px,8vw,76px)/1 var(--mono);letter-spacing:-.02em}
+.hero h1 .cur{display:inline-block;width:.5em;height:.9em;background:var(--accent);vertical-align:-.08em;margin-left:.08em;animation:blink 1.1s steps(1) infinite}
+@keyframes blink{50%{opacity:0}}
+@media (prefers-reduced-motion: reduce){.hero h1 .cur{animation:none}}
+.tagline{margin:18px 0 0;font-size:clamp(20px,2.6vw,26px);font-weight:500;line-height:1.45;max-width:24em}
+.lede{margin:14px 0 0;color:var(--soft);max-width:38em}
+.actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:26px}
+.btn{display:inline-flex;align-items:center;gap:.5em;font:600 15px/1 var(--sans);text-decoration:none;padding:13px 20px;border-radius:8px;border:1px solid transparent}
+.btn.primary{background:var(--accent);color:var(--on-accent)}
+.btn.primary:hover{background:color-mix(in oklab, var(--accent) 88%, #fff)}
+.btn.ghost{border-color:var(--line);color:var(--ink);background:var(--surface)}
+.btn.ghost:hover{border-color:var(--accent-line)}
+.btn svg{width:18px;height:18px;flex:none}
+.req{margin:14px 0 0;font:13px/1.6 var(--mono);color:var(--dim)}
+
+/* 終端機外框（截圖容器） */
+.term{border:1px solid var(--frame-line);border-radius:10px;overflow:hidden;background:#1d1d2d;
+  box-shadow:0 1px 0 rgba(255,255,255,.04) inset, 0 24px 60px -24px rgba(0,20,40,.45)}
+.term .bar{display:flex;align-items:center;gap:7px;padding:9px 12px;background:#15151f;border-bottom:1px solid #2a2a3a;font:12px/1 var(--mono);color:#7d8590}
+.term .bar i{width:11px;height:11px;border-radius:50%;background:#3a3a4a;flex:none}
+.term .bar span{margin-left:8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.term .bar .mock{margin-left:auto;flex:none;font-style:normal;font-size:11px;color:#e6b450;border:1px solid #5a4a20;border-radius:4px;padding:2px 6px}
+.term img{width:100%;height:auto}  /* 依原圖比例完整顯示；空白邊請先用 tools/trim_shots.py 裁掉 */
+.hero .term{border-color:var(--accent-line)}
+.cap{margin:10px 2px 0;font-size:13px;color:var(--dim)}
+
+/* ---------- 區塊共用 ---------- */
+section{scroll-margin-top:56px}
+.sec{padding-block:clamp(48px,7vw,88px);border-top:1px solid var(--line)}
+.sec-head{max-width:40em;margin-bottom:clamp(28px,4vw,44px)}
+.kicker{font:13px/1 var(--mono);color:var(--accent-ink);margin:0 0 10px}
+.sec h2{margin:0;font-size:clamp(26px,3.4vw,34px);line-height:1.3;font-weight:700}
+.sec-head p{margin:12px 0 0;color:var(--soft)}
+
+/* 功能區塊：文字＋截圖交錯 */
+.feat{display:grid;gap:22px;align-items:center;padding-block:clamp(20px,3vw,32px)}
+.feat + .feat{border-top:1px dashed var(--line)}
+.feat h3{margin:0;font-size:21px;line-height:1.4}
+.feat h3 .n{font:600 13px/1 var(--mono);color:var(--accent-ink);display:block;margin-bottom:8px}
+.feat p{margin:10px 0 0;color:var(--soft)}
+.feat ul{margin:12px 0 0;padding-left:1.2em;color:var(--soft)}
+.feat li{margin:4px 0}
+@media (min-width:880px){
+  .feat{grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:44px}
+  .feat.flip{grid-template-columns:minmax(0,7fr) minmax(0,5fr)}  /* 圖在左時也給圖寬欄 */
+  .feat.flip .txt{order:2}
+}
+
+/* 自由區塊 split：左文字、右程式碼或截圖（例：給 AI agent 使用） */
+.split{display:grid;gap:24px}
+@media (min-width:880px){.split{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:44px;align-items:start}}
+.split-p{color:var(--soft);margin:12px 0 0}
+.split-p b{color:var(--ink)}
+.note{border-left:3px solid var(--amber);background:color-mix(in oklab, var(--amber) 9%, var(--bg));padding:12px 16px;border-radius:0 6px 6px 0;color:var(--soft);font-size:15px;margin:16px 0 0}
+.note b{color:var(--ink)}
+
+/* 程式碼 */
+pre.code{margin:0;background:var(--code-bg);color:var(--code-ink);border:1px solid var(--frame-line);border-radius:10px;
+  padding:16px 18px;overflow-x:auto;font:13px/1.75 var(--mono);tab-size:2}
+pre.code .c{color:#6b7682}
+pre.code .p{color:var(--amber);user-select:none}
+pre.code .a{color:var(--accent)}
+
+/* 安裝 */
+.install{display:grid;gap:28px}
+@media (min-width:880px){.install{grid-template-columns:minmax(0,7fr) minmax(0,5fr);gap:44px;align-items:start}}
+.steps{margin:0;padding:0;list-style:none;display:grid;gap:14px;color:var(--soft)}
+.steps li{padding:14px 16px;border:1px solid var(--line);border-radius:8px;background:var(--surface)}
+.steps b{color:var(--ink)}
+.side h3{margin:0 0 10px;font-size:19px}
+.side ul{margin:0;padding-left:1.2em;color:var(--soft)}
+.side li{margin:6px 0}
+.side .term{margin-top:18px}
+
+/* 自由區塊 cards：卡片清單（例：已知限制） */
+.cards{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));margin:0;padding:0;list-style:none}
+.cards li{border:1px solid var(--line);border-radius:8px;padding:14px 16px;background:var(--surface);color:var(--soft);font-size:15px}
+.cards .ct{display:block;font-weight:700;color:var(--ink);margin-bottom:4px}  /* 卡片標題；內文的 <b> 維持行內粗體 */
+
+/* ---------- 頁尾：品牌記號＋連結列＋說明 ---------- */
+/* 品牌記號的色條由 content.yml 的 brand_bars 定義；沒有定義的專案只顯示名稱 */
+footer{margin-top:clamp(40px,6vw,72px);border-top:1px solid var(--line);padding-block:36px calc(48px + env(safe-area-inset-bottom,0px));font-size:13.5px;color:var(--dim)}
+footer .row{display:flex;flex-wrap:wrap;justify-content:space-between;gap:16px;align-items:center}
+footer .brand{font:800 22px/1 var(--sans);color:var(--ink);display:flex;align-items:center;gap:8px;letter-spacing:-.02em}
+footer nav{display:flex;flex-wrap:wrap;gap:18px}
+footer a{color:var(--soft);text-decoration:none}
+footer a:hover{color:var(--accent-ink)}
+footer p{margin:18px 0 0}
+.mark{display:inline-flex;gap:3px;align-items:stretch;height:.78em}
+.mark i{display:block;width:.11em;border-radius:1px}
+</style>
+</head>
+<body>
+
+<nav class="topbar" aria-label="返回入口網站">
+  <div class="wrap">
+    <a class="crumb" href="https://mark22013333.github.io/" title="回到作品入口">
+      <span class="p">$</span><span class="home">~/portal</span><span class="sep">›</span><span class="here">treef</span>
+    </a>
+    <div class="topnav">
+      <a class="opt" href="#features">功能</a>
+      <a href="#install">安裝</a>
+    </div>
+  </div>
+</nav>
+
+<main>
+  <!-- 首屏 -->
+  <header class="hero">
+    <div class="wrap hero-grid">
+      <div>
+        <p class="eyebrow"><b>CLI 工具</b> · macOS · Linux · Bash</p>
+        <h1>treef<span class="cur" aria-hidden="true"></span></h1>
+        <p class="tagline">帶 emoji、顏色、檔案大小與 Git 狀態的目錄樹。</p>
+        <p class="lede">一支 Bash 腳本，把資料夾畫成樹狀結構：目錄與檔案前面加上 📁／📄，目錄名稱以粗體藍色標示；加 <code>-h</code> 顯示檔案大小、<code>-g</code> 顯示 Git 狀態。v2.0 起改用 Bash 原生 globbing 走訪目錄，不再呼叫 <code>find</code>，用來避開大型專案（例如 <code>node_modules</code>）常見的「Too many open files」問題。</p>
+        <div class="actions">
+          <a class="btn primary" href="#install">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg>
+            安裝
+          </a>
+          <a class="btn ghost" href="https://github.com/mark22013333/treef">
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5a11.5 11.5 0 0 0-3.64 22.41c.58.1.79-.25.79-.56v-2c-3.2.7-3.88-1.37-3.88-1.37-.52-1.33-1.28-1.69-1.28-1.69-1.05-.71.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.55-.29-5.24-1.28-5.24-5.69 0-1.26.45-2.29 1.19-3.09-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.17 1.18a11 11 0 0 1 5.77 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.8 1.19 1.83 1.19 3.09 0 4.42-2.69 5.39-5.26 5.68.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.8.56A11.5 11.5 0 0 0 12 .5Z"/></svg>
+            GitHub
+          </a>
+        </div>
+        <p class="req">需求：macOS 或 Linux 上的 Bash；<code>-g</code> 需要 git</p>
+      </div>
+      <figure style="margin:0">
+        <div class="term">
+          <div class="bar"><i></i><i></i><i></i><span>treef . -g -h -e node_modules,dist</span></div>
+          <img src="img/hero.png" width="1120" height="612"
+               alt="treef 對示範專案 acme-shop 的輸出：每個檔案後面是大小（20B、340KB、2MB、1GB）與 Git 狀態符號，目錄名稱為粗體藍色，最後一行統計 5 個資料夾、12 個檔案">
+        </div>
+        <figcaption class="cap">檔案後面是大小與 Git 狀態：勾號＝沒有變更（被 .gitignore 忽略的檔案也顯示勾號）、鉛筆＝已修改、星星＝未追蹤；<code>-e</code> 排除了 <code>node_modules</code> 與 <code>dist</code>。</figcaption>
+      </figure>
+    </div>
+  </header>
+
+
+  <!-- 功能 -->
+  <section id="features" class="sec">
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="kicker">// 功能</p>
+        <h2>看結構、找檔案、寫文件</h2>
+        <p>用法：<code>treef [directory] [pattern...] [options]</code>。不給目錄就是目前目錄。</p>
+      </div>
+
+      <article class="feat">
+        <div class="txt">
+          <h3><span class="n">01 · 時間與大小</span>修改時間、建立時間、檔案大小</h3>
+          <p><code>-t</code> 顯示最後修改時間，<code>-ct</code> 顯示建立時間，<code>-h</code> 顯示檔案大小。大小自動換算成 B／KB／MB／GB。</p>
+          <ul>
+            <li>大小取整數：2.4MB 的檔案顯示為 <code>2MB</code></li>
+            <li>預設模式下，時間與大小只顯示在檔案後面，目錄後面只顯示 Git 狀態（<code>-s</code> 精簡模式的目錄後面也會顯示時間）</li>
+            <li>macOS 用 BSD <code>stat</code>，完整支援建立時間；Linux 用 GNU <code>stat</code>，建立時間依檔案系統支援</li>
+          </ul>
+        </div>
+        <div class="term">
+          <div class="bar"><i></i><i></i><i></i><span>treef src -t -h</span></div>
+          <img src="img/time.png" width="760" height="313" loading="lazy"
+               alt="treef src -t -h 的輸出：每個檔案後面是方括號內的修改時間（例如 Oct 12 09:15）與括號內的大小">
+        </div>
+      </article>
+
+      <article class="feat flip">
+        <div class="txt">
+          <h3><span class="n">02 · 過濾</span>只看想看的，排除不想看的</h3>
+          <p>目錄之後的其他參數都當作包含條件，可用萬用字元（例如 <code>"src*"</code>，限制見下方「使用前請先知道」）；<code>-e</code> 接逗號分隔的名稱清單，排除指定的檔案或目錄。</p>
+          <ul>
+            <li>包含條件只比對第一層，符合的目錄底下全部照常列出</li>
+            <li>排除條件每一層都比對</li>
+            <li><code>-d &lt;n&gt;</code> 限制遞迴深度</li>
+            <li>輸出開頭會列出這次用的 Filter 與 Exclude（精簡模式除外）</li>
+            <li>要用包含條件時目錄不能省略：第一個非選項參數一律當成目錄，例如 <code>treef . "src*"</code></li>
+          </ul>
+        </div>
+        <div class="term">
+          <div class="bar"><i></i><i></i><i></i><span>treef . &quot;src*&quot; docs -e utils,manual.pdf</span></div>
+          <img src="img/filter.png" width="760" height="387" loading="lazy"
+               alt="只列出 docs 與 src 兩個目錄，utils 目錄與 manual.pdf 被排除；開頭兩行顯示 Filter: src*, docs 與 Exclude: utils,manual.pdf">
+        </div>
+      </article>
+
+      <article class="feat">
+        <div class="txt">
+          <h3><span class="n">03 · 只看目錄</span>用 -do 快速看整體架構</h3>
+          <p><code>-do</code> 只列資料夾、隱藏所有檔案，最後的統計也只算資料夾數。</p>
+          <ul>
+            <li>可以和 <code>-e</code>、<code>-d</code>、包含條件一起用</li>
+            <li>隱藏檔（例如 <code>.gitignore</code>）平常會列出，<code>.git</code> 目錄一律不列</li>
+          </ul>
+        </div>
+        <div class="term">
+          <div class="bar"><i></i><i></i><i></i><span>treef -do</span></div>
+          <img src="img/dirs-only.png" width="760" height="362" loading="lazy"
+               alt="treef -do 的輸出：只有資料夾的樹狀結構，最後一行統計 8 個資料夾">
+        </div>
+      </article>
+
+      <article class="feat flip">
+        <div class="txt">
+          <h3><span class="n">04 · 輸出成文件</span>導向檔案時自動拿掉顏色代碼</h3>
+          <p>輸出不是終端機時（例如 <code>&gt; structure.txt</code>），不加 ANSI 顏色代碼，存下來的文字檔可以直接貼進技術文件。</p>
+          <ul>
+            <li>📁／📄 圖示仍會保留；完全不要顏色與圖示，用 <code>-s</code> 精簡模式</li>
+            <li>README 的範例：<code>treef . "cheng*" -do -e target,node_modules,.npm-cache -d 15 &gt; Architecture.txt</code></li>
+          </ul>
+        </div>
+        <div class="term">
+          <div class="bar"><i></i><i></i><i></i><span>treef . -do -e node_modules,dist &gt; structure.txt</span></div>
+          <img src="img/export.png" width="844" height="338" loading="lazy"
+               alt="先把 treef 的輸出導向 structure.txt，再用 cat 顯示：同樣的樹狀結構，但目錄名稱沒有顏色">
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <!-- 安裝 -->
+  <section id="install" class="sec">
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="kicker">// 安裝</p>
+        <h2>Homebrew 或 curl</h2>
+        <p>treef 是單一 Bash 腳本，裝好就能用。macOS 與 Linux 都能執行。curl 的寫法照 README 安裝到 <code>/usr/local/bin</code>；沒有寫入權限時要加 <code>sudo</code>，或改放到自己 PATH 裡的目錄。</p>
+      </div>
+      <div class="install">
+        <div>
+          <pre class="code" tabindex="0" aria-label="安裝指令"><span class="c"># Homebrew（建議）</span>
+brew tap mark22013333/treef
+brew install treef
+
+<span class="c"># 或用 curl 下載腳本</span>
+curl -L https://raw.githubusercontent.com/mark22013333/treef/main/treef.sh \
+  -o /usr/local/bin/treef
+chmod +x /usr/local/bin/treef</pre>
+          <ul class="steps" style="margin-top:16px">
+            <li><b>看完整說明：</b><code>treef -help</code>，列出全部參數與範例。</li>
+            <li><b>日常開發：</b><code>treef . -g -h -e node_modules,dist</code>，顯示 Git 狀態與大小，並排除 <code>node_modules</code>、<code>dist</code>。</li>
+            <li><b>只看架構：</b><code>treef -do</code>。</li>
+          </ul>
+        </div>
+        <div class="side">
+          <h3>參數一覽</h3>
+          <ul>
+            <li><code>-s</code> 精簡模式（不加顏色與 📁／📄）</li>
+            <li><code>-do</code> 只顯示目錄</li>
+            <li><code>-h</code> 檔案大小、<code>-g</code> Git 狀態</li>
+            <li><code>-t</code> 修改時間、<code>-ct</code> 建立時間</li>
+            <li><code>-d &lt;n&gt;</code> 遞迴深度</li>
+            <li><code>-e &lt;list&gt;</code> 排除清單（逗號分隔，例如 <code>-e bin,obj</code>）</li>
+            <li><code>-help</code> 顯示說明</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 使用前請先知道 -->
+  <section id="notes" class="sec">
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="kicker">// 使用前請先知道</p>
+        <h2>幾個依原始碼確認的行為</h2>
+      </div>
+      <ul class="cards">
+        <li><b class="ct">Git 狀態看的是目前所在的 repo</b><code>-g</code> 在目前的工作目錄執行 <code>git status</code>。不在 git repo 裡執行時查不到狀態，所有項目都會顯示 ✔️；請先 <code>cd</code> 進 repo 再跑。</li>
+        <li><b class="ct">還有第四種 Git 符號 ✖️</b>README 列了 ✔️ 已追蹤、✏️ 已修改、✨ 未追蹤三種；其他狀態（例如已 <code>git add</code> 的修改）顯示 ✖️。另外 ✔️ 其實代表「<code>git status</code> 沒有列出它」：被 .gitignore 忽略的檔案、或不在 repo 裡執行時，也都顯示 ✔️，不代表已進版控。</li>
+        <li><b class="ct">包含條件只看第一層</b>第二個參數起的包含條件只比對指定目錄的第一層項目；排除條件（<code>-e</code>）則每一層都比對。</li>
+        <li><b class="ct">萬用字元會先依目前目錄展開</b>包含與排除條件在腳本內以未加引號的清單展開，萬用字元會先被 Bash 依<b>目前工作目錄</b>展開：找不到就整個消失；找得到則會被換成目前目錄裡的檔名，結果是錯的而不是空的（例如在專案根目錄執行 <code>treef docs -e "*.md"</code>，<code>*.md</code> 變成根目錄的 <code>README.md</code>，docs 裡的 .md 照樣列出）。在要看的目錄裡執行 <code>treef . "src*"</code> 可以正常過濾；從上層執行 <code>treef 專案 "src*"</code> 會什麼都列不出來。<code>-e</code> 同理，所以排除請直接寫名稱（例如 <code>-e node_modules,dist</code>）。</li>
+        <li><b class="ct">精簡模式仍有 Git 符號</b><code>-s</code> 拿掉顏色與 📁／📄 圖示，但 <code>-g</code> 的 ✔️／✏️／✨ 符號照樣顯示。</li>
+      </ul>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="row">
+      <span class="brand">treef</span>
+      <nav aria-label="頁尾連結">
+        <a href="https://github.com/mark22013333/treef">GitHub</a>
+        <a href="https://github.com/mark22013333/treef/releases/latest">最新釋出版</a>
+        <a href="https://mark22013333.github.io/">回作品集</a>
+      </nav>
+    </div>
+    <p>帶 emoji、顏色、檔案大小與 Git 狀態的目錄樹。本頁截圖全部使用虛構的展示資料。</p>
+  </div>
+</footer>
+
+</body>
+</html>

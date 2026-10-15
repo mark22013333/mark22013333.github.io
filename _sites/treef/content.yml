@@ -1,0 +1,159 @@
+# treef 作品介紹頁的內容。改完執行 python3 tools/build_sites.py treef 重新產生 /treef/。
+#
+# 字串欄位分兩種：
+#   純文字：slug、name、tagline、各種 alt、bar（截圖視窗標題）、label、kicker、nav 標籤、url
+#           會自動做 HTML 跳脫，直接寫文字即可。
+#   行內 HTML：其餘說明文字（lede、intro、paragraphs、bullets、caption、note、body…）
+#           可以用 <code>、<kbd>、<b>；要顯示 < > & 本身請寫 &lt; &gt; &amp;。
+# code 欄位是純文字，產生器自動上色：以「$ 」開頭的行加提示字元，「#」開頭的行
+# 或指令後空兩格以上再接「#」的部分當註解，highlight 列出的字串用主色。
+#
+# 截圖：sh _sites/treef/tapes/record.sh <treef repo 的路徑>，在虛構專案 acme-shop 裡實跑 treef 錄成。
+
+slug: treef
+name: treef
+tagline: 帶 emoji、顏色、檔案大小與 Git 狀態的目錄樹。
+accent: '#89b4fa'          # 取自 treef 目錄名稱的粗體藍（ANSI 1;34）在截圖終端機主題下的實際顏色
+github: https://github.com/mark22013333/treef
+
+eyebrow:
+  kind: CLI 工具
+  meta: [macOS, Linux, Bash]
+
+lede: '一支 Bash 腳本，把資料夾畫成樹狀結構：目錄與檔案前面加上 📁／📄，目錄名稱以粗體藍色標示；加 <code>-h</code> 顯示檔案大小、<code>-g</code> 顯示 Git 狀態。v2.0 起改用 Bash 原生 globbing 走訪目錄，不再呼叫 <code>find</code>，用來避開大型專案（例如 <code>node_modules</code>）常見的「Too many open files」問題。'
+
+buttons:
+  - label: 安裝
+    url: '#install'
+    icon: download
+  - label: GitHub
+    url: https://github.com/mark22013333/treef
+    icon: github
+
+requirements: 需求：macOS 或 Linux 上的 Bash；<code>-g</code> 需要 git
+
+hero:
+  image: hero.png
+  bar: treef . -g -h -e node_modules,dist
+  alt: 'treef 對示範專案 acme-shop 的輸出：每個檔案後面是大小（20B、340KB、2MB、1GB）與 Git 狀態符號，目錄名稱為粗體藍色，最後一行統計 5 個資料夾、12 個檔案'
+  caption: '檔案後面是大小與 Git 狀態：勾號＝沒有變更（被 .gitignore 忽略的檔案也顯示勾號）、鉛筆＝已修改、星星＝未追蹤；<code>-e</code> 排除了 <code>node_modules</code> 與 <code>dist</code>。'
+
+features:
+  id: features
+  nav: 功能
+  nav_optional: true
+  kicker: // 功能
+  title: 看結構、找檔案、寫文件
+  intro: '用法：<code>treef [directory] [pattern...] [options]</code>。不給目錄就是目前目錄。'
+  items:
+    - label: 時間與大小
+      title: 修改時間、建立時間、檔案大小
+      paragraphs:
+        - '<code>-t</code> 顯示最後修改時間，<code>-ct</code> 顯示建立時間，<code>-h</code> 顯示檔案大小。大小自動換算成 B／KB／MB／GB。'
+      bullets:
+        - '大小取整數：2.4MB 的檔案顯示為 <code>2MB</code>'
+        - 預設模式下，時間與大小只顯示在檔案後面，目錄後面只顯示 Git 狀態（<code>-s</code> 精簡模式的目錄後面也會顯示時間）
+        - 'macOS 用 BSD <code>stat</code>，完整支援建立時間；Linux 用 GNU <code>stat</code>，建立時間依檔案系統支援'
+      image: time.png
+      bar: treef src -t -h
+      alt: 'treef src -t -h 的輸出：每個檔案後面是方括號內的修改時間（例如 Oct 12 09:15）與括號內的大小'
+
+    - label: 過濾
+      title: 只看想看的，排除不想看的
+      paragraphs:
+        - '目錄之後的其他參數都當作包含條件，可用萬用字元（例如 <code>"src*"</code>，限制見下方「使用前請先知道」）；<code>-e</code> 接逗號分隔的名稱清單，排除指定的檔案或目錄。'
+      bullets:
+        - 包含條件只比對第一層，符合的目錄底下全部照常列出
+        - 排除條件每一層都比對
+        - '<code>-d &lt;n&gt;</code> 限制遞迴深度'
+        - '輸出開頭會列出這次用的 Filter 與 Exclude（精簡模式除外）'
+        - '要用包含條件時目錄不能省略：第一個非選項參數一律當成目錄，例如 <code>treef . "src*"</code>'
+      image: filter.png
+      bar: treef . "src*" docs -e utils,manual.pdf
+      alt: '只列出 docs 與 src 兩個目錄，utils 目錄與 manual.pdf 被排除；開頭兩行顯示 Filter: src*, docs 與 Exclude: utils,manual.pdf'
+
+    - label: 只看目錄
+      title: 用 -do 快速看整體架構
+      paragraphs:
+        - '<code>-do</code> 只列資料夾、隱藏所有檔案，最後的統計也只算資料夾數。'
+      bullets:
+        - '可以和 <code>-e</code>、<code>-d</code>、包含條件一起用'
+        - '隱藏檔（例如 <code>.gitignore</code>）平常會列出，<code>.git</code> 目錄一律不列'
+      image: dirs-only.png
+      bar: treef -do
+      alt: treef -do 的輸出：只有資料夾的樹狀結構，最後一行統計 8 個資料夾
+
+    - label: 輸出成文件
+      title: 導向檔案時自動拿掉顏色代碼
+      paragraphs:
+        - '輸出不是終端機時（例如 <code>&gt; structure.txt</code>），不加 ANSI 顏色代碼，存下來的文字檔可以直接貼進技術文件。'
+      bullets:
+        - '📁／📄 圖示仍會保留；完全不要顏色與圖示，用 <code>-s</code> 精簡模式'
+        - 'README 的範例：<code>treef . "cheng*" -do -e target,node_modules,.npm-cache -d 15 &gt; Architecture.txt</code>'
+      image: export.png
+      bar: treef . -do -e node_modules,dist > structure.txt
+      alt: 先把 treef 的輸出導向 structure.txt，再用 cat 顯示：同樣的樹狀結構，但目錄名稱沒有顏色
+
+sections:
+  - type: cards
+    id: notes
+    position: after_install
+    kicker: // 使用前請先知道
+    title: 幾個依原始碼確認的行為
+    cards:
+      - title: Git 狀態看的是目前所在的 repo
+        body: '<code>-g</code> 在目前的工作目錄執行 <code>git status</code>。不在 git repo 裡執行時查不到狀態，所有項目都會顯示 ✔️；請先 <code>cd</code> 進 repo 再跑。'
+      - title: 還有第四種 Git 符號 ✖️
+        body: 'README 列了 ✔️ 已追蹤、✏️ 已修改、✨ 未追蹤三種；其他狀態（例如已 <code>git add</code> 的修改）顯示 ✖️。另外 ✔️ 其實代表「<code>git status</code> 沒有列出它」：被 .gitignore 忽略的檔案、或不在 repo 裡執行時，也都顯示 ✔️，不代表已進版控。'
+      - title: 包含條件只看第一層
+        body: '第二個參數起的包含條件只比對指定目錄的第一層項目；排除條件（<code>-e</code>）則每一層都比對。'
+      - title: 萬用字元會先依目前目錄展開
+        body: '包含與排除條件在腳本內以未加引號的清單展開，萬用字元會先被 Bash 依<b>目前工作目錄</b>展開：找不到就整個消失；找得到則會被換成目前目錄裡的檔名，結果是錯的而不是空的（例如在專案根目錄執行 <code>treef docs -e "*.md"</code>，<code>*.md</code> 變成根目錄的 <code>README.md</code>，docs 裡的 .md 照樣列出）。在要看的目錄裡執行 <code>treef . "src*"</code> 可以正常過濾；從上層執行 <code>treef 專案 "src*"</code> 會什麼都列不出來。<code>-e</code> 同理，所以排除請直接寫名稱（例如 <code>-e node_modules,dist</code>）。'
+      - title: 精簡模式仍有 Git 符號
+        body: '<code>-s</code> 拿掉顏色與 📁／📄 圖示，但 <code>-g</code> 的 ✔️／✏️／✨ 符號照樣顯示。'
+
+install:
+  id: install
+  nav: 安裝
+  kicker: // 安裝
+  title: Homebrew 或 curl
+  intro: 'treef 是單一 Bash 腳本，裝好就能用。macOS 與 Linux 都能執行。curl 的寫法照 README 安裝到 <code>/usr/local/bin</code>；沒有寫入權限時要加 <code>sudo</code>，或改放到自己 PATH 裡的目錄。'
+  code:
+    label: 安裝指令
+    text: |-
+      # Homebrew（建議）
+      brew tap mark22013333/treef
+      brew install treef
+
+      # 或用 curl 下載腳本
+      curl -L https://raw.githubusercontent.com/mark22013333/treef/main/treef.sh \
+        -o /usr/local/bin/treef
+      chmod +x /usr/local/bin/treef
+  steps:
+    - title: 看完整說明：
+      body: '<code>treef -help</code>，列出全部參數與範例。'
+    - title: 日常開發：
+      body: '<code>treef . -g -h -e node_modules,dist</code>，顯示 Git 狀態與大小，並排除 <code>node_modules</code>、<code>dist</code>。'
+    - title: 只看架構：
+      body: '<code>treef -do</code>。'
+  side:
+    title: 參數一覽
+    items:
+      - '<code>-s</code> 精簡模式（不加顏色與 📁／📄）'
+      - '<code>-do</code> 只顯示目錄'
+      - '<code>-h</code> 檔案大小、<code>-g</code> Git 狀態'
+      - '<code>-t</code> 修改時間、<code>-ct</code> 建立時間'
+      - '<code>-d &lt;n&gt;</code> 遞迴深度'
+      - '<code>-e &lt;list&gt;</code> 排除清單（逗號分隔，例如 <code>-e bin,obj</code>）'
+      - '<code>-help</code> 顯示說明'
+
+footer_links:
+  - label: GitHub
+    url: https://github.com/mark22013333/treef
+  - label: 最新釋出版
+    url: https://github.com/mark22013333/treef/releases/latest
+  - label: 回作品集
+    url: https://mark22013333.github.io/
+footer_note: 帶 emoji、顏色、檔案大小與 Git 狀態的目錄樹。本頁截圖全部使用虛構的展示資料。
+
+en: null
