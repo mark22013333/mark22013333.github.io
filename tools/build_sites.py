@@ -47,6 +47,7 @@ OG_SIZE = (1200, 630)
 OG_FONTS = ["/System/Library/Fonts/STHeiti Medium.ttc", "/System/Library/Fonts/Hiragino Sans GB.ttc",
             "/usr/share/fonts/opentype/noto/NotoSansCJK-Bold.ttc"]
 OG_MOCK_LABEL = "介面示意（依原始碼重繪）"
+OG_BAND = 64  # 示意圖 OG 底部標註帶高度
 
 ICONS = {
     "download": '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg>',
@@ -355,24 +356,30 @@ def make_og(src, dst, mock=False):
         w, h = im.size
         scale = max(OG_SIZE[0] / w, OG_SIZE[1] / h)
         nw, nh = round(w * scale), round(h * scale)
-        im = im.resize((nw, nh), Image.LANCZOS).crop((0, 0) + OG_SIZE)
-        if mock:
+        if not mock:
+            im = im.resize((nw, nh), Image.LANCZOS).crop((0, 0) + OG_SIZE)
+        else:
+            # 示意圖：底部留一條標註帶，圖本身縮進上方，標註不會壓到內容
+            area = (OG_SIZE[0], OG_SIZE[1] - OG_BAND)
+            scale = max(area[0] / w, area[1] / h)
+            shot = im.resize((round(w * scale), round(h * scale)), Image.LANCZOS).crop((0, 0) + area)
+            im = Image.new("RGB", OG_SIZE, (20, 20, 28))
+            im.paste(shot, (0, 0))
             _draw_mock_label(im)
         im.save(dst, "PNG")
 
 
 def _draw_mock_label(im):
+    """在底部標註帶左側寫上「介面示意」。"""
     font_path = next((f for f in OG_FONTS if os.path.isfile(f)), None)
     if not font_path:
         raise SiteError("找不到可畫中文標註的字型（OG_FONTS），無法產生示意圖的 OG 圖")
-    font = ImageFont.truetype(font_path, 30)
+    font = ImageFont.truetype(font_path, 28)
     d = ImageDraw.Draw(im)
+    top = OG_SIZE[1] - OG_BAND
+    d.rectangle((0, top, OG_SIZE[0], top + 3), fill=(230, 180, 80))
     l, t, r, b = d.textbbox((0, 0), OG_MOCK_LABEL, font=font)
-    pad_x, pad_y, margin = 20, 12, 28
-    w, h = r - l + pad_x * 2, b - t + pad_y * 2
-    x0, y0 = OG_SIZE[0] - margin - w, OG_SIZE[1] - margin - h
-    d.rounded_rectangle((x0, y0, x0 + w, y0 + h), radius=10, fill=(20, 20, 28), outline=(230, 180, 80), width=3)
-    d.text((x0 + pad_x - l, y0 + pad_y - t), OG_MOCK_LABEL, font=font, fill=(230, 180, 80))
+    d.text((32 - l, top + 3 + (OG_BAND - 3 - (b - t)) // 2 - t), OG_MOCK_LABEL, font=font, fill=(230, 180, 80))
 
 
 def build_site(slug, out_root, template):
