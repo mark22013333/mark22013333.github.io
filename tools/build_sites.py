@@ -175,7 +175,8 @@ def _req(d, key, where):
     return v
 
 
-def _image(slug, name, alt, bar, used, where):
+def _image(slug, name, alt, bar, used, where, mock=False):
+    """mock=True：依原始碼重繪的示意圖（非實際截圖），頁面會在視窗標題列標註。"""
     if not name:
         raise SiteError("%s 沒有指定截圖" % where)
     if not alt:
@@ -186,7 +187,8 @@ def _image(slug, name, alt, bar, used, where):
     with Image.open(path) as im:
         w, h = im.size
     used.append(name)
-    return {"src": "img/" + name, "width": w, "height": h, "alt": alt, "bar": bar or "", "path": path}
+    return {"src": "img/" + name, "width": w, "height": h, "alt": alt, "bar": bar or "", "path": path,
+            "mock": bool(mock)}
 
 
 def build_context(slug, c):
@@ -237,7 +239,7 @@ def build_context(slug, c):
     ctx["buttons"] = buttons
 
     h = c["hero"]
-    ctx["hero"] = _image(slug, h.get("image"), h.get("alt"), h.get("bar"), used, "hero")
+    ctx["hero"] = _image(slug, h.get("image"), h.get("alt"), h.get("bar"), used, "hero", mock=h.get("mock"))
     ctx["hero"]["caption"] = h.get("caption")
 
     nav, blocks_before, blocks_after = [], [], []
@@ -262,7 +264,7 @@ def build_context(slug, c):
             "paragraphs": it.get("paragraphs") or [],
             "bullets": it.get("bullets") or [],
             "flip": i % 2 == 1,
-            "image": _image(slug, it.get("image"), it.get("alt"), it.get("bar"), used, where),
+            "image": _image(slug, it.get("image"), it.get("alt"), it.get("bar"), used, where, mock=it.get("mock")),
         })
     feat_nav = {"id": feat["id"], "label": f.get("nav"), "optional": f.get("nav_optional", False)}
 
@@ -289,7 +291,7 @@ def build_context(slug, c):
             blk["code"] = {"label": s["code"].get("label") or "",
                            "html": code_html(_req(s["code"], "text", where + ".code"), s["code"].get("highlight") or [])}
         if s.get("image"):
-            blk["image"] = _image(slug, s.get("image"), s.get("alt"), s.get("bar"), used, where)
+            blk["image"] = _image(slug, s.get("image"), s.get("alt"), s.get("bar"), used, where, mock=s.get("mock"))
         if typ == "cards" and not blk["cards"]:
             raise SiteError("%s 是 cards 但沒有 cards" % where)
         pos = s.get("position") or "before_install"
@@ -317,7 +319,7 @@ def build_context(slug, c):
         inst["side"] = {"title": _req(sd, "title", "install.side"), "items": sd.get("items") or [],
                         "caption": sd.get("caption"), "image": None}
         if sd.get("image"):
-            inst["side"]["image"] = _image(slug, sd.get("image"), sd.get("alt"), sd.get("bar"), used, "install.side")
+            inst["side"]["image"] = _image(slug, sd.get("image"), sd.get("alt"), sd.get("bar"), used, "install.side", mock=sd.get("mock"))
 
     blocks = [feat] + [b for b, _ in blocks_before] + [inst] + [b for b, _ in blocks_after]
     ctx["blocks"] = blocks
