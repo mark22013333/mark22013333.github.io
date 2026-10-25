@@ -198,6 +198,7 @@ footer p{margin:18px 0 0}
     <div class="topnav">
       <a class="opt" href="#features">功能</a>
       <a class="opt" href="#compare">與 FortiClient</a>
+      <a class="opt" href="#external-vpn">搭配其他 VPN</a>
       <a class="opt" href="#company">公司設定檔</a>
       <a class="opt" href="#plugins">外掛</a>
       <a href="#install">安裝</a>
@@ -333,6 +334,23 @@ footer p{margin:18px 0 0}
         <li><b class="ct">Teams／Google Meet</b>FortiClient 下視訊要先繞到公司再出去，延遲高、容易不穩；SplitSwan 直接走本機網路，不經過 VPN。</li>
         <li><b class="ct">多台閘道</b>FortiClient 手動切換；SplitSwan 自動輪替。</li>
         <li><b class="ct">為什麼要列出網段？</b>FortiClient 其實也不知道公司網段，而是把全部流量都送進 VPN，交給公司閘道轉出去。SplitSwan 只讓公司網段走 VPN，所以要列出網段。</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- 搭配其他 VPN（1.9.2 起） -->
+  <section id="external-vpn" class="sec">
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="kicker">// 搭配其他 VPN（1.9.2 起）</p>
+        <h2>外部 VPN、公司 VPN、一般上網與區網同時可用</h2>
+        <p>另一套 VPN 程式（例如客戶或機關要求的全通道 VPN）仍負責登入、驗證碼與中斷；SplitSwan 只調整 IPv4 路由，讓一般上網與區網留在原本的網路，再讓公司網段走 SplitSwan 的公司通道。目前僅支援 IPv4。</p>
+      </div>
+      <ul class="cards">
+        <li><b class="ct">先等待，再登入</b>外部 VPN 尚未連線時，在「自動分流」頁按「開始等待 VPN 並自動分流」記下正常的上網出口與 DNS，再用原本的程式登入外部 VPN。</li>
+        <li><b class="ct">一般上網與區網</b>偵測到外部 VPN 的全通道後，只加入一般外網與本機網段的路由，並驗證完整覆蓋；本機網段的直連路由被外部 VPN 移除時會自動恢復。</li>
+        <li><b class="ct">再連公司 VPN</b>分流啟用後，從「連線」頁或狀態列連公司 VPN。有些 VPN 程式會刪除其他程式新增的路由，所以公司網段的路由由系統元件逐條建立並標記，連線期間持續驗證，消失就停止公司連線並保留外部分流。</li>
+        <li><b class="ct">停止與復原</b>中斷公司 VPN 時只結束通道，路由隨公司虛擬網卡一起移除，不會依目的地刪除其他程式的路由；停止分流或正常結束 App 會先停公司通道，再復原本次分流。</li>
       </ul>
     </div>
   </section>
