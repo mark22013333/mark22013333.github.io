@@ -380,10 +380,11 @@ SPLITSWAN_REMOTE_TS="10.0.0.0/24,198.51.100.5/32"             <span class="c"># 
         <h2>把與 VPN 無關的小工具放進狀態列選單</h2>
         <p class="split-p">打卡提醒、會議倒數、CI 狀態這類腳本可以顯示在狀態列選單裡、必要時發通知。<b>預設關閉</b>，到「設定」頁的「外掛」區塊開啟；關閉時不建立任何計時器、不掃描資料夾，等於沒有這個功能。</p>
         <p class="split-p">外掛放在 <code>~/.config/splitswan/plugins/</code>，檔名格式同 SwiftBar（<code>punch-reminder.1m.sh</code>），輸出格式是 SwiftBar 的子集，另外擴充 <code>notify=true</code> 發通知。每次限時 10 秒，逾時只會結束外掛本身，外掛另外啟動、而且忽略 SIGTERM 的子程序可能留在背景；最多 10 個外掛，輸出當成不受信任的資料處理。</p>
+        <p class="split-p"><b>1.9.4 起</b>，外掛可以提供原生設定視窗：分段頁籤與分組卡片、可展開的說明、狀態卡片，會登入外部網站的測試會標示「會登入」；「取消」在沒有修改時直接關閉，有未儲存修改時先確認。外掛也可以在子選單最上方放一張資訊卡片，顯示狀態、今天的時間軸、執行條件與近 10 天的圖表；只顯示資訊、沒有動作的選單列不再看起來像按鈕。卡片資料有誤時會自動退回文字列。</p>
         <p class="split-p">repo 附一個打卡提醒範例（<code>config/plugins/punch-reminder.1m.sh.example</code>）：可讀政府行政機關辦公日曆表判斷放假日，也可以用覆寫檔標記特休或加班。</p>
         <p class="note"><b>外掛以你本人的身分執行。</b>它能讀到你的 VPN 帳號密碼與 PSK（<code>secrets.conf</code>）、能透過輔助程式連線或斷線，也能存取你帳號下的所有檔案。<b>只安裝你信任、而且看得懂內容的腳本</b>；不要把網路上下載的腳本直接放進外掛資料夾。</p>
       </div>
-      <pre class="code" tabindex="0" aria-label="外掛輸出格式（SwiftBar 的子集）">標題
+      <pre class="code" tabindex="0" aria-label="外掛輸出格式（SwiftBar 的子集）">標題 | settings=true card=…  <span class="c"># 1.9.4 起，選填</span>
 ---
 一般項目
 有顏色的項目 | color=red
