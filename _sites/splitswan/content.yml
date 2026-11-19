@@ -116,6 +116,24 @@ sections:
       - title: 為什麼要列出網段？
         body: 'FortiClient 其實也不知道公司網段，而是把全部流量都送進 VPN，交給公司閘道轉出去。SplitSwan 只讓公司網段走 VPN，所以要列出網段。'
 
+  - type: cards
+    id: external-vpn
+    position: before_install
+    nav: 搭配其他 VPN
+    nav_optional: true
+    kicker: // 搭配其他 VPN（1.9.2 起）
+    title: 外部 VPN、公司 VPN、一般上網與區網同時可用
+    intro: '另一套 VPN 程式（例如客戶或機關要求的全通道 VPN）仍負責登入、驗證碼與中斷；SplitSwan 只調整 IPv4 路由，讓一般上網與區網留在原本的網路，再讓公司網段走 SplitSwan 的公司通道。目前僅支援 IPv4。'
+    cards:
+      - title: 先等待，再登入
+        body: '外部 VPN 尚未連線時，在「自動分流」頁按「開始等待 VPN 並自動分流」記下正常的上網出口與 DNS，再用原本的程式登入外部 VPN。'
+      - title: 一般上網與區網
+        body: '偵測到外部 VPN 的全通道後，只加入一般外網與本機網段的路由，並驗證完整覆蓋；本機網段的直連路由被外部 VPN 移除時會自動恢復。'
+      - title: 再連公司 VPN
+        body: '分流啟用後，從「連線」頁或狀態列連公司 VPN。有些 VPN 程式會刪除其他程式新增的路由，所以公司網段的路由由系統元件逐條建立並標記，連線期間持續驗證，消失就停止公司連線並保留外部分流。'
+      - title: 停止與復原
+        body: '中斷公司 VPN 時只結束通道，路由隨公司虛擬網卡一起移除，不會依目的地刪除其他程式的路由；停止分流或正常結束 App 會先停公司通道，再復原本次分流。'
+
   - type: split
     id: company
     position: before_install
@@ -145,12 +163,13 @@ sections:
     paragraphs:
       - '打卡提醒、會議倒數、CI 狀態這類腳本可以顯示在狀態列選單裡、必要時發通知。<b>預設關閉</b>，到「設定」頁的「外掛」區塊開啟；關閉時不建立任何計時器、不掃描資料夾，等於沒有這個功能。'
       - '外掛放在 <code>~/.config/splitswan/plugins/</code>，檔名格式同 SwiftBar（<code>punch-reminder.1m.sh</code>），輸出格式是 SwiftBar 的子集，另外擴充 <code>notify=true</code> 發通知。每次限時 10 秒，逾時只會結束外掛本身，外掛另外啟動、而且忽略 SIGTERM 的子程序可能留在背景；最多 10 個外掛，輸出當成不受信任的資料處理。'
+      - '<b>1.9.4 起</b>，外掛可以提供原生設定視窗：分段頁籤與分組卡片、可展開的說明、狀態卡片，會登入外部網站的測試會標示「會登入」；「取消」在沒有修改時直接關閉，有未儲存修改時先確認。外掛也可以在子選單最上方放一張資訊卡片，顯示狀態、今天的時間軸、執行條件與近 10 天的圖表；只顯示資訊、沒有動作的選單列不再看起來像按鈕。卡片資料有誤時會自動退回文字列。'
       - 'repo 附一個打卡提醒範例（<code>config/plugins/punch-reminder.1m.sh.example</code>）：可讀政府行政機關辦公日曆表判斷放假日，也可以用覆寫檔標記特休或加班。'
     note: '<b>外掛以你本人的身分執行。</b>它能讀到你的 VPN 帳號密碼與 PSK（<code>secrets.conf</code>）、能透過輔助程式連線或斷線，也能存取你帳號下的所有檔案。<b>只安裝你信任、而且看得懂內容的腳本</b>；不要把網路上下載的腳本直接放進外掛資料夾。'
     code:
       label: 外掛輸出格式（SwiftBar 的子集）
       text: |-
-        標題
+        標題 | settings=true card=…  # 1.9.4 起，選填
         ---
         一般項目
         有顏色的項目 | color=red
