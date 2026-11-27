@@ -61,6 +61,41 @@ code, .mono { font-family: var(--mono); }
 .icon { width: 1em; height: 1em; display: inline-block; vertical-align: -0.15em; flex: none; }
 .ok { color: var(--green); } .warn { color: var(--orange); } .fail { color: var(--red); }
 
+/* 1.9.20 起：狀態卡 StatusCard、卡片 DSCard、徽章 StatusBadge（Sources/DesignSystem.swift） */
+.stack { display: flex; flex-direction: column; gap: 16px; }
+.scard { border-radius: 10px; padding: 16px; display: flex; flex-direction: column; gap: 12px;
+  background: rgba(var(--rgb), .10); box-shadow: inset 0 0 0 1px rgba(var(--rgb), .22); }
+.scard.t-ok { --rgb: 40,167,69; --tone: var(--green); }
+.scard.t-error { --rgb: 229,50,45; --tone: var(--red); }
+.scard.t-warn { --rgb: 232,137,12; --tone: var(--orange); }
+.scard.t-neutral { --rgb: 120,120,128; --tone: var(--secondary); background: var(--card); box-shadow: inset 0 0 0 1px rgba(120,120,128,.22); }
+.scard .top { display: flex; align-items: flex-start; gap: 14px; }
+.scard .ico { width: 52px; height: 52px; border-radius: 50%; flex: none; background: rgba(var(--rgb), .14); color: var(--tone);
+  display: flex; align-items: center; justify-content: center; }
+.scard .ico svg { width: 26px; height: 26px; }
+.scard .main { flex: 1; display: flex; flex-direction: column; gap: 4px; }
+.scard .tl { display: flex; align-items: baseline; gap: 8px; }
+.scard .tl .title2 { flex: 1; }
+.scard .detail { font-size: 13px; color: var(--secondary); display: flex; flex-direction: column; gap: 3px; }
+.badge { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; font-weight: 600; padding: 3px 8px; border-radius: 999px;
+  color: var(--tone, var(--secondary)); background: rgba(var(--rgb, 120,120,128), .15); white-space: nowrap; }
+.badge svg { width: 11px; height: 11px; }
+.badge.ok { --tone: var(--green); --rgb: 40,167,69; } .badge.error { --tone: var(--red); --rgb: 229,50,45; }
+.badge.warn { --tone: var(--orange); --rgb: 232,137,12; } .badge.neutral { --tone: var(--secondary); --rgb: 120,120,128; }
+.dcard { display: flex; flex-direction: column; gap: 8px; }
+.dcard > .hd { font-size: 13px; font-weight: 700; display: flex; align-items: center; gap: 6px; }
+.dcard > .sub { font-size: 13px; color: var(--secondary); margin-top: -6px; }
+.dcard > .in { background: rgba(120,120,128,.08); box-shadow: inset 0 0 0 1px rgba(120,120,128,.22); border-radius: 10px; padding: 14px;
+  display: flex; flex-direction: column; gap: 10px; }
+.hr { height: 1px; background: rgba(0,0,0,.12); }
+.sbtn { display: flex; gap: 8px; }
+.sbtn > div { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.sbtn .btn { width: 100%; }
+.ovrow { display: flex; align-items: center; gap: 10px; font-size: 13px; padding: 4px 0; }
+.ovrow .ic { width: 22px; color: var(--secondary); display: flex; justify-content: center; }
+.ovrow .ic svg { width: 16px; height: 16px; }
+.ovrow .chev { color: #b0b0b5; font-size: 12px; font-weight: 600; }
+
 /* 底部固定列 */
 .footer { border-top: 1px solid var(--line); margin-top: 10px; padding-top: 10px; display: flex; align-items: center; gap: 10px; }
 .spacer { flex: 1; }
