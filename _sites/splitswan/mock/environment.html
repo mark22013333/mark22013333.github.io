@@ -1,51 +1,77 @@
 <!doctype html>
 <meta charset="utf-8">
 <title>SplitSwan 環境檢查（示意）</title>
-<!-- 依 Sources/MainView.swift EnvironmentTab（676–758 行）與 Sources/EnvChecker.swift check()（38–121 行）重繪：
-     第一次安裝時，strongSwan 已裝好、系統元件與設定尚未完成的狀態（README「第一次安裝」第 5～7 步之間）。
-     每一列的標題、說明、按鈕文字照 EnvChecker.swift 46／59–60／118／75–76／98–100／107–108 行；
-     「strongSwan 安裝完成」取自 142 行；診斷報告說明取自 MainView.swift 723 行。 -->
+<!-- 依 Sources/MainView.swift EnvironmentTab（638–793 行）與 Sources/EnvChecker.swift check()（38–121 行）重繪（SplitSwan 1.9.26）：
+     第一次安裝時，strongSwan 已裝好、系統元件與設定尚未完成的狀態。
+     頂端狀態卡：標題「有 N 項需要處理」（751–755 行）、徽章「M/6 通過」（757–760 行）、說明「下一步：…，按「…」」（762–768 行）、
+     下方「strongSwan 安裝完成」（env.lastMessage，MainView.swift 659 行）取自 EnvChecker.swift 152 行、主要按鈕＋「重新檢查」（662–676 行）；
+     「檢查項目」卡片 683–692 行、每列 719–743 行；「診斷報告」卡片 695–711 行（說明取自 696 行）。
+     每列標題、說明、按鈕文字照 EnvChecker.swift 46／59–60／118／75–76／98–100／107–108 行。 -->
 <link rel="stylesheet" href="mac.css">
 <style>
-  .list { background: #fff; border-radius: 6px; box-shadow: 0 0 0 0.5px rgba(0,0,0,.15); overflow: hidden; }
-  .li { display: flex; align-items: flex-start; gap: 10px; padding: 9px 12px; }
-  .li:nth-child(even) { background: #f4f5f7; }
+  .li { display: flex; align-items: flex-start; gap: 10px; padding: 2px 0; }
   .li .ic { width: 22px; display: flex; justify-content: center; padding-top: 1px; }
   .li .ic svg { width: 20px; height: 20px; }
   .li .t { font-size: 13px; font-weight: 500; }
   .li .d { font-size: 13px; color: var(--secondary); margin-top: 2px; }
-  .li .btn { margin-left: auto; }
-  .bar { display: flex; align-items: center; gap: 10px; margin-top: 12px; }
+  .li .d.f { color: var(--red); }
+  .li .btn { margin-left: auto; align-self: center; }
 </style>
 <div id="shot">
 <div class="window">
   <div class="titlebar"><div class="lights"><i></i><i></i><i></i></div>SplitSwan</div>
   <div class="body">
-    <div class="tabs"><div class="seg"><span>連線</span><span>設定</span><span class="on">環境檢查</span><span>關於</span></div></div>
+    <div class="tabs"><div class="seg"><span>連線</span><span>自動分流</span><span>設定</span><span class="on">環境檢查</span><span>關於</span></div></div>
     <div class="tabbox">
-      <div class="list">
-        <div class="li"><span class="ic ok"><svg viewBox="0 0 20 20"><circle cx="10" cy="10" r="9" fill="currentColor"/><path d="m6 10.3 2.7 2.7L14 7.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
-          <div><div class="t">strongSwan</div><div class="d">已安裝（Homebrew）</div></div></div>
-        <div class="li"><span class="ic fail"><svg viewBox="0 0 20 20"><circle cx="10" cy="10" r="9" fill="currentColor"/><path d="m7 7 6 6m0-6-6 6" stroke="#fff" stroke-width="2" stroke-linecap="round"/></svg></span>
-          <div><div class="t">系統元件（輔助程式）</div><div class="d">尚未安裝</div></div><span class="btn">安裝</span></div>
-        <div class="li"><span class="ic fail"><svg viewBox="0 0 20 20"><circle cx="10" cy="10" r="9" fill="currentColor"/><path d="m7 7 6 6m0-6-6 6" stroke="#fff" stroke-width="2" stroke-linecap="round"/></svg></span>
-          <div><div class="t">免密碼執行權限</div><div class="d">無法免密碼執行輔助程式</div></div><span class="btn">安裝</span></div>
-        <div class="li"><span class="ic fail"><svg viewBox="0 0 20 20"><circle cx="10" cy="10" r="9" fill="currentColor"/><path d="m7 7 6 6m0-6-6 6" stroke="#fff" stroke-width="2" stroke-linecap="round"/></svg></span>
-          <div><div class="t">連線設定</div><div class="d">尚未建立</div></div><span class="btn">前往設定</span></div>
-        <div class="li"><span class="ic fail"><svg viewBox="0 0 20 20"><circle cx="10" cy="10" r="9" fill="currentColor"/><path d="m7 7 6 6m0-6-6 6" stroke="#fff" stroke-width="2" stroke-linecap="round"/></svg></span>
-          <div><div class="t">預設共享金鑰與密碼</div><div class="d">尚未設定：預設共享金鑰、密碼</div></div><span class="btn">前往設定</span></div>
-        <div class="li"><span class="ic ok"><svg viewBox="0 0 20 20"><circle cx="10" cy="10" r="9" fill="currentColor"/><path d="m6 10.3 2.7 2.7L14 7.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
-          <div><div class="t">FortiClient</div><div class="d">未執行</div></div></div>
-      </div>
-      <div class="bar">
-        <span class="callout sec">strongSwan 安裝完成</span>
-        <span class="spacer"></span>
-        <span class="btn">重新檢查</span>
-      </div>
-      <div class="bar">
-        <span class="callout sec">連線有問題時，產生報告傳給管理者（不含密碼與預設共享金鑰）</span>
-        <span class="spacer"></span>
-        <span class="btn">產生診斷報告</span>
+      <div class="stack">
+        <div class="scard t-error">
+          <div class="top">
+            <div class="ico"><svg viewBox="0 0 20 20"><path fill="currentColor" d="M6.6 1.5h6.8l5.1 5.1v6.8l-5.1 5.1H6.6l-5.1-5.1V6.6Z"/><path d="m7.2 7.2 5.6 5.6m0-5.6-5.6 5.6" stroke="#fde8e7" stroke-width="1.8" stroke-linecap="round"/></svg></div>
+            <div class="main">
+              <div class="tl"><div class="title2">有 4 項需要處理</div>
+                <span class="badge error"><svg viewBox="0 0 20 20"><path fill="currentColor" d="M6.6 1.5h6.8l5.1 5.1v6.8l-5.1 5.1H6.6l-5.1-5.1V6.6Z"/></svg>2/6 通過</span></div>
+              <div class="detail">
+                <div>下一步：系統元件（輔助程式），按「安裝」。</div>
+                <div>strongSwan 安裝完成</div>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <span class="btn primary"><svg class="icon" viewBox="0 0 20 20"><path d="M4 16 11 9M12.5 3.5a3.5 3.5 0 0 0 4 4l-1.2 1.2-4-4Z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>安裝</span>
+            <span class="btn"><svg class="icon" viewBox="0 0 20 20"><path d="M16 10a6 6 0 1 1-2-4.5M16 3v3.5h-3.5" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>重新檢查</span>
+          </div>
+        </div>
+
+        <div class="dcard">
+          <div class="hd"><svg class="icon" viewBox="0 0 20 20"><path d="M3 5.5h2M3 10h2M3 14.5h2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M8 5.5h9M8 10h9M8 14.5h9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>檢查項目</div>
+          <div class="in" style="gap:8px">
+            <div class="li"><span class="ic ok"><svg viewBox="0 0 20 20"><circle cx="10" cy="10" r="9" fill="currentColor"/><path d="m6 10.3 2.7 2.7L14 7.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+              <div><div class="t">strongSwan</div><div class="d">已安裝（Homebrew）</div></div></div>
+            <div class="hr"></div>
+            <div class="li"><span class="ic fail"><svg viewBox="0 0 20 20"><circle cx="10" cy="10" r="9" fill="currentColor"/><path d="m7 7 6 6m0-6-6 6" stroke="#fff" stroke-width="2" stroke-linecap="round"/></svg></span>
+              <div><div class="t">系統元件（輔助程式）</div><div class="d f">尚未安裝</div></div><span class="btn">安裝</span></div>
+            <div class="hr"></div>
+            <div class="li"><span class="ic fail"><svg viewBox="0 0 20 20"><circle cx="10" cy="10" r="9" fill="currentColor"/><path d="m7 7 6 6m0-6-6 6" stroke="#fff" stroke-width="2" stroke-linecap="round"/></svg></span>
+              <div><div class="t">免密碼執行權限</div><div class="d f">無法免密碼執行輔助程式</div></div><span class="btn">安裝</span></div>
+            <div class="hr"></div>
+            <div class="li"><span class="ic fail"><svg viewBox="0 0 20 20"><circle cx="10" cy="10" r="9" fill="currentColor"/><path d="m7 7 6 6m0-6-6 6" stroke="#fff" stroke-width="2" stroke-linecap="round"/></svg></span>
+              <div><div class="t">連線設定</div><div class="d f">尚未建立</div></div><span class="btn">前往設定</span></div>
+            <div class="hr"></div>
+            <div class="li"><span class="ic fail"><svg viewBox="0 0 20 20"><circle cx="10" cy="10" r="9" fill="currentColor"/><path d="m7 7 6 6m0-6-6 6" stroke="#fff" stroke-width="2" stroke-linecap="round"/></svg></span>
+              <div><div class="t">預設共享金鑰與密碼</div><div class="d f">尚未設定：預設共享金鑰、密碼</div></div><span class="btn">前往設定</span></div>
+            <div class="hr"></div>
+            <div class="li"><span class="ic ok"><svg viewBox="0 0 20 20"><circle cx="10" cy="10" r="9" fill="currentColor"/><path d="m6 10.3 2.7 2.7L14 7.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+              <div><div class="t">FortiClient</div><div class="d">未執行</div></div></div>
+          </div>
+        </div>
+
+        <div class="dcard">
+          <div class="hd"><svg class="icon" viewBox="0 0 20 20"><path d="M4.5 2h7l4 4v12h-11Z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><circle cx="10" cy="11" r="2.6" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="m12 13 2.5 2.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>診斷報告</div>
+          <div class="sub">連線有問題時，產生報告傳給管理者（不含密碼與預設共享金鑰）</div>
+          <div class="in">
+            <div class="row"><span class="btn"><svg class="icon" viewBox="0 0 20 20"><path d="M4.5 2h7l4 4v12h-11Z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M10 9v5M7.5 11.5h5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>產生診斷報告</span></div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
